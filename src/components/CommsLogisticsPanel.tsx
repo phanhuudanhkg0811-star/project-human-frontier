@@ -7,7 +7,7 @@ import { useI18n } from '../i18n/useI18n.ts';
 
 export function CommsLogisticsPanel() {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t } = useI18n();
+  const { t, pickText } = useI18n();
   const [messageInput, setMessageInput] = useState(() => t('comms.defaultMessage', { sol: bundle.campaign.milestones.lunarNight.startSol }));
   const [slots, setSlots] = useState<Partial<Record<CargoPackId, number>>>({
     'water-pack': 2,
@@ -145,8 +145,8 @@ export function CommsLogisticsPanel() {
                 return (
                   <div key={pack.id} className="p-2.5 rounded bg-slate-950/75 border border-slate-800 flex items-center justify-between gap-2">
                     <div>
-                      <div className="text-xs font-bold text-white">{pack.name}</div>
-                      <div className="text-[11px] text-slate-400">{pack.summary}</div>
+                      <div className="text-xs font-bold text-white">{pickText(pack.name, pack.nameEn)}</div>
+                      <div className="text-[11px] text-slate-400">{pickText(pack.summary, pack.summaryEn)}</div>
                     </div>
                     <div className="flex items-center gap-1.5 font-mono text-xs">
                       <button type="button" disabled={count <= 0} onClick={() => adjustSlot(pack.id, -1)} className="hail-btn px-2 py-0.5">-</button>

@@ -23,7 +23,7 @@ const ITEM_ICON: Record<string, string> = {
 };
 
 export function CraftingModal({ onClose }: CraftingModalProps) {
-  const { t } = useI18n();
+  const { t, pickText } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const [feedback, setFeedback] = useState<string | null>(null);
   const inEngineering = gameState.clock.phase === 'engineering';
@@ -57,7 +57,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
           <span>
             {t('crafting.stock')} <strong className="text-amber-300">{gameState.resources.partsKg} kg Parts</strong> ·{' '}
             <strong className="text-sky-300">{gameState.resources.waterL.toFixed(1)} L {t('crafting.water')}</strong> ·{' '}
-            <strong className="text-emerald-300">{gameState.resources.batteryKWh.toFixed(1)} kWh Pin</strong>
+            <strong className="text-emerald-300">{gameState.resources.batteryKWh.toFixed(1)} kWh {t('telemetry.battery')}</strong>
           </span>
           {!inEngineering && (
             <span className="text-amber-300 font-mono">{t('crafting.phaseLock')}</span>
@@ -135,7 +135,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
                       )}
                       {recipe.id === 'medkit' && (
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-950/60 border border-sky-500/40 text-sky-300">
-                          Kho: {gameState.resources.medkits} (Lv{gameState.resources.medkitLevel})
+                          {t('crafting.medkitStock', { count: gameState.resources.medkits, level: gameState.resources.medkitLevel })}
                         </span>
                       )}
                       {recipe.id === 'mre_pack' && (
@@ -144,7 +144,9 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-300/90 mt-1 leading-relaxed">{recipe.effectSummary}</p>
+                    <p className="text-xs text-slate-300/90 mt-1 leading-relaxed">
+                      {pickText(recipe.effectSummary, recipe.effectSummaryEn)}
+                    </p>
                     <p className="text-[11px] font-mono text-slate-400 mt-1">
                       {t('crafting.craftCost', { parts: recipe.craftCost.partsKg, battery: recipe.craftCost.batteryKWh })}
                       {recipe.craftCost.waterL > 0 ? ` + ${recipe.craftCost.waterL}L` : ''} ({recipe.craftCost.durationSols}d)
@@ -154,7 +156,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/90">
                   <button type="button" disabled={!canCraft} onClick={() => runAction('craft', recipe.id)} className="hail-btn hail-btn--accent w-full text-[11px]">
-                    <Hammer className="w-3.5 h-3.5" /> In
+                    <Hammer className="w-3.5 h-3.5" /> {t('crafting.craft')}
                   </button>
                   {recipe.upgradeCost && (
                     <button type="button" disabled={!canUpgrade} onClick={() => runAction('upgrade', recipe.id)} className="hail-btn w-full text-[11px]">

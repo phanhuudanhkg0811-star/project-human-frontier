@@ -295,13 +295,13 @@ project-human-frontier/
 
 ### Phase 1: Moon Survival 32 Sol (Current Scope)
 - [x] Official Product Scope Reconciliation & 3-Campaign Architecture.
-- [x] Technical foundation: Vite + React 19 + TypeScript + CI workflow.
-- [ ] Phase 1.1: Domain state, command handlers, and versioned save system.
-- [ ] Phase 1.2: Crew management, inventory, and 3-expedition rover lifecycle.
-- [ ] Phase 1.3: 18–24 branching event catalog and Sol 7 Golden Crisis.
-- [ ] Phase 1.4: 14-Sol Lunar Night balance, load shedding, and NASA Cadet Report Card.
-- [ ] Phase 1.5: Cockpit V12 layout integration, 2D Canvas window, and bilingual VI/EN copy.
-- [ ] Phase 1.6: Automated 32-Sol simulation bots, E2E test suite, and release gate.
+- [x] Technical foundation: Vite + React + TypeScript + CI workflow.
+- [x] Phase 1.1: Domain state, command handlers, and versioned save system (`SaveEnvelope v4`).
+- [x] Phase 1.2: Crew management, inventory, `3D Fabricator`, and 3-expedition rover lifecycle.
+- [x] Phase 1.3: 22 branching VI/EN events and Sol 7 Golden Crisis.
+- [x] Phase 1.4: 14-Sol Lunar Night balance, load shedding, and NASA Cadet Report Card.
+- [x] Phase 1.5: Tactile Cockpit UI, 2D ambient canvas, Web Audio, asset manifest, and bilingual VI/EN copy.
+- [ ] Phase 1.6: Bundle/asset budget, `ErrorBoundary`, accessibility polish, 5-journey E2E gate & release.
 
 ### Phase 2: Mars Survival Campaign (Independent)
 - [ ] Standalone 36+ Sol Mars expedition.
@@ -341,8 +341,9 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 
 ## 📜 Attribution & References
 
+- **Full Credits & NASA Open Data Notice**: See [CREDITS.md](CREDITS.md) and [LICENSE](LICENSE).
 - **NASA Space Apps Challenge**: Junior Astronaut Mission Trainer challenge track.
-- **NASA Open Data**: NASA DONKI (Space Weather Database Of Notifications, Knowledge, and Information) API.
+- **NASA Open Data**: NASA DONKI (Space Weather Database Of Notifications, Knowledge, and Information) API, NASA LRO Diviner & LOLA (PDS), and NASA OSDR RadLab.
 - **Educational Framework**: Next Generation Science Standards (NGSS) Earth and Space Sciences.
 
 ---

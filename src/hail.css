@@ -1088,33 +1088,54 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   top: 93%;
   height: 7%;
   z-index: 45;
-  padding: 0 1.5%;
+  padding: 0 1%;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1cqi;
+  gap: 0.65cqi;
+  overflow: hidden;
   background: linear-gradient(180deg, rgba(24, 34, 42, 0.72) 0%, rgba(24, 34, 42, 0.94) 100%);
   border-top: 1px solid rgba(199, 203, 200, 0.22);
+}
+
+.hail-action-band-left {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.32cqi;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.hail-action-band-left::-webkit-scrollbar {
+  display: none;
 }
 
 .hail-action-band button {
   display: inline-flex;
   align-items: center;
-  gap: 0.45cqi;
-  padding: 0.35cqi 0.85cqi;
-  border-radius: 0.4cqi;
+  flex-shrink: 0;
+  white-space: nowrap;
+  gap: 0.3cqi;
+  padding: 0.28cqi 0.56cqi;
+  border-radius: 0.36cqi;
   background: rgba(48, 59, 67, 0.92);
   border: 1px solid rgba(199, 203, 200, 0.35);
   color: #E7E6DF;
-  font-size: clamp(10px, 0.92cqi, 13px);
+  font-size: clamp(9.5px, 0.84cqi, 12px);
   font-weight: 600;
+  line-height: 1.2;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .hail-action-band button img {
-  width: clamp(13px, 1.15cqi, 17px);
-  height: clamp(13px, 1.15cqi, 17px);
+  width: clamp(12px, 1.05cqi, 16px);
+  height: clamp(12px, 1.05cqi, 16px);
+  flex-shrink: 0;
 }
 
 .hail-action-band button:hover {
@@ -1125,6 +1146,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-action-band button.is-primary {
   border-color: #C57D59;
   background: rgba(48, 59, 67, 0.96);
+  padding: 0.3cqi 0.72cqi;
 }
 
 .hail-action-band button.is-primary:hover {
@@ -1134,19 +1156,24 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-action-band-right {
   display: flex;
   align-items: center;
-  gap: 0.6cqi;
+  flex-shrink: 0;
+  gap: 0.45cqi;
+  min-width: 0;
 }
 
 .hail-phase-hint {
   margin: 0;
-  padding: 0.22cqi 0.9cqi;
+  padding: 0.2cqi 0.7cqi;
+  max-width: clamp(110px, 18cqi, 240px);
   border-radius: 999px;
   background: rgba(38, 55, 70, 0.88);
   border: 1px solid rgba(117, 169, 165, 0.32);
   color: #E7E6DF;
-  font-size: clamp(9px, 0.86cqi, 12px);
+  font-size: clamp(9px, 0.8cqi, 11.5px);
   text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -3432,6 +3459,10 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   }
 
   .hail-utility-controls button span {
+    display: none;
+  }
+
+  .hail-phase-hint {
     display: none;
   }
 }

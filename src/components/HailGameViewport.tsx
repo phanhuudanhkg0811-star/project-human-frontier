@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect, type ComponentType } from 'react';
 import { AlertTriangle, CircleHelp, Languages, RefreshCw, Volume2, VolumeX } from 'lucide-react';
 import { playSfx, startMusic, syncMusicMuted } from '../audio/sfx.ts';
 import { playSfx as playSynthSfx, syncAmbientAudio } from '../audio/soundEngine.ts';
@@ -10,7 +10,6 @@ import { useUiStore } from '../store/uiStore.ts';
 import { downloadArtifact } from '../persistence/downloadArtifact.ts';
 import { SAVE_STORAGE_KEY } from '../persistence/saveAdapter.ts';
 import type { ActiveModalType, CrewId, EquipmentId } from '../types/index.ts';
-import { SystemControls } from './SystemControls.tsx';
 import {
   HAIL_ENV,
   HAIL_EQUIPMENT,
@@ -18,20 +17,28 @@ import {
   HAIL_SVG,
   getHailCrewVisual,
 } from './cabin/hailAssets.ts';
+import { SafeImage } from './common/SafeImage.tsx';
 import { TelemetryTopBar } from './hud/TelemetryTopBar.tsx';
-import { CharacterSheetModal } from './modals/CharacterSheetModal.tsx';
-import { CommsLogisticsModal } from './modals/CommsLogisticsModal.tsx';
-import { CraftingModal } from './modals/CraftingModal.tsx';
-import { EndOfDayModal } from './modals/EndOfDayModal.tsx';
-import { ExpeditionModal } from './modals/ExpeditionModal.tsx';
-import { JournalModal } from './modals/JournalModal.tsx';
 import { MissionDialog } from './modals/MissionDialog.tsx';
-import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
-import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
-import { StarlogModal } from './modals/StarlogModal.tsx';
-import { TutorialModal } from './modals/TutorialModal.tsx';
 import { AmbientCanvasLayer } from './cabin/AmbientCanvasLayer.tsx';
 import { useI18n } from '../i18n/useI18n.ts';
+
+function lazyNamed<TProps>(loader: () => Promise<ComponentType<TProps>>) {
+  return lazy(async () => ({ default: await loader() }));
+}
+
+const SystemControls = lazyNamed(() => import('./SystemControls.tsx').then((m) => m.SystemControls));
+const CharacterSheetModal = lazyNamed(() => import('./modals/CharacterSheetModal.tsx').then((m) => m.CharacterSheetModal));
+const CommsLogisticsModal = lazyNamed(() => import('./modals/CommsLogisticsModal.tsx').then((m) => m.CommsLogisticsModal));
+const CraftingModal = lazyNamed(() => import('./modals/CraftingModal.tsx').then((m) => m.CraftingModal));
+const EndOfDayModal = lazyNamed(() => import('./modals/EndOfDayModal.tsx').then((m) => m.EndOfDayModal));
+const ExpeditionModal = lazyNamed(() => import('./modals/ExpeditionModal.tsx').then((m) => m.ExpeditionModal));
+const JournalModal = lazyNamed(() => import('./modals/JournalModal.tsx').then((m) => m.JournalModal));
+const MissionLaunchModal = lazyNamed(() => import('./modals/MissionLaunchModal.tsx').then((m) => m.MissionLaunchModal));
+const NightCutsceneModal = lazyNamed(() => import('./modals/NightCutsceneModal.tsx').then((m) => m.NightCutsceneModal));
+const StarlogModal = lazyNamed(() => import('./modals/StarlogModal.tsx').then((m) => m.StarlogModal));
+const TutorialModal = lazyNamed(() => import('./modals/TutorialModal.tsx').then((m) => m.TutorialModal));
+const AboutCreditsModal = lazyNamed(() => import('./modals/AboutCreditsModal.tsx').then((m) => m.AboutCreditsModal));
 
 const EQUIPMENT_RACK_META: ReadonlyArray<{
   id: EquipmentId;
@@ -224,8 +231,8 @@ export function HailGameViewport() {
         >
           {/* Observation Window Backdrop */}
           <div className="hail-window-aperture" aria-hidden="true">
-            <img src={HAIL_ENV.spaceDeep} alt="" className="hail-l00-space" draggable={false} />
-            <img
+            <SafeImage src={HAIL_ENV.spaceDeep} alt="" className="hail-l00-space" draggable={false} />
+            <SafeImage
               src={progress.isLunarNight ? HAIL_ENV.lunarNight : HAIL_ENV.lunarDay}
               alt=""
               className="hail-l01-lunar"
@@ -238,7 +245,7 @@ export function HailGameViewport() {
             />
           </div>
 
-          <img src={HAIL_ENV.cockpitShell} alt={t('cockpit.shellAlt')} className="hail-l02-shell" draggable={false} />
+          <SafeImage src={HAIL_ENV.cockpitShell} alt={t('cockpit.shellAlt')} className="hail-l02-shell" draggable={false} />
           <div className="hail-cabin-lighting" aria-hidden="true" />
 
           {/* UL: Food & Aid Wall Rack */}
@@ -318,7 +325,7 @@ export function HailGameViewport() {
             onClick={() => openPanel('crafting')}
             aria-label={t('cockpit.openFabricator')}
           >
-            <img src={fabSprite} alt="3D Fabricator" className="hail-sprite-contain" draggable={false} />
+            <SafeImage src={fabSprite} alt="3D Fabricator" className="hail-sprite-contain" draggable={false} />
             <span className="hail-station-tag">
               3D FAB Lv{gameState.systems.fabricator.level}{' '}
               · {gameState.fabricator.activeJob ? t('cockpit.printing') : t('cockpit.ready')}
@@ -334,7 +341,7 @@ export function HailGameViewport() {
             onClick={() => openPanel('comms')}
             aria-label={t('cockpit.openComms')}
           >
-            <img src={HAIL_EQUIPMENT.comms} alt="CAPCOM" className="hail-sprite-contain" draggable={false} />
+            <SafeImage src={HAIL_EQUIPMENT.comms} alt="CAPCOM" className="hail-sprite-contain" draggable={false} />
             <span className="hail-station-tag">
               CAPCOM · {gameState.logistics.activeOrder ? `CARGO S${gameState.logistics.activeOrder.arrivalSol}` : '80KG READY'}
             </span>
@@ -413,7 +420,7 @@ export function HailGameViewport() {
                   style={slot.style}
                   aria-label={t('cockpit.astronaut', { name: member.name, state: stateLabel })}
                 >
-                  <img
+                  <SafeImage
                     src={visual.seated}
                     alt={`${member.name} · ${stateLabel}`}
                     className="hail-crew-figure"
@@ -467,7 +474,7 @@ export function HailGameViewport() {
 
         {/* Bottom Action Bar */}
         <footer className="hail-action-band">
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="hail-action-band-left">
             <button type="button" onClick={() => openPanel('journal')}>
               <img src={HAIL_SVG.frameCorner} alt="" />
               <span>{t('hud.journal')}</span>
@@ -500,12 +507,32 @@ export function HailGameViewport() {
               <img src={HAIL_SVG.badgeNasaStem} alt="" />
               <span>{t('hud.campaign')}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => openPanel('about')}
+              aria-label={t('about.title')}
+              title={t('about.title')}
+            >
+              <img src={HAIL_SVG.badgeNasaStem} alt="" aria-hidden="true" />
+              <span>{t('hud.credits')}</span>
+            </button>
           </div>
 
           <div className="hail-action-band-right">
-            <span className="hail-phase-hint">
-              {advancePerm.allowed ? t('hud.readyAdvance') : advancePerm.message}
-            </span>
+            {(() => {
+              const phaseHint = advancePerm.allowed
+                ? t('hud.readyAdvance')
+                : gameState.campaign.status !== 'active'
+                  ? t('hud.hint.campaignEnded')
+                  : advancePerm.code === 'E_EVENT_PENDING'
+                    ? t('hud.hint.briefingPending')
+                    : t('hud.hint.useEndSol');
+              return (
+                <span className="hail-phase-hint" title={phaseHint}>
+                  {phaseHint}
+                </span>
+              );
+            })()}
             <button
               type="button"
               onClick={handlePrimaryAction}
@@ -532,42 +559,46 @@ export function HailGameViewport() {
           onOpen={() => openPanel('starlog')}
         />
       )}
-      {activeModal === 'journal' && (
-        <JournalModal
-          onClose={closeModal}
-          onOpenDecision={() => openPanel('starlog')}
-          onOpenPanel={(panel) => openPanel(panel)}
-        />
-      )}
-      {activeModal === 'starlog' && (
-        <StarlogModal onClose={closeModal} onOpenJournal={() => openPanel('journal')} />
-      )}
-      {activeModal === 'character' && <CharacterSheetModal onClose={closeModal} />}
-      {activeModal === 'crafting' && <CraftingModal onClose={closeModal} />}
-      {activeModal === 'expedition' && <ExpeditionModal onClose={closeModal} />}
-      {activeModal === 'comms' && <CommsLogisticsModal onClose={closeModal} />}
-      {activeModal === 'end' && (
-        <EndOfDayModal
-          onClose={closeModal}
-          onStarlog={() => openPanel('starlog')}
-          onComms={() => openPanel('comms')}
-        />
-      )}
-      {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
-      {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
-      {sysModalOpen && (
-        <MissionDialog
-          title={t('systems.dialogTitle')}
-          eyebrow={t('systems.dialogEyebrow')}
-          art={HAIL_EQUIPMENT.consoleDesk}
-          panelType="menu"
-          dockSide="left"
-          onClose={closeModal}
-        >
-          <SystemControls />
-        </MissionDialog>
-      )}
-      <NightCutsceneModal />
+      <Suspense fallback={null}>
+        {activeModal === 'journal' && (
+          <JournalModal
+            onClose={closeModal}
+            onOpenDecision={() => openPanel('starlog')}
+            onOpenPanel={(panel) => openPanel(panel)}
+          />
+        )}
+        {activeModal === 'starlog' && (
+          <StarlogModal onClose={closeModal} onOpenJournal={() => openPanel('journal')} />
+        )}
+        {activeModal === 'character' && <CharacterSheetModal onClose={closeModal} />}
+        {activeModal === 'crafting' && <CraftingModal onClose={closeModal} />}
+        {activeModal === 'expedition' && <ExpeditionModal onClose={closeModal} />}
+        {activeModal === 'comms' && <CommsLogisticsModal onClose={closeModal} />}
+        {activeModal === 'end' && (
+          <EndOfDayModal
+            onClose={closeModal}
+            onStarlog={() => openPanel('starlog')}
+            onComms={() => openPanel('comms')}
+          />
+        )}
+        {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
+        {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
+        {activeModal === 'about' && <AboutCreditsModal onClose={closeModal} />}
+        {sysModalOpen && (
+          <MissionDialog
+            title={t('systems.dialogTitle')}
+            eyebrow={t('systems.dialogEyebrow')}
+            art={HAIL_EQUIPMENT.consoleDesk}
+            panelType="menu"
+            dockSide="left"
+            onClose={closeModal}
+          >
+            <SystemControls />
+          </MissionDialog>
+        )}
+        {(gameState.clock.phase === 'debrief' || gameState.clock.phase === 'terminal') &&
+          activeModal !== 'launch' && <NightCutsceneModal />}
+      </Suspense>
     </main>
   );
 }

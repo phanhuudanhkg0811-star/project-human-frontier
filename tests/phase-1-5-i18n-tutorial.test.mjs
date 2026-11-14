@@ -71,6 +71,29 @@ test('Phase 1.5 NASA science briefs include bilingual titleEn and contentEn for 
   }
 });
 
+test('Phase 1.5 catalogs include bilingual English fields for recipes, crew, logistics packs, and difficulties', () => {
+  const bundle = mod.loadContentBundle();
+  for (const item of bundle.recipes.items) {
+    assert.ok(
+      typeof item.effectSummaryEn === 'string' && item.effectSummaryEn.trim().length > 0,
+      `recipe ${item.id} missing effectSummaryEn`
+    );
+  }
+  for (const member of bundle.crewCatalog) {
+    assert.ok(
+      typeof member.perkDescriptionEn === 'string' && member.perkDescriptionEn.trim().length > 0,
+      `crew ${member.id} missing perkDescriptionEn`
+    );
+  }
+  for (const pack of bundle.balance.logistics.packs) {
+    assert.ok(typeof pack.nameEn === 'string' && pack.nameEn.trim().length > 0, `pack ${pack.id} missing nameEn`);
+    assert.ok(typeof pack.summaryEn === 'string' && pack.summaryEn.trim().length > 0, `pack ${pack.id} missing summaryEn`);
+  }
+  for (const diff of Object.values(bundle.campaign.difficultyProfiles)) {
+    assert.ok(typeof diff.labelEn === 'string' && diff.labelEn.trim().length > 0, `difficulty ${diff.id} missing labelEn`);
+  }
+});
+
 test('Phase 1.5 tutorialSteps covers 5 complete bilingual onboarding steps', () => {
   assert.equal(mod.TUTORIAL_STEPS.length, 5);
   mod.TUTORIAL_STEPS.forEach((step, idx) => {

@@ -61,29 +61,37 @@
       {
         "id": "oxygen-pack",
         "name": "Gói Oxy (20 kg)",
+        "nameEn": "Oxygen Pack (20 kg)",
         "weightKg": 20,
         "summary": "+20 kg O₂",
+        "summaryEn": "+20 kg O₂",
         "grant": { "oxygenKg": 20 }
       },
       {
         "id": "water-pack",
         "name": "Gói Nước (20 kg)",
+        "nameEn": "Water Pack (20 kg)",
         "weightKg": 20,
         "summary": "+25 L Nước sạch",
+        "summaryEn": "+25 L Clean Water",
         "grant": { "waterL": 25 }
       },
       {
         "id": "food-med-pack",
         "name": "Gói Lương thực & Y tế (20 kg)",
+        "nameEn": "Food & Medical Pack (20 kg)",
         "weightKg": 20,
         "summary": "+10 MRE + 1 Medkit",
+        "summaryEn": "+10 MRE + 1 Medkit",
         "grant": { "mrePacks": 10, "medkits": 1 }
       },
       {
         "id": "power-parts-pack",
         "name": "Gói Pin & Phụ tùng (20 kg)",
+        "nameEn": "Power & Parts Pack (20 kg)",
         "weightKg": 20,
         "summary": "+25 kWh Pin + 6 kg Phụ tùng",
+        "summaryEn": "+25 kWh Battery + 6 kg Parts",
         "grant": { "batteryKWh": 25, "partsKg": 6 }
       }
     ]
