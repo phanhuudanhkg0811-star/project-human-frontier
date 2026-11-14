@@ -1,5 +1,11 @@
 # PHASE 1 — Kế hoạch hoàn chỉnh Moon Survival 32 Sol từ project trắng
 
+> [!IMPORTANT]
+> **CẬP NHẬT CHỐT GAMEPLAY (14/11/2026 — Option B):** Nội dung gốc bên dưới được giữ nguyên để tham chiếu kiến trúc/flow. Khi code & cân bằng số liệu, **ưu tiên chuẩn chốt duy nhất** tại [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) và xem bảng diff tại [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - Gỡ bỏ quy tắc *"loại bỏ chế tạo phức tạp"*: **`3D Fabricator` + `6 Equipment` + Wall-Rack Cockpit là P0 bắt buộc** (`0` slot Crew, chỉ tốn `Parts + Battery (+ Water)`).
+> - Đổi thông số sang **Option A**: `WRS = 90% (Lv1) / 95% (Lv2–3)`, Golden Sol 7 (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`), `Hunger FSM` (`Ok / Hungry / Starving` với `MRE +75 Satiety`), Cargo `80 kg (4 x 20 kg, 4 Sol)`.
+> - Asset Cockpit Wall-Rack mới do Lead/User tự sinh; phạm vi QA rút gọn nhẹ hơn (không bắt buộc 10k simulation hay 13 E2E matrix).
+
 > **Mục tiêu:** xây dựng từ repository trống thành campaign Mặt Trăng độc lập hoàn chỉnh, chơi từ Sol 1 đến hết Sol 32, bao gồm 14 Sol Lunar Night và màn tổng kết thắng/thua.
 >
 > **Phạm vi tài liệu:** toàn bộ product, game design, code, data, UI/UX, asset, nội dung STEM, kiểm thử và phát hành cần thiết cho PHASE 1. Không giả định bất kỳ code hay asset nào đã tồn tại.

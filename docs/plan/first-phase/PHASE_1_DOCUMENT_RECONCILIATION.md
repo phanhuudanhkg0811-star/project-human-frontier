@@ -1,5 +1,11 @@
 # Quyết định phạm vi chính thức của Project Hail
 
+> [!IMPORTANT]
+> **CẬP NHẬT CHỐT DESIGN (Option B — Giữ nguyên nội dung gốc để tham chiếu):** Các thay đổi sau đã được chốt làm chuẩn mới nhất và ghi đầy đủ tại [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Bắt buộc P0:** `3D Fabricator` (máy tự chạy, `0` slot Crew, tối đa `1` lệnh/Sol) + `2 Consumables` (`MRE`, `Medkit`) + `6 Equipment` + bố cục **Wall-Rack Cockpit** mới (`UL` Food, `LL` 3D Fabricator, `UR` CAPCOM/Rover, `LR` Inventory, `Center` Telemetry Console — bỏ module treo tường Oxygen/Water/Power). Asset mới do Lead/User trực tiếp sinh theo AeroMatte 2050.
+> - **Thông số & Kho đồ:** `4` tài nguyên (`Battery`, `O2`, `Water`, `Parts`; không `Chemicals`), `WRS 90% -> 95%` (`Option A`), `Hunger FSM` (`Ok / Hungry / Starving`), Cargo `80 kg / 4 slots x 20 kg / 4 Sol`.
+> - **QA thực tế, nhẹ hơn:** Bỏ 10k-run bot / 13 E2E / trần `150 kB` initial JS cứng; giữ unit test, Golden Sol 7 (`25.0 L / 2 kWh` vs `34.0 L / 0 kWh`), `~100` seed smoke, `4–5` E2E cốt lõi, bundle `< 2.5 MB` / `60 FPS`.
+
 > Cập nhật ngày **14/11/2026** theo quyết định mới nhất của chủ dự án. Tài liệu này cao hơn các GDD/handoff/roadmap cũ khi có mâu thuẫn.
 
 ## 1. Ba chế độ/campaign độc lập

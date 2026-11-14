@@ -1,5 +1,10 @@
 # PHASE 1.1 — State Foundation và kế hoạch triển khai song song
 
+> [!IMPORTANT]
+> **CẬP NHẬT STATE & COMMAND (14/11/2026 — Option B):** Giữ nguyên kiến trúc 5 nhóm state + `GameCommand` / `EngineResult` bên dưới, bổ sung/chỉnh theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - Bắt buộc có từ P0: `fabricator` queue (`1` lệnh/Sol, **tự động `0` Crew slot**, `1d/2d`, chỉ tốn `Parts + Battery (+ Water)`), `inventory` (`2` Consumables + `6` Equipment), `crew[i].satiety` (`0–100`) + `HungerState` (`Ok / Hungry / Starving`).
+> - Tài nguyên chuẩn: `4` kho hiển thị (`Battery 40/60`, `O2 70/120`, `Water 80/160`, `Parts 16/60`) + `wasteWaterL` ẩn nội bộ; **không** thêm `Chemicals`. `WRS` áp dụng **Option A (`90% -> 95%`)**.
+
 > **Mục tiêu phase con:** từ project trắng tạo được lõi state theo `campaignId` ổn định, deterministic, lưu/khôi phục được và chạy trọn một Sol bằng test — trước khi xây Moon Survival 32 Sol và cockpit hoàn chỉnh.
 >
 > **Đầu ra quan trọng nhất:** không phải UI đẹp, mà là một `GameState` duy nhất có quy tắc rõ ràng, được thay đổi qua command và không thể rơi vào trạng thái bất hợp lệ.
