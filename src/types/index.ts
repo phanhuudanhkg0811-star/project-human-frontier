@@ -1,3 +1,5 @@
+import type { OnboardingNoticeCode, OnboardingState } from '../onboarding/types.ts';
+
 export type CampaignId = 'moon-32';
 export type CampaignStatus = 'not-started' | 'active' | 'victory' | 'defeat';
 export type DifficultyId = 'cadet' | 'standard' | 'hardcore';
@@ -963,5 +965,7 @@ export interface UiState {
   readonly audioMuted: boolean;
   readonly tutorialCompleted: boolean;
   readonly tutorialStep: number;
+  readonly onboarding: OnboardingState;
+  readonly onboardingNoticeCode: OnboardingNoticeCode;
   readonly toasts: readonly ToastMessage[];
 }

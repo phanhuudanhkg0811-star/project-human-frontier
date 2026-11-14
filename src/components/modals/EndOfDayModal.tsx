@@ -9,6 +9,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
+import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 const CREW_IDS: readonly CrewId[] = ['cmd', 'eng', 'doc', 'geo'];
 
@@ -303,7 +304,7 @@ export function EndOfDayModal({
               </div>
             </div>
 
-            <div className="hail-alloc-predictor-row">
+            <div className="hail-alloc-predictor-row" data-tour={TOUR_TARGET_IDS.RESOURCE_FORECAST}>
               <p className="hail-alloc-summary-line">
                 {t('endDay.forecastLine', {
                   sol,
@@ -349,6 +350,7 @@ export function EndOfDayModal({
           <button
             type="button"
             className={`hail-lever-btn ${leverPulled ? 'is-pulled' : ''}`}
+            data-tour={TOUR_TARGET_IDS.END_SOL}
             disabled={!canPullLever}
             aria-label={t('endDay.leverAria')}
             title={

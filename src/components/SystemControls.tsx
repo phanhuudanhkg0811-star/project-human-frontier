@@ -6,6 +6,7 @@ import type { CrewId, SystemId } from '../types/index.ts';
 import { HAIL_SVG, getHailSystemSprite } from './cabin/hailAssets.ts';
 import { HailSelect } from './HailSelect.tsx';
 import { useI18n } from '../i18n/useI18n.ts';
+import { TOUR_TARGET_IDS } from '../onboarding/targets.ts';
 
 const SYSTEM_IDS: ReadonlyArray<SystemId> = ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'];
 
@@ -30,7 +31,7 @@ export function SystemControls() {
   };
 
   return (
-    <section className="hail-sys-panel" aria-label={t('systems.aria')}>
+    <section className="hail-sys-panel" aria-label={t('systems.aria')} data-tour={TOUR_TARGET_IDS.SYSTEMS_PANEL}>
       <div className="hail-sys-header">
         <div>
           <h3>{t('systems.title')}</h3>
