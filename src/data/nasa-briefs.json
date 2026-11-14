@@ -1,38 +1,42 @@
 [
   {
-    "id": "brief-1",
-    "title": "BẢO VỆ DƯỠNG KHÍ VÀ HỆ THỐNG ECLSS",
-    "content": "Một phi hành gia trung bình tiêu thụ khoảng 0.84 kg oxy nguyên chất mỗi ngày. Hệ thống ECLSS của NASA sử dụng phương pháp điện phân nước để tạo ra O2 và dùng các khối Zeolite để hút sạch khí CO2 độc hại khỏi không khí trạm.",
-    "source": "NASA Technical Reports: Environmental Control and Life Support Systems"
+    "id": "brief-lunar-cycle",
+    "tags": ["baseline", "lunar-night"],
+    "title": "Chu kỳ Ngày & Đêm 29.5 ngày trên Mặt Trăng",
+    "content": "Một ngày-đêm trên Mặt Trăng dài khoảng 708.7 giờ (~29.5 ngày Trái Đất). Trong 14 Sol Đêm Trăng (Sol 15-28), nhiệt độ bề mặt đo từ tàu LRO Diviner giảm xuống tới -171.7°C và tấm pin Solar không nhận được ánh sáng — toàn trạm phải dựa vào lò hạt nhân nhỏ Fission (+8 kWh/Sol) và pin tích trữ.",
+    "source": "NASA LRO Diviner Thermal Calibration (Observed, R² = 0.954)",
+    "provenance": "observed"
   },
   {
-    "id": "brief-2",
-    "title": "VÀNG TRẮNG CỦA MẶT TRĂNG: BĂNG NƯỚC CỰC NAM",
-    "content": "Miệng núi lửa Shackleton ở Cực Nam Mặt Trăng nằm trong bóng tối vĩnh cửu suốt hàng tỷ năm. Nhiệt độ ở đây lạnh tới -246°C, bảo tồn hàng triệu tấn băng nước ngầm – nguồn tài nguyên sống còn để chiết xuất nước uống và nhiên liệu tên lửa Hydro-Oxy.",
-    "source": "NASA Lunar Reconnaissance Orbiter (LRO) Data"
+    "id": "brief-wrs-eclss",
+    "tags": ["wrs", "water"],
+    "title": "Hệ thống Tái chế Nước WRS (Water Recovery System)",
+    "content": "Mỗi phi hành gia cần khoảng 2.5 L nước sạch/Sol và thải ra ~2.2 L nước xám. Hệ thống WRS thực tế trên trạm vũ trụ có thể thu hồi 90% đến 95% lượng nước này bằng chưng cất chân không và lọc màng, giúp kéo dài thời gian sống sót mà không phụ thuộc hoàn toàn vào tàu tiếp tế.",
+    "source": "NASA ECLSS Baseline (Observed / Adapted for Moon 32)",
+    "provenance": "observed"
   },
   {
-    "id": "brief-3",
-    "title": "BỤI REGOLITH: LƯỠI DAO CẠO VÔ HÌNH",
-    "content": "Do không có khí quyển và gió để bào mòn, các hạt cát bụi Mặt Trăng sắc nhọn như mảnh vỡ thủy tinh và tích điện tĩnh. Chúng bám chặt vào đồ phi hành, gây mòn rách gioăng đệm khóa khí và mài xước bề mặt các tấm pin năng lượng mặt trời.",
-    "source": "NASA Apollo Soil Mechanics & Artemis Dust Mitigation Program"
+    "id": "brief-donki-sep-flare",
+    "tags": ["donki-storm", "radiation"],
+    "title": "Bão Mặt Trời (Flare / CME / SEP) & Nguy cơ trên Mặt Trăng",
+    "content": "Khác với Trái Đất, Mặt Trăng không có từ quyển hay khí quyển dày bảo vệ. Khi dữ liệu NASA DONKI ghi nhận Solar Flare cấp M/X hoặc sự kiện proton SEP và xung kích IPS, tỷ lệ sửa chữa thiết bị thành công giảm xuống, rủi ro hư hỏng Rover tăng lên và phi hành gia tích lũy liều bức xạ (mGy) nhanh hơn nếu Scrubber/che chắn chưa được nâng cấp.",
+    "source": "NASA CCMC DONKI Space Weather Database (FLR / CME / SEP / IPS)",
+    "provenance": "observed"
   },
   {
-    "id": "brief-4",
-    "title": "LÁ CHẮN BỨC XẠ BẰNG NƯỚC",
-    "content": "Bức xạ vũ trụ và bão hạt Mặt Trời (SPE) có thể gây đột biến tế bào nguy hiểm. Vì nước chứa mật độ nguyên tử Hydro rất cao, nó là một trong những vật liệu cản bức xạ ion hóa hiệu quả nhất. NASA đang thiết kế khoang ngủ phi hành gia bao quanh bởi các bể nước sinh hoạt.",
-    "source": "NASA Space Radiation Laboratory (NSRL)"
+    "id": "brief-oxygen-eclss",
+    "tags": ["oxygen", "baseline"],
+    "title": "Định mức Oxy Hô hấp 0.85 kg/người/ngày",
+    "content": "Một phi hành gia trưởng thành tiêu thụ trung bình 0.85 kg khí Oxy tinh khiết mỗi ngày để trao đổi chất. Chỉ cần Airlock rò rỉ hoặc kho Oxy tụt về 0 kg trong 1 Sol, toàn bộ trạm sẽ rơi vào tình trạng mất áp và nguy kịch ngay lập tức.",
+    "source": "NASA Human Integration Design Handbook (HIDH)",
+    "provenance": "observed"
   },
   {
-    "id": "brief-5",
-    "title": "ĐỘ TRỄ SÓNG VÔ TUYẾN: KHI HOUSTON BẤT LỰC",
-    "content": "Ánh sáng di chuyển với vận tốc 300,000 km/s. Khi ở Mặt Trăng, tín hiệu chỉ trễ 1.3 giây. Nhưng khi đến Sao Hỏa, khoảng cách xa xôi khiến sóng radio mất từ 4 đến 24 phút để tới Trái Đất. Trong các sự cố nguy cấp, phi hành đoàn buộc phải tự đưa ra quyết định sinh tử mà không thể chờ lệnh từ mặt đất.",
-    "source": "NASA Deep Space Network (DSN) Telecommunications"
-  },
-  {
-    "id": "brief-6",
-    "title": "MOXIE: 'CÂY XANH CÔNG NGHỆ' TRÊN SAO HỎA",
-    "content": "Khí quyển Sao Hỏa có 95% là khí CO2. Thiết bị MOXIE trên tàu thám hiểm Perseverance đã thử nghiệm thành công công nghệ điện phân oxit rắn ở nhiệt độ 800°C để bẻ gãy phân tử CO2 thành khí O2 tinh khiết, mở đường cho các tiền đồn con người tự sản xuất dưỡng khí.",
-    "source": "NASA Jet Propulsion Laboratory (JPL) Mars MOXIE Mission"
+    "id": "brief-comms-delay",
+    "tags": ["comms", "baseline"],
+    "title": "Độ trễ Vô tuyến Trái Đất – Mặt Trăng (1.3 giây)",
+    "content": "Ánh sáng và sóng vô tuyến truyền đi ở vận tốc ~299,792 km/giây. Với khoảng cách trung bình ~384,400 km, tín hiệu từ trạm Artemis mất khoảng 1.28 giây để tới Houston (khoảng 2.6 giây khứ hồi) — cho phép hội thoại gần như thời gian thực nhưng tàu tiếp tế Cargo cần tới 4 Sol để bay tới bãi đáp.",
+    "source": "NASA Deep Space Network Lunar Telemetry",
+    "provenance": "observed"
   }
 ]

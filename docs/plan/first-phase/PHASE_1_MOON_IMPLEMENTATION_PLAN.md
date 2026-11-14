@@ -104,14 +104,14 @@ Mỗi chuyến cần tối thiểu: mục tiêu, thời lượng, chi phí đi�
 State đầu vào của scenario kiểm chứng phải được cố định bằng fixture:
 
 - 35 L nước sạch, 10 L nước thải, 8 kWh nguồn trong Sol và 8 kWh pin.
-- Tải thiết yếu 12 kWh; WRS cần 4 kWh; thu hồi 93% tối đa 10 L.
+- Tải thiết yếu 12 kWh; WRS Lv1 cần 4 kWh; thu hồi 90% tối đa 20 L/mẻ.
 - Ba người đã bận xử lý rò khí, kiểm tra nguồn điện và cô lập mạch lỗi.
 - Elena là người duy nhất còn có thể nhận việc.
 
 Hai lựa chọn bắt buộc:
 
 - **Cứu rover:** tốn 2 kWh, hoãn WRS, chuyến 2 có thể hoàn thành; cuối Sol mục tiêu là 25.0 L nước và 2 kWh pin.
-- **Ưu tiên trạm:** chạy WRS, bỏ hạn cứu dữ liệu rover; cuối Sol mục tiêu là 34.3 L nước và 0 kWh pin; chuyến 2 thất bại nhưng rover còn dùng được cho chuyến 3.
+- **Ưu tiên trạm:** chạy WRS, bỏ hạn cứu dữ liệu rover; cuối Sol mục tiêu là 34.0 L nước và 0 kWh pin; chuyến 2 thất bại nhưng rover còn dùng được cho chuyến 3.
 
 Đây là acceptance scenario quan trọng nhất của PHASE 1 và phải có golden test.
 
@@ -119,23 +119,17 @@ Hai lựa chọn bắt buộc:
 
 ```mermaid
 flowchart TD
-    Data[JSON content + simulation catalog + JSON Schema]
-    Domain[TypeScript domain orchestrator]
-    Worker[Pyodide Web Worker]
-    Engine[Python simulation resolver]
+    Data[Static JSON content + Diviner/DONKI catalogs + Schema]
+    Domain[Pure TS domain orchestrator & deterministic resolver]
     Store[Zustand store + persistence adapter]
     UI[React cockpit + panels + modals]
     Save[Versioned LocalStorage save]
     Tests[Unit + integration + E2E]
 
     Data --> Domain
-    Data --> Engine
-    Domain <-->|Versioned JSON| Worker
-    Worker --> Engine
     Domain --> Store
     Store <--> Save
     Store --> UI
-    Engine --> Tests
     Domain --> Tests
     Store --> Tests
     UI --> Tests
@@ -143,18 +137,18 @@ flowchart TD
 
 ### Nguyên tắc bắt buộc
 
-- Python simulation chạy trong persistent Pyodide Web Worker; không chạy trên main thread.
-- TypeScript quản lý phase/plan/store nhưng không chứa công thức End-Sol hoặc forecast thứ hai.
-- Worker/resolver không truy cập React, DOM, Zustand hoặc LocalStorage.
-- Cùng `state (có committed plan) + seed + modelVersion + catalogVersion` phải cho cùng canonical response/hash.
+- Toàn bộ End-Sol simulation, forecast preview và hàm xác suất DONKI chạy bằng **Pure TypeScript** trong `src/domain/`; không dùng Pyodide Web Worker, không cần Python runtime khi chơi.
+- Dữ liệu NASA (Diviner LRO + 3 mẫu × 32 ngày NASA DONKI) được cào trước bằng script offline (`scripts/`) và đóng gói dưới dạng static JSON (`src/data/`).
+- Domain engine (`src/domain/`) là nguồn tính toán duy nhất; không truy cập React, DOM, Zustand hoặc LocalStorage.
+- Cùng `state (có committed plan) + seed + modelVersion + catalogVersion` phải cho cùng canonical output/hash.
 - UI không chứa công thức cân bằng hoặc tự sửa state.
 - Mọi event, mission, brief và thông số balance phải nằm trong data.
 - Command sai phase hoặc không hợp lệ trả về lỗi domain có mã và giải thích; UI dùng lỗi đó để phản hồi cho trẻ, không im lặng.
 - Save có `schemaVersion`, `modelVersion`, `catalogVersion` và migration/compatibility check từ ngày đầu.
 - Mỗi số liệu STEM phải được đánh dấu là `observed`, `inferred` hoặc `simulated`.
-- Worker lỗi, response stale hoặc version mismatch phải giữ nguyên state và cho phép retry.
+- Validation error hoặc version mismatch không được âm thầm ghi đè/mutate state; save lỗi phải báo khôi phục an toàn.
 
-State và JSON worker contract chi tiết được khóa tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
+State và JSON schema contract chi tiết được khóa tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 5. Cấu trúc repository đề xuất
 
@@ -170,9 +164,8 @@ project-hail/
 │   ├── ui-ux/
 │   └── asset-pipeline/
 ├── public/
-│   ├── assets/hail/
-│   ├── pyodide/             # self-host để offline/cache
-│   └── python/hail_sim/     # Python runtime resolver package
+│   └── assets/hail/
+├── scripts/                 # Offline NASA DONKI & Diviner catalog builders
 ├── src/
 │   ├── app/                 # bootstrap, providers, routes/error boundary
 │   ├── components/          # common UI primitives
@@ -184,22 +177,24 @@ project-hail/
 │   │   ├── rover/
 │   │   ├── rationing/
 │   │   └── debrief/
-│   ├── domain/              # TypeScript phase/plan orchestration
-│   │   ├── commands/
-│   │   ├── selectors/
-│   │   └── validation/
-│   ├── simulation/          # Worker client + JSON contract
-│   │   ├── simulation.worker.ts
-│   │   ├── workerClient.ts
-│   │   └── contracts/
+│   ├── domain/              # Pure TS orchestrator, End-Sol resolver, DONKI probability & PRNG
+│   │   ├── orchestrator.ts
+│   │   ├── endSolResolver.ts
+│   │   ├── spaceWeather.ts
+│   │   ├── prng.ts
+│   │   ├── invariants.ts
+│   │   └── selectors.ts
 │   ├── data/
 │   │   ├── balance.json
 │   │   ├── crew.json
+│   │   ├── recipes.json
+│   │   ├── campaign-moon32.json
+│   │   ├── donki-space-weather.json
 │   │   ├── events.json
-│   │   ├── expeditions.json
 │   │   ├── initial-state.json
 │   │   ├── simulation-catalog.json
-│   │   └── science-briefs.json
+│   │   └── nasa-briefs.json
+│   ├── persistence/
 │   ├── schemas/
 │   ├── store/
 │   ├── types/
@@ -296,7 +291,7 @@ Thứ tự xử lý phải cố định:
 | Solar cấp 1 | 25 kWh/Sol |
 | Pin tối đa | 60 kWh |
 | Recycler | 4 kWh/chu kỳ |
-| Hiệu suất WRS | 85% / 90% / 93% |
+| Hiệu suất WRS | 90% / 95% / 95% (Lv3 giảm còn 3 kWh) |
 | Sửa chữa | 2 kg phụ tùng |
 | Nâng cấp | 4 kg lên cấp 2; 8 kg lên cấp 3 |
 | Radio một chiều | 1.3 giây |

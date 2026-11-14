@@ -1,172 +1,123 @@
 import { useState } from 'react';
+import { CheckCircle2, ScrollText } from 'lucide-react';
+import { selectWeatherOutlook } from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
-import { getHailEventScene, HAIL_SVG } from '../cabin/hailAssets.ts';
+import { getHailEventScene } from '../cabin/hailAssets.ts';
+import { MissionDialog } from './MissionDialog.tsx';
 
-export function StarlogModal({
-  onResolved,
-}: {
-  onResolved: (text: string) => void;
-}) {
-  const {
-    gameState,
-    config,
-    chooseEventOption,
-    advancePhase,
-  } = useGameStore();
-  const [history, setHistory] = useState(false);
-  const event = config.events.find(e => e.id === gameState.activeEvent);
-  const pending = Boolean(event && gameState.phase === 'briefing');
-  const entries = [...gameState.log].reverse();
+interface StarlogModalProps {
+  onClose: () => void;
+}
 
-  const choose = (id: string) => {
-    chooseEventOption(id);
-    const next = useGameStore.getState();
-    if (!next.gameState.activeEvent) {
-      onResolved(next.gameState.log.at(-1) ?? 'Đã ghi nhận quyết định.');
-    }
+export function StarlogModal({ onClose }: StarlogModalProps) {
+  const { gameState, bundle, dispatch } = useGameStore();
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const activeEvent = gameState.events.activeEventId
+    ? bundle.events.find((e) => e.id === gameState.events.activeEventId) ?? null
+    : null;
+  const weather = selectWeatherOutlook(gameState, bundle);
+
+  const handleChoice = async (choiceId: string) => {
+    if (!activeEvent) return;
+    const res = await dispatch({
+      type: 'event/resolve',
+      eventId: activeEvent.id,
+      choiceId,
+    });
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã xử lý.' : res.error.message);
   };
 
-  const promptText =
-    event?.prompt ??
-    'Kiểm tra sức khỏe phi hành đoàn, bảo trì hệ thống và chuẩn bị khẩu phần cho đêm nay.';
-
   return (
-    <article className="starlog-sheet">
-      {/* Tab Controls with Retro Terminal Buttons */}
-      <nav className="mission-tabs" aria-label="Chế độ Starlog">
-        <button
-          type="button"
-          aria-pressed={!history}
-          className="tab-crt-btn"
-          onClick={() => setHistory(false)}
-        >
-          <span className="tab-indicator" />
-          Báo cáo Sol {gameState.sol}
-        </button>
-        <button
-          type="button"
-          aria-pressed={history}
-          className="tab-crt-btn"
-          onClick={() => setHistory(true)}
-        >
-          <span className="tab-indicator" />
-          Nhật ký lưu trữ ({entries.length})
-        </button>
-      </nav>
-
-      {history ? (
-        <div className="starlog-history-paper">
-          <div className="paper-header">
-            <span>NHẬT KÝ HÀNH TRÌNH TỰ ĐỘNG · BẢN IN GIẤY</span>
-            <span>LƯU TRỮ TRẠM</span>
+    <MissionDialog
+      title={`Starlog & Sự kiện Sol ${gameState.clock.sol}`}
+      eyebrow="PHA 1 · MORNING BRIEFING & DONKI WEATHER"
+      art={getHailEventScene(activeEvent?.id)}
+      panelType="starlog"
+      dockSide="center"
+      onClose={onClose}
+    >
+      <div className="flex flex-col gap-3 text-slate-200">
+        {/* DONKI Space Weather Card */}
+        <section className="p-3 rounded-lg bg-slate-900/75 border border-cyan-500/35 text-xs">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <strong className="text-cyan-300">
+              NASA DONKI Space Weather ({weather.date}) — Mức: {weather.level.toUpperCase()}
+            </strong>
+            <span className="font-mono text-[11px] text-slate-400">
+              Mẫu: {gameState.campaign.donkiProfileId}
+            </span>
           </div>
-          <ol className="starlog-history-list">
-            {entries.map((entry, i) => (
-              <li key={i} className="starlog-history-entry">
-                <span className="history-bullet">▶</span>
-                <p className="history-text">{entry}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      ) : (
-        <>
-          <div className="hail-event-banner">
-            <img
-              src={getHailEventScene(event?.id)}
-              alt={event?.title ?? 'Nhật ký vận hành trạm'}
-              className="hail-event-banner-img"
-              draggable={false}
-            />
-            <div className="hail-event-banner-badge">
-              <img
-                src={pending ? HAIL_SVG.stateWarn : HAIL_SVG.stateOk}
-                alt=""
-                className="w-4 h-4"
-              />
-              <span>{pending ? 'SỰ CỐ CẦN XỬ LÝ' : 'TRẠNG THÁI BÌNH THƯỜNG'}</span>
-            </div>
+          {weather.headline && <p className="text-amber-200 italic mb-1.5">"{weather.headline}"</p>}
+          <div className="grid grid-cols-3 gap-2 font-mono text-[11px] bg-slate-950/75 p-2 rounded">
+            <div>Tỉ lệ sửa: <strong className="text-emerald-300">{Math.round(weather.repairSuccessProb * 100)}%</strong></div>
+            <div>Rủi ro Rover: <strong className="text-amber-300">{Math.round(weather.roverIncidentProb * 100)}%</strong></div>
+            <div>Bức xạ nền: <strong className="text-sky-300">+{weather.crewWeatherRisk.radiationDoseMgy} mGy</strong></div>
           </div>
+        </section>
 
-          <div className="crt-terminal-screen">
-            <div className="crt-terminal-header">
-              <span className="crt-status-dot" />
-              <span className="crt-terminal-title">
-                {pending
-                  ? 'CẢNH BÁO: CHỈ THỊ KHẨN CẤP TỪ TRUNG TÂM'
-                  : 'STATUS: HOẠT ĐỘNG THƯỜNG NHẬT'}
-              </span>
-              <span className="crt-sol-badge">
-                SOL {String(gameState.sol).padStart(2, '0')}
-              </span>
-            </div>
-
-            <h3 className="crt-event-title">
-              {event?.title ?? 'Hệ thống Trạm ổn định'}
-            </h3>
-
-            <p className="crt-prompt-text">{promptText}</p>
+        {feedback && (
+          <div className="text-xs px-3 py-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            {feedback}
           </div>
+        )}
 
-          {pending ? (
-            <div className="events-cards-section">
-              <h4 className="events-cards-heading">
-                <span>LỰA CHỌN PHƯƠNG ÁN XỬ LÝ</span>
-                <small>Nhấp vào thẻ để đưa ra chỉ thị</small>
-              </h4>
-
-              <div className="events-cards-grid">
-                {event?.choices.map((choice, i) => {
-                  const letter = String.fromCharCode(65 + i);
-                  const disabled =
-                    gameState.resources.partsKg < (choice.partsKg ?? 0);
+        {/* Active Mandatory Event */}
+        {activeEvent ? (
+          <section className="hail-event-banner">
+            <img src={getHailEventScene(activeEvent.id)} alt="" className="hail-event-banner-img" />
+            <div className="p-3 flex flex-col gap-2">
+              <span className="hail-event-banner-badge">{activeEvent.category.toUpperCase()}</span>
+              <h3 className="text-base font-bold text-white">{activeEvent.title}</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">{activeEvent.prompt}</p>
+              <div className="flex flex-col gap-2 mt-2">
+                {activeEvent.choices.map((ch) => {
+                  const missingEq =
+                    ch.requiresEquipment &&
+                    (!gameState.equipment[ch.requiresEquipment].owned ||
+                      gameState.equipment[ch.requiresEquipment].state === 'damaged');
                   return (
                     <button
-                      key={choice.id}
+                      key={ch.id}
                       type="button"
-                      className="events-choice-card hail-choice-card group"
-                      disabled={disabled}
-                      onClick={() => choose(choice.id)}
+                      disabled={Boolean(missingEq) || gameState.clock.phase !== 'briefing'}
+                      onClick={() => handleChoice(ch.id)}
+                      className="hail-choice-card text-left p-2.5 rounded border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 disabled:opacity-45"
                     >
-                      <div className="events-card-content">
-                        <div className="events-card-stamp">
-                          <span className="stamp-letter">{letter}</span>
+                      <div className="text-xs font-semibold text-cyan-200">{ch.label}</div>
+                      {missingEq && (
+                        <div className="text-[10px] text-rose-300 mt-0.5">
+                          (Yêu cầu thiết bị {ch.requiresEquipment} còn tốt trên LR Rack)
                         </div>
-                        <p className="events-card-text">{choice.label}</p>
-                        {choice.partsKg ? (
-                          <span className="events-card-cost">
-                            Tiêu tốn: {choice.partsKg} kg phụ tùng
-                          </span>
-                        ) : (
-                          <span className="events-card-cost free">
-                            Không tốn phụ tùng
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </button>
                   );
                 })}
               </div>
             </div>
-          ) : (
-            <div className="starlog-resolved-actions">
-              <button
-                type="button"
-                className="mission-button-terminal group"
-                onClick={() => {
-                  if (gameState.phase === 'briefing') {
-                    advancePhase();
-                  }
-                  onResolved('Đã ghi nhận Starlog. Buồng trạm sẵn sàng.');
-                }}
-              >
-                <span>Trở về buồng tàu</span>
-                <span className="arrow">→</span>
-              </button>
-            </div>
-          )}
-        </>
-      )}
-    </article>
+          </section>
+        ) : (
+          <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
+            Không còn sự kiện khẩn cấp nào chờ xử lý trong Morning Briefing hôm nay.
+          </div>
+        )}
+
+        {/* History Logs */}
+        <section className="crt-terminal-screen p-3 rounded-lg">
+          <div className="text-xs font-bold text-cyan-300 mb-2 flex items-center gap-1.5">
+            <ScrollText className="w-3.5 h-3.5" />
+            Nhật ký Vận hành Trạm Artemis
+          </div>
+          <div className="max-h-36 overflow-y-auto flex flex-col gap-1 text-[11px] font-mono">
+            {gameState.history.logs.slice(-8).reverse().map((log, i) => (
+              <div key={i} className="text-slate-300">
+                <span className="text-cyan-400">[Sol {log.sol} · {log.phase}]</span> {log.message}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </MissionDialog>
   );
 }

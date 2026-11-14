@@ -9,7 +9,7 @@
 >
 > **Đầu ra quan trọng nhất:** không phải UI đẹp, mà là một `GameState` duy nhất có quy tắc rõ ràng, được thay đổi qua command và không thể rơi vào trạng thái bất hợp lệ.
 >
-> **Runtime đã chốt:** Python resolver chạy trong Pyodide Web Worker; TypeScript quản lý phase, store, UI và persistence. Hai phía chỉ trao đổi JSON versioned. Chi tiết field và contract nằm tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
+> **Runtime đã chốt:** **Pure TypeScript Deterministic Engine** (`src/domain/`) + **Pre-scraped Static JSON** (`src/data/donki-space-weather.json`, `simulation-catalog.json`, v.v.); **không dùng Pyodide** Web Worker hay local Python sidecar. TypeScript quản lý trọn vẹn phase, command, End-Sol resolver, hàm xác suất DONKI, store và persistence. Chi tiết field và contract nằm tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 1. Cách quản lý “một mớ state”
 
@@ -17,42 +17,38 @@ Không đặt mọi thứ vào một object Zustand rồi cho component sửa tr
 
 | Nhóm | Ví dụ | Nơi quản lý | Có lưu save? |
 | --- | --- | --- | --- |
-| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | TypeScript snapshot + Python resolver | Có |
+| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | TypeScript snapshot + Pure TS Resolver | Có |
 | UI state | Modal đang mở, tab, hover, toast, animation | UI store/local component | Không |
 | Draft state | Khẩu phần đang kéo, payload tiếp tế chưa xác nhận | Form/local state | Không; chỉ commit khi xác nhận |
-| Content/config | Balance, event catalog, crew, brief | JSON đã validate | Lưu `contentVersion`, không copy cả catalog |
-| Derived state | Có sửa được không, dự báo cuối Sol, cảnh báo | Selector thuần | Không |
-| Runtime state | Worker loading/ready/error, request đang chạy | Worker adapter/store | Không |
+| Content/config | Balance, event catalog, crew, DONKI 3×32d, brief | Static JSON đã validate | Lưu `contentVersion`, không copy cả catalog |
+| Derived state | Có sửa được không, dự báo cuối Sol, rủi ro DONKI | Selector thuần | Không |
+| Runtime state | Save status / loading / domain error tạm | Adapter/store | Không |
 
 ### Quy tắc nguồn sự thật
 
 ```text
-JSON content/catalog ───────────────┐
-                                    ▼
-Player command → TS orchestrator → GameState/plan → Store → UI
-                         │               │
-                         │               └→ Save adapter
-                         ▼
-                Pyodide Web Worker
-                Python resolver
-                         │
-                         └→ JSON result/effects/diagnostics
+Static JSON (balance/DONKI/Diviner) ──┐
+                                      ▼
+Player command → TS Orchestrator → Pure TS End-Sol / Preview Resolver → GameState → Store → UI
+                         │                   │                            │
+                         │                   └→ SHA-256 PRNG + DONKI prob └→ SaveEnvelope v1
+                         └→ DomainError / Effects
 ```
 
 - `GameState` trong store là snapshot gameplay có thẩm quyền duy nhất.
-- TypeScript xử lý phase/plan command; Python là nguồn tính toán duy nhất cho End-Sol và forecast.
+- `src/domain/` là nguồn tính toán duy nhất cho phase transition, End-Sol, preview forecast và DONKI probability rolls.
 - Component không được tự trừ tài nguyên hoặc đổi phase.
 - Zustand không chứa công thức gameplay; chỉ giữ snapshot và gọi `dispatch`.
 - UI không lưu lại giá trị có thể tính từ `GameState`.
 - Save không lưu modal, toast, loading hay form đang nhập dở.
-- Thời gian gameplay dùng game clock/command; simulation không đọc `Date.now()`, `Math.random()` hoặc RNG global của Python.
-- Worker lỗi hoặc response stale thì giữ nguyên state; không có resolver TypeScript dự phòng.
+- Thời gian gameplay dùng game clock/command; simulation không đọc `Date.now()` hay `Math.random()` (dùng `prng.ts` SHA-256 theo `(missionSeed, sol, subsystem)`).
+- Validation error hoặc save version mismatch thì giữ nguyên state (fail closed), không tự ý mutate `GameState`.
 
 ## 2. Hình dạng state đề xuất
 
 Không cần tách thành hàng chục store. PHASE 1 dùng hai store:
 
-1. `gameStore`: domain snapshot, async dispatch, save/load status và worker runtime status không persist.
+1. `gameStore`: domain snapshot, async dispatch, save/load status và runtime status không persist.
 2. `uiStore`: modal, selection và presentation state dùng chung.
 
 Form chỉ dùng state cục bộ trong component nếu không cần chia sẻ.
@@ -155,7 +151,7 @@ type DispatchResult =
 
 `DomainEffect` chỉ mô tả điều đã xảy ra (`resource-changed`, `system-repaired`, `phase-changed`). UI quyết định biến effect thành toast, âm thanh hay animation; engine không biết UI.
 
-`dispatch` trả `Promise<DispatchResult>` vì `sol/end`, forecast và validation qua worker là bất đồng bộ. Command phase/plan có thể hoàn tất ngay nhưng vẫn đi qua cùng async interface.
+`dispatch` trả `Promise<DispatchResult>` để giữ interface `GamePort` đồng nhất cho mọi command (sync hoặc bất đồng bộ nếu mở rộng sau này) và cho phép SHA-256 PRNG (`crypto.subtle` / Node `crypto`) chạy sạch qua một biên chung.
 
 ## 4. Derived state bằng selector
 
@@ -215,11 +211,11 @@ Viết `assertGameState()` cho development/test và chạy sau mỗi command tro
         ↓
 2. Domain types + command contract
         ↓
-3. JSON schema + fixtures + config loader
+3. JSON schema + DONKI 3×32d / Diviner static catalog + fixtures
         ↓
-4. Pyodide worker bootstrap + JSON contract
+4. SHA-256 PRNG + DONKI probabilistic functions
         ↓
-5. TS state machine + Python End-Sol resolver
+5. TS state machine + Pure TS End-Sol resolver
         ↓
 6. Selectors + forecast
         ↓
@@ -240,11 +236,9 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 
 - Project foundation và CI.
 - Domain types, command, error, effect và invariant.
-- JSON loader/schema cho balance, crew, initial state, worker request/response và simulation catalog.
-- Pyodide chạy trong persistent Web Worker, có boot/version/error lifecycle.
-- State machine đủ các phase.
-- Python Resource/ECLSS resolver cho một Sol.
-- Crew assignment cơ bản và sửa chữa một system.
+- Static JSON loader/schema cho balance, crew, recipes, campaign, initial state, `donki-space-weather.json` (3×32 ngày) và `simulation-catalog.json` (Diviner).
+- Pure TS state machine đủ các phase + End-Sol / preview resolver + hàm xác suất thời tiết DONKI theo seed.
+- Crew assignment cơ bản, 3D Fabricator queue và sửa chữa system.
 - Selector permission + resource forecast.
 - Predictor phải gọi cùng resolver ở chế độ preview; không viết công thức thứ hai trong UI.
 - Zustand adapter và hai store.
@@ -295,34 +289,32 @@ flowchart LR
     D --> Join
 ```
 
-### Workstream A — Domain, worker và simulation
+### Workstream A — Domain, resolver và DONKI simulation
 
-**Sở hữu file:** `src/types/`, `src/domain/`, `src/simulation/`, `public/python/`.
+**Sở hữu file:** `src/types/`, `src/domain/`.
 
 - Implement TypeScript state machine, command dispatcher và invariant validation.
-- Implement worker client, persistent Web Worker và Pyodide boot lifecycle.
-- Implement JSON contract validation ở cả TypeScript và Python.
-- Implement crew assignment.
-- Implement repair system.
-- Implement power/ECLSS End-Sol resolver cho Sol 1 bằng Python.
+- Implement SHA-256 subsystem PRNG (`src/domain/prng.ts`) và DONKI probabilistic space weather functions (`src/domain/spaceWeather.ts`).
+- Implement crew assignment, 3D Fabricator queue và repair system.
+- Implement power/ECLSS End-Sol & preview resolver (`src/domain/endSolResolver.ts`) bằng Pure TypeScript.
 - Phát `DomainEffect` và `DomainError`.
-- Viết unit test domain, Python resolver và determinism trong cùng PR/branch.
+- Viết unit test domain, resolver, DONKI probability và determinism trong cùng PR/branch.
 
 **Không làm:** Zustand, component, JSON copy, save adapter.
 
-**Đầu ra:** từ fixture có thể boot worker, gửi một JSON request và nhận state Sol 2 đúng expected snapshot; restart worker rồi replay vẫn cùng output.
+**Đầu ra:** từ fixture Sol 1 có thể chạy full phase đến End-Sol và nhận state Sol 2 đúng expected snapshot; replay nhiều lần với cùng seed luôn cho cùng output/hash.
 
 ### Workstream B — Data, schema và science contract
 
-**Sở hữu file:** `src/data/`, `src/schemas/`, `src/content/`, calibration artifact/manifest.
+**Sở hữu file:** `src/data/`, `src/schemas/`, `scripts/`.
 
-- Tạo `balance.json`, `crew.json`, `initial-state.json`.
-- Tạo schema và decoder/validator cho content, save và worker contract.
-- Tạo `simulation-catalog.json` nhỏ từ calibration artifact; không đóng gói raw NASA dataset.
+- Tạo `balance.json`, `crew.json`, `recipes.json`, `campaign-moon32.json`, `initial-state.json`.
+- Tạo schema và validator cho content, save envelope và DONKI/Diviner catalog.
+- Chạy script cào trước 3 mẫu × 32 ngày NASA DONKI (`donki-space-weather.json`) và tạo `simulation-catalog.json` từ Diviner LRO; không đưa raw NASA dump hay API key vào runtime bundle.
 - Định nghĩa `contentVersion`, `modelVersion`, `catalogVersion` và provenance.
 - Chuẩn hóa unit/description/source metadata.
 - Tạo fixture valid/invalid cho validation.
-- Chuẩn bị event/brief mẫu Sol 1, chưa cần full catalog.
+- Chuẩn bị event/brief mẫu Sol 1 và Moon DONKI brief.
 
 **Không làm:** sửa engine types sau contract freeze; thay đổi phải qua proposal.
 
@@ -353,7 +345,7 @@ flowchart LR
 - Implement async `gameStore` facade theo interface đã khóa.
 - Implement save envelope, LocalStorage adapter và migration v1.
 - Tạo command replay harness và state snapshot viewer.
-- Test stale response, worker crash/retry và version mismatch giữ nguyên state.
+- Test schema mismatch, corrupted save recovery và version mismatch giữ nguyên state.
 - Viết integration test store/save/reload.
 
 **Không làm:** gameplay formula hoặc UI component.
@@ -365,11 +357,11 @@ flowchart LR
 | Hạng mục | Phụ thuộc | Có thể làm song song? |
 | --- | --- | --- |
 | Types/commands v0 | Product lock | Không; làm đầu tiên |
-| TS state machine + worker protocol | Types/contract v0 | Có với schema/UI/tooling |
-| JSON schema/content | Types v0 | Có |
+| TS state machine + PRNG/DONKI model | Types/contract v0 | Có với schema/UI/tooling |
+| JSON schema/content + scraped DONKI | Types v0 | Có |
 | UI shell/design system | Store interface v0 | Có, dùng mock |
 | Save envelope/adapter | GameState v0 | Có |
-| Python End-Sol resolver | Balance + JSON contract | A và B phối hợp qua fixture |
+| Pure TS End-Sol & preview resolver | Balance + JSON contract | A và B phối hợp qua fixture |
 | Store integration | Async dispatch + persistence | Chờ A/D hoàn thiện interface |
 | Playable Sol 1 | A + B + C + D | Integration gate cuối |
 
@@ -387,8 +379,8 @@ flowchart LR
 - Shared contracts chỉ thay đổi qua PR nhỏ, review bởi đại diện A–D.
 - Dùng `contracts-v0.md` hoặc TypeScript types làm giao diện chung.
 - UI dùng mock `GamePort`; không import fixture trực tiếp.
-- Python resolver nhận state/plan/catalog đã version hóa; không biết Zustand hay React.
-- TypeScript không chứa công thức End-Sol/forecast dự phòng.
+- `src/domain/endSolResolver.ts` nhận state/plan/catalog/donkiProfile đã version hóa; không biết Zustand hay React.
+- UI và store không chứa công thức End-Sol/forecast riêng.
 - Data loader trả đúng `ContentBundle`; không biết Zustand.
 - Persistence nhận/ghi `SaveEnvelope`; không biết component.
 - Merge contract → schema/data → engine → persistence/store → UI integration.
@@ -401,7 +393,6 @@ interface GamePort {
   dispatch(command: GameCommand): Promise<DispatchResult>;
   subscribe(listener: () => void): () => void;
   getRuntimeState(): SimulationRuntimeState;
-  retryWorker(): Promise<void>;
   reset(): Promise<void>;
 }
 ```
@@ -412,18 +403,18 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 
 ### Gate 1 — Contract freeze v0
 
-- Phase diagram, state types, async command, JSON request/response, error và invariant đã review.
+- Phase diagram, state types, command contract, schema/DONKI contract, error và invariant đã review.
 - Fixture Sol 1 và expected Sol 2 đã chốt.
 
-### Gate 1.5 — Worker ready
+### Gate 1.5 — Data & Resolver ready
 
-- Pyodide boot trong Web Worker, không block main thread.
-- Worker báo `modelVersion`/`catalogVersion` và validate được round-trip JSON.
-- Worker crash/retry không làm đổi `GameState`.
+- `donki-space-weather.json` (3×32 ngày) và `simulation-catalog.json` (Diviner) validate pass schema.
+- End-Sol resolver báo `modelVersion`/`catalogVersion` và chạy deterministic `preview` / `commit`.
+- Lỗi validation không làm đổi `GameState`.
 
 ### Gate 2 — Headless Sol 1
 
-- Harness/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol qua worker.
+- Harness/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol qua Pure TS resolver.
 - Nhận state Sol 2, log và delta đúng.
 - Không có resource âm hoặc duplicate assignment.
 
@@ -451,12 +442,12 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 | ---: | --- | --- |
 | 1 | Project scaffold + CI tối thiểu | D |
 | 2 | Domain contract v0 + invariants | A, review chung |
-| 3 | Content/worker schemas + fixtures Sol 1 | B |
-| 4 | Pyodide worker bootstrap + async port | A |
+| 3 | Static JSON schemas + DONKI 3×32d & Diviner scripts/fixtures | B |
+| 4 | SHA-256 PRNG + DONKI probabilistic functions | A |
 | 5 | Design tokens + primitives + mock port | C |
 | 6 | Save envelope + persistence adapter | D |
-| 7 | TS state machine + Python Resource/ECLSS resolver | A + fixture B |
-| 8 | Async game store + selectors/worker wiring | D + A review |
+| 7 | TS state machine + Pure TS Resource/ECLSS resolver | A + fixture B |
+| 8 | Async game store + selectors wiring | D + A review |
 | 9 | Sol 1 feature panels trên mock | C |
 | 10 | Store/UI integration | C + D |
 | 11 | Full Sol 1 integration/E2E | D, cả team fix |
@@ -470,19 +461,19 @@ PR 3–6 có thể chạy đồng thời sau PR 2. PR 5 và 9 không cần chờ
 - [ ] Domain/UI/draft/runtime/content/derived state được phân tách đúng.
 - [ ] Không component nào sửa domain state trực tiếp.
 - [ ] Tất cả domain mutation đi qua typed command.
-- [ ] Python resolver stateless, deterministic; Pyodide chỉ chạy trong Web Worker.
-- [ ] TypeScript không có công thức End-Sol/forecast thứ hai.
-- [ ] Worker lỗi/stale response/version mismatch không mutate state.
+- [ ] Pure TS resolver stateless, deterministic; `preview` và `commit` dùng chung một hàm.
+- [ ] UI và store không có công thức End-Sol/forecast thứ hai.
+- [ ] Validation error hoặc version mismatch không mutate state.
 - [ ] Invariant được kiểm tra bằng test.
-- [ ] JSON được schema validation và có content version.
+- [ ] JSON (bao gồm 3×32 ngày DONKI và Diviner catalog) được schema validation và có version.
 - [ ] Selector trả permission kèm lý do.
 - [ ] Zustand chỉ làm adapter/snapshot, không chứa công thức gameplay.
 - [ ] Save version 1 có validation và recovery.
 - [ ] Reload được ở mọi phase trong Sol 1.
 - [ ] Sol 1 chạy headless và chạy bằng UI đến Sol 2.
-- [ ] Test cùng seed/commands cho cùng state/log.
-- [ ] Worker restart rồi replay vẫn cho cùng canonical response/hash.
-- [ ] Cold boot, warm resolve và forecast có benchmark theo budget.
+- [ ] Test cùng seed/commands cho cùng state/log/hash.
+- [ ] Reload save rồi replay vẫn cho cùng canonical response/hash.
+- [ ] Bundle không chứa Pyodide runtime; resolve và forecast chạy tức thì `< 10 ms`.
 - [ ] Typecheck, lint, unit, integration, E2E smoke và build đều đạt CI.
 - [ ] Có tài liệu contract và sơ đồ ownership để phase sau không phá kiến trúc.
 

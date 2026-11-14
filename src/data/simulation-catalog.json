@@ -1,0 +1,59 @@
+{
+  "catalogVersion": "1.1.0-moon32",
+  "modelVersion": "1.1.0-ts-donki",
+  "generatedAtUtc": "2026-11-14T06:40:41.665Z",
+  "campaign": {
+    "id": "moon-32",
+    "planet": "moon",
+    "targetSol": 32,
+    "lunarDayStartSol": 1,
+    "lunarDayEndSol": 14,
+    "lunarNightStartSol": 15,
+    "lunarNightEndSol": 28,
+    "lunarDawnResumeSol": 29,
+    "provenance": "assumption"
+  },
+  "environment": {
+    "source": "Calibrated from LRO Diviner lunar surface temperature GCP records",
+    "provenance": "observed",
+    "diurnalCycleHours": 708.7,
+    "temperatureC": {
+      "meanC": -55.6177,
+      "amplitudeC": 164.0104,
+      "dayMaxC": 117.2871,
+      "nightMinC": -171.6508,
+      "noiseSdC": 26.4013,
+      "fitR2": 0.954,
+      "provenance": "observed"
+    },
+    "dustTauMean": 0,
+    "dustNote": "Atmosphere-free lunar vacuum; Mars dust storm tau does not apply.",
+    "radiationBaselineMgyPerSol": {
+      "nominalBackgroundMgy": 0.38,
+      "shelterReductionPct": 0.55,
+      "provenance": "inferred"
+    },
+    "earthMoonCommsDelaySec": {
+      "oneWaySec": 1.28,
+      "roundTripDisplaySec": 1.3,
+      "provenance": "observed"
+    }
+  },
+  "baselineProvenance": {
+    "divinerThermal": "observed",
+    "donkiSpaceWeather": "observed",
+    "donkiHazardProbabilities": "inferred",
+    "gameplayBalanceOptionA": "assumption"
+  },
+  "provenanceMeta": {
+    "sourceFiles": [
+      "data/calibration/environment_profile_moon.json"
+    ],
+    "sourceUrls": [
+      "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm",
+      "https://ssd.jpl.nasa.gov/horizons/"
+    ],
+    "rawInputSha256": "6d54e6400bac1d7cfd18d4b3411ff9374c32e6db57c0f442c83b14e533194488",
+    "normalizedSha256": "9db2d31e20b4dcba66a9709d23f212da0e4786ee33baafa393b8f9359f1724f0"
+  }
+}

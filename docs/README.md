@@ -19,7 +19,7 @@ docs/
 │   │   ├── PHASE_1_MOON_IMPLEMENTATION_PLAN.md   # Master implementation plan
 │   │   ├── PHASE_1_TEAM_EXECUTION_PLAN.md        # Phân công lane & ownership team
 │   │   ├── PHASE_1_1_STATE_FOUNDATION_PLAN.md    # Domain state, commands, save/load
-│   │   ├── PHASE_1_1_STATE_CONTRACT.md           # GameState + JSON contract Pyodide worker
+│   │   ├── PHASE_1_1_STATE_CONTRACT.md           # GameState + JSON contract Pure TS Engine & DONKI
 │   │   ├── PHASE_1_2_ROVER_CREW_PLAN.md          # Crew assignment, inventory, rover
 │   │   ├── PHASE_1_3_EVENTS_SOL7_PLAN.md         # Event tree, Sol 7 crisis
 │   │   ├── PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md    # Lunar Night, balance, ranking
@@ -27,7 +27,7 @@ docs/
 │   │   └── PHASE_1_6_RELEASE_PLAN.md             # E2E test, performance, release gate
 │   └── second-phase/                  # PHASE 2: Mars Survival (Độc lập, sau Phase 1)
 ├── architecture/                      # Kiến trúc kỹ thuật và hợp đồng dữ liệu
-│   └── SYSTEM_ARCHITECTURE.md         # Pyodide Worker, State Machine, Zustand Store
+│   └── SYSTEM_ARCHITECTURE.md         # Pure TS Deterministic Engine, Static JSON, Zustand Store
 ├── game-design/                       # Tài liệu thiết kế trò chơi (GDD)
 │   ├── HUMAN_FRONTIER_2050_GAME_SETUP.md         # CHUẨN CHỐT CHÍNH THỨC (14/11/2026)
 │   └── GAME_DESIGN_DOCUMENT.md        # GDD nền (tham chiếu lịch sử)

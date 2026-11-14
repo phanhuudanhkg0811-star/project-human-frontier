@@ -161,6 +161,13 @@ export function getHailSystemSprite(id: SystemId, integrity: number): {
       state,
     };
   }
+  if (id === 'fabricator') {
+    return {
+      sprite: state === 'broken' ? HAIL_EQUIPMENT.fabricatorDamaged : HAIL_EQUIPMENT.fabricatorIdle,
+      overlay: state === 'broken' ? HAIL_FX.broken : state === 'degraded' ? HAIL_FX.degraded : null,
+      state,
+    };
+  }
   // airlock / comms bay
   return {
     sprite: HAIL_EQUIPMENT.comms,
@@ -172,10 +179,13 @@ export function getHailSystemSprite(id: SystemId, integrity: number): {
 export function getHailEventScene(eventId: string | null | undefined): string {
   switch (eventId) {
     case 'solar-particles':
+    case 'sol15-lunar-nightfall':
       return hailUrl('events/PH_EVT_SOLAR_PARTICLE_BASE_V01.webp');
     case 'airlock-leak':
+    case 'sol3-airlock-seal-alert':
       return hailUrl('events/PH_EVT_AIRLOCK_LEAK_BASE_V01.webp');
     case 'regolith-filter':
+    case 'sol1-arrival-check':
       return hailUrl('events/PH_EVT_TECHNICAL_FAULT_BASE_V01.webp');
     default:
       return hailUrl('events/PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01.webp');

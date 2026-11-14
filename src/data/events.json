@@ -1,150 +1,112 @@
 [
   {
-    "id": "solar-particles",
-    "title": "Bão hạt Mặt Trời",
-    "prompt": "CAPCOM cảnh báo bức xạ. Quyết định ngay trước ca EVA.",
-    "weight": 1,
-    "when": [
-      {
-        "kind": "min-sol",
-        "value": 2
-      }
-    ],
+    "id": "sol1-arrival-check",
+    "title": "Kiểm tra Khởi động Trạm Artemis (Sol 1)",
+    "category": "ops",
+    "art": "techFault",
+    "when": [{ "sol": 1 }],
+    "mandatory": true,
+    "prompt": "Ngày đầu tiên tại căn cứ Artemis Nam Cực Mặt Trăng. Chỉ huy Sarah đề nghị hiệu chỉnh cảm biến pin mặt trời & máy lọc nước trước Đêm Trăng Sol 15.",
     "choices": [
       {
-        "id": "shelter",
-        "label": "Dừng EVA và vào khu trú ẩn",
-        "partsKg": 0,
-        "outcomes": [
-          {
-            "weight": 1,
-            "summary": "Phi hành đoàn đã vào khu trú ẩn.",
-            "effects": []
-          }
-        ]
+        "id": "calibrate-now",
+        "label": "Hiệu chỉnh ngay (-2 kg Phụ tùng, +5 Morale toàn đội)",
+        "effects": {
+          "resources": { "partsKg": -2 },
+          "crew": { "moraleDelta": 5 }
+        },
+        "log": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis."
       },
       {
-        "id": "finish-eva",
-        "label": "Hoàn thành công việc ngoài trạm",
-        "partsKg": 0,
-        "outcomes": [
-          {
-            "weight": 3,
-            "summary": "Đội EVA về trước đỉnh sự kiện.",
-            "effects": [
-              {
-                "kind": "stress",
-                "amount": 8
-              }
-            ]
-          },
-          {
-            "weight": 1,
-            "summary": "Cảnh báo liều kế buộc đội EVA quay về.",
-            "effects": [
-              {
-                "kind": "stress",
-                "amount": 25
-              }
-            ]
-          }
-        ]
+        "id": "hold-parts",
+        "label": "Giữ lại Phụ tùng cho 3D Fabricator (Không tốn vật tư)",
+        "effects": {},
+        "log": "Giữ nguyên mức Phụ tùng dự phòng và chuyển sang kiểm tra vận hành."
       }
     ]
   },
   {
-    "id": "airlock-leak",
-    "title": "Rò rỉ oxy tại gioăng khóa khí",
-    "prompt": "Cảm biến phát hiện tốc độ thất thoát tăng sau lần mở khóa khí.",
-    "weight": 1,
-    "when": [
-      {
-        "kind": "min-sol",
-        "value": 3
-      }
-    ],
+    "id": "sol3-airlock-seal-alert",
+    "title": "Bụi tĩnh điện bám gioăng cửa Airlock",
+    "category": "hazard",
+    "art": "airlockLeak",
+    "when": [{ "solMin": 3, "solMax": 5 }],
+    "mandatory": true,
+    "prompt": "Bụi regolith bám vào gioăng cửa khoang điều áp Airlock làm tăng nguy cơ rò rỉ dưỡng khí O₂.",
     "choices": [
       {
-        "id": "isolate",
-        "label": "Cô lập khóa khí",
-        "partsKg": 0,
-        "outcomes": [
-          {
-            "weight": 1,
-            "summary": "Đã cô lập khóa khí, một phần oxy đã thoát.",
-            "effects": [
-              {
-                "kind": "oxygen-loss",
-                "amount": 1
-              }
-            ]
-          }
-        ]
+        "id": "use-sealant-tape",
+        "label": "Dùng Băng keo Sealant Tape (Khắc chế, miễn phí Parts)",
+        "requiresEquipment": "sealant_tape",
+        "effects": {
+          "equipmentDamage": { "id": "sealant_tape", "wear": 50 }
+        },
+        "log": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng."
       },
       {
-        "id": "temporary-seal",
-        "label": "Lắp gioăng dự phòng",
-        "partsKg": 1,
-        "outcomes": [
-          {
-            "weight": 1,
-            "summary": "Gioăng giữ áp suất; thất thoát nhỏ khi thay.",
-            "effects": [
-              {
-                "kind": "oxygen-loss",
-                "amount": 0.2
-              }
-            ]
-          }
-        ]
+        "id": "patch-with-parts",
+        "label": "Thay gioăng dự phòng (-2 kg Phụ tùng)",
+        "effects": {
+          "resources": { "partsKg": -2 }
+        },
+        "log": "Đã thay gioăng Airlock bằng 2 kg Phụ tùng."
+      },
+      {
+        "id": "ignore-leak",
+        "label": "Tạm bỏ qua (-5 kg O₂ do rò rỉ)",
+        "effects": {
+          "resources": { "oxygenKg": -5 },
+          "systemIntegrity": { "id": "airlock", "delta": -0.2 }
+        },
+        "log": "Airlock rò rỉ nhẹ trước khi được siết lại cuối ca."
       }
     ]
   },
   {
-    "id": "regolith-filter",
-    "title": "Bụi regolith làm suy giảm bộ lọc",
-    "prompt": "Chênh áp tăng qua cụm lọc sau nhiều lượt EVA.",
-    "weight": 1,
-    "when": [
-      {
-        "kind": "min-sol",
-        "value": 4
-      },
-      {
-        "kind": "planet",
-        "value": "moon"
-      }
-    ],
+    "id": "sol7-golden-comms-crisis",
+    "title": "Sol 7: Sụt nguồn & Mất tín hiệu Rover gần Miệng hố",
+    "category": "crisis",
+    "art": "robotSignalLoss",
+    "when": [{ "sol": 7 }],
+    "mandatory": true,
+    "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu và Rover phát tín hiệu yếu do địa hình che khuất. Bạn chọn ưu tiên điện cho Rover hay chạy WRS tái chế nước?",
     "choices": [
       {
-        "id": "replace",
-        "label": "Thay lõi lọc",
-        "partsKg": 1,
-        "outcomes": [
-          {
-            "weight": 1,
-            "summary": "Lõi mới giữ lưu lượng danh định.",
-            "effects": []
-          }
-        ]
+        "id": "save-rover-link",
+        "label": "Ưu tiên cứu tín hiệu Rover (-2 kWh Pin, tắt WRS hôm nay)",
+        "effects": {
+          "resources": { "batteryKWh": -2 },
+          "planOverride": { "wrsEnabled": false }
+        },
+        "log": "Đã giữ tín hiệu liên lạc Rover an toàn trong ca Sol 7."
       },
       {
-        "id": "defer",
-        "label": "Giảm EVA và hoãn thay lõi",
-        "partsKg": 0,
-        "outcomes": [
-          {
-            "weight": 1,
-            "summary": "Bộ lọc giảm lưu lượng trong lúc chờ bảo trì.",
-            "effects": [
-              {
-                "kind": "damage",
-                "amount": 0.2,
-                "system": "scrubber"
-              }
-            ]
-          }
-        ]
+        "id": "prioritize-wrs",
+        "label": "Ưu tiên bật máy lọc nước WRS 90% (Giữ điện chạy WRS)",
+        "effects": {
+          "planOverride": { "wrsEnabled": true },
+          "crew": { "moraleDelta": -5 }
+        },
+        "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7."
+      }
+    ]
+  },
+  {
+    "id": "sol15-lunar-nightfall",
+    "title": "Sol 15: Hoàng hôn tắt nắng — Bước vào 14 Sol Đêm Trăng",
+    "category": "milestone",
+    "art": "solarParticle",
+    "when": [{ "sol": 15 }],
+    "mandatory": true,
+    "prompt": "Mặt Trời lặn xuống đường chân trời Nam Cực Mặt Trăng. Tấm pin Solar ngừng phát điện suốt 14 Sol tới (chỉ còn Lò Fission +8 kWh/Sol).",
+    "choices": [
+      {
+        "id": "night-protocol",
+        "label": "Kích hoạt Chế độ Tiết kiệm Đêm Trăng",
+        "effects": {
+          "crew": { "moraleDelta": 5 }
+        },
+        "log": "Toàn trạm chuyển sang nguồn Fission & Pin dự phòng cho 14 Sol Đêm Trăng."
       }
     ]
   }

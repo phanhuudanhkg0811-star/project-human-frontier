@@ -82,7 +82,7 @@ PHASE 1 (Current Focus)                 PHASE 2 (Post-Phase 1)
 - 🤖 **3 Remote Rover Expeditions**: Explore the *Lunar Crater*, *Regolith Field*, and *Permanently Shadowed Region (PSR)* for water-ice deposits.
 - ⚖️ **Sol 7 Golden Crisis**: A signature branching decision: sacrifice rover telemetry to guarantee habitat life support, or spend vital power to save groundbreaking scientific data.
 - 📊 **Dynamic Daily STEM Debrief & 5-Sol Trend Predictor**: Plain-language science explanations linking observed data, inferred context, and simulated station impacts.
-- 🔁 **100% Deterministic & Replay-Friendly**: A subsystem-seeded Python resolver running in a Pyodide Web Worker produces versioned, canonical JSON results for scenario sharing and automated grading.
+- 🔁 **100% Deterministic & Replay-Friendly**: A SHA-256 subsystem-seeded Pure TypeScript resolver (`endSolResolver.ts` + `spaceWeather.ts`) produces versioned, canonical JSON results for scenario sharing and automated testing.
 - 🌐 **Bilingual (VI / EN)**: Full bilingual Vietnamese and English support across all UI text, briefs, and dialogues.
 
 ---
@@ -116,7 +116,7 @@ flowchart LR
 |---|---|---:|---:|---:|---|
 | **Oxygen (`oxygenKg`)** | kg | 80 kg | 100 kg | 0.84 kg / person | Essential for respiration; failure causes critical medical emergency |
 | **Clean Water (`waterL`)** | L | 100 L | 120 L | 2.5 L / person | Hydration and health recovery; supplemented by WRS recycler |
-| **Waste Water (`wasteWaterL`)** | L | 10 L | 100 L | Generated daily | Recycled into clean water via WRS (85%–93% efficiency) |
+| **Waste Water (`wasteWaterL`)** | L | 10 L | 100 L | Generated daily | Recycled into clean water via WRS (90%–95% efficiency) |
 | **Food / MRE (`foodKg`)** | kg | 60 kg | 100 kg | 0.62 kg / person | Daily caloric intake; rationing reduces morale and increases fatigue |
 | **Spare Parts (`partsKg`)** | kg | 15 kg | 50 kg | 2 kg / repair | Consumed when repairing broken systems or performing upgrades (4–8 kg) |
 | **Battery Bank (`batteryKWh`)** | kWh | 45 kWh | 60 kWh | Buffer storage | Critical energy reservoir during peak demand and the 14-Sol Lunar Night |
@@ -124,7 +124,7 @@ flowchart LR
 ### 2. 4 Core ECLSS Systems
 
 1. **CO2 Scrubber**: Removes toxic exhaled carbon dioxide; system degradation causes rapid crew fatigue and incapacitation.
-2. **Water Recycler (WRS)**: Purifies greywater into potable water (costs 4 kWh/cycle); multi-tier upgrades increase recovery efficiency (85% -> 90% -> 93%).
+2. **Water Recycler (WRS)**: Purifies greywater into potable water; Lv1 recovers 90% at 4 kWh, while Lv2/Lv3 recover 95% (Lv3 uses 3 kWh).
 3. **Power Grid (Fission + Solar)**:
    - **Mini Fission Generator**: Delivers continuous baseline power (**8 kWh/Sol**) regardless of day or night.
    - **Solar Array**: Generates **25 kWh/Sol** during daytime; drops to **0 kWh/Sol** during Lunar Night.
@@ -147,7 +147,7 @@ Surface exploration is conducted via uncrewed robotic rovers:
 #### ⚖️ The Sol 7 Golden Crisis
 At Sol 7, a simultaneous cabin leak, solar degradation, and rover telemetry failure strike. Elena Chen is the only available astronaut remaining:
 - **Option A (Save Rover)**: Spend 2 kWh and postpone the WRS recycler to rescue rover data; Expedition 2 succeeds, leaving the station with 25.0 L water and 2 kWh battery.
-- **Option B (Protect Habitat)**: Run the WRS recycler to safeguard water reserves; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 34.3 L water and 0 kWh battery.
+- **Option B (Protect Habitat)**: Run the WRS recycler to safeguard water reserves; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 34.0 L water and 0 kWh battery.
 
 ### 5. The 14-Sol Lunar Night Survival (Sol 15–28)
 
@@ -181,15 +181,11 @@ flowchart TD
         Science["science-briefs.json (Observed / Inferred / Simulated)"]
     end
 
-    subgraph Domain ["TypeScript Domain Orchestrator"]
-        Actions["Phase & Plan Command Handlers"]
-        WorkerClient["Async JSON Worker Client"]
+    subgraph Domain ["Pure TypeScript Domain Engine"]
+        Actions["Typed Command Orchestrator"]
+        Resolver["End-Sol & Forecast Resolver"]
+        PRNG["SHA-256 Seeded PRNG"]
         Selectors["Pure State Selectors"]
-    end
-
-    subgraph Engine ["Persistent Pyodide Web Worker"]
-        Resolver["Python End-Sol & Forecast Resolver"]
-        PRNG["Subsystem-Seeded RNG"]
     end
 
     subgraph Store ["State Facade & Persistence (Zustand)"]
@@ -204,8 +200,6 @@ flowchart TD
     end
 
     Data --> Domain
-    Catalog --> Engine
-    Domain <-->|"Versioned JSON"| Engine
     Domain --> Store
     Store <--> LocalStorage
     Store --> UI
@@ -214,10 +208,10 @@ flowchart TD
 ```
 
 ### Engineering Principles
-- **Worker Isolation**: Python/Pyodide runs only in a persistent Web Worker and never blocks the React main thread.
-- **Single Simulation Authority**: TypeScript orchestrates phase/plan state, while Python alone computes End-Sol and forecast results.
+- **Pure TypeScript Runtime**: End-Sol, forecast, state transitions, and DONKI probability models run locally without Python, Pyodide, or a sidecar service.
+- **Single Simulation Authority**: The TypeScript domain resolver is the only source of End-Sol and forecast calculations.
 - **Strict Determinism**: Replaying the same `(state with committed plan, seed, modelVersion, catalogVersion)` yields the same canonical response/hash.
-- **Fail Closed**: Worker failures, stale responses, or version mismatches leave `GameState` unchanged and can be retried.
+- **Fail Closed**: Validation, persistence, or version failures leave `GameState` unchanged and expose a recoverable error.
 - **Versioned LocalStorage**: Saves include schema, content, model, and catalog versions with migration/compatibility checks.
 
 ---
@@ -232,7 +226,7 @@ project-human-frontier/
 ├── docs/                        # Complete Documentation Hub
 │   ├── README.md                # Documentation index & map
 │   ├── product/                 # Scope reconciliation & product vision
-│   ├── architecture/            # Pyodide worker, state machine, data contracts
+│   ├── architecture/            # Pure TS engine, state machine, data contracts
 │   ├── game-design/             # GDD, balance formulas, event tree, rover specs
 │   ├── ui-ux/                   # Cockpit V12 specs, wireframes, accessibility
 │   ├── asset-pipeline/          # WebP/SVG specifications, Web Audio guidelines
@@ -240,25 +234,16 @@ project-human-frontier/
 │       ├── first-phase/         # Phase 1.1 - 1.6 plans, master plan, team execution
 │       └── second-phase/        # Phase 2 Mars campaign placeholder
 ├── public/
-│   ├── assets/hail/             # Cockpit backgrounds, crew portraits, audio
-│   ├── pyodide/                 # Self-hosted offline runtime
-│   ├── python/hail_sim/         # Python simulation package
-│   └── favicon.svg
+│   └── assets/hail/             # Cockpit backgrounds, crew portraits, UI assets
 ├── src/
 │   ├── app/                     # Bootstrap, providers, error boundaries
 │   ├── components/              # Shared UI primitives (gauges, buttons, cards)
 │   ├── features/                # UI feature modules (briefing, crew, comms, rover, etc.)
-│   ├── domain/                  # TypeScript phase/plan orchestration
-│   │   ├── commands/            # Business command handlers
-│   │   ├── selectors/           # Pure state queries
-│   │   └── validation/          # Action guards and state invariants
-│   ├── simulation/              # Pyodide worker client and JSON contracts
-│   │   ├── simulation.worker.ts
-│   │   ├── workerClient.ts
-│   │   └── contracts/
-│   ├── data/                    # JSON balance, events, expeditions, science briefs
-│   ├── schemas/                 # JSON Schemas for content and save validation
-│   ├── store/                   # Zustand store & persistence adapters
+│   ├── domain/                  # Commands, resolver, PRNG, invariants, selectors
+│   ├── data/                    # Static balance, campaign, NASA DONKI/Diviner catalogs
+│   ├── persistence/             # Versioned SaveEnvelope and recovery adapter
+│   ├── schemas/                 # Runtime validation for content, commands, and saves
+│   ├── store/                   # Zustand GamePort and non-persisted UI store
 │   ├── types/                   # Strict domain TypeScript definitions
 │   ├── utils/                   # Math, formatters, audio synthesis helpers
 │   ├── App.tsx                  # Root component
@@ -339,8 +324,8 @@ project-human-frontier/
 
 For in-depth design specifications, architecture blueprints, and execution plans, visit the [`docs/`](docs/README.md) hub:
 - 📑 [Scope Reconciliation](docs/product/SCOPE_RECONCILIATION.md): Definitive 3-campaign roadmap and release gates.
-- 🏗️ [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md): Pyodide worker, TypeScript orchestrator, Zustand store, and data contracts.
-- 🧩 [Phase 1.1 State Contract](docs/plan/first-phase/PHASE_1_1_STATE_CONTRACT.md): Authoritative GameState fields, JSON worker protocol, save envelope, and invariants.
+- 🏗️ [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md): Pure TypeScript engine, static NASA catalogs, Zustand store, and data contracts.
+- 🧩 [Phase 1.1 State Contract](docs/plan/first-phase/PHASE_1_1_STATE_CONTRACT.md): Authoritative GameState fields, resolver contract, save envelope, and invariants.
 - 🎮 [Game Design Document](docs/game-design/GAME_DESIGN_DOCUMENT.md): Complete balance formulas, resource economics, and rover systems.
 - 🎛️ [Cockpit V12 Specifications](docs/ui-ux/COCKPIT_V12_SPEC.md): 16:9 cockpit layout, 6 modules, 2 racks, and Observation Window.
 - 🎨 [Asset & Audio Pipeline](docs/asset-pipeline/ASSET_SPECIFICATION.md): WebP/SVG standards, Web Audio procedural SFX, and NASA attributions.

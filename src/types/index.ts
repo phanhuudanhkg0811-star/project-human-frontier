@@ -1,159 +1,699 @@
-export type Planet = 'moon' | 'mars';
-export type SystemId = 'scrubber' | 'recycler' | 'solar' | 'airlock';
-export type Level = 1 | 2 | 3;
-export type Cargo = Omit<OutpostResources, 'batteryKWh' | 'wasteWaterL'>;
+export type CampaignId = 'moon-32';
+export type CampaignStatus = 'not-started' | 'active' | 'victory' | 'defeat';
+export type DifficultyId = 'cadet' | 'standard' | 'hardcore';
 
-export interface CrewMember {
-  readonly id: string;
-  readonly name: string;
-  readonly health: number;
-  readonly stress: number;
-  readonly fatigue: number;
-  readonly hunger: number;
-  readonly thirst: number;
-  readonly status: 'fit' | 'impaired' | 'evacuated';
+export type SolPhase =
+  | 'briefing'
+  | 'engineering'
+  | 'comms'
+  | 'rationing'
+  | 'resolving'
+  | 'debrief'
+  | 'terminal';
+
+export type SystemId = 'solar' | 'recycler' | 'scrubber' | 'airlock' | 'fabricator';
+export type SystemStatus = 'nominal' | 'degraded' | 'offline';
+
+export type CrewId = 'cmd' | 'eng' | 'doc' | 'geo';
+export type CrewCondition = 'fit' | 'injured' | 'evacuated';
+export type HungerState = 'ok' | 'hungry' | 'starving';
+export type CrewTaskType =
+  | 'repair-system'
+  | 'upgrade-system'
+  | 'rover-operate'
+  | 'emergency-response'
+  | 'medical-care'
+  | 'rest';
+
+export type ConsumableId = 'mre_pack' | 'medkit';
+export type EquipmentId =
+  | 'core_drill'
+  | 'sealant_tape'
+  | 'solar_lantern'
+  | 'dust_shield'
+  | 'radio_repeater'
+  | 'cryo_thermal_rig';
+export type ItemId = ConsumableId | EquipmentId;
+export type EquipmentCondition = 'good' | 'worn' | 'damaged';
+export type FabricatorAction = 'craft' | 'upgrade' | 'repair' | 'recycle';
+
+export type PowerConsumerId = 'eclss' | 'wrs' | 'fabricator' | 'rover';
+export type CargoPackId = 'oxygen-pack' | 'water-pack' | 'food-med-pack' | 'power-parts-pack';
+export type ExpeditionId = 'lunar-crater' | 'regolith-field' | 'polar-psr';
+export type DonkiLevel = 'quiet' | 'moderate' | 'storm' | 'extreme';
+export type ProvenanceTag = 'observed' | 'inferred' | 'assumption' | 'simulated';
+
+export interface AssignedCrewTask {
+  readonly type: CrewTaskType;
+  readonly targetSystemId?: SystemId;
+  readonly targetCrewId?: CrewId;
+  readonly partsSpent?: number;
 }
 
-export interface OutpostResources {
+export interface CrewMemberState {
+  readonly id: CrewId;
+  readonly name: string;
+  readonly roleTag: string;
+  readonly health: number;
+  readonly morale: number;
+  readonly satiety: number;
+  readonly condition: CrewCondition;
+  readonly hungerState: HungerState;
+  readonly radiationMgy: number;
+  readonly assignedTask: AssignedCrewTask | null;
+}
+
+export interface StationSystemState {
+  readonly id: SystemId;
+  readonly level: 1 | 2 | 3;
+  readonly integrity: number;
+  readonly status: SystemStatus;
+}
+
+export interface ResourceState {
+  readonly batteryKWh: number;
   readonly oxygenKg: number;
   readonly waterL: number;
-  readonly wasteWaterL: number;
-  readonly foodKg: number;
   readonly partsKg: number;
-  readonly batteryKWh: number;
+  readonly wasteWaterL: number;
+  readonly mrePacks: number;
+  readonly medkits: number;
+  readonly medkitLevel: 1 | 2;
+  readonly waterZeroStreak: number;
+  readonly oxygenZeroStreak: number;
 }
 
-export interface StationSystem {
-  readonly level: Level;
-  readonly integrity: number;
+export interface EquipmentItemState {
+  readonly id: EquipmentId;
+  readonly owned: boolean;
+  readonly level: 1 | 2;
+  readonly durability: number;
+  readonly state: EquipmentCondition;
+  readonly reservedForRover: boolean;
 }
 
-export interface ResupplyMission {
+export interface FabricatorJob {
+  readonly action: FabricatorAction;
+  readonly itemId: ItemId;
+  readonly startedSol: number;
+  readonly solsRemaining: number;
+  readonly partsSpent: number;
+  readonly waterSpent: number;
+  readonly batteryReserved: number;
+}
+
+export interface FabricatorState {
+  readonly usedThisSol: boolean;
+  readonly activeJob: FabricatorJob | null;
+}
+
+export interface DailyPlan {
+  readonly sol: number;
+  readonly status: 'draft' | 'committed';
+  readonly wrsEnabled: boolean;
+  readonly powerPriority: readonly PowerConsumerId[];
+  readonly mreTargets: readonly CrewId[];
+  readonly medkitTargets: readonly CrewId[];
+}
+
+export interface RoverState {
+  readonly status: 'idle' | 'outbound' | 'exploring' | 'returning' | 'broken';
+  readonly expeditionId: ExpeditionId | null;
+  readonly solsRemaining: number;
+  readonly equippedItems: readonly EquipmentId[];
+  readonly samplesCollected: readonly string[];
+  readonly completedExpeditions: readonly ExpeditionId[];
+}
+
+export interface EventState {
+  readonly activeEventId: string | null;
+  readonly resolvedEventIds: readonly string[];
+}
+
+export interface CargoOrder {
   readonly id: string;
+  readonly orderedAtSol: number;
   readonly arrivalSol: number;
-  readonly payload: Cargo;
-  readonly status: 'in-transit' | 'delivered';
+  readonly slots: Readonly<Partial<Record<CargoPackId, number>>>;
 }
 
-export interface RadioTransmission {
+export interface RadioMessage {
   readonly id: string;
-  readonly message: string;
-  readonly groundReceivesAtMs: number;
-  readonly replyAtMs: number;
-  readonly status: 'outbound' | 'awaiting-reply' | 'reply-received';
-}
-
-export type Condition =
-  | { readonly kind: 'planet'; readonly value: Planet }
-  | { readonly kind: 'min-sol'; readonly value: number }
-  | { readonly kind: 'integrity-below'; readonly system: SystemId; readonly value: number };
-
-export type Effect =
-  | { readonly kind: 'damage'; readonly system: SystemId; readonly amount: number }
-  | { readonly kind: 'oxygen-loss' | 'stress'; readonly amount: number };
-
-export interface GameEvent {
-  readonly id: string;
-  readonly title: string;
+  readonly sentSol: number;
   readonly prompt: string;
-  readonly weight: number;
-  readonly when: readonly Condition[];
-  readonly choices: readonly {
-    readonly id: string;
-    readonly label: string;
+  readonly status: 'transmitting' | 'reply-received';
+  readonly reply: string | null;
+  readonly replyReadyAtMs: number;
+}
+
+export interface LogisticsState {
+  readonly activeOrder: CargoOrder | null;
+  readonly padCooldownSols: number;
+  readonly radioMessages: readonly RadioMessage[];
+}
+
+export interface SpaceWeatherOutcome {
+  readonly profileId: string;
+  readonly solDate: string;
+  readonly level: DonkiLevel;
+  readonly solarPenaltyPct: number;
+  readonly radiationRiskIndex: number;
+  readonly commsNoiseIndex: number;
+  readonly hardwareStressIndex: number;
+  readonly repairSuccessProb: number;
+  readonly repairRollOk: boolean;
+  readonly roverIncidentProb: number;
+  readonly roverIncidentTriggered: boolean;
+  readonly radiationDoseMgy: number;
+  readonly stormDegradedSystem: SystemId | null;
+  readonly headline: string | null;
+}
+
+export interface SolSummary {
+  readonly sol: number;
+  readonly isLunarNight: boolean;
+  readonly surfaceTempC: number;
+  readonly powerGeneratedKWh: number;
+  readonly powerConsumedKWh: number;
+  readonly unmetLoads: readonly PowerConsumerId[];
+  readonly blackout: boolean;
+  readonly wrsRecoveredWaterL: number;
+  readonly resourceDeltas: {
+    readonly batteryKWh: number;
+    readonly oxygenKg: number;
+    readonly waterL: number;
     readonly partsKg: number;
-    readonly outcomes: readonly {
-      readonly weight: number;
-      readonly summary: string;
-      readonly effects: readonly Effect[];
-    }[];
-  }[];
+    readonly mrePacks: number;
+    readonly medkits: number;
+  };
+  readonly weather: SpaceWeatherOutcome;
+  readonly briefId: string;
+  readonly highlights: readonly string[];
+}
+
+export interface DebriefState {
+  readonly pendingDismiss: boolean;
+  readonly lastSummary: SolSummary | null;
+}
+
+export interface MissionLogEntry {
+  readonly sol: number;
+  readonly phase: SolPhase;
+  readonly code: string;
+  readonly message: string;
+}
+
+export interface MissionHistory {
+  readonly summaries: readonly SolSummary[];
+  readonly logs: readonly MissionLogEntry[];
+}
+
+export interface CampaignState {
+  readonly id: CampaignId;
+  readonly runId: string;
+  readonly planet: 'moon';
+  readonly status: CampaignStatus;
+  readonly difficulty: DifficultyId;
+  readonly seed: number;
+  readonly donkiProfileId: string;
+  readonly spaceWeatherOverride?: 'quiet';
+  readonly targetSol: number;
+  readonly endReason: string | null;
+}
+
+export interface MissionClock {
+  readonly sol: number;
+  readonly phase: SolPhase;
+  readonly resolutionIndex: number;
 }
 
 export interface GameState {
-  readonly plan: Omit<Extract<DayAction, { type: 'plan' }>, 'type'>;
+  readonly schemaVersion: 1;
+  readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly revision: number;
+  readonly campaign: CampaignState;
+  readonly clock: MissionClock;
+  readonly resources: ResourceState;
+  readonly systems: Readonly<Record<SystemId, StationSystemState>>;
+  readonly crew: Readonly<Record<CrewId, CrewMemberState>>;
+  readonly equipment: Readonly<Record<EquipmentId, EquipmentItemState>>;
+  readonly fabricator: FabricatorState;
+  readonly dailyPlan: DailyPlan;
+  readonly rover: RoverState;
+  readonly events: EventState;
+  readonly logistics: LogisticsState;
+  readonly debrief: DebriefState;
+  readonly history: MissionHistory;
+}
+
+export interface DonkiSolEntry {
   readonly sol: number;
-  readonly phase: 'briefing' | 'engineering' | 'comms' | 'rationing' | 'ended';
-  readonly planet: Planet;
-  readonly seed: number;
-  readonly radioClockMs: number;
-  readonly crew: readonly CrewMember[];
-  readonly resources: OutpostResources;
-  readonly systems: Readonly<Record<SystemId, StationSystem>>;
-  readonly missions: readonly ResupplyMission[];
-  readonly radio: readonly RadioTransmission[];
-  readonly seenEvents: readonly string[];
-  readonly activeEvent: string | null;
-  readonly log: readonly string[];
+  readonly date: string;
+  readonly level: DonkiLevel;
+  readonly radiationRiskIndex: number;
+  readonly commsNoiseIndex: number;
+  readonly hardwareStressIndex: number;
+  readonly solarPenaltyPct: number;
+  readonly flares: {
+    readonly count: number;
+    readonly maxClass: string | null;
+    readonly ids: readonly string[];
+  };
+  readonly cme: {
+    readonly count: number;
+    readonly maxSpeedKms: number;
+    readonly maxHalfAngle: number;
+    readonly earthDirectedCount: number;
+    readonly ids: readonly string[];
+  };
+  readonly sep: { readonly count: number; readonly ids: readonly string[] };
+  readonly ips: { readonly count: number; readonly ids: readonly string[] };
+  readonly notifications: {
+    readonly count: number;
+    readonly types: readonly string[];
+    readonly headline: string | null;
+  };
 }
 
-export interface MissionTransitionRequirements {
-  readonly minSol: number;
-  readonly minActiveCrew: number;
-  readonly minSystemLevelTotal: number;
-  readonly minSystemIntegrity: number;
-  readonly requiredResources: Readonly<Omit<OutpostResources, 'wasteWaterL'>>;
-  readonly transitConsumption: Readonly<Omit<OutpostResources, 'wasteWaterL' | 'batteryKWh'>>;
+export interface DonkiSample {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string;
+  readonly startDate: string;
+  readonly endDate: string;
+  readonly solCount: number;
+  readonly provenance: ProvenanceTag;
+  readonly summary: {
+    readonly totalFlares: number;
+    readonly xClassFlares: number;
+    readonly mClassFlares: number;
+    readonly totalCmes: number;
+    readonly totalSeps: number;
+    readonly totalIps: number;
+    readonly totalNotifications: number;
+    readonly stormOrExtremeSols: readonly number[];
+  };
+  readonly sols: readonly DonkiSolEntry[];
 }
 
-export interface MissionRequirementCheck {
+export interface DonkiCatalog {
+  readonly catalogVersion: string;
+  readonly generatedAtUtc: string;
+  readonly source: string;
+  readonly endpointsUsed: readonly string[];
+  readonly provenance: ProvenanceTag;
+  readonly derivedIndicesProvenance: ProvenanceTag;
+  readonly samples: readonly DonkiSample[];
+}
+
+export interface BalanceConfig {
+  readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly storages: {
+    readonly batteryKWh: { readonly initial: number; readonly max: number };
+    readonly oxygenKg: { readonly initial: number; readonly max: number };
+    readonly waterL: { readonly initial: number; readonly max: number };
+    readonly partsKg: { readonly initial: number; readonly max: number };
+    readonly wasteWaterL: { readonly initial: number; readonly max: number };
+  };
+  readonly consumables: {
+    readonly mrePacks: { readonly initial: number; readonly max: number; readonly satietyRestore: number; readonly massKgApprox: number };
+    readonly medkits: { readonly initial: number; readonly max: number; readonly healLv1: number; readonly healLv2: number; readonly medicBonus: number };
+  };
+  readonly power: {
+    readonly fissionKWhPerSol: number;
+    readonly essentialLoadKWh: number;
+    readonly solarByLevelKWh: Readonly<Record<'1' | '2' | '3', number>>;
+    readonly blackoutPenalty: { readonly healthDelta: number; readonly moraleDelta: number };
+  };
+  readonly eclss: {
+    readonly oxygenKgPerCrewPerSol: number;
+    readonly waterLPerCrewPerSol: number;
+    readonly wasteWaterGeneratedPerCrewPerSol: number;
+    readonly airlockDegradedLeakO2Kg: number;
+    readonly wrsByLevel: Readonly<Record<'1' | '2' | '3', { readonly recoveryRate: number; readonly powerKWh: number; readonly maxBatchL: number }>>;
+  };
+  readonly crew: {
+    readonly satietyDrainPerSol: number;
+    readonly injuredBelowHealth: number;
+    readonly fitRecoverAtHealth: number;
+    readonly tiredBelowMorale: number;
+    readonly normalRecoverAtMorale: number;
+    readonly restMoraleGain: number;
+    readonly restHealthGain: number;
+    readonly medicalCareMoraleGain: number;
+    readonly medicalCareHealthGain: number;
+    readonly hungryMoraleDelta: number;
+    readonly starvingHealthDelta: number;
+    readonly starvingMoraleDelta: number;
+  };
+  readonly systems: {
+    readonly maxLevel: number;
+    readonly repairPartsCost: number;
+    readonly upgradePartsByTargetLevel: Readonly<Record<'2' | '3', number>>;
+  };
+  readonly logistics: {
+    readonly maxSlots: number;
+    readonly slotWeightKg: number;
+    readonly maxPayloadKg: number;
+    readonly transitSols: number;
+    readonly padCooldownSols: number;
+    readonly radioLatencyMs: number;
+    readonly groundProcessingMs: number;
+    readonly packs: ReadonlyArray<{
+      readonly id: CargoPackId;
+      readonly name: string;
+      readonly weightKg: number;
+      readonly summary: string;
+      readonly grant: Readonly<Partial<Record<'oxygenKg' | 'waterL' | 'mrePacks' | 'medkits' | 'batteryKWh' | 'partsKg', number>>>;
+    }>;
+  };
+  readonly donkiProbability: {
+    readonly repairBaseSuccessProb: number;
+    readonly repairHardwareStressWeight: number;
+    readonly repairAlexBonus: number;
+    readonly repairMinSuccessProb: number;
+    readonly roverBaseIncidentProb: number;
+    readonly roverStressWeight: number;
+    readonly roverBlockedMultiplier: number;
+    readonly roverElenaMultiplier: number;
+    readonly crewHighRadiationThreshold: number;
+    readonly crewShelterProtectionByLevel: Readonly<Record<'1' | '2' | '3', number>>;
+    readonly dustShieldRadiationBonus: number;
+    readonly backgroundMgyPerSol: number;
+    readonly stormPeakExtraMgy: number;
+    readonly stormSystemDegradeChance: number;
+  };
+}
+
+export interface CrewProfileConfig {
+  readonly id: CrewId;
+  readonly name: string;
+  readonly roleTag: string;
+  readonly perkId: string;
+  readonly perkDescription: string;
+  readonly initialHealth: number;
+  readonly initialMorale: number;
+  readonly initialSatiety: number;
+  readonly initialCondition: CrewCondition;
+  readonly initialHungerState: HungerState;
+  readonly initialRadiationMgy: number;
+}
+
+export interface RecipeItemConfig {
+  readonly id: ItemId;
+  readonly name: string;
+  readonly category: 'consumable' | 'equipment';
+  readonly rack: 'UL' | 'LR';
+  readonly requiredFabricatorLevel: 1 | 2 | 3;
+  readonly craftCost: {
+    readonly partsKg: number;
+    readonly waterL: number;
+    readonly batteryKWh: number;
+    readonly durationSols: number;
+  };
+  readonly upgradeCost: {
+    readonly partsKg: number;
+    readonly waterL: number;
+    readonly batteryKWh: number;
+    readonly durationSols: number;
+  } | null;
+  readonly effectSummary: string;
+  readonly blockThreat: string | null;
+}
+
+export interface RecipeCatalog {
+  readonly contentVersion: string;
+  readonly rules: {
+    readonly maxQueueCommandsPerSol: number;
+    readonly crewSlotsRequired: number;
+    readonly repairCost: { readonly partsKg: number; readonly batteryKWh: number; readonly waterL: number; readonly durationSols: number };
+    readonly recycleReturnRate: number;
+    readonly recycleDurationSols: number;
+  };
+  readonly items: readonly RecipeItemConfig[];
+}
+
+export interface ExpeditionConfig {
+  readonly id: ExpeditionId;
+  readonly name: string;
+  readonly windowStartSol: number;
+  readonly windowEndSol: number;
+  readonly durationSols: number;
+  readonly launchPowerKWh: number;
+  readonly threat: string;
+  readonly requiredEquipment: readonly EquipmentId[];
+  readonly rewardSample: string;
+  readonly rewards: {
+    readonly partsKg: number;
+    readonly batteryKWh: number;
+    readonly oxygenKg: number;
+    readonly waterL: number;
+  };
+}
+
+export interface CampaignConfig {
+  readonly contentVersion: string;
+  readonly id: CampaignId;
+  readonly title: string;
+  readonly planet: 'moon';
+  readonly targetSol: number;
+  readonly milestones: {
+    readonly lunarDay: { readonly startSol: number; readonly endSol: number };
+    readonly lunarNight: { readonly startSol: number; readonly endSol: number };
+    readonly lunarDawn: { readonly startSol: number; readonly endSol: number };
+    readonly goldenCrisisSol: number;
+    readonly recommendedLastCargoSol: number;
+  };
+  readonly victory: { readonly reachSol: number; readonly minActiveCrew: number };
+  readonly defeat: { readonly minActiveCrew: number; readonly o2ZeroConsecutiveSols: number; readonly waterZeroConsecutiveSols: number };
+  readonly difficultyProfiles: Readonly<
+    Record<DifficultyId, { readonly id: DifficultyId; readonly label: string; readonly weatherRiskMultiplier: number; readonly eventSeverityMultiplier: number }>
+  >;
+  readonly expeditions: readonly ExpeditionConfig[];
+}
+
+export interface SimulationCatalog {
+  readonly catalogVersion: string;
+  readonly modelVersion: string;
+  readonly campaign: {
+    readonly id: CampaignId;
+    readonly planet: 'moon';
+    readonly targetSol: number;
+    readonly lunarDayStartSol: number;
+    readonly lunarDayEndSol: number;
+    readonly lunarNightStartSol: number;
+    readonly lunarNightEndSol: number;
+    readonly lunarDawnResumeSol: number;
+    readonly provenance: ProvenanceTag;
+  };
+  readonly environment: {
+    readonly source: string;
+    readonly provenance: ProvenanceTag;
+    readonly diurnalCycleHours: number;
+    readonly temperatureC: {
+      readonly meanC: number;
+      readonly amplitudeC: number;
+      readonly dayMaxC: number;
+      readonly nightMinC: number;
+      readonly noiseSdC: number;
+      readonly fitR2: number;
+      readonly provenance: ProvenanceTag;
+    };
+    readonly dustTauMean: number;
+    readonly dustNote: string;
+    readonly radiationBaselineMgyPerSol: {
+      readonly nominalBackgroundMgy: number;
+      readonly shelterReductionPct: number;
+      readonly provenance: ProvenanceTag;
+    };
+    readonly earthMoonCommsDelaySec: {
+      readonly oneWaySec: number;
+      readonly roundTripDisplaySec: number;
+      readonly provenance: ProvenanceTag;
+    };
+  };
+  readonly baselineProvenance: Readonly<Record<string, ProvenanceTag>>;
+}
+
+export interface EventChoice {
   readonly id: string;
   readonly label: string;
-  readonly currentText: string;
-  readonly targetText: string;
-  readonly met: boolean;
+  readonly requiresEquipment?: EquipmentId;
+  readonly effects: {
+    readonly resources?: Readonly<Partial<Record<'batteryKWh' | 'oxygenKg' | 'waterL' | 'partsKg' | 'mrePacks', number>>>;
+    readonly crew?: { readonly moraleDelta?: number; readonly healthDelta?: number };
+    readonly equipmentDamage?: { readonly id: EquipmentId; readonly wear: number };
+    readonly systemIntegrity?: { readonly id: SystemId; readonly delta: number };
+    readonly planOverride?: { readonly wrsEnabled?: boolean };
+  };
+  readonly log: string;
 }
 
-export interface MissionEvaluation {
-  readonly planet: Planet;
-  readonly canTransition: boolean;
-  readonly checks: readonly MissionRequirementCheck[];
+export interface EventNode {
+  readonly id: string;
+  readonly title: string;
+  readonly category: 'ops' | 'hazard' | 'crisis' | 'milestone';
+  readonly art: string;
+  readonly when: ReadonlyArray<{ readonly sol?: number; readonly solMin?: number; readonly solMax?: number }>;
+  readonly mandatory: boolean;
+  readonly prompt: string;
+  readonly choices: readonly EventChoice[];
 }
 
-export interface SimulationConfig {
-  readonly events: readonly GameEvent[];
-  readonly oxygenKgPerDay: number;
-  readonly waterLPerDay: number;
-  readonly foodKgPerDay: number;
-  readonly recovery: Readonly<Record<Level, number>>;
-  readonly solarOutput: Readonly<Record<Level, number>>;
-  readonly airlockLeakFactor: Readonly<Record<Level, number>>;
-  readonly scrubberFlow: Readonly<Record<Level, number>>;
-  readonly repairKg: number;
-  readonly upgradeKg: Readonly<Record<1 | 2, number>>;
-  readonly solarKWhPerDay: number;
-  readonly fissionKWhPerDay: number;
-  readonly essentialKWhPerDay: number;
-  readonly recyclerKWhPerDay: number;
-  readonly batteryCapacityKWh: number;
-  readonly lunarHalfCycleDays: number;
-  readonly marsDustTransmission: number;
-  readonly marsDustWindows: readonly { readonly startSol: number; readonly endSol: number }[];
-  readonly moxieOxygenKgPerDay: number;
-  readonly moxieKWhPerDay: number;
-  readonly airlockLeakKgPerDay: number;
-  readonly maxCargoKg: number;
-  readonly transitSols: Readonly<Record<Planet, number>>;
-  readonly radioLatencyMs: Readonly<Record<Planet, number>>;
-  readonly groundProcessingMs: number;
-  readonly marsLaunch: MissionTransitionRequirements;
-  readonly marsVictory: Omit<MissionTransitionRequirements, 'transitConsumption'>;
+export interface ScienceBrief {
+  readonly id: string;
+  readonly tags: readonly string[];
+  readonly title: string;
+  readonly content: string;
+  readonly source: string;
+  readonly provenance: ProvenanceTag;
 }
 
-export type DayAction =
-  | { readonly type: 'advance' | 'end-sol' | 'launch-mars' }
-  | { readonly type: 'repair' | 'upgrade'; readonly system: SystemId }
-  | { readonly type: 'choose'; readonly eventId: string; readonly choiceId: string }
-  | { readonly type: 'resupply'; readonly id: string; readonly payload: Cargo }
-  | { readonly type: 'transmit'; readonly id: string; readonly message: string }
-  | { readonly type: 'radio-tick'; readonly nowMs: number }
-  | { readonly type: 'plan'; readonly oxygenFraction: number; readonly waterFraction: number; readonly foodFraction: number; readonly restFraction: number; readonly recycle: boolean; readonly moxie: boolean };
-
-export interface DayActions {
-  readonly config: SimulationConfig;
-  readonly commands: readonly DayAction[];
+export interface ContentBundle {
+  readonly balance: BalanceConfig;
+  readonly crewCatalog: readonly CrewProfileConfig[];
+  readonly recipes: RecipeCatalog;
+  readonly campaign: CampaignConfig;
+  readonly catalog: SimulationCatalog;
+  readonly donki: DonkiCatalog;
+  readonly events: readonly EventNode[];
+  readonly briefs: readonly ScienceBrief[];
 }
 
+export type GameCommand =
+  | {
+      readonly type: 'game/start';
+      readonly seed?: number;
+      readonly difficulty?: DifficultyId;
+      readonly donkiProfileId?: string;
+      readonly spaceWeatherOverride?: 'quiet';
+    }
+  | { readonly type: 'phase/advance' }
+  | { readonly type: 'event/resolve'; readonly eventId: string; readonly choiceId: string }
+  | {
+      readonly type: 'crew/assign';
+      readonly crewId: CrewId;
+      readonly task: CrewTaskType;
+      readonly targetSystemId?: SystemId;
+      readonly targetCrewId?: CrewId;
+    }
+  | { readonly type: 'crew/unassign'; readonly crewId: CrewId }
+  | { readonly type: 'fabricator/queue'; readonly action: FabricatorAction; readonly itemId: ItemId }
+  | { readonly type: 'fabricator/cancel' }
+  | { readonly type: 'comms/send-radio'; readonly id: string; readonly message: string; readonly nowMs?: number }
+  | { readonly type: 'comms/tick-radio'; readonly nowMs: number }
+  | { readonly type: 'comms/order-cargo'; readonly slots: Readonly<Partial<Record<CargoPackId, number>>> }
+  | { readonly type: 'rover/launch'; readonly expeditionId: ExpeditionId; readonly equipmentIds: readonly EquipmentId[] }
+  | { readonly type: 'rationing/set-wrs'; readonly enabled: boolean }
+  | { readonly type: 'rationing/set-power-priority'; readonly order: readonly PowerConsumerId[] }
+  | { readonly type: 'rationing/toggle-mre'; readonly crewId: CrewId; readonly enabled?: boolean }
+  | { readonly type: 'rationing/toggle-medkit'; readonly crewId: CrewId; readonly enabled?: boolean }
+  | { readonly type: 'sol/end' }
+  | { readonly type: 'debrief/dismiss' };
 
+export type ErrorCode =
+  | 'E_CONTRACT_MISMATCH'
+  | 'E_MODEL_MISMATCH'
+  | 'E_CATALOG_MISMATCH'
+  | 'E_SAVE_CORRUPTED'
+  | 'E_STATE_INVALID'
+  | 'E_PLAN_INVALID'
+  | 'E_PHASE_INVALID'
+  | 'E_INSUFFICIENT_RESOURCE'
+  | 'E_RESOLVE_FAILED';
 
+export interface DomainError {
+  readonly code: ErrorCode;
+  readonly message: string;
+  readonly recoverable: boolean;
+}
 
+export interface DomainEffect {
+  readonly type:
+    | 'phase-changed'
+    | 'event-resolved'
+    | 'crew-assigned'
+    | 'fabricator-queued'
+    | 'cargo-ordered'
+    | 'rover-launched'
+    | 'sol-resolved'
+    | 'debrief-dismissed'
+    | 'game-started';
+  readonly message: string;
+}
+
+export type DispatchResult =
+  | { readonly ok: true; readonly state: GameState; readonly effects: readonly DomainEffect[] }
+  | { readonly ok: false; readonly state: GameState; readonly error: DomainError };
+
+export type Permission =
+  | { readonly allowed: true }
+  | { readonly allowed: false; readonly code: string; readonly message: string };
+
+export interface SimulationRuntimeState {
+  readonly status: 'idle' | 'loading' | 'ready' | 'resolving' | 'error';
+  readonly loadedModelVersion: string;
+  readonly loadedCatalogVersion: string;
+  readonly error: DomainError | null;
+}
+
+export interface SaveEnvelope {
+  readonly schemaVersion: 1;
+  readonly savedAt: string;
+  readonly appVersion: string;
+  readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly state: GameState;
+  readonly checksum: string;
+}
+
+export interface ForecastPoint {
+  readonly sol: number;
+  readonly batteryKWh: number;
+  readonly oxygenKg: number;
+  readonly waterL: number;
+  readonly partsKg: number;
+  readonly isLunarNight: boolean;
+  readonly weatherLevel: DonkiLevel;
+}
+
+export interface GamePort {
+  getSnapshot(): GameState;
+  dispatch(command: GameCommand): Promise<DispatchResult>;
+  subscribe(listener: () => void): () => void;
+  getRuntimeState(): SimulationRuntimeState;
+  reset(): Promise<void>;
+}
+
+export interface ToastMessage {
+  readonly id: string;
+  readonly tone: 'info' | 'warn' | 'error' | 'success';
+  readonly text: string;
+}
+
+export type ActiveModalType =
+  | null
+  | 'starlog'
+  | 'character'
+  | 'crafting'
+  | 'expedition'
+  | 'end'
+  | 'comms'
+  | 'launch'
+  | 'menu';
+
+export interface UiState {
+  readonly activeModal: ActiveModalType;
+  readonly selectedCrewId: CrewId | null;
+  readonly selectedSystemId: SystemId | null;
+  readonly selectedEquipmentIds: readonly EquipmentId[];
+  readonly devPanelOpen: boolean;
+  readonly locale: 'vi' | 'en';
+  readonly reducedMotion: boolean;
+  readonly toasts: readonly ToastMessage[];
+}

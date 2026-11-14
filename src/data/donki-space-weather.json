@@ -1,0 +1,4755 @@
+{
+  "catalogVersion": "1.1.0-donki",
+  "generatedAtUtc": "2026-11-14T06:41:06.116Z",
+  "source": "NASA DONKI Web API (https://api.nasa.gov/DONKI/)",
+  "endpointsUsed": [
+    "FLR",
+    "CME",
+    "SEP",
+    "IPS",
+    "notifications"
+  ],
+  "excludedEndpoints": [
+    {
+      "endpoint": "GST",
+      "reason": "Geomagnetic Storm (Kp index) applies only to Earth magnetosphere, not the Moon."
+    },
+    {
+      "endpoint": "RBE",
+      "reason": "Radiation Belt Enhancement applies only to Earth Van Allen belts, not the Moon."
+    }
+  ],
+  "provenance": "observed",
+  "derivedIndicesProvenance": "inferred",
+  "samples": [
+    {
+      "id": "may-2024-xstorm",
+      "name": "AR3664 Extreme Solar Storm (May 2024)",
+      "description": "Historic May 2024 AR3664 eruption sequence with intense X-class flares, halo CMEs, and SEP shockwaves peaking mid-window.",
+      "startDate": "2024-04-26",
+      "endDate": "2024-05-27",
+      "solCount": 32,
+      "provenance": "observed",
+      "summary": {
+        "totalFlares": 177,
+        "xClassFlares": 19,
+        "mClassFlares": 153,
+        "totalCmes": 141,
+        "totalSeps": 14,
+        "totalIps": 17,
+        "totalNotifications": 164,
+        "stormOrExtremeSols": [
+          1,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          24,
+          25,
+          26,
+          28,
+          31,
+          32
+        ]
+      },
+      "sols": [
+        {
+          "sol": 1,
+          "date": "2024-04-26",
+          "level": "storm",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.64,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 583,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-04-26T00:24:00-CME-001",
+              "2024-04-26T13:25:00-CME-001",
+              "2024-04-26T18:00:00-CME-001",
+              "2024-04-26T19:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-04-26T00:17:00-IPS-001",
+              "2024-04-26T12:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 2,
+          "date": "2024-04-27",
+          "level": "moderate",
+          "radiationRiskIndex": 0.2212,
+          "commsNoiseIndex": 0.3838,
+          "hardwareStressIndex": 0.1505,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 2,
+            "maxClass": "M3.0",
+            "ids": [
+              "2024-04-27T12:23:00-FLR-001",
+              "2024-04-27T21:29:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 605,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-04-27T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 3,
+          "date": "2024-04-28",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.204,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 738,
+            "maxHalfAngle": 19,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-04-28T03:48:00-CME-001",
+              "2024-04-28T08:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 4,
+          "date": "2024-04-29",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1818,
+          "commsNoiseIndex": 0.4117,
+          "hardwareStressIndex": 0.0758,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 2,
+            "maxClass": "M3.7",
+            "ids": [
+              "2024-04-29T00:33:00-FLR-001",
+              "2024-04-29T00:54:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 341,
+            "maxHalfAngle": 38,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-04-29T03:12:00-CME-001",
+              "2024-04-29T13:25:00-CME-001",
+              "2024-04-29T13:41:00-CME-001",
+              "2024-04-29T19:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 5,
+          "date": "2024-04-30",
+          "level": "storm",
+          "radiationRiskIndex": 0.3382,
+          "commsNoiseIndex": 0.4743,
+          "hardwareStressIndex": 0.4793,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 4,
+            "maxClass": "M9.5",
+            "ids": [
+              "2024-04-30T00:46:00-FLR-001",
+              "2024-04-30T14:50:00-FLR-001",
+              "2024-04-30T16:11:00-FLR-001",
+              "2024-04-30T23:23:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 513,
+            "maxHalfAngle": 26,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-04-30T00:36:00-CME-001",
+              "2024-04-30T02:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-04-30T11:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME",
+              "FLR"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 6,
+          "date": "2024-05-01",
+          "level": "storm",
+          "radiationRiskIndex": 0.2014,
+          "commsNoiseIndex": 0.5251,
+          "hardwareStressIndex": 0.1422,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 4,
+            "maxClass": "M1.9",
+            "ids": [
+              "2024-05-01T05:53:00-FLR-001",
+              "2024-05-01T14:17:00-FLR-001",
+              "2024-05-01T14:37:00-FLR-001",
+              "2024-05-01T22:26:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 861,
+            "maxHalfAngle": 50,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-01T00:48:00-CME-001",
+              "2024-05-01T06:36:00-CME-001",
+              "2024-05-01T11:36:00-CME-001",
+              "2024-05-01T12:36:00-CME-001",
+              "2024-05-01T17:36:00-CME-001",
+              "2024-05-01T23:16:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "FLR",
+              "CME",
+              "Report"
+            ],
+            "headline": "Significant flare detected by GOES."
+          }
+        },
+        {
+          "sol": 7,
+          "date": "2024-05-02",
+          "level": "storm",
+          "radiationRiskIndex": 0.2158,
+          "commsNoiseIndex": 0.4387,
+          "hardwareStressIndex": 0.4283,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 2,
+            "maxClass": "M2.7",
+            "ids": [
+              "2024-05-02T02:07:00-FLR-001",
+              "2024-05-02T20:52:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 716,
+            "maxHalfAngle": 33,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-02T03:12:00-CME-001",
+              "2024-05-02T05:12:00-CME-001",
+              "2024-05-02T10:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-05-02T07:46:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 6,
+            "types": [
+              "IPS",
+              "MPC",
+              "GST"
+            ],
+            "headline": "Significant interplanetary shock detected by DSCOVR at L1 at 2024-05-02T07:46Z."
+          }
+        },
+        {
+          "sol": 8,
+          "date": "2024-05-03",
+          "level": "extreme",
+          "radiationRiskIndex": 0.5625,
+          "commsNoiseIndex": 0.861,
+          "hardwareStressIndex": 0.351,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 6,
+            "maxClass": "X1.6",
+            "ids": [
+              "2024-05-03T00:08:00-FLR-001",
+              "2024-05-03T02:11:00-FLR-001",
+              "2024-05-03T08:05:00-FLR-001",
+              "2024-05-03T22:25:00-FLR-001",
+              "2024-05-03T23:11:00-FLR-001",
+              "2024-05-03T23:24:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 972,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 4,
+            "ids": [
+              "2024-05-03T02:48:00-CME-001",
+              "2024-05-03T09:24:00-CME-001",
+              "2024-05-03T21:17:00-CME-001",
+              "2024-05-03T21:28:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 9,
+          "date": "2024-05-04",
+          "level": "storm",
+          "radiationRiskIndex": 0.331,
+          "commsNoiseIndex": 0.6475,
+          "hardwareStressIndex": 0.1962,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 6,
+            "maxClass": "M9.1",
+            "ids": [
+              "2024-05-04T00:26:00-FLR-001",
+              "2024-05-04T06:02:00-FLR-001",
+              "2024-05-04T07:04:00-FLR-001",
+              "2024-05-04T18:10:00-FLR-001",
+              "2024-05-04T22:23:00-FLR-001",
+              "2024-05-04T23:28:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 863,
+            "maxHalfAngle": 25,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-04T01:53:00-CME-001",
+              "2024-05-04T06:53:00-CME-001",
+              "2024-05-04T13:12:00-CME-001",
+              "2024-05-04T16:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 5,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 10,
+          "date": "2024-05-05",
+          "level": "extreme",
+          "radiationRiskIndex": 0.4932,
+          "commsNoiseIndex": 0.8007,
+          "hardwareStressIndex": 0.5438,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 12,
+            "maxClass": "X1.3",
+            "ids": [
+              "2024-05-05T01:15:00-FLR-001",
+              "2024-05-05T03:01:00-FLR-001",
+              "2024-05-05T05:47:00-FLR-001",
+              "2024-05-05T08:07:00-FLR-001",
+              "2024-05-05T09:23:00-FLR-001",
+              "2024-05-05T09:53:00-FLR-001",
+              "2024-05-05T11:41:00-FLR-001",
+              "2024-05-05T14:33:00-FLR-001",
+              "2024-05-05T15:28:00-FLR-001",
+              "2024-05-05T16:55:00-FLR-001",
+              "2024-05-05T18:34:00-FLR-001",
+              "2024-05-05T19:44:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 820,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 6,
+            "ids": [
+              "2024-05-05T02:09:00-CME-001",
+              "2024-05-05T03:38:00-CME-001",
+              "2024-05-05T06:38:00-CME-001",
+              "2024-05-05T08:09:00-CME-001",
+              "2024-05-05T13:24:00-CME-001",
+              "2024-05-05T15:48:00-CME-001",
+              "2024-05-05T17:00:00-CME-001",
+              "2024-05-05T23:27:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-05-05T11:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 10,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 11,
+          "date": "2024-05-06",
+          "level": "storm",
+          "radiationRiskIndex": 0.6159,
+          "commsNoiseIndex": 0.6566,
+          "hardwareStressIndex": 0.3149,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 6,
+            "maxClass": "X4.5",
+            "ids": [
+              "2024-05-06T00:47:00-FLR-001",
+              "2024-05-06T05:09:00-FLR-001",
+              "2024-05-06T05:38:00-FLR-001",
+              "2024-05-06T09:49:00-FLR-001",
+              "2024-05-06T21:37:00-FLR-001",
+              "2024-05-06T21:58:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 780,
+            "maxHalfAngle": 17,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-06T07:38:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "FLR"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 12,
+          "date": "2024-05-07",
+          "level": "storm",
+          "radiationRiskIndex": 0.3148,
+          "commsNoiseIndex": 0.6322,
+          "hardwareStressIndex": 0.1895,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 14,
+            "maxClass": "M8.2",
+            "ids": [
+              "2024-05-07T00:41:00-FLR-001",
+              "2024-05-07T05:58:00-FLR-001",
+              "2024-05-07T08:18:00-FLR-001",
+              "2024-05-07T08:28:00-FLR-001",
+              "2024-05-07T11:40:00-FLR-001",
+              "2024-05-07T12:43:00-FLR-001",
+              "2024-05-07T13:16:00-FLR-001",
+              "2024-05-07T13:32:00-FLR-001",
+              "2024-05-07T16:21:00-FLR-001",
+              "2024-05-07T19:58:00-FLR-001",
+              "2024-05-07T20:45:00-FLR-001",
+              "2024-05-07T21:13:00-FLR-001",
+              "2024-05-07T21:42:00-FLR-001",
+              "2024-05-07T22:55:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 628,
+            "maxHalfAngle": 35,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-05-07T02:12:00-CME-001",
+              "2024-05-07T03:12:00-CME-001",
+              "2024-05-07T05:24:00-CME-001",
+              "2024-05-07T07:48:00-CME-001",
+              "2024-05-07T16:12:00-CME-001",
+              "2024-05-07T19:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "FLR"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 13,
+          "date": "2024-05-08",
+          "level": "extreme",
+          "radiationRiskIndex": 0.5255,
+          "commsNoiseIndex": 0.8261,
+          "hardwareStressIndex": 0.3356,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 18,
+            "maxClass": "X1.0",
+            "ids": [
+              "2024-05-08T01:33:00-FLR-001",
+              "2024-05-08T02:16:00-FLR-001",
+              "2024-05-08T03:19:00-FLR-001",
+              "2024-05-08T03:38:00-FLR-001",
+              "2024-05-08T04:20:00-FLR-001",
+              "2024-05-08T04:37:00-FLR-001",
+              "2024-05-08T06:44:00-FLR-001",
+              "2024-05-08T07:29:00-FLR-001",
+              "2024-05-08T09:31:00-FLR-001",
+              "2024-05-08T09:43:00-FLR-001",
+              "2024-05-08T11:09:00-FLR-001",
+              "2024-05-08T11:26:00-FLR-001",
+              "2024-05-08T17:32:00-FLR-001",
+              "2024-05-08T18:14:00-FLR-001",
+              "2024-05-08T19:15:00-FLR-001",
+              "2024-05-08T20:27:00-FLR-001",
+              "2024-05-08T21:08:00-FLR-001",
+              "2024-05-08T22:05:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1257,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 4,
+            "ids": [
+              "2024-05-08T05:36:00-CME-001",
+              "2024-05-08T12:24:00-CME-001",
+              "2024-05-08T19:12:00-CME-001",
+              "2024-05-08T22:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 15,
+            "types": [
+              "FLR",
+              "CME",
+              "Report"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 14,
+          "date": "2024-05-09",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 0.8746,
+          "hardwareStressIndex": 0.9832,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 20,
+            "maxClass": "X2.2",
+            "ids": [
+              "2024-05-09T00:58:00-FLR-001",
+              "2024-05-09T03:07:00-FLR-001",
+              "2024-05-09T03:23:00-FLR-001",
+              "2024-05-09T04:44:00-FLR-001",
+              "2024-05-09T05:35:00-FLR-001",
+              "2024-05-09T06:03:00-FLR-001",
+              "2024-05-09T06:24:00-FLR-001",
+              "2024-05-09T07:54:00-FLR-001",
+              "2024-05-09T08:30:00-FLR-001",
+              "2024-05-09T08:45:00-FLR-001",
+              "2024-05-09T11:52:00-FLR-001",
+              "2024-05-09T12:05:00-FLR-001",
+              "2024-05-09T13:16:00-FLR-001",
+              "2024-05-09T14:01:00-FLR-001",
+              "2024-05-09T17:23:00-FLR-001",
+              "2024-05-09T21:15:00-FLR-001",
+              "2024-05-09T22:08:00-FLR-001",
+              "2024-05-09T22:24:00-FLR-001",
+              "2024-05-09T23:04:00-FLR-001",
+              "2024-05-09T23:44:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 1561,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-05-09T09:24:00-CME-001",
+              "2024-05-09T18:23:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 2,
+            "ids": [
+              "2024-05-09T13:59:00-SEP-001",
+              "2024-05-09T14:25:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 11,
+            "types": [
+              "FLR",
+              "SEP",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 15,
+          "date": "2024-05-10",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 0.9452,
+          "hardwareStressIndex": 1,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 15,
+            "maxClass": "X3.9",
+            "ids": [
+              "2024-05-10T00:10:00-FLR-001",
+              "2024-05-10T03:15:00-FLR-001",
+              "2024-05-10T06:14:00-FLR-001",
+              "2024-05-10T06:27:00-FLR-001",
+              "2024-05-10T10:10:00-FLR-001",
+              "2024-05-10T13:58:00-FLR-001",
+              "2024-05-10T17:14:00-FLR-001",
+              "2024-05-10T17:54:00-FLR-001",
+              "2024-05-10T18:26:00-FLR-001",
+              "2024-05-10T18:38:00-FLR-001",
+              "2024-05-10T18:57:00-FLR-001",
+              "2024-05-10T19:35:00-FLR-001",
+              "2024-05-10T19:56:00-FLR-001",
+              "2024-05-10T20:59:00-FLR-001",
+              "2024-05-10T21:15:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 1332,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-05-10T02:12:00-CME-001",
+              "2024-05-10T07:12:00-CME-001",
+              "2024-05-10T16:36:00-CME-001",
+              "2024-05-10T21:17:00-CME-001",
+              "2024-05-10T21:28:00-CME-001",
+              "2024-05-10T23:13:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 4,
+            "ids": [
+              "2024-05-10T12:59:00-SEP-001",
+              "2024-05-10T13:02:00-SEP-001",
+              "2024-05-10T13:35:00-SEP-001",
+              "2024-05-10T14:50:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-05-10T14:00:00-IPS-001",
+              "2024-05-10T16:36:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 17,
+            "types": [
+              "FLR",
+              "CME",
+              "SEP",
+              "IPS",
+              "MPC",
+              "GST"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 16,
+          "date": "2024-05-11",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 1,
+          "hardwareStressIndex": 1,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 13,
+            "maxClass": "X5.8",
+            "ids": [
+              "2024-05-11T01:10:00-FLR-001",
+              "2024-05-11T04:28:00-FLR-001",
+              "2024-05-11T07:26:00-FLR-001",
+              "2024-05-11T08:14:00-FLR-001",
+              "2024-05-11T08:45:00-FLR-001",
+              "2024-05-11T09:05:00-FLR-001",
+              "2024-05-11T10:03:00-FLR-001",
+              "2024-05-11T10:53:00-FLR-001",
+              "2024-05-11T11:15:00-FLR-001",
+              "2024-05-11T13:45:00-FLR-001",
+              "2024-05-11T14:46:00-FLR-001",
+              "2024-05-11T16:27:00-FLR-001",
+              "2024-05-11T20:32:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 1820,
+            "maxHalfAngle": 51,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-11T01:36:00-CME-001",
+              "2024-05-11T02:36:00-CME-001",
+              "2024-05-11T03:12:00-CME-002",
+              "2024-05-11T16:24:00-CME-001",
+              "2024-05-11T18:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 2,
+            "ids": [
+              "2024-05-11T02:10:00-SEP-001",
+              "2024-05-11T04:07:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-05-11T09:30:00-IPS-001",
+              "2024-05-11T20:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 17,
+            "types": [
+              "MPC",
+              "GST",
+              "FLR",
+              "SEP",
+              "CME"
+            ],
+            "headline": "Strong compression of the magnetosphere continues. Simulations carried out at NASA Community Coordinated Modeling Center indicate that the magnetopause separati"
+          }
+        },
+        {
+          "sol": 17,
+          "date": "2024-05-12",
+          "level": "extreme",
+          "radiationRiskIndex": 0.4735,
+          "commsNoiseIndex": 0.7821,
+          "hardwareStressIndex": 0.5356,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 10,
+            "maxClass": "X1.0",
+            "ids": [
+              "2024-05-12T00:41:00-FLR-001",
+              "2024-05-12T05:37:00-FLR-001",
+              "2024-05-12T12:27:00-FLR-001",
+              "2024-05-12T13:40:00-FLR-001",
+              "2024-05-12T13:49:00-FLR-001",
+              "2024-05-12T16:11:00-FLR-001",
+              "2024-05-12T20:17:00-FLR-001",
+              "2024-05-12T22:01:00-FLR-001",
+              "2024-05-12T22:14:00-FLR-001",
+              "2024-05-12T23:00:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 624,
+            "maxHalfAngle": 47,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-12T02:00:00-CME-001",
+              "2024-05-12T03:48:00-CME-001",
+              "2024-05-12T13:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-05-12T08:55:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "CME",
+              "FLR"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 18,
+          "date": "2024-05-13",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 0.555,
+          "hardwareStressIndex": 0.8775,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 11,
+            "maxClass": "M6.6",
+            "ids": [
+              "2024-05-13T01:23:00-FLR-001",
+              "2024-05-13T08:06:00-FLR-001",
+              "2024-05-13T08:23:00-FLR-001",
+              "2024-05-13T08:47:00-FLR-001",
+              "2024-05-13T09:36:00-FLR-001",
+              "2024-05-13T12:56:00-FLR-001",
+              "2024-05-13T14:02:00-FLR-001",
+              "2024-05-13T14:12:00-FLR-001",
+              "2024-05-13T17:32:00-FLR-001",
+              "2024-05-13T18:38:00-FLR-001",
+              "2024-05-13T21:48:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 1935,
+            "maxHalfAngle": 50,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-13T09:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 6,
+            "ids": [
+              "2024-05-13T12:44:00-SEP-001",
+              "2024-05-13T13:10:00-SEP-001",
+              "2024-05-13T14:00:00-SEP-001",
+              "2024-05-13T16:19:00-SEP-001",
+              "2024-05-13T18:07:00-SEP-001",
+              "2024-05-13T18:07:00-SEP-002"
+            ]
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 12,
+            "types": [
+              "GST",
+              "FLR",
+              "SEP",
+              "CME"
+            ],
+            "headline": "Ongoing space weather storm in the Earth's magnetosphere. Geomagnetic Kp index has reached level 6.33 (moderate) during the synoptic period 2024-05-12T21:00Z to"
+          }
+        },
+        {
+          "sol": 19,
+          "date": "2024-05-14",
+          "level": "extreme",
+          "radiationRiskIndex": 0.8257,
+          "commsNoiseIndex": 1,
+          "hardwareStressIndex": 0.5482,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 6,
+            "maxClass": "X8.7",
+            "ids": [
+              "2024-05-14T01:23:00-FLR-001",
+              "2024-05-14T02:03:00-FLR-001",
+              "2024-05-14T04:05:00-FLR-001",
+              "2024-05-14T12:40:00-FLR-001",
+              "2024-05-14T16:46:00-FLR-001",
+              "2024-05-14T17:25:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 2225,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-14T02:24:00-CME-001",
+              "2024-05-14T04:48:00-CME-001",
+              "2024-05-14T10:09:00-CME-001",
+              "2024-05-14T10:36:00-CME-001",
+              "2024-05-14T13:12:00-CME-001",
+              "2024-05-14T17:00:00-CME-001",
+              "2024-05-14T17:30:00-CME-001",
+              "2024-05-14T17:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 10,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 20,
+          "date": "2024-05-15",
+          "level": "extreme",
+          "radiationRiskIndex": 0.7145,
+          "commsNoiseIndex": 0.9969,
+          "hardwareStressIndex": 0.7819,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 5,
+            "maxClass": "X3.4",
+            "ids": [
+              "2024-05-15T08:18:00-FLR-001",
+              "2024-05-15T09:50:00-FLR-001",
+              "2024-05-15T13:56:00-FLR-001",
+              "2024-05-15T14:10:00-FLR-001",
+              "2024-05-15T14:20:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 1766,
+            "maxHalfAngle": 42,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-15T08:36:00-CME-001",
+              "2024-05-15T08:48:00-CME-001",
+              "2024-05-15T10:00:00-CME-001",
+              "2024-05-15T10:36:00-CME-001",
+              "2024-05-15T10:48:00-CME-001",
+              "2024-05-15T14:53:00-CME-001",
+              "2024-05-15T17:36:00-CME-001",
+              "2024-05-15T21:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-05-15T18:13:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 11,
+            "types": [
+              "CME",
+              "FLR",
+              "RBE"
+            ],
+            "headline": "Update on CME with ID 2024-05-14T17:00:00-CME-001 (see previous notification 20240514-AL-010). This CME was very closely followed by CME with ID 2024-05-14T17:3"
+          }
+        },
+        {
+          "sol": 21,
+          "date": "2024-05-16",
+          "level": "extreme",
+          "radiationRiskIndex": 0.2372,
+          "commsNoiseIndex": 0.4538,
+          "hardwareStressIndex": 0.7755,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 1,
+            "maxClass": "M1.0",
+            "ids": [
+              "2024-05-16T07:50:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 1452,
+            "maxHalfAngle": 48,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-16T01:25:00-CME-001",
+              "2024-05-16T04:36:00-CME-001",
+              "2024-05-16T06:48:00-CME-001",
+              "2024-05-16T08:12:00-CME-001",
+              "2024-05-16T09:09:00-CME-001",
+              "2024-05-16T13:38:00-CME-001",
+              "2024-05-16T18:00:00-CME-001",
+              "2024-05-16T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-05-16T04:35:00-IPS-001",
+              "2024-05-16T11:37:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 9,
+            "types": [
+              "CME",
+              "Report",
+              "GST",
+              "IPS"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        },
+        {
+          "sol": 22,
+          "date": "2024-05-17",
+          "level": "extreme",
+          "radiationRiskIndex": 0.4268,
+          "commsNoiseIndex": 0.7252,
+          "hardwareStressIndex": 0.942,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 1,
+            "maxClass": "M7.2",
+            "ids": [
+              "2024-05-17T20:33:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 1625,
+            "maxHalfAngle": 50,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-05-17T00:12:00-CME-001",
+              "2024-05-17T03:12:00-CME-001",
+              "2024-05-17T04:17:00-CME-001",
+              "2024-05-17T04:28:00-CME-001",
+              "2024-05-17T12:48:00-CME-001",
+              "2024-05-17T13:25:00-CME-001",
+              "2024-05-17T18:48:00-CME-001",
+              "2024-05-17T21:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-05-17T11:48:00-IPS-001",
+              "2024-05-17T12:40:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 7,
+            "types": [
+              "CME",
+              "IPS",
+              "FLR",
+              "GST"
+            ],
+            "headline": "Update on CME with ID 2024-05-16T13:38:00-CME-001 (see previous notification 20240516-AL-005).  Based on preliminary analysis by the Moon to Mars Space Weather "
+          }
+        },
+        {
+          "sol": 23,
+          "date": "2024-05-18",
+          "level": "moderate",
+          "radiationRiskIndex": 0.182,
+          "commsNoiseIndex": 0.394,
+          "hardwareStressIndex": 0.28,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 1585,
+            "maxHalfAngle": 38,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-18T06:24:00-CME-001",
+              "2024-05-18T13:38:00-CME-001",
+              "2024-05-18T19:38:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 24,
+          "date": "2024-05-19",
+          "level": "storm",
+          "radiationRiskIndex": 0.2122,
+          "commsNoiseIndex": 0.5353,
+          "hardwareStressIndex": 0.1468,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M2.5",
+            "ids": [
+              "2024-05-19T13:37:00-FLR-001",
+              "2024-05-19T17:47:00-FLR-001",
+              "2024-05-19T21:53:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 584,
+            "maxHalfAngle": 26,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2024-05-19T01:23:00-CME-001",
+              "2024-05-19T03:36:00-CME-001",
+              "2024-05-19T14:23:00-CME-001",
+              "2024-05-19T16:23:00-CME-001",
+              "2024-05-19T16:53:00-CME-001",
+              "2024-05-19T17:09:00-CME-001",
+              "2024-05-19T19:09:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 25,
+          "date": "2024-05-20",
+          "level": "storm",
+          "radiationRiskIndex": 0.182,
+          "commsNoiseIndex": 0.494,
+          "hardwareStressIndex": 0.28,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 2678,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2024-05-20T05:36:00-CME-001",
+              "2024-05-20T20:12:00-CME-001",
+              "2024-05-20T21:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "O-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 26,
+          "date": "2024-05-21",
+          "level": "storm",
+          "radiationRiskIndex": 0.2014,
+          "commsNoiseIndex": 0.4251,
+          "hardwareStressIndex": 0.1422,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 3,
+            "maxClass": "M1.9",
+            "ids": [
+              "2024-05-21T07:20:00-FLR-001",
+              "2024-05-21T14:00:00-FLR-001",
+              "2024-05-21T19:19:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 660,
+            "maxHalfAngle": 30,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-21T08:00:00-CME-001",
+              "2024-05-21T13:36:00-CME-001",
+              "2024-05-21T14:36:00-CME-001",
+              "2024-05-21T20:12:00-CME-001",
+              "2024-05-21T20:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        },
+        {
+          "sol": 27,
+          "date": "2024-05-22",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1566,
+          "commsNoiseIndex": 0.3879,
+          "hardwareStressIndex": 0.0653,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 3,
+            "maxClass": "M2.3",
+            "ids": [
+              "2024-05-22T03:02:00-FLR-001",
+              "2024-05-22T03:38:00-FLR-001",
+              "2024-05-22T13:51:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 492,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-22T03:36:00-CME-001",
+              "2024-05-22T04:00:00-CME-001",
+              "2024-05-22T11:36:00-CME-001",
+              "2024-05-22T17:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "Report"
+            ],
+            "headline": "Solar activity was at moderate levels during this reporting period with 2 X-class flares, 9 M-class flares, 14 O-type CMEs, and 17 C-type CMEs (see details belo"
+          }
+        },
+        {
+          "sol": 28,
+          "date": "2024-05-23",
+          "level": "storm",
+          "radiationRiskIndex": 0.2948,
+          "commsNoiseIndex": 0.6082,
+          "hardwareStressIndex": 0.2395,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 5,
+            "maxClass": "M4.2",
+            "ids": [
+              "2024-05-23T02:05:00-FLR-001",
+              "2024-05-23T04:03:00-FLR-001",
+              "2024-05-23T10:03:00-FLR-001",
+              "2024-05-23T12:48:00-FLR-001",
+              "2024-05-23T15:53:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 9,
+            "maxSpeedKms": 943,
+            "maxHalfAngle": 41,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2024-05-23T01:25:00-CME-001",
+              "2024-05-23T03:12:00-CME-001",
+              "2024-05-23T04:24:00-CME-001",
+              "2024-05-23T06:48:00-CME-001",
+              "2024-05-23T07:12:00-CME-001",
+              "2024-05-23T10:12:00-CME-001",
+              "2024-05-23T13:25:00-CME-001",
+              "2024-05-23T17:24:00-CME-001",
+              "2024-05-23T22:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        },
+        {
+          "sol": 29,
+          "date": "2024-05-24",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1924,
+          "commsNoiseIndex": 0.4166,
+          "hardwareStressIndex": 0.1385,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 4,
+            "maxClass": "M1.4",
+            "ids": [
+              "2024-05-24T06:28:00-FLR-001",
+              "2024-05-24T07:51:00-FLR-001",
+              "2024-05-24T08:08:00-FLR-001",
+              "2024-05-24T20:05:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 854,
+            "maxHalfAngle": 42,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-24T03:12:00-CME-001",
+              "2024-05-24T05:00:00-CME-001",
+              "2024-05-24T07:36:00-CME-001",
+              "2024-05-24T08:12:00-CME-001",
+              "2024-05-24T10:48:00-CME-001",
+              "2024-05-24T12:12:00-CME-001",
+              "2024-05-24T13:25:00-CME-001",
+              "2024-05-24T20:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 30,
+          "date": "2024-05-25",
+          "level": "quiet",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.124,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 652,
+            "maxHalfAngle": 30,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-25T17:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 31,
+          "date": "2024-05-26",
+          "level": "storm",
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0.08,
+          "hardwareStressIndex": 0.56,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 435,
+            "maxHalfAngle": 31,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-05-26T17:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-05-26T13:44:00-IPS-001",
+              "2024-05-26T14:35:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 32,
+          "date": "2024-05-27",
+          "level": "extreme",
+          "radiationRiskIndex": 0.6158,
+          "commsNoiseIndex": 0.8314,
+          "hardwareStressIndex": 0.3733,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 1,
+            "maxClass": "X2.8",
+            "ids": [
+              "2024-05-27T06:49:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 1254,
+            "maxHalfAngle": 50,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-05-27T07:23:00-CME-001",
+              "2024-05-27T20:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        }
+      ]
+    },
+    {
+      "id": "oct-2024-x9storm",
+      "name": "AR3842 X9.0 & October CME Cluster (Sep-Oct 2024)",
+      "description": "Strong late-Sep to Oct 2024 solar activity featuring X7.1/X9.0 flares and fast Earth/Moon-vicinity CMEs centered mid-campaign.",
+      "startDate": "2024-09-20",
+      "endDate": "2024-10-21",
+      "solCount": 32,
+      "provenance": "observed",
+      "summary": {
+        "totalFlares": 89,
+        "xClassFlares": 6,
+        "mClassFlares": 80,
+        "totalCmes": 122,
+        "totalSeps": 9,
+        "totalIps": 8,
+        "totalNotifications": 78,
+        "stormOrExtremeSols": [
+          3,
+          4,
+          7,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          25,
+          26,
+          27,
+          30
+        ]
+      },
+      "sols": [
+        {
+          "sol": 1,
+          "date": "2024-09-20",
+          "level": "quiet",
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0,
+          "hardwareStressIndex": 0,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 0,
+            "maxSpeedKms": 0,
+            "maxHalfAngle": 0,
+            "earthDirectedCount": 0,
+            "ids": []
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 2,
+          "date": "2024-09-21",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 651,
+            "maxHalfAngle": 38,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-09-21T11:12:00-CME-001",
+              "2024-09-21T16:12:00-CME-001",
+              "2024-09-21T20:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "RBE"
+            ],
+            "headline": "GOES \"greater than 2.0 MeV\" integral electron flux remains elevated, recently crossing the threshold of 1000 pfu at 2024-09-21T14:40Z."
+          }
+        },
+        {
+          "sol": 3,
+          "date": "2024-09-22",
+          "level": "storm",
+          "radiationRiskIndex": 0.2858,
+          "commsNoiseIndex": 0.5997,
+          "hardwareStressIndex": 0.2358,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 1,
+            "maxClass": "M3.7",
+            "ids": [
+              "2024-09-22T21:12:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1381,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-09-22T07:12:00-CME-001",
+              "2024-09-22T14:48:00-CME-001",
+              "2024-09-22T19:12:00-CME-001",
+              "2024-09-22T21:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "O-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 4,
+          "date": "2024-09-23",
+          "level": "storm",
+          "radiationRiskIndex": 0.1906,
+          "commsNoiseIndex": 0.5149,
+          "hardwareStressIndex": 0.4178,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 1,
+            "maxClass": "M1.3",
+            "ids": [
+              "2024-09-23T14:23:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 512,
+            "maxHalfAngle": 30,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-09-23T02:00:00-CME-001",
+              "2024-09-23T09:12:00-CME-001",
+              "2024-09-23T20:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-09-23T11:36:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "RBE"
+            ],
+            "headline": "Significantly elevated energetic electron fluxes in the Earth's outer radiation belt. GOES \"greater than 2.0 MeV\" integral electron flux remains elevated, recen"
+          }
+        },
+        {
+          "sol": 5,
+          "date": "2024-09-24",
+          "level": "quiet",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.124,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 577,
+            "maxHalfAngle": 20,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-09-24T04:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 6,
+          "date": "2024-09-25",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1386,
+          "commsNoiseIndex": 0.2109,
+          "hardwareStressIndex": 0.0578,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 1,
+            "maxClass": "M1.3",
+            "ids": [
+              "2024-09-25T22:57:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 393,
+            "maxHalfAngle": 11,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-09-25T04:53:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "Report"
+            ],
+            "headline": "Solar activity was between low and moderate levels during this reporting period with 2 M-class flares, 1 O-type CME, and 10 C-type CMEs (see details below)."
+          }
+        },
+        {
+          "sol": 7,
+          "date": "2024-09-26",
+          "level": "storm",
+          "radiationRiskIndex": 0.1404,
+          "commsNoiseIndex": 0.4726,
+          "hardwareStressIndex": 0.0585,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M1.4",
+            "ids": [
+              "2024-09-26T19:41:00-FLR-001",
+              "2024-09-26T22:58:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 415,
+            "maxHalfAngle": 49,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-09-26T05:38:00-CME-001",
+              "2024-09-26T09:36:00-CME-001",
+              "2024-09-26T14:36:00-CME-001",
+              "2024-09-26T20:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "RBE"
+            ],
+            "headline": "Significantly elevated energetic electron fluxes in the Earth's outer radiation belt. GOES \"greater than 2.0 MeV\" integral electron flux is above 1000 pfu start"
+          }
+        },
+        {
+          "sol": 8,
+          "date": "2024-09-27",
+          "level": "quiet",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.124,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 515,
+            "maxHalfAngle": 25,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-09-27T09:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 9,
+          "date": "2024-09-28",
+          "level": "moderate",
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0.34,
+          "hardwareStressIndex": 0.28,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 481,
+            "maxHalfAngle": 27,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-09-28T06:36:00-CME-001",
+              "2024-09-28T11:00:00-CME-001",
+              "2024-09-28T17:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-09-28T07:00:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 10,
+          "date": "2024-09-29",
+          "level": "storm",
+          "radiationRiskIndex": 0.2498,
+          "commsNoiseIndex": 0.4657,
+          "hardwareStressIndex": 0.2208,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 4,
+            "maxClass": "M1.7",
+            "ids": [
+              "2024-09-29T05:26:00-FLR-001",
+              "2024-09-29T12:49:00-FLR-001",
+              "2024-09-29T14:09:00-FLR-001",
+              "2024-09-29T14:31:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 1148,
+            "maxHalfAngle": 39,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-09-29T06:00:00-CME-001",
+              "2024-09-29T08:36:00-CME-001",
+              "2024-09-29T18:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 11,
+          "date": "2024-09-30",
+          "level": "extreme",
+          "radiationRiskIndex": 0.434,
+          "commsNoiseIndex": 0.732,
+          "hardwareStressIndex": 0.385,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 1,
+            "maxClass": "M7.6",
+            "ids": [
+              "2024-09-30T23:37:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 1535,
+            "maxHalfAngle": 40,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-09-30T03:12:00-CME-001",
+              "2024-09-30T05:36:00-CME-001",
+              "2024-09-30T07:12:00-CME-001",
+              "2024-09-30T12:48:00-CME-001",
+              "2024-09-30T14:00:00-CME-001",
+              "2024-09-30T14:12:00-CME-001",
+              "2024-09-30T16:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME",
+              "FLR"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 12,
+          "date": "2024-10-01",
+          "level": "extreme",
+          "radiationRiskIndex": 0.7223,
+          "commsNoiseIndex": 1,
+          "hardwareStressIndex": 0.4176,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 3,
+            "maxClass": "X7.1",
+            "ids": [
+              "2024-10-01T14:41:00-FLR-001",
+              "2024-10-01T18:52:00-FLR-001",
+              "2024-10-01T21:58:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 963,
+            "maxHalfAngle": 65,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-10-01T01:09:00-CME-001",
+              "2024-10-01T01:25:00-CME-001",
+              "2024-10-01T14:00:00-CME-001",
+              "2024-10-01T19:24:00-CME-001",
+              "2024-10-01T23:09:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES."
+          }
+        },
+        {
+          "sol": 13,
+          "date": "2024-10-02",
+          "level": "storm",
+          "radiationRiskIndex": 0.18,
+          "commsNoiseIndex": 0.51,
+          "hardwareStressIndex": 0.075,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 7,
+            "maxClass": "M3.6",
+            "ids": [
+              "2024-10-02T01:43:00-FLR-001",
+              "2024-10-02T02:31:00-FLR-001",
+              "2024-10-02T05:30:00-FLR-001",
+              "2024-10-02T06:19:00-FLR-001",
+              "2024-10-02T13:22:00-FLR-001",
+              "2024-10-02T19:58:00-FLR-001",
+              "2024-10-02T20:27:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 437,
+            "maxHalfAngle": 26,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-02T06:36:00-CME-001",
+              "2024-10-02T14:24:00-CME-001",
+              "2024-10-02T17:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "CME",
+              "Report"
+            ],
+            "headline": "S-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 14,
+          "date": "2024-10-03",
+          "level": "extreme",
+          "radiationRiskIndex": 0.752,
+          "commsNoiseIndex": 1,
+          "hardwareStressIndex": 0.43,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 12,
+            "maxClass": "X9.0",
+            "ids": [
+              "2024-10-03T02:23:00-FLR-001",
+              "2024-10-03T03:22:00-FLR-001",
+              "2024-10-03T08:10:00-FLR-001",
+              "2024-10-03T08:30:00-FLR-001",
+              "2024-10-03T09:19:00-FLR-001",
+              "2024-10-03T12:00:00-FLR-001",
+              "2024-10-03T12:08:00-FLR-001",
+              "2024-10-03T17:18:00-FLR-001",
+              "2024-10-03T19:18:00-FLR-001",
+              "2024-10-03T20:09:00-FLR-001",
+              "2024-10-03T21:39:00-FLR-001",
+              "2024-10-03T23:26:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 1077,
+            "maxHalfAngle": 53,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-10-03T08:24:00-CME-001",
+              "2024-10-03T09:48:00-CME-001",
+              "2024-10-03T12:48:00-CME-001",
+              "2024-10-03T13:26:00-CME-001",
+              "2024-10-03T13:27:00-CME-001",
+              "2024-10-03T20:36:00-CME-001",
+              "2024-10-03T22:12:00-CME-001",
+              "2024-10-03T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 7,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 15,
+          "date": "2024-10-04",
+          "level": "storm",
+          "radiationRiskIndex": 0.2912,
+          "commsNoiseIndex": 0.6048,
+          "hardwareStressIndex": 0.238,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 6,
+            "maxClass": "M4.0",
+            "ids": [
+              "2024-10-04T00:09:00-FLR-001",
+              "2024-10-04T04:36:00-FLR-001",
+              "2024-10-04T05:30:00-FLR-001",
+              "2024-10-04T10:58:00-FLR-001",
+              "2024-10-04T20:55:00-FLR-001",
+              "2024-10-04T22:04:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 921,
+            "maxHalfAngle": 46,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2024-10-04T04:13:00-CME-001",
+              "2024-10-04T05:12:00-CME-001",
+              "2024-10-04T06:24:00-CME-001",
+              "2024-10-04T10:00:00-CME-001",
+              "2024-10-04T13:25:00-CME-001",
+              "2024-10-04T20:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 16,
+          "date": "2024-10-05",
+          "level": "storm",
+          "radiationRiskIndex": 0.2104,
+          "commsNoiseIndex": 0.5336,
+          "hardwareStressIndex": 0.426,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 5,
+            "maxClass": "M2.4",
+            "ids": [
+              "2024-10-05T00:07:00-FLR-001",
+              "2024-10-05T08:18:00-FLR-001",
+              "2024-10-05T08:37:00-FLR-001",
+              "2024-10-05T20:33:00-FLR-001",
+              "2024-10-05T23:10:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 675,
+            "maxHalfAngle": 34,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-05T02:12:00-CME-001",
+              "2024-10-05T06:00:00-CME-001",
+              "2024-10-05T07:12:00-CME-001",
+              "2024-10-05T12:00:00-CME-001",
+              "2024-10-05T13:48:00-CME-001",
+              "2024-10-05T16:48:00-CME-001",
+              "2024-10-05T19:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-10-05T19:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 17,
+          "date": "2024-10-06",
+          "level": "storm",
+          "radiationRiskIndex": 0.1942,
+          "commsNoiseIndex": 0.4183,
+          "hardwareStressIndex": 0.6993,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 6,
+            "maxClass": "M1.5",
+            "ids": [
+              "2024-10-06T00:09:00-FLR-001",
+              "2024-10-06T01:30:00-FLR-001",
+              "2024-10-06T15:14:00-FLR-001",
+              "2024-10-06T16:41:00-FLR-001",
+              "2024-10-06T18:52:00-FLR-001",
+              "2024-10-06T20:52:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 817,
+            "maxHalfAngle": 30,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-06T04:48:00-CME-001",
+              "2024-10-06T05:48:00-CME-001",
+              "2024-10-06T06:12:00-CME-001",
+              "2024-10-06T16:12:00-CME-001",
+              "2024-10-06T21:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-10-06T06:55:00-IPS-001",
+              "2024-10-06T08:00:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "IPS"
+            ],
+            "headline": "Significant interplanetary shock detected by DSCOVR at L1 at 2024-10-06T06:55Z."
+          }
+        },
+        {
+          "sol": 18,
+          "date": "2024-10-07",
+          "level": "extreme",
+          "radiationRiskIndex": 0.5872,
+          "commsNoiseIndex": 0.8844,
+          "hardwareStressIndex": 0.6413,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 3,
+            "maxClass": "X2.1",
+            "ids": [
+              "2024-10-07T18:03:00-FLR-001",
+              "2024-10-07T19:02:00-FLR-001",
+              "2024-10-07T19:31:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 1345,
+            "maxHalfAngle": 48,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-07T03:48:00-CME-001",
+              "2024-10-07T04:36:00-CME-001",
+              "2024-10-07T20:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-10-07T22:12:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 6,
+            "types": [
+              "GST",
+              "FLR",
+              "IPS"
+            ],
+            "headline": "Ongoing space weather storm in the Earth's magnetosphere. Geomagnetic Kp index has reached level 6.33 (moderate) during the synoptic period 2024-10-07T12:00Z to"
+          }
+        },
+        {
+          "sol": 19,
+          "date": "2024-10-08",
+          "level": "storm",
+          "radiationRiskIndex": 0.2516,
+          "commsNoiseIndex": 0.5674,
+          "hardwareStressIndex": 0.2215,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M1.8",
+            "ids": [
+              "2024-10-08T01:01:00-FLR-001",
+              "2024-10-08T08:43:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1124,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-08T02:12:00-CME-001",
+              "2024-10-08T02:36:00-CME-001",
+              "2024-10-08T06:12:00-CME-001",
+              "2024-10-08T12:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 8,
+            "types": [
+              "CME",
+              "GST"
+            ],
+            "headline": "C-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 20,
+          "date": "2024-10-09",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 0.9368,
+          "hardwareStressIndex": 0.9754,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 4,
+            "maxClass": "X1.8",
+            "ids": [
+              "2024-10-09T01:25:00-FLR-001",
+              "2024-10-09T05:41:00-FLR-001",
+              "2024-10-09T15:44:00-FLR-001",
+              "2024-10-09T22:59:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 2112,
+            "maxHalfAngle": 46,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-10-09T02:09:00-CME-001",
+              "2024-10-09T02:12:00-CME-001",
+              "2024-10-09T02:23:00-CME-001",
+              "2024-10-09T16:12:00-CME-001",
+              "2024-10-09T18:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 9,
+            "ids": [
+              "2024-10-09T03:50:00-SEP-001",
+              "2024-10-09T04:28:00-SEP-001",
+              "2024-10-09T04:34:00-SEP-001",
+              "2024-10-09T05:05:00-SEP-001",
+              "2024-10-09T05:30:00-SEP-001",
+              "2024-10-09T06:01:00-SEP-001",
+              "2024-10-09T06:01:00-SEP-002",
+              "2024-10-09T07:08:00-SEP-001",
+              "2024-10-09T08:55:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 13,
+            "types": [
+              "FLR",
+              "SEP",
+              "CME",
+              "Report"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 21,
+          "date": "2024-10-10",
+          "level": "extreme",
+          "radiationRiskIndex": 0.2732,
+          "commsNoiseIndex": 0.5078,
+          "hardwareStressIndex": 0.7905,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 5,
+            "maxClass": "M3.0",
+            "ids": [
+              "2024-10-10T11:47:00-FLR-001",
+              "2024-10-10T12:10:00-FLR-001",
+              "2024-10-10T12:22:00-FLR-001",
+              "2024-10-10T16:51:00-FLR-001",
+              "2024-10-10T21:54:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 1323,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-10T09:53:00-CME-001",
+              "2024-10-10T18:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2024-10-10T12:06:00-IPS-001",
+              "2024-10-10T14:46:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 8,
+            "types": [
+              "FLR",
+              "IPS",
+              "MPC",
+              "GST"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 22,
+          "date": "2024-10-11",
+          "level": "storm",
+          "radiationRiskIndex": 0.205,
+          "commsNoiseIndex": 0.5285,
+          "hardwareStressIndex": 0.1438,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M2.1",
+            "ids": [
+              "2024-10-11T15:48:00-FLR-001",
+              "2024-10-11T16:07:00-FLR-001",
+              "2024-10-11T22:50:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 808,
+            "maxHalfAngle": 38,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-10-11T12:24:00-CME-001",
+              "2024-10-11T13:09:00-CME-001",
+              "2024-10-11T16:48:00-CME-001",
+              "2024-10-11T17:38:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "GST",
+              "CME"
+            ],
+            "headline": "Intensifying space weather storm in the Earth's magnetosphere. Geomagnetic Kp index has reached level 8.67 (severe) during the synoptic period 2024-10-10T21:00Z"
+          }
+        },
+        {
+          "sol": 23,
+          "date": "2024-10-12",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 662,
+            "maxHalfAngle": 39,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-12T02:36:00-CME-001",
+              "2024-10-12T04:00:00-CME-001",
+              "2024-10-12T11:23:00-CME-001",
+              "2024-10-12T11:36:00-CME-001",
+              "2024-10-12T20:09:00-CME-001",
+              "2024-10-12T22:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 24,
+          "date": "2024-10-13",
+          "level": "moderate",
+          "radiationRiskIndex": 0.104,
+          "commsNoiseIndex": 0.328,
+          "hardwareStressIndex": 0.16,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 1184,
+            "maxHalfAngle": 33,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-13T01:36:00-CME-001",
+              "2024-10-13T02:48:00-CME-001",
+              "2024-10-13T17:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "O-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 25,
+          "date": "2024-10-14",
+          "level": "storm",
+          "radiationRiskIndex": 0.2284,
+          "commsNoiseIndex": 0.4506,
+          "hardwareStressIndex": 0.1535,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M3.4",
+            "ids": [
+              "2024-10-14T00:04:00-FLR-001",
+              "2024-10-14T13:22:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 829,
+            "maxHalfAngle": 36,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-14T00:48:00-CME-001",
+              "2024-10-14T09:24:00-CME-001",
+              "2024-10-14T10:12:00-CME-001",
+              "2024-10-14T10:36:00-CME-001",
+              "2024-10-14T14:36:00-CME-001",
+              "2024-10-14T17:36:00-CME-001",
+              "2024-10-14T20:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 26,
+          "date": "2024-10-15",
+          "level": "storm",
+          "radiationRiskIndex": 0.205,
+          "commsNoiseIndex": 0.4285,
+          "hardwareStressIndex": 0.1438,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 5,
+            "maxClass": "M2.1",
+            "ids": [
+              "2024-10-15T02:02:00-FLR-001",
+              "2024-10-15T02:23:00-FLR-001",
+              "2024-10-15T10:00:00-FLR-001",
+              "2024-10-15T18:00:00-FLR-001",
+              "2024-10-15T18:28:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 746,
+            "maxHalfAngle": 36,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-15T00:36:00-CME-001",
+              "2024-10-15T02:36:00-CME-001",
+              "2024-10-15T11:09:00-CME-001",
+              "2024-10-15T22:06:00-CME-001",
+              "2024-10-15T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 27,
+          "date": "2024-10-16",
+          "level": "storm",
+          "radiationRiskIndex": 0.2858,
+          "commsNoiseIndex": 0.4997,
+          "hardwareStressIndex": 0.2358,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 8,
+            "maxClass": "M3.7",
+            "ids": [
+              "2024-10-16T03:12:00-FLR-001",
+              "2024-10-16T03:21:00-FLR-001",
+              "2024-10-16T03:28:00-FLR-001",
+              "2024-10-16T03:38:00-FLR-001",
+              "2024-10-16T04:57:00-FLR-001",
+              "2024-10-16T13:12:00-FLR-001",
+              "2024-10-16T14:29:00-FLR-001",
+              "2024-10-16T14:51:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 980,
+            "maxHalfAngle": 40,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-16T02:24:00-CME-001",
+              "2024-10-16T04:24:00-CME-001",
+              "2024-10-16T08:24:00-CME-001",
+              "2024-10-16T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "Report"
+            ],
+            "headline": "Solar activity was at high levels during this reporting period with 2 X-class flares, 17 M-class flares, 7 O-type CMEs, and 13 C-type CMEs (see details below)."
+          }
+        },
+        {
+          "sol": 28,
+          "date": "2024-10-17",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1584,
+          "commsNoiseIndex": 0.3896,
+          "hardwareStressIndex": 0.066,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 2,
+            "maxClass": "M2.4",
+            "ids": [
+              "2024-10-17T02:12:00-FLR-001",
+              "2024-10-17T04:53:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 489,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-17T00:12:00-CME-001",
+              "2024-10-17T07:36:00-CME-001",
+              "2024-10-17T08:36:00-CME-001",
+              "2024-10-17T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 29,
+          "date": "2024-10-18",
+          "level": "moderate",
+          "radiationRiskIndex": 0.2016,
+          "commsNoiseIndex": 0.2704,
+          "hardwareStressIndex": 0.084,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 3,
+            "maxClass": "M4.8",
+            "ids": [
+              "2024-10-18T17:28:00-FLR-001",
+              "2024-10-18T19:27:00-FLR-001",
+              "2024-10-18T23:13:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 305,
+            "maxHalfAngle": 29,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-18T11:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "RBE"
+            ],
+            "headline": "Significantly elevated energetic electron fluxes in the Earth's outer radiation belt. GOES \"greater than 2.0 MeV\" integral electron flux is above 1000 pfu start"
+          }
+        },
+        {
+          "sol": 30,
+          "date": "2024-10-19",
+          "level": "storm",
+          "radiationRiskIndex": 0.3362,
+          "commsNoiseIndex": 0.5473,
+          "hardwareStressIndex": 0.2568,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M6.5",
+            "ids": [
+              "2024-10-19T06:48:00-FLR-001",
+              "2024-10-19T14:27:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 1015,
+            "maxHalfAngle": 34,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-19T07:12:00-CME-001",
+              "2024-10-19T09:24:00-CME-001",
+              "2024-10-19T09:48:00-CME-001",
+              "2024-10-19T19:00:00-CME-001",
+              "2024-10-19T22:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 31,
+          "date": "2024-10-20",
+          "level": "quiet",
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0,
+          "hardwareStressIndex": 0,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 0,
+            "maxSpeedKms": 0,
+            "maxHalfAngle": 0,
+            "earthDirectedCount": 0,
+            "ids": []
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 32,
+          "date": "2024-10-21",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1165,
+          "commsNoiseIndex": 0.3449,
+          "hardwareStressIndex": 0.1069,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 1,
+            "maxClass": "C6.2",
+            "ids": [
+              "2024-10-21T09:01:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 703,
+            "maxHalfAngle": 42,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-10-21T05:24:00-CME-001",
+              "2024-10-21T09:24:00-CME-001",
+              "2024-10-21T11:24:00-CME-001",
+              "2024-10-21T13:48:00-CME-001",
+              "2024-10-21T15:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dec-2024-jan-2025-mixed",
+      "name": "Year-End Moderate-to-Storm Window (Dec 2024-Jan 2025)",
+      "description": "Mixed moderate background activity punctuated by late-December/early-January X-class flares and CME shocks.",
+      "startDate": "2024-12-18",
+      "endDate": "2025-01-18",
+      "solCount": 32,
+      "provenance": "observed",
+      "summary": {
+        "totalFlares": 115,
+        "xClassFlares": 6,
+        "mClassFlares": 100,
+        "totalCmes": 156,
+        "totalSeps": 8,
+        "totalIps": 12,
+        "totalNotifications": 105,
+        "stormOrExtremeSols": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          25,
+          31,
+          32
+        ]
+      },
+      "sols": [
+        {
+          "sol": 1,
+          "date": "2024-12-18",
+          "level": "storm",
+          "radiationRiskIndex": 0.532,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.61,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 620,
+            "maxHalfAngle": 33,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-12-18T06:36:00-CME-001",
+              "2024-12-18T10:00:00-CME-001",
+              "2024-12-18T11:12:00-CME-001",
+              "2024-12-18T12:48:00-CME-001",
+              "2024-12-18T15:00:00-CME-001",
+              "2024-12-18T18:24:00-CME-001",
+              "2024-12-18T22:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 1,
+            "ids": [
+              "2024-12-18T12:01:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-12-18T06:15:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "SEP",
+              "CME",
+              "Report"
+            ],
+            "headline": "Solar energetic particle event detected by STEREO A.  The flux of 13-100 MeV protons exceeds 10^(-1) pfu/MeV starting at 2024-12-18T12:01Z."
+          }
+        },
+        {
+          "sol": 2,
+          "date": "2024-12-19",
+          "level": "storm",
+          "radiationRiskIndex": 0.2356,
+          "commsNoiseIndex": 0.5574,
+          "hardwareStressIndex": 0.1565,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M3.8",
+            "ids": [
+              "2024-12-19T10:21:00-FLR-001",
+              "2024-12-19T15:27:00-FLR-001",
+              "2024-12-19T18:56:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 814,
+            "maxHalfAngle": 52,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-19T01:25:00-CME-001",
+              "2024-12-19T03:48:00-CME-001",
+              "2024-12-19T14:00:00-CME-001",
+              "2024-12-19T17:53:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 3,
+          "date": "2024-12-20",
+          "level": "storm",
+          "radiationRiskIndex": 0.2122,
+          "commsNoiseIndex": 0.5353,
+          "hardwareStressIndex": 0.1468,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M2.5",
+            "ids": [
+              "2024-12-20T07:20:00-FLR-001",
+              "2024-12-20T10:03:00-FLR-001",
+              "2024-12-20T11:15:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 10,
+            "maxSpeedKms": 719,
+            "maxHalfAngle": 38,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-20T01:38:00-CME-001",
+              "2024-12-20T02:18:00-CME-001",
+              "2024-12-20T02:24:00-CME-001",
+              "2024-12-20T08:09:00-CME-001",
+              "2024-12-20T10:24:00-CME-001",
+              "2024-12-20T21:12:00-CME-002",
+              "2024-12-20T21:24:00-CME-001",
+              "2024-12-20T22:23:00-CME-001",
+              "2024-12-20T23:23:00-CME-001",
+              "2024-12-20T23:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 4,
+          "date": "2024-12-21",
+          "level": "extreme",
+          "radiationRiskIndex": 0.7334,
+          "commsNoiseIndex": 0.5691,
+          "hardwareStressIndex": 0.7523,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 2,
+            "maxClass": "M1.9",
+            "ids": [
+              "2024-12-21T00:33:00-FLR-001",
+              "2024-12-21T22:58:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 946,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-21T10:12:00-CME-001",
+              "2024-12-21T11:48:00-CME-001",
+              "2024-12-21T13:25:00-CME-001",
+              "2024-12-21T17:48:00-CME-001",
+              "2024-12-21T20:00:00-CME-001",
+              "2024-12-21T23:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 1,
+            "ids": [
+              "2024-12-21T16:12:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-12-21T04:50:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "CME"
+            ],
+            "headline": "S-type CME detected by STEREO A / SOHO."
+          }
+        },
+        {
+          "sol": 5,
+          "date": "2024-12-22",
+          "level": "storm",
+          "radiationRiskIndex": 0.187,
+          "commsNoiseIndex": 0.5115,
+          "hardwareStressIndex": 0.1362,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M1.1",
+            "ids": [
+              "2024-12-22T04:03:00-FLR-001",
+              "2024-12-22T14:06:00-FLR-001",
+              "2024-12-22T20:39:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 9,
+            "maxSpeedKms": 704,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-22T00:12:00-CME-001",
+              "2024-12-22T01:25:00-CME-001",
+              "2024-12-22T03:12:00-CME-001",
+              "2024-12-22T04:00:00-CME-001",
+              "2024-12-22T06:48:00-CME-001",
+              "2024-12-22T17:48:00-CME-001",
+              "2024-12-22T19:36:00-CME-001",
+              "2024-12-22T21:36:00-CME-001",
+              "2024-12-22T21:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "SEP",
+              "CME"
+            ],
+            "headline": "Solar energetic particle event detected by SOHO. The flux of one or more of the >15.8 MeV protons channels exceeds 10^(-1) pfu/MeV starting at 2024-12-21T16:12Z"
+          }
+        },
+        {
+          "sol": 6,
+          "date": "2024-12-23",
+          "level": "storm",
+          "radiationRiskIndex": 0.3274,
+          "commsNoiseIndex": 0.6441,
+          "hardwareStressIndex": 0.1947,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M8.9",
+            "ids": [
+              "2024-12-23T02:10:00-FLR-001",
+              "2024-12-23T06:24:00-FLR-001",
+              "2024-12-23T11:06:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 846,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-12-23T04:48:00-CME-001",
+              "2024-12-23T06:24:00-CME-001",
+              "2024-12-23T11:36:00-CME-001",
+              "2024-12-23T11:48:00-CME-001",
+              "2024-12-23T20:00:00-CME-001",
+              "2024-12-23T21:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 6,
+            "types": [
+              "FLR",
+              "none",
+              "RBE",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 7,
+          "date": "2024-12-24",
+          "level": "storm",
+          "radiationRiskIndex": 0.3038,
+          "commsNoiseIndex": 0.6167,
+          "hardwareStressIndex": 0.2433,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 8,
+            "maxClass": "M4.7",
+            "ids": [
+              "2024-12-24T00:14:00-FLR-001",
+              "2024-12-24T01:50:00-FLR-001",
+              "2024-12-24T08:28:00-FLR-001",
+              "2024-12-24T14:02:00-FLR-001",
+              "2024-12-24T16:25:00-FLR-001",
+              "2024-12-24T18:20:00-FLR-001",
+              "2024-12-24T20:15:00-FLR-001",
+              "2024-12-24T22:24:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 1104,
+            "maxHalfAngle": 31,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-12-24T00:36:00-CME-001",
+              "2024-12-24T03:24:00-CME-001",
+              "2024-12-24T05:24:00-CME-001",
+              "2024-12-24T08:24:00-CME-001",
+              "2024-12-24T09:24:00-CME-001",
+              "2024-12-24T20:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 2,
+            "types": [
+              "CME"
+            ],
+            "headline": "BETA PRODUCT. ENSEMBLE PRODUCT IS STILL IN DEVELOPMENT MODE. PLEASE LET US KNOW IF YOU HAVE ANY SUGGESTIONS FOR MODIFICATIONS."
+          }
+        },
+        {
+          "sol": 8,
+          "date": "2024-12-25",
+          "level": "storm",
+          "radiationRiskIndex": 0.2554,
+          "commsNoiseIndex": 0.5761,
+          "hardwareStressIndex": 0.1648,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M4.9",
+            "ids": [
+              "2024-12-25T04:14:00-FLR-001",
+              "2024-12-25T04:46:00-FLR-001",
+              "2024-12-25T23:59:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 876,
+            "maxHalfAngle": 34,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-12-25T04:48:00-CME-001",
+              "2024-12-25T08:12:00-CME-001",
+              "2024-12-25T10:36:00-CME-001",
+              "2024-12-25T16:36:00-CME-001",
+              "2024-12-25T17:12:00-CME-001",
+              "2024-12-25T21:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 5,
+            "types": [
+              "none",
+              "CME",
+              "Report"
+            ],
+            "headline": "Strong compression of the magnetosphere detected. Simulations carried out at NASA Community Coordinated Modeling Center indicate that the magnetopause separatin"
+          }
+        },
+        {
+          "sol": 9,
+          "date": "2024-12-26",
+          "level": "storm",
+          "radiationRiskIndex": 0.3524,
+          "commsNoiseIndex": 0.6626,
+          "hardwareStressIndex": 0.2635,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M7.4",
+            "ids": [
+              "2024-12-26T02:52:00-FLR-001",
+              "2024-12-26T18:28:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 1240,
+            "maxHalfAngle": 44,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-12-26T01:25:00-CME-001",
+              "2024-12-26T03:12:00-CME-001",
+              "2024-12-26T04:12:00-CME-001",
+              "2024-12-26T05:36:00-CME-001",
+              "2024-12-26T15:24:00-CME-001",
+              "2024-12-26T17:48:00-CME-001",
+              "2024-12-26T19:00:00-CME-001",
+              "2024-12-26T19:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 5,
+            "types": [
+              "FLR",
+              "none",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 10,
+          "date": "2024-12-27",
+          "level": "storm",
+          "radiationRiskIndex": 0.2786,
+          "commsNoiseIndex": 0.4929,
+          "hardwareStressIndex": 0.2328,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M3.3",
+            "ids": [
+              "2024-12-27T15:27:00-FLR-001",
+              "2024-12-27T20:29:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 985,
+            "maxHalfAngle": 39,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-12-27T01:25:00-CME-001",
+              "2024-12-27T04:39:00-CME-001",
+              "2024-12-27T06:36:00-CME-001",
+              "2024-12-27T07:36:00-CME-001",
+              "2024-12-27T21:12:00-CME-001",
+              "2024-12-27T22:00:00-CME-001",
+              "2024-12-27T22:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 5,
+            "types": [
+              "CME",
+              "none"
+            ],
+            "headline": "O-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 11,
+          "date": "2024-12-28",
+          "level": "storm",
+          "radiationRiskIndex": 0.2482,
+          "commsNoiseIndex": 0.5693,
+          "hardwareStressIndex": 0.1618,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 3,
+            "maxClass": "M4.5",
+            "ids": [
+              "2024-12-28T11:12:00-FLR-001",
+              "2024-12-28T15:14:00-FLR-001",
+              "2024-12-28T22:04:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 8,
+            "maxSpeedKms": 835,
+            "maxHalfAngle": 31,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-28T02:48:00-CME-001",
+              "2024-12-28T05:23:00-CME-001",
+              "2024-12-28T06:48:00-CME-001",
+              "2024-12-28T09:12:00-CME-001",
+              "2024-12-28T09:48:00-CME-001",
+              "2024-12-28T18:00:00-CME-001",
+              "2024-12-28T18:36:00-CME-001",
+              "2024-12-28T22:23:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        },
+        {
+          "sol": 12,
+          "date": "2024-12-29",
+          "level": "extreme",
+          "radiationRiskIndex": 0.5324,
+          "commsNoiseIndex": 0.8326,
+          "hardwareStressIndex": 0.3385,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 22,
+            "maxClass": "X1.1",
+            "ids": [
+              "2024-12-29T02:28:00-FLR-001",
+              "2024-12-29T02:38:00-FLR-001",
+              "2024-12-29T03:56:00-FLR-001",
+              "2024-12-29T04:18:00-FLR-001",
+              "2024-12-29T05:12:00-FLR-001",
+              "2024-12-29T05:41:00-FLR-001",
+              "2024-12-29T06:48:00-FLR-001",
+              "2024-12-29T07:08:00-FLR-001",
+              "2024-12-29T07:54:00-FLR-001",
+              "2024-12-29T09:41:00-FLR-001",
+              "2024-12-29T10:26:00-FLR-001",
+              "2024-12-29T12:15:00-FLR-001",
+              "2024-12-29T12:50:00-FLR-001",
+              "2024-12-29T15:02:00-FLR-001",
+              "2024-12-29T16:56:00-FLR-001",
+              "2024-12-29T17:46:00-FLR-001",
+              "2024-12-29T17:58:00-FLR-001",
+              "2024-12-29T18:27:00-FLR-001",
+              "2024-12-29T20:31:00-FLR-001",
+              "2024-12-29T21:42:00-FLR-001",
+              "2024-12-29T21:57:00-FLR-001",
+              "2024-12-29T23:20:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 1114,
+            "maxHalfAngle": 45,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2024-12-29T01:23:00-CME-001",
+              "2024-12-29T06:24:00-CME-001",
+              "2024-12-29T09:12:00-CME-001",
+              "2024-12-29T11:36:00-CME-001",
+              "2024-12-29T14:24:00-CME-001",
+              "2024-12-29T18:12:00-CME-001",
+              "2024-12-29T18:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 9,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 13,
+          "date": "2024-12-30",
+          "level": "extreme",
+          "radiationRiskIndex": 0.5049,
+          "commsNoiseIndex": 0.8118,
+          "hardwareStressIndex": 0.2687,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 16,
+            "maxClass": "X1.5",
+            "ids": [
+              "2024-12-30T00:33:00-FLR-001",
+              "2024-12-30T02:50:00-FLR-001",
+              "2024-12-30T04:01:00-FLR-001",
+              "2024-12-30T04:29:00-FLR-001",
+              "2024-12-30T06:13:00-FLR-001",
+              "2024-12-30T08:34:00-FLR-001",
+              "2024-12-30T08:44:00-FLR-001",
+              "2024-12-30T10:00:00-FLR-001",
+              "2024-12-30T14:34:00-FLR-001",
+              "2024-12-30T16:45:00-FLR-001",
+              "2024-12-30T16:56:00-FLR-001",
+              "2024-12-30T17:14:00-FLR-001",
+              "2024-12-30T17:36:00-FLR-001",
+              "2024-12-30T18:14:00-FLR-001",
+              "2024-12-30T18:27:00-FLR-001",
+              "2024-12-30T22:35:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 539,
+            "maxHalfAngle": 34,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2024-12-30T00:12:00-CME-001",
+              "2024-12-30T05:24:00-CME-001",
+              "2024-12-30T10:53:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 7,
+            "types": [
+              "CME",
+              "FLR"
+            ],
+            "headline": "BETA PRODUCT. ENSEMBLE PRODUCT IS STILL IN DEVELOPMENT MODE. PLEASE LET US KNOW IF YOU HAVE ANY SUGGESTIONS FOR MODIFICATIONS."
+          }
+        },
+        {
+          "sol": 14,
+          "date": "2024-12-31",
+          "level": "storm",
+          "radiationRiskIndex": 0.2194,
+          "commsNoiseIndex": 0.4421,
+          "hardwareStressIndex": 0.4298,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 4,
+            "maxClass": "M2.9",
+            "ids": [
+              "2024-12-31T04:50:00-FLR-001",
+              "2024-12-31T21:09:00-FLR-001",
+              "2024-12-31T22:02:00-FLR-001",
+              "2024-12-31T22:46:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 712,
+            "maxHalfAngle": 15,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2024-12-31T00:12:00-CME-001",
+              "2024-12-31T13:37:00-CME-001",
+              "2024-12-31T14:12:00-CME-001",
+              "2024-12-31T16:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2024-12-31T15:44:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "IPS"
+            ],
+            "headline": "Significant interplanetary shock detected by DSCOVR and ACE at L1 at 2024-12-31T15:44Z."
+          }
+        },
+        {
+          "sol": 15,
+          "date": "2025-01-01",
+          "level": "moderate",
+          "radiationRiskIndex": 0.1888,
+          "commsNoiseIndex": 0.4132,
+          "hardwareStressIndex": 0.417,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 4,
+            "maxClass": "M1.2",
+            "ids": [
+              "2025-01-01T04:35:00-FLR-001",
+              "2025-01-01T15:12:00-FLR-001",
+              "2025-01-01T18:05:00-FLR-001",
+              "2025-01-01T21:32:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 611,
+            "maxHalfAngle": 35,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-01T02:24:00-CME-001",
+              "2025-01-01T02:36:00-CME-001",
+              "2025-01-01T02:48:00-CME-001",
+              "2025-01-01T04:24:00-CME-001",
+              "2025-01-01T12:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-01T01:20:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 9,
+            "types": [
+              "MPC",
+              "GST",
+              "Report"
+            ],
+            "headline": "Strong compression of the magnetosphere detected. Simulations carried out at NASA Community Coordinated Modeling Center indicate that the magnetopause separatin"
+          }
+        },
+        {
+          "sol": 16,
+          "date": "2025-01-02",
+          "level": "storm",
+          "radiationRiskIndex": 0.239,
+          "commsNoiseIndex": 0.4555,
+          "hardwareStressIndex": 0.4963,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 1,
+            "maxClass": "M1.1",
+            "ids": [
+              "2025-01-02T17:18:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 7,
+            "maxSpeedKms": 986,
+            "maxHalfAngle": 33,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-02T02:00:00-CME-001",
+              "2025-01-02T03:12:00-CME-001",
+              "2025-01-02T03:36:00-CME-001",
+              "2025-01-02T15:12:00-CME-001",
+              "2025-01-02T15:24:00-CME-001",
+              "2025-01-02T19:12:00-CME-001",
+              "2025-01-02T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-02T10:05:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 17,
+          "date": "2025-01-03",
+          "level": "storm",
+          "radiationRiskIndex": 0.4869,
+          "commsNoiseIndex": 0.6948,
+          "hardwareStressIndex": 0.5412,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 5,
+            "maxClass": "X1.2",
+            "ids": [
+              "2025-01-03T11:29:00-FLR-001",
+              "2025-01-03T21:54:00-FLR-001",
+              "2025-01-03T22:32:00-FLR-001",
+              "2025-01-03T23:14:00-FLR-001",
+              "2025-01-03T23:50:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 584,
+            "maxHalfAngle": 44,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-03T12:12:00-CME-001",
+              "2025-01-03T15:36:00-CME-001",
+              "2025-01-03T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-03T23:33:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 6,
+            "types": [
+              "CME",
+              "FLR"
+            ],
+            "headline": "Multiple CMEs have been detected as follows:"
+          }
+        },
+        {
+          "sol": 18,
+          "date": "2025-01-04",
+          "level": "extreme",
+          "radiationRiskIndex": 1,
+          "commsNoiseIndex": 0.9368,
+          "hardwareStressIndex": 1,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 7,
+            "maxClass": "X1.8",
+            "ids": [
+              "2025-01-04T00:34:00-FLR-001",
+              "2025-01-04T04:58:00-FLR-001",
+              "2025-01-04T12:34:00-FLR-001",
+              "2025-01-04T14:24:00-FLR-001",
+              "2025-01-04T18:46:00-FLR-001",
+              "2025-01-04T23:08:00-FLR-001",
+              "2025-01-04T23:57:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1603,
+            "maxHalfAngle": 43,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2025-01-04T05:48:00-CME-001",
+              "2025-01-04T13:25:00-CME-001",
+              "2025-01-04T15:12:00-CME-001",
+              "2025-01-04T18:48:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 3,
+            "ids": [
+              "2025-01-04T21:46:00-SEP-001",
+              "2025-01-04T22:15:00-SEP-001",
+              "2025-01-04T22:23:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-04T01:30:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 16,
+            "types": [
+              "FLR",
+              "MPC",
+              "IPS",
+              "CME",
+              "SEP"
+            ],
+            "headline": "Significant flare detected by GOES."
+          }
+        },
+        {
+          "sol": 19,
+          "date": "2025-01-05",
+          "level": "extreme",
+          "radiationRiskIndex": 0.789,
+          "commsNoiseIndex": 0.4185,
+          "hardwareStressIndex": 0.8588,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 4,
+            "maxClass": "M4.1",
+            "ids": [
+              "2025-01-05T02:14:00-FLR-001",
+              "2025-01-05T07:04:00-FLR-001",
+              "2025-01-05T09:09:00-FLR-001",
+              "2025-01-05T15:20:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 434,
+            "maxHalfAngle": 28,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-05T10:12:00-CME-001",
+              "2025-01-05T16:36:00-CME-001",
+              "2025-01-05T18:36:00-CME-001",
+              "2025-01-05T20:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 2,
+            "ids": [
+              "2025-01-05T01:03:00-SEP-001",
+              "2025-01-05T02:35:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-05T22:34:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "SEP",
+              "RBE"
+            ],
+            "headline": "Solar energetic particle event detected by SOHO. The flux of one or more of the >28.2 MeV protons channels exceeds 10^(-1) pfu/MeV starting at 2025-01-05T01:03Z"
+          }
+        },
+        {
+          "sol": 20,
+          "date": "2025-01-06",
+          "level": "storm",
+          "radiationRiskIndex": 0.3056,
+          "commsNoiseIndex": 0.5184,
+          "hardwareStressIndex": 0.244,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 4,
+            "maxClass": "M4.8",
+            "ids": [
+              "2025-01-06T01:29:00-FLR-001",
+              "2025-01-06T03:36:00-FLR-001",
+              "2025-01-06T16:12:00-FLR-001",
+              "2025-01-06T21:58:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1184,
+            "maxHalfAngle": 17,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-06T05:48:00-CME-001",
+              "2025-01-06T17:24:00-CME-001",
+              "2025-01-06T20:00:00-CME-001",
+              "2025-01-06T23:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "CME"
+            ],
+            "headline": "Update on CMEs with IDs 2025-01-04T15:12:00-CME-001 and 2025-01-04T18:48:00-CME-001 (see previous notification 20250104-AL-016).  Based on preliminary analysis "
+          }
+        },
+        {
+          "sol": 21,
+          "date": "2025-01-07",
+          "level": "extreme",
+          "radiationRiskIndex": 0.719,
+          "commsNoiseIndex": 0.5555,
+          "hardwareStressIndex": 1,
+          "solarPenaltyPct": 0.18,
+          "flares": {
+            "count": 2,
+            "maxClass": "M1.1",
+            "ids": [
+              "2025-01-07T09:19:00-FLR-001",
+              "2025-01-07T22:35:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 1219,
+            "maxHalfAngle": 47,
+            "earthDirectedCount": 2,
+            "ids": [
+              "2025-01-07T07:24:00-CME-001",
+              "2025-01-07T10:36:00-CME-001",
+              "2025-01-07T17:48:00-CME-001",
+              "2025-01-07T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 1,
+            "ids": [
+              "2025-01-07T00:42:00-SEP-001"
+            ]
+          },
+          "ips": {
+            "count": 2,
+            "ids": [
+              "2025-01-07T00:46:00-IPS-001",
+              "2025-01-07T04:00:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "SEP",
+              "CME",
+              "RBE"
+            ],
+            "headline": "Solar energetic particle event detected by STEREO A.  The flux of 13-100 MeV protons exceeds 10^(-1) pfu/MeV starting at 2025-01-07T00:42Z."
+          }
+        },
+        {
+          "sol": 22,
+          "date": "2025-01-08",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 650,
+            "maxHalfAngle": 21,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-08T01:36:00-CME-001",
+              "2025-01-08T02:12:00-CME-001",
+              "2025-01-08T05:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "CME",
+              "Report"
+            ],
+            "headline": "O-type CME detected by SOHO."
+          }
+        },
+        {
+          "sol": 23,
+          "date": "2025-01-09",
+          "level": "moderate",
+          "radiationRiskIndex": 0.135,
+          "commsNoiseIndex": 0.2075,
+          "hardwareStressIndex": 0.0563,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 1,
+            "maxClass": "M1.1",
+            "ids": [
+              "2025-01-09T00:18:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 1,
+            "maxSpeedKms": 268,
+            "maxHalfAngle": 27,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-09T03:23:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 24,
+          "date": "2025-01-10",
+          "level": "moderate",
+          "radiationRiskIndex": 0.0639,
+          "commsNoiseIndex": 0.2204,
+          "hardwareStressIndex": 0.0266,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 1,
+            "maxClass": "C6.1",
+            "ids": [
+              "2025-01-10T09:24:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 444,
+            "maxHalfAngle": 19,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-10T01:38:00-CME-001",
+              "2025-01-10T10:09:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 25,
+          "date": "2025-01-11",
+          "level": "storm",
+          "radiationRiskIndex": 0.1489,
+          "commsNoiseIndex": 0.3704,
+          "hardwareStressIndex": 0.4587,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 1,
+            "maxClass": "C2.8",
+            "ids": [
+              "2025-01-11T08:35:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 3,
+            "maxSpeedKms": 931,
+            "maxHalfAngle": 21,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-11T05:48:00-CME-001",
+              "2025-01-11T09:09:00-CME-001",
+              "2025-01-11T23:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-11T03:48:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 26,
+          "date": "2025-01-12",
+          "level": "quiet",
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0.16,
+          "hardwareStressIndex": 0,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 375,
+            "maxHalfAngle": 10,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-12T05:00:00-CME-001",
+              "2025-01-12T20:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 27,
+          "date": "2025-01-13",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.204,
+          "hardwareStressIndex": 0.36,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 627,
+            "maxHalfAngle": 17,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-13T05:24:00-CME-001",
+              "2025-01-13T14:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 1,
+            "ids": [
+              "2025-01-13T04:15:00-IPS-001"
+            ]
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 28,
+          "date": "2025-01-14",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 6,
+            "maxSpeedKms": 817,
+            "maxHalfAngle": 34,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-14T00:48:00-CME-001",
+              "2025-01-14T02:24:00-CME-001",
+              "2025-01-14T02:48:00-CME-001",
+              "2025-01-14T06:00:00-CME-001",
+              "2025-01-14T09:12:00-CME-001",
+              "2025-01-14T19:00:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "none"
+            ],
+            "headline": "***This auto-generated notification was issued in error due to suspect solar wind data.***"
+          }
+        },
+        {
+          "sol": 29,
+          "date": "2025-01-15",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.204,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 2,
+            "maxSpeedKms": 596,
+            "maxHalfAngle": 15,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-15T16:12:00-CME-001",
+              "2025-01-15T21:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 1,
+            "types": [
+              "Report"
+            ],
+            "headline": "Solar activity was at low to moderate levels during this reporting period with 1 M-class flare and 7 C-type CMEs (see details below)."
+          }
+        },
+        {
+          "sol": 30,
+          "date": "2025-01-16",
+          "level": "moderate",
+          "radiationRiskIndex": 0.052,
+          "commsNoiseIndex": 0.284,
+          "hardwareStressIndex": 0.08,
+          "solarPenaltyPct": 0.04,
+          "flares": {
+            "count": 0,
+            "maxClass": null,
+            "ids": []
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 732,
+            "maxHalfAngle": 35,
+            "earthDirectedCount": 0,
+            "ids": [
+              "2025-01-16T05:36:00-CME-001",
+              "2025-01-16T21:36:00-CME-001",
+              "2025-01-16T22:36:00-CME-001",
+              "2025-01-16T23:12:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 0,
+            "types": [],
+            "headline": null
+          }
+        },
+        {
+          "sol": 31,
+          "date": "2025-01-17",
+          "level": "storm",
+          "radiationRiskIndex": 0.3004,
+          "commsNoiseIndex": 0.6186,
+          "hardwareStressIndex": 0.1835,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 9,
+            "maxClass": "M7.4",
+            "ids": [
+              "2025-01-17T02:01:00-FLR-001",
+              "2025-01-17T03:08:00-FLR-001",
+              "2025-01-17T09:10:00-FLR-001",
+              "2025-01-17T11:19:00-FLR-001",
+              "2025-01-17T13:24:00-FLR-001",
+              "2025-01-17T18:42:00-FLR-001",
+              "2025-01-17T19:44:00-FLR-001",
+              "2025-01-17T19:59:00-FLR-001",
+              "2025-01-17T22:00:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 4,
+            "maxSpeedKms": 741,
+            "maxHalfAngle": 18,
+            "earthDirectedCount": 1,
+            "ids": [
+              "2025-01-17T15:12:00-CME-001",
+              "2025-01-17T16:24:00-CME-001",
+              "2025-01-17T21:24:00-CME-001",
+              "2025-01-17T22:36:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 4,
+            "types": [
+              "FLR",
+              "CME"
+            ],
+            "headline": "Significant flare detected by GOES.  Flare intensity has crossed the threshold of M5.0."
+          }
+        },
+        {
+          "sol": 32,
+          "date": "2025-01-18",
+          "level": "storm",
+          "radiationRiskIndex": 0.2498,
+          "commsNoiseIndex": 0.5657,
+          "hardwareStressIndex": 0.2208,
+          "solarPenaltyPct": 0.1,
+          "flares": {
+            "count": 2,
+            "maxClass": "M1.7",
+            "ids": [
+              "2025-01-18T00:44:00-FLR-001",
+              "2025-01-18T03:00:00-FLR-001"
+            ]
+          },
+          "cme": {
+            "count": 5,
+            "maxSpeedKms": 915,
+            "maxHalfAngle": 27,
+            "earthDirectedCount": 3,
+            "ids": [
+              "2025-01-18T01:36:00-CME-001",
+              "2025-01-18T02:00:00-CME-001",
+              "2025-01-18T15:12:00-CME-001",
+              "2025-01-18T15:48:00-CME-001",
+              "2025-01-18T23:24:00-CME-001"
+            ]
+          },
+          "sep": {
+            "count": 0,
+            "ids": []
+          },
+          "ips": {
+            "count": 0,
+            "ids": []
+          },
+          "notifications": {
+            "count": 3,
+            "types": [
+              "CME"
+            ],
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          }
+        }
+      ]
+    }
+  ],
+  "provenanceMeta": {
+    "sourceUrls": [
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-04-26&endDate=2024-05-11",
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-05-12&endDate=2024-05-27",
+      "https://api.nasa.gov/DONKI/CME?startDate=2024-04-26&endDate=2024-05-27&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/SEP?startDate=2024-04-26&endDate=2024-05-27&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/IPS?startDate=2024-04-26&endDate=2024-05-27&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2024-04-26&endDate=2024-05-11&type=all&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2024-05-12&endDate=2024-05-27&type=all&api_key=REDACTED",
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-09-20&endDate=2024-10-05",
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-10-06&endDate=2024-10-21",
+      "https://api.nasa.gov/DONKI/CME?startDate=2024-09-20&endDate=2024-10-21&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/SEP?startDate=2024-09-20&endDate=2024-10-21&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/IPS?startDate=2024-09-20&endDate=2024-10-21&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2024-09-20&endDate=2024-10-05&type=all&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2024-10-06&endDate=2024-10-21&type=all&api_key=REDACTED",
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-12-18&endDate=2025-01-02",
+      "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2025-01-03&endDate=2025-01-18",
+      "https://api.nasa.gov/DONKI/CME?startDate=2024-12-18&endDate=2025-01-18&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/SEP?startDate=2024-12-18&endDate=2025-01-18&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/IPS?startDate=2024-12-18&endDate=2025-01-18&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2024-12-18&endDate=2025-01-02&type=all&api_key=REDACTED",
+      "https://api.nasa.gov/DONKI/notifications?startDate=2025-01-03&endDate=2025-01-18&type=all&api_key=REDACTED"
+    ],
+    "fetchSha256": "ed67ccbe611a4e89a80b05e522a77fd7c0ee7c269042fd9d2fdda8f0a110ad51",
+    "normalizedSha256": "c8015669fb1495b9167cf1058cb31955a919dc84ce38c5b1526a6cf5229e9e16"
+  }
+}
