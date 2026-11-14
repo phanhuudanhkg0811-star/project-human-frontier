@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { playSfx } from '../audio/sfx.ts';
 import type { ActiveModalType, CrewId, EquipmentId, SystemId, ToastMessage, UiState } from '../types/index.ts';
 
 interface UiStoreActions {
@@ -27,8 +28,14 @@ const initialUiState: UiState = {
 
 export const useUiStore = create<UiState & UiStoreActions>((set) => ({
   ...initialUiState,
-  openModal: (modal) => set({ activeModal: modal }),
-  closeModal: () => set({ activeModal: null }),
+  openModal: (modal) => {
+    playSfx(modal === 'comms' ? 'radioOn' : 'open');
+    set({ activeModal: modal });
+  },
+  closeModal: () => {
+    playSfx('click', 0.4);
+    set({ activeModal: null });
+  },
   selectCrew: (crewId) => set({ selectedCrewId: crewId }),
   selectSystem: (systemId) => set({ selectedSystemId: systemId }),
   toggleRoverEquipment: (eqId) =>

@@ -1,4 +1,6 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
+import { startMusic } from '../audio/sfx.ts';
 import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import { useUiStore } from '../store/uiStore.ts';
@@ -51,6 +53,11 @@ export function HailGameViewport() {
   const roverSamples = selectRoverSamples(gameState);
   const { activeModal, openModal, closeModal } = useUiStore();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openModal('menu')];
+
+  useEffect(() => {
+    // browsers block autoplay until a user gesture
+    window.addEventListener('pointerdown', () => startMusic(), { once: true });
+  }, []);
 
   const progress = selectMissionProgress(gameState, bundle);
   const weather = selectWeatherOutlook(gameState, bundle);

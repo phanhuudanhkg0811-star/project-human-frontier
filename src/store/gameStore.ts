@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { playSfx, type SfxName } from '../audio/sfx.ts';
 import { dispatchDomainCommand } from '../domain/orchestrator.ts';
 import { clearSavedGame, loadGameState, saveGameState } from '../persistence/saveAdapter.ts';
 import { createInitialGameState, loadContentBundle, type NewGameOptions } from '../schemas/contracts.ts';
@@ -23,6 +24,25 @@ interface GameStoreModel {
   dispatch: (command: GameCommand) => Promise<DispatchResult>;
   resetCampaign: (options?: NewGameOptions) => Promise<void>;
   dismissError: () => void;
+}
+
+const EFFECT_SFX: Partial<Record<DomainEffect['type'], SfxName>> = {
+  'event-resolved': 'click',
+  'cargo-ordered': 'radio',
+  'rover-scheduled': 'launch',
+  'sol-resolved': 'endSol',
+};
+
+function playEffectSfx(command: GameCommand, prev: GameState, next: GameState, effects: readonly DomainEffect[]): void {
+  if (next.events.activeEventId && !prev.events.activeEventId) playSfx('alert');
+  if (command.type === 'fabricator/queue') {
+    playSfx(command.action === 'upgrade' ? 'upgrade' : 'repair');
+    return;
+  }
+  for (const e of effects) {
+    const name = EFFECT_SFX[e.type];
+    if (name) playSfx(name, name === 'launch' ? 0.8 : 0.6);
+  }
 }
 
 const bundle = loadContentBundle();
@@ -58,6 +78,7 @@ export const useGameStore = create<GameStoreModel>((set, get) => ({
 
     const res = dispatchDomainCommand(current.gameState, command, current.bundle);
     if (res.ok) {
+      playEffectSfx(command, current.gameState, res.state, res.effects);
       const saveRes = saveGameState(res.state);
       set({
         gameState: res.state,
