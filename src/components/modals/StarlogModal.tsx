@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CheckCircle2, ScrollText } from 'lucide-react';
+import { selectActiveEventView, selectEventChoicePreviews } from '../../domain/eventSelectors.ts';
 import { selectWeatherOutlook } from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
+import { EVENT_CATEGORY_LABELS, EVENT_RESOURCE_LABELS, eventDeadlineText, formatEventEffectSummary } from '../eventPresentation.ts';
+import type { EventResourceKey } from '../../types/index.ts';
 import { getHailEventScene } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 
@@ -12,27 +15,40 @@ interface StarlogModalProps {
 export function StarlogModal({ onClose }: StarlogModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
   const [feedback, setFeedback] = useState<string | null>(null);
-
-  const activeEvent = gameState.events.activeEventId
-    ? bundle.events.find((e) => e.id === gameState.events.activeEventId) ?? null
-    : null;
+  const [choiceError, setChoiceError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const inFlight = useRef(false);
+  const activeView = selectActiveEventView(gameState, bundle);
+  const activeEvent = activeView?.event ?? null;
+  const previews = activeEvent ? selectEventChoicePreviews(gameState, activeEvent.id, bundle) : [];
+  const planningPhase = ['briefing', 'engineering', 'comms', 'rationing'].includes(gameState.clock.phase);
+  const canRespondNow = planningPhase && gameState.campaign.status === 'active'
+    && activeView !== null && gameState.clock.sol <= activeView.deadlineSol;
   const weather = selectWeatherOutlook(gameState, bundle);
 
   const handleChoice = async (choiceId: string) => {
-    if (!activeEvent) return;
-    const res = await dispatch({
-      type: 'event/resolve',
-      eventId: activeEvent.id,
-      choiceId,
-    });
-    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã xử lý.' : res.error.message);
+    if (!activeEvent || inFlight.current || !canRespondNow) return;
+    inFlight.current = true;
+    setIsSubmitting(true);
+    setChoiceError(null);
+    setFeedback(null);
+    try {
+      const res = await dispatch({ type: 'event/resolve', eventId: activeEvent.id, choiceId });
+      if (res.ok) setFeedback(res.effects[0]?.message ?? 'Đã xử lý.');
+      else setChoiceError(res.error.message);
+    } catch {
+      setChoiceError('Chưa thể xử lý lựa chọn. Hãy thử lại.');
+    } finally {
+      inFlight.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <MissionDialog
       title={`Starlog & Sự kiện Sol ${gameState.clock.sol}`}
       eyebrow="PHA 1 · MORNING BRIEFING & DONKI WEATHER"
-      art={getHailEventScene(activeEvent?.id)}
+      art={getHailEventScene(activeEvent?.art)}
       panelType="starlog"
       dockSide="center"
       onClose={onClose}
@@ -57,41 +73,54 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
         </section>
 
         {feedback && (
-          <div className="text-xs px-3 py-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 flex items-center gap-2">
+          <div role="status" className="text-xs px-3 py-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             {feedback}
           </div>
         )}
+        {choiceError && <p role="alert" className="hail-event-error">{choiceError}</p>}
 
         {/* Active Mandatory Event */}
-        {activeEvent ? (
-          <section className="hail-event-banner">
-            <img src={getHailEventScene(activeEvent.id)} alt="" className="hail-event-banner-img" />
+        {activeEvent && activeView ? (
+          <section className={`hail-event-banner hail-event-detail--${activeEvent.category}`} aria-busy={isSubmitting}>
+            <img src={getHailEventScene(activeEvent.art)} alt="" className="hail-event-banner-img" />
             <div className="p-3 flex flex-col gap-2">
-              <span className="hail-event-banner-badge">{activeEvent.category.toUpperCase()}</span>
+              <span className="hail-event-banner-badge">{EVENT_CATEGORY_LABELS[activeEvent.category]}</span>
               <h3 className="text-base font-bold text-white">{activeEvent.title}</h3>
+              <div className="hail-event-metadata">
+                <span>{activeView.mandatory ? 'Bắt buộc · xử lý trước khi rời giao ban' : 'Tùy chọn · có thể xử lý trong các pha của ngày'}</span>
+                <span>Ưu tiên {activeView.priority}</span>
+                <strong className="hail-event-deadline">{eventDeadlineText(activeView, gameState.clock.sol)}</strong>
+              </div>
               <p className="text-xs text-slate-300 leading-relaxed">{activeEvent.prompt}</p>
+              {!canRespondNow && <p className="hail-event-error">Sự kiện không còn nhận lựa chọn ở thời điểm này.</p>}
               <div className="flex flex-col gap-2 mt-2">
-                {activeEvent.choices.map((ch) => {
-                  const missingEq =
-                    ch.requiresEquipment &&
-                    (!gameState.equipment[ch.requiresEquipment].owned ||
-                      gameState.equipment[ch.requiresEquipment].state === 'damaged');
+                {previews.map((preview) => {
+                  const ch = preview.choice;
+                  const reasonsId = `event-choice-${ch.id}-reasons`;
                   return (
-                    <button
-                      key={ch.id}
-                      type="button"
-                      disabled={Boolean(missingEq) || gameState.clock.phase !== 'briefing'}
-                      onClick={() => handleChoice(ch.id)}
-                      className="hail-choice-card text-left p-2.5 rounded border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 disabled:opacity-45"
-                    >
-                      <div className="text-xs font-semibold text-cyan-200">{ch.label}</div>
-                      {missingEq && (
-                        <div className="text-[10px] text-rose-300 mt-0.5">
-                          (Yêu cầu thiết bị {ch.requiresEquipment} còn tốt trên LR Rack)
-                        </div>
-                      )}
-                    </button>
+                    <article key={ch.id} className={`hail-event-choice ${!preview.allowed ? 'is-blocked' : ''}`}>
+                      <h4>{ch.label}</h4>
+                      <div className="hail-event-costs" aria-label="Thay đổi tài nguyên dự kiến">
+                        {Object.entries(preview.resourceDeltas).map(([resource, delta]) => {
+                          return <span key={resource}>{EVENT_RESOURCE_LABELS[resource as EventResourceKey]}: <strong>{Number(delta) > 0 ? '+' : ''}{delta}</strong></span>;
+                        })}
+                        {preview.scienceDelta !== 0 && <span>Khoa học: <strong>{preview.scienceDelta > 0 ? '+' : ''}{preview.scienceDelta}</strong></span>}
+                        {Object.keys(preview.resourceDeltas).length === 0 && preview.scienceDelta === 0 && <span>Không thay đổi trực tiếp vật tư/khoa học.</span>}
+                      </div>
+                      {preview.effectsSummary.length > 0 && <ul className="hail-event-effects" aria-label="Hệ quả dự kiến">
+                        {preview.effectsSummary.map((effect, index) => <li key={index}>{formatEventEffectSummary(effect)}</li>)}
+                      </ul>}
+                      {preview.blockedReasons.length > 0 && <ul id={reasonsId} className="hail-event-blocked" aria-label="Lý do chưa thể chọn">
+                        {preview.blockedReasons.map((reason, index) => <li key={index}>{formatEventEffectSummary(reason)}</li>)}
+                      </ul>}
+                      <button type="button" className="hail-btn hail-choice-card"
+                        disabled={!preview.allowed || !canRespondNow || isSubmitting}
+                        aria-describedby={preview.blockedReasons.length > 0 ? reasonsId : undefined}
+                        onClick={() => handleChoice(ch.id)}>
+                        {isSubmitting ? 'Đang xử lý…' : `Chọn: ${ch.label}`}
+                      </button>
+                    </article>
                   );
                 })}
               </div>
@@ -99,7 +128,7 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
           </section>
         ) : (
           <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
-            Không còn sự kiện khẩn cấp nào chờ xử lý trong Morning Briefing hôm nay.
+            Không có sự kiện nào đang chờ xử lý.
           </div>
         )}
 
