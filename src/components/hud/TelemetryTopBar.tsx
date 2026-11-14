@@ -3,6 +3,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import type { DonkiLevel, SolPhase } from '../../types/index.ts';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 const DONKI_COLOR: Record<DonkiLevel, string> = {
   quiet: 'text-emerald-300 border-emerald-500/40 bg-emerald-950/50',
@@ -45,7 +46,7 @@ export function TelemetryTopBar() {
             <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${progress.isLunarNight ? 'text-indigo-200 border-indigo-400/50 bg-indigo-950/60' : 'text-amber-200 border-amber-400/40 bg-amber-950/40'}`}>
               {progress.isLunarNight ? t('telemetry.lunarNight') : t('telemetry.lunarDay')}
             </span>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${DONKI_COLOR[weather.level]}`} title={weather.headline ?? 'NASA DONKI'}>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${DONKI_COLOR[weather.level]}`} title={weather.headline ?? 'NASA DONKI'} data-tour={TOUR_TARGET_IDS.TELEMETRY_DONKI}>
               DONKI: {t(`donki.${weather.level}`)}
             </span>
           </div>

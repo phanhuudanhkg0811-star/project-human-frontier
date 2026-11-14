@@ -8,6 +8,7 @@ import type { ContentBundle, GameState, SolSummary } from '../../types/index.ts'
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { CampaignReportCard, TrainingReport } from '../CampaignReportCard.tsx';
 import { HAIL_ENV, HAIL_SVG } from '../cabin/hailAssets.ts';
+import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 function DebriefDialogBody({
   gameState,
@@ -154,19 +155,21 @@ function DebriefDialogBody({
           ))}
         </div>
 
-        <DynamicSTEMBrief
-          view={debriefView}
-          bundle={bundle}
-          content={
-            <>
-              <p aria-hidden="true" className="night-typewriter">
-                {skip ? fullText : fullText.slice(0, length)}
-                <span className="typewriter-cursor" />
-              </p>
-              <p className="sr-only">{fullText}</p>
-            </>
-          }
-        />
+        <div data-tour={TOUR_TARGET_IDS.DEBRIEF_BRIEF}>
+          <DynamicSTEMBrief
+            view={debriefView}
+            bundle={bundle}
+            content={
+              <>
+                <p aria-hidden="true" className="night-typewriter">
+                  {skip ? fullText : fullText.slice(0, length)}
+                  <span className="typewriter-cursor" />
+                </p>
+                <p className="sr-only">{fullText}</p>
+              </>
+            }
+          />
+        </div>
 
         <div className="night-actions">
           {!skip && length < fullText.length && (

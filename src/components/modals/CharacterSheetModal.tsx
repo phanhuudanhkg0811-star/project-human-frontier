@@ -8,6 +8,7 @@ import { getHailCrewVisual } from '../cabin/hailAssets.ts';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 interface CharacterSheetModalProps {
   onClose: () => void;
@@ -97,7 +98,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3" data-tour={TOUR_TARGET_IDS.CREW_ASSIGNMENT}>
           {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId) => {
             const member = gameState.crew[crewId];
             const profile = bundle.crewCatalog.find((p) => p.id === crewId);

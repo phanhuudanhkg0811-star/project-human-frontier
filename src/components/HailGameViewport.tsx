@@ -22,6 +22,9 @@ import { TelemetryTopBar } from './hud/TelemetryTopBar.tsx';
 import { MissionDialog } from './modals/MissionDialog.tsx';
 import { AmbientCanvasLayer } from './cabin/AmbientCanvasLayer.tsx';
 import { useI18n } from '../i18n/useI18n.ts';
+import { createBrowserDriverBackend } from '../onboarding/browserBackend.ts';
+import { onboardingDriver, registerBrowserDriverBackend } from '../onboarding/driverAdapter.ts';
+import { TOUR_TARGET_IDS } from '../onboarding/targets.ts';
 
 function lazyNamed<TProps>(loader: () => Promise<ComponentType<TProps>>) {
   return lazy(async () => ({ default: await loader() }));
@@ -108,6 +111,17 @@ export function HailGameViewport() {
   useEffect(() => {
     if ((activeEventView?.priority ?? 0) >= 4) playSynthSfx('alert');
   }, [activeEventView?.event.id, activeEventView?.priority]);
+
+  useEffect(() => {
+    if (gameState.clock.phase === 'terminal') {
+      onboardingDriver.destroy('terminal');
+    }
+  }, [gameState.clock.phase]);
+
+  useEffect(() => {
+    registerBrowserDriverBackend(createBrowserDriverBackend);
+    return () => onboardingDriver.destroy('unmount');
+  }, []);
 
   const fabSprite =
     gameState.systems.fabricator.status === 'offline'
@@ -221,6 +235,7 @@ export function HailGameViewport() {
             onClick={() => openPanel('tutorial')}
             aria-label={t('hud.tutorial')}
             title={t('hud.tutorial')}
+            data-tour={TOUR_TARGET_IDS.HUD_TUTORIAL_TRIGGER}
           >
             <CircleHelp aria-hidden="true" />
           </button>
@@ -464,6 +479,7 @@ export function HailGameViewport() {
                 className={`hail-console-screen ${gameState.clock.phase === 'rationing' ? 'is-alert' : ''}`}
                 onClick={() => openPanel('end')}
                 aria-label={t('cockpit.openRationing')}
+                data-tour={TOUR_TARGET_IDS.OPEN_END_SOL}
               >
                 <span className="hail-screen-code">{t('cockpit.rationing')}</span>
                 <strong>{gameState.clock.phase === 'rationing' ? t('cockpit.distributeMre') : t('cockpit.closeSol')}</strong>
@@ -479,11 +495,11 @@ export function HailGameViewport() {
               <img src={HAIL_SVG.frameCorner} alt="" />
               <span>{t('hud.journal')}</span>
             </button>
-            <button type="button" onClick={() => openPanel('starlog')}>
+            <button type="button" onClick={() => openPanel('starlog')} data-tour={TOUR_TARGET_IDS.OPEN_BRIEFING}>
               <img src={HAIL_SVG.sysComms} alt="" />
               <span>{t('hud.briefing')}{gameState.events.activeEventId ? ' (!)' : ''}</span>
             </button>
-            <button type="button" onClick={() => setSysModalOpen()}>
+            <button type="button" onClick={() => setSysModalOpen()} data-tour={TOUR_TARGET_IDS.OPEN_SYSTEMS}>
               <img src={HAIL_SVG.sysPower} alt="" />
               <span>{t('hud.systems')}</span>
             </button>
@@ -491,15 +507,15 @@ export function HailGameViewport() {
               <img src={HAIL_SVG.resParts} alt="" />
               <span>{t('hud.fabricator')}</span>
             </button>
-            <button type="button" onClick={() => openPanel('character')}>
+            <button type="button" onClick={() => openPanel('character')} data-tour={TOUR_TARGET_IDS.OPEN_CREW}>
               <img src={HAIL_SVG.sysMed} alt="" />
               <span>{t('hud.crew')}</span>
             </button>
-            <button type="button" onClick={() => openPanel('comms')}>
+            <button type="button" onClick={() => openPanel('comms')} data-tour={TOUR_TARGET_IDS.OPEN_COMMS}>
               <img src={HAIL_SVG.sysComms} alt="" />
               <span>{t('hud.comms')}</span>
             </button>
-            <button type="button" onClick={() => openPanel('expedition')}>
+            <button type="button" onClick={() => openPanel('expedition')} data-tour={TOUR_TARGET_IDS.OPEN_ROVER}>
               <img src={HAIL_SVG.sysRobot} alt="" />
               <span>{t('hud.rover')}</span>
             </button>
@@ -537,6 +553,7 @@ export function HailGameViewport() {
               type="button"
               onClick={handlePrimaryAction}
               className="is-primary"
+              data-tour={TOUR_TARGET_IDS.PRIMARY_PHASE_CTA}
             >
               <img src={HAIL_SVG.actExplore} alt="" />
               <span>

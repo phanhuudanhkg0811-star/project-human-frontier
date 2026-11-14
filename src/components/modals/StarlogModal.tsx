@@ -3,6 +3,7 @@ import { playSfx } from '../../audio/sfx.ts';
 import { selectActiveEventView, selectEventChoicePreviews } from '../../domain/eventSelectors.ts';
 import { selectCanAdvancePhase, selectWeatherOutlook } from '../../domain/selectors.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 import type { Locale } from '../../i18n/types.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { EquipmentId, EventChoice, EventResourceKey } from '../../types/index.ts';
@@ -211,7 +212,7 @@ export function StarlogModal({
         <div className="hail-dec-main-screen">
           {/* Upper Half: Strictly Pure Terminal Text Lines & Event Metadata */}
           <div className="hail-dec-text-pane">
-            <div className="hail-term-topbar">
+            <div className="hail-term-topbar" data-tour={TOUR_TARGET_IDS.WEATHER_STATUS}>
               <span className="hail-term-code">
                 {event && activeView
                   ? `${getEventCategoryLabel(event.category, locale)} // ${
@@ -372,6 +373,7 @@ export function StarlogModal({
           {/* Lower Half: Icon-Only Cards + 1-to-1 Square Green/Red Keys */}
           <div
             className="hail-dec-actions-grid"
+            data-tour={event && choicePreviews.length > 0 ? TOUR_TARGET_IDS.EVENT_CHOICE : undefined}
             style={{
               gridTemplateColumns: `repeat(${Math.max(2, event ? choicePreviews.length : 2)}, minmax(0, 1fr))`,
             }}
@@ -442,6 +444,7 @@ export function StarlogModal({
                   <button
                     type="button"
                     className="hail-sq-push-btn is-green"
+                    data-tour={TOUR_TARGET_IDS.STARLOG_CONFIRM}
                     aria-label={pickText('Xác nhận và tiếp tục', 'Confirm and continue')}
                     onClick={triggerContinue}
                   >

@@ -45,9 +45,9 @@ State này thuộc UI persistence. Nó không được đưa vào `GameState`, r
 
 ## Tests/gate
 
-- [ ] Decode/migration với missing, corrupt và future version.
-- [ ] Start/resume/skip/complete/replay idempotent.
-- [ ] Unmount/modal switch luôn cleanup overlay và listener.
-- [ ] Missing/replaced target không crash.
-- [ ] Onboarding thay đổi không làm replay hash thay đổi.
-- [ ] Keyboard focus và reduced-motion contract đạt.
+- [x] Decode/migration với missing, corrupt và future version.
+- [x] Start/resume/skip/complete/replay idempotent.
+- [x] Unmount/modal switch luôn cleanup overlay và listener.
+- [x] Missing/replaced target không crash.
+- [x] Onboarding thay đổi không làm replay hash thay đổi.
+- [x] Keyboard focus và reduced-motion contract đạt.
