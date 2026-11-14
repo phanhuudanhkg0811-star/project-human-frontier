@@ -1,219 +1,110 @@
 import { create } from 'zustand';
-import type { GameState, SimulationConfig, SystemId, Cargo } from '../types/index.ts';
-import { DaySimulationEngine } from '../engine/DaySimulationEngine.ts';
-import initialStateJson from '../data/initial-state.json';
-import balanceJson from '../data/balance.json';
-import eventsJson from '../data/events.json';
-import briefsJson from '../data/nasa-briefs.json';
+import { dispatchDomainCommand } from '../domain/orchestrator.ts';
+import { clearSavedGame, loadGameState, saveGameState } from '../persistence/saveAdapter.ts';
+import { createInitialGameState, loadContentBundle, type NewGameOptions } from '../schemas/contracts.ts';
+import type {
+  ContentBundle,
+  DispatchResult,
+  DomainEffect,
+  DomainError,
+  GameCommand,
+  GamePort,
+  GameState,
+  SimulationRuntimeState,
+} from '../types/index.ts';
 
-export interface StemBrief {
-  id: string;
-  title: string;
-  content: string;
-  source: string;
+interface GameStoreModel {
+  readonly bundle: ContentBundle;
+  readonly gameState: GameState;
+  readonly runtime: SimulationRuntimeState;
+  readonly saveRecoveryError: DomainError | null;
+  readonly lastEffects: readonly DomainEffect[];
+  readonly lastError: DomainError | null;
+  dispatch: (command: GameCommand) => Promise<DispatchResult>;
+  resetCampaign: (options?: NewGameOptions) => Promise<void>;
+  dismissError: () => void;
 }
 
-interface GameStore {
-  gameState: GameState;
-  config: SimulationConfig;
-  isNightTransition: boolean;
-  currentBrief: StemBrief | null;
-  dailyDecision: { sol: number; summary: string } | null;
-  lastStatsDelta: {
-    oxygenDelta: number;
-    waterDelta: number;
-    batteryDelta: number;
-  } | null;
+const bundle = loadContentBundle();
+const bootLoad = loadGameState(bundle);
+const initialGameState =
+  bootLoad.status === 'ok' ? bootLoad.state : createInitialGameState(bundle);
+const initialSaveError = bootLoad.status === 'error' ? bootLoad.error : null;
 
-  // NASA Outpost Actions
-  advancePhase: () => void;
-  chooseEventOption: (choiceId: string) => void;
-  repairSystem: (system: SystemId) => void;
-  upgradeSystem: (system: SystemId) => void;
-  updatePlan: (plan: Partial<GameState['plan']>) => void;
-  transmitRadio: (message: string) => void;
-  tickRadio: (deltaMs: number) => void;
-  requestResupply: (payload: Cargo) => void;
-  endSol: () => void;
-  launchToMars: () => void;
-  completeNightTransition: () => void;
-  resetGame: () => void;
-}
-
-const config: SimulationConfig = {
-  ...(balanceJson as unknown as Omit<SimulationConfig, 'events'>),
-  events: eventsJson as unknown as SimulationConfig['events'],
-};
-
-export const useGameStore = create<GameStore>((set, get) => ({
-  gameState: {
-    ...(initialStateJson as unknown as GameState),
-    resources: { ...(initialStateJson.resources as GameState['resources']) },
-    systems: { ...(initialStateJson.systems as unknown as GameState['systems']) },
-    crew: [...(initialStateJson.crew as unknown as GameState['crew'])],
-    log: [...initialStateJson.log],
+export const useGameStore = create<GameStoreModel>((set, get) => ({
+  bundle,
+  gameState: initialGameState,
+  runtime: {
+    status: initialSaveError ? 'error' : 'ready',
+    loadedModelVersion: bundle.balance.modelVersion,
+    loadedCatalogVersion: bundle.catalog.catalogVersion,
+    error: initialSaveError,
   },
-  config,
-  isNightTransition: false,
-  currentBrief: null,
-  dailyDecision: null,
-  lastStatsDelta: null,
+  saveRecoveryError: initialSaveError,
+  lastEffects: [],
+  lastError: null,
 
-  advancePhase: () => {
-    const { gameState, config } = get();
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'advance' }],
-    });
-    set({ gameState: next });
-  },
+  dispatch: async (command) => {
+    const current = get();
+    if (current.saveRecoveryError && command.type !== 'game/start') {
+      const blocked: DispatchResult = {
+        ok: false,
+        state: current.gameState,
+        error: current.saveRecoveryError,
+      };
+      set({ lastError: current.saveRecoveryError });
+      return blocked;
+    }
 
-  chooseEventOption: (choiceId: string) => {
-    const { gameState, config } = get();
-    if (!gameState.activeEvent) return;
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'choose', eventId: gameState.activeEvent, choiceId }],
-    });
-    set({
-      gameState: next,
-      dailyDecision:
-        next.activeEvent === null
-          ? { sol: gameState.sol, summary: next.log.at(-1) ?? 'Đã ghi nhận quyết định.' }
-          : get().dailyDecision,
-    });
-  },
-
-  repairSystem: (system: SystemId) => {
-    const { gameState, config } = get();
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'repair', system }],
-    });
-    set({ gameState: next });
-  },
-
-  upgradeSystem: (system: SystemId) => {
-    const { gameState, config } = get();
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'upgrade', system }],
-    });
-    set({ gameState: next });
-  },
-
-  updatePlan: (planPartial) => {
-    const { gameState, config } = get();
-    const merged = { ...gameState.plan, ...planPartial };
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'plan', ...merged }],
-    });
-    set({ gameState: next });
-  },
-
-  transmitRadio: (message: string) => {
-    const { gameState, config } = get();
-    const id = `tx-sol${gameState.sol}-${gameState.radio.length + 1}`;
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'transmit', id, message }],
-    });
-    set({ gameState: next });
-  },
-
-  tickRadio: (deltaMs: number) => {
-    const { gameState, config } = get();
-    const nowMs = gameState.radioClockMs + Math.max(1, Math.round(deltaMs));
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'radio-tick', nowMs }],
-    });
-    set({ gameState: next });
-  },
-
-  requestResupply: (payload: Cargo) => {
-    const { gameState, config } = get();
-    const id = `CARGO-SOL${gameState.sol}-${gameState.missions.length + 1}`;
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'resupply', id, payload }],
-    });
-    set({ gameState: next });
-  },
-
-  endSol: () => {
-    if (get().isNightTransition) return;
-    const { gameState, config } = get();
-    const prevResources = { ...gameState.resources };
-
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'end-sol' }],
-    });
-
-    if (next.sol === gameState.sol) return;
-
-    const o2Delta = Math.round((next.resources.oxygenKg - prevResources.oxygenKg) * 10) / 10;
-    const waterDelta = Math.round((next.resources.waterL - prevResources.waterL) * 10) / 10;
-    const batteryDelta = Math.round((next.resources.batteryKWh - prevResources.batteryKWh) * 10) / 10;
-
-    const briefs = briefsJson as StemBrief[];
-    const briefIndex = (gameState.sol - 1) % briefs.length;
-    const brief = briefs[briefIndex];
-
-    set({
-      gameState: next,
-      isNightTransition: true,
-      currentBrief: brief,
-      lastStatsDelta: {
-        oxygenDelta: o2Delta,
-        waterDelta: waterDelta,
-        batteryDelta: batteryDelta,
-      },
-    });
-  },
-
-  launchToMars: () => {
-    const { gameState, config } = get();
-    const prevPlanet = gameState.planet;
-    const next = DaySimulationEngine(gameState, {
-      config,
-      commands: [{ type: 'launch-mars' }],
-    });
-    if (next.planet !== prevPlanet) {
-      const briefs = briefsJson as StemBrief[];
+    const res = dispatchDomainCommand(current.gameState, command, current.bundle);
+    if (res.ok) {
+      const saveRes = saveGameState(res.state);
       set({
-        gameState: next,
-        isNightTransition: true,
-        currentBrief: briefs[4],
-        lastStatsDelta: {
-          oxygenDelta: -config.marsLaunch.transitConsumption.oxygenKg,
-          waterDelta: -config.marsLaunch.transitConsumption.waterL,
-          batteryDelta: 0,
+        gameState: res.state,
+        lastEffects: res.effects,
+        lastError: saveRes.ok ? null : saveRes.error,
+        saveRecoveryError: null,
+        runtime: {
+          ...current.runtime,
+          status: 'ready',
+          error: saveRes.ok ? null : saveRes.error,
         },
       });
+    } else {
+      set({
+        lastError: res.error,
+        runtime: { ...current.runtime, error: res.error },
+      });
     }
+    return res;
   },
 
-  completeNightTransition: () => {
-    set({ isNightTransition: false });
-  },
-
-  resetGame: () => {
+  resetCampaign: async (options = {}) => {
+    clearSavedGame();
+    const fresh = createInitialGameState(bundle, options);
+    const saveRes = saveGameState(fresh);
     set({
-      gameState: {
-        ...(initialStateJson as unknown as GameState),
-        planet: 'moon',
-        resources: { ...(initialStateJson.resources as GameState['resources']) },
-        systems: { ...(initialStateJson.systems as unknown as GameState['systems']) },
-        crew: [...(initialStateJson.crew as unknown as GameState['crew'])],
-        log: ['Trạm Mặt Trăng Artemis Base Camp được kích hoạt thành công vào Sol 1.'],
+      gameState: fresh,
+      saveRecoveryError: null,
+      lastError: saveRes.ok ? null : saveRes.error,
+      lastEffects: [],
+      runtime: {
+        status: 'ready',
+        loadedModelVersion: bundle.balance.modelVersion,
+        loadedCatalogVersion: bundle.catalog.catalogVersion,
+        error: saveRes.ok ? null : saveRes.error,
       },
-      isNightTransition: false,
-      currentBrief: null,
-      dailyDecision: null,
-      lastStatsDelta: null,
     });
   },
+
+  dismissError: () => set({ lastError: null }),
 }));
+
+/** Adapter exposing `useGameStore` via the headless `GamePort` contract. */
+export const ZustandGamePort: GamePort = {
+  getSnapshot: () => useGameStore.getState().gameState,
+  dispatch: (command) => useGameStore.getState().dispatch(command),
+  subscribe: (listener) => useGameStore.subscribe(listener),
+  getRuntimeState: () => useGameStore.getState().runtime,
+  reset: () => useGameStore.getState().resetCampaign(),
+};
