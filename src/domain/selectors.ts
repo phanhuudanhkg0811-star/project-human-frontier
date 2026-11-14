@@ -1,3 +1,4 @@
+import eventsCatalogJson from '../data/events.json' with { type: 'json' };
 import { resolveSol } from './endSolResolver.ts';
 import {
   computeCrewWeatherRisk,
@@ -100,13 +101,26 @@ export function selectCanScheduleExpedition(
   return { allowed: true };
 }
 
+function isActiveEventMandatory(state: GameState, bundle?: ContentBundle): boolean {
+  const activeId = state.events.activeEventId;
+  if (!activeId) return false;
+  const fromBundle = bundle?.events.find((e) => e.id === activeId);
+  if (fromBundle) return fromBundle.mandatory;
+  const ctxMandatory = state.events.activeEvent?.context?.mandatory;
+  if (typeof ctxMandatory === 'boolean') return ctxMandatory;
+  const fromStatic = (eventsCatalogJson as ReadonlyArray<{ id: string; mandatory?: boolean }>).find(
+    (e) => e.id === activeId
+  );
+  return fromStatic?.mandatory ?? true;
+}
+
 /** Check whether the player can advance from the current phase to the next phase. */
-export function selectCanAdvancePhase(state: GameState): Permission {
+export function selectCanAdvancePhase(state: GameState, bundle?: ContentBundle): Permission {
   if (state.campaign.status !== 'active') {
     return { allowed: false, code: 'E_PHASE_INVALID', message: 'Chiến dịch đã kết thúc.' };
   }
-  if (state.clock.phase === 'briefing' && state.events.activeEventId !== null) {
-    return { allowed: false, code: 'E_EVENT_PENDING', message: 'Hãy xử lý sự kiện Morning Briefing trước.' };
+  if (state.clock.phase === 'briefing' && isActiveEventMandatory(state, bundle)) {
+    return { allowed: false, code: 'E_EVENT_PENDING', message: 'Hãy xử lý sự kiện Morning Briefing bắt buộc trước.' };
   }
   if (state.clock.phase === 'rationing' || state.clock.phase === 'debrief' || state.clock.phase === 'resolving') {
     return { allowed: false, code: 'E_PHASE_INVALID', message: 'Dùng nút Chốt ngày (End-Sol) hoặc Tiếp tục ở pha này.' };
@@ -135,9 +149,9 @@ export function selectCanRepair(state: GameState, systemId: SystemId, bundle: Co
 }
 
 /** Explain all current blocking conditions before End-Sol or phase advance. */
-export function selectBlockingReasons(state: GameState): readonly string[] {
+export function selectBlockingReasons(state: GameState, bundle?: ContentBundle): readonly string[] {
   const reasons: string[] = [];
-  if (state.clock.phase === 'briefing' && state.events.activeEventId !== null) {
+  if (state.clock.phase === 'briefing' && isActiveEventMandatory(state, bundle)) {
     reasons.push('Chưa chọn phương án xử lý Sự kiện đầu ngày.');
   }
   if (state.clock.phase === 'debrief' && state.debrief.pendingDismiss) {

@@ -38,5 +38,45 @@
     "content": "Ánh sáng và sóng vô tuyến truyền đi ở vận tốc ~299,792 km/giây. Với khoảng cách trung bình ~384,400 km, tín hiệu từ trạm Artemis mất khoảng 1.28 giây để tới Houston (khoảng 2.6 giây khứ hồi) — cho phép hội thoại gần như thời gian thực nhưng tàu tiếp tế Cargo cần tới 4 Sol để bay tới bãi đáp.",
     "source": "NASA Deep Space Network Lunar Telemetry",
     "provenance": "observed"
+  },
+  {
+    "id": "brief-regolith-isru",
+    "tags": ["regolith", "isru", "dust"],
+    "title": "Bụi Tĩnh điện Regolith & Khai thác Tài nguyên tại chỗ (ISRU)",
+    "content": "Hạt bụi regolith trên Mặt Trăng sắc nhọn như mảnh thủy tinh vì không bị gió nước bào mòn và dễ nhiễm điện tích dưới bức xạ tử ngoại/plasma. Chúng bám chặt vào gioăng Airlock và bộ tản nhiệt, nhưng đồng thời chứa tới ~40% khối lượng là Oxy liên kết trong khoáng vật ilmenit và silicat có thể tách chiết làm vật liệu in 3D.",
+    "source": "NASA Artemis ISRU & Lunar Dust Mitigation Project",
+    "provenance": "observed"
+  },
+  {
+    "id": "brief-psr-water-ice",
+    "tags": ["psr", "water", "cryo"],
+    "title": "Băng Nước Cổ đại tại Vùng Tối Vĩnh cửu (PSR) Nam Cực",
+    "content": "Do trục nghiêng của Mặt Trăng chỉ khoảng 1.54°, đáy các miệng hố sâu vùng Nam Cực như Shackleton và Haworth chưa từng thấy ánh nắng suốt hàng tỷ năm. Nhiệt độ cực thấp (-170°C đến -230°C) biến nơi đây thành bẫy lạnh giữ lại băng nước từ sao chổi, cung cấp nguồn nước sống còn cho căn cứ Artemis.",
+    "source": "NASA LCROSS Impact Plume & LRO Diviner Polar Observations",
+    "provenance": "observed"
+  },
+  {
+    "id": "brief-fission-kilopower",
+    "tags": ["fission", "power", "lunar-night"],
+    "title": "Lò Phản ứng Hạt nhân Nhỏ Fission Surface Power (Kilopower)",
+    "content": "Để vượt qua 14 ngày Đêm Trăng không có nắng, NASA và DOE phát triển lò phản ứng phân hạch nhỏ dùng ống dẫn nhiệt Natri-Kali (NaK) và động cơ Stirling. Lò cung cấp dòng điện nền ổn định bất chấp bão bụi hay đêm tối dài 336 giờ.",
+    "source": "NASA Glenn Research Center / DOE Kilopower KRUSTY Test",
+    "provenance": "inferred"
+  },
+  {
+    "id": "brief-circadian-health",
+    "tags": ["crew", "morale", "circadian"],
+    "title": "Nhịp Sinh học Circadian & Tâm lý Phi hành đoàn trong Đêm Trăng",
+    "content": "Sống trong không gian kín suốt 14 ngày đêm tối liên tục dễ gây rối loạn giấc ngủ, suy giảm melatonin và mệt mỏi nhận thức. NASA ứng dụng hệ thống chiếu sáng quang phổ biến thiên (Solid-State Lighting) mô phỏng ánh nắng ban ngày để đồng bộ đồng hồ sinh học 24 giờ cho phi hành đoàn.",
+    "source": "NASA Human Research Program (HRP) Behavioral Health & Circadian Lighting",
+    "provenance": "observed"
+  },
+  {
+    "id": "brief-in-space-mfg",
+    "tags": ["fabricator", "parts", "engineering"],
+    "title": "Chế tạo In 3D tại chỗ trong Không gian (In-Space Manufacturing)",
+    "content": "Thay vì mang theo hàng trăm phụ tùng dự phòng từ Trái Đất với chi phí phóng đắt đỏ, máy in 3D Fabricator trên trạm cho phép đùn sợi polymer-hợp kim để chế tạo gioăng kín, tấm chắn bụi và linh kiện sửa chữa ngay khi phát sinh sự cố.",
+    "source": "NASA In-Space Manufacturing (ISM) & ISS 3D Printer Tech Demo",
+    "provenance": "inferred"
   }
 ]

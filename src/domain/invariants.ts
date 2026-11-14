@@ -95,7 +95,11 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     return makeErr('Duplicate crew IDs in dailyPlan.mreTargets');
   }
   // Equipment durability bounds & exact Rover reservation consistency
-  const activeItems = new Set(state.rover.activeMission?.equippedItems ?? []);
+  const isMissionHoldingEquipment =
+    state.rover.activeMission !== null &&
+    state.rover.activeMission.status !== 'completed' &&
+    state.rover.activeMission.status !== 'failed';
+  const activeItems = new Set(isMissionHoldingEquipment ? state.rover.activeMission!.equippedItems : []);
   for (const eqId of EQUIPMENT_IDS) {
     const eq = state.equipment[eqId];
     if (!Number.isFinite(eq.durability) || eq.durability < 0 || eq.durability > 100) {
@@ -135,8 +139,8 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     return makeErr('Non-terminal active expedition already exists in missionHistory');
   }
   const scienceGranted = state.rover.missionHistory.reduce((sum, result) => sum + result.scienceGranted, 0);
-  if (state.campaign.sciencePoints !== scienceGranted) {
-    return makeErr('campaign.sciencePoints must equal settled mission science grants');
+  if (state.campaign.sciencePoints < scienceGranted) {
+    return makeErr('campaign.sciencePoints cannot be less than settled mission science grants');
   }
 
   // EventState v3 invariants

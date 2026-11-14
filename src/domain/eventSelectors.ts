@@ -1,3 +1,4 @@
+import { checkEventChoiceRequirements } from './eventEngine.ts';
 import type {
   ActiveEvent,
   ContentBundle,
@@ -72,63 +73,57 @@ export function selectEventChoicePreviews(
   if (!event) return [];
 
   return event.choices.map((choice) => {
-    const blockedReasons: string[] = [];
-    if (choice.requiresEquipment) {
-      const eq = state.equipment[choice.requiresEquipment];
-      if (!eq.owned || eq.state === 'damaged') {
-        blockedReasons.push(`Yêu cầu thiết bị ${choice.requiresEquipment} còn tốt.`);
-      }
-    }
-    if (choice.requiresFlag && !state.events.flags[choice.requiresFlag]) {
-      blockedReasons.push(`Yêu cầu điều kiện ${choice.requiresFlag}.`);
-    }
-    if (choice.requiresCrew) {
-      const crewMember = state.crew[choice.requiresCrew.crewId];
-      if (crewMember.condition === 'evacuated') {
-        blockedReasons.push(`${crewMember.name} đã rời trạm.`);
-      } else {
-        if (choice.requiresCrew.requireFit && crewMember.condition !== 'fit') {
-          blockedReasons.push(`${crewMember.name} cần ở trạng thái Fit.`);
-        }
-        if (choice.requiresCrew.requireFree && crewMember.assignedTask !== null) {
-          blockedReasons.push(`${crewMember.name} đang bận nhiệm vụ khác.`);
-        }
-      }
-    }
-
+    const reqCheck = checkEventChoiceRequirements(state, choice);
     const resourceDeltas: Partial<Record<EventResourceKey, number>> = {};
     let scienceDelta = 0;
     const effectsSummary: string[] = [];
 
     for (const eff of choice.effects) {
       if (eff.kind === 'resource') {
-        const nextDelta = (resourceDeltas[eff.resource] ?? 0) + eff.delta;
+        const nextDelta = Math.round(((resourceDeltas[eff.resource] ?? 0) + eff.delta) * 100) / 100;
         resourceDeltas[eff.resource] = nextDelta;
-        if (state.resources[eff.resource] + nextDelta < 0) {
-          blockedReasons.push(`Không đủ ${eff.resource} (${eff.delta}).`);
-        }
         effectsSummary.push(`${eff.resource}: ${eff.delta > 0 ? `+${eff.delta}` : eff.delta}`);
       } else if (eff.kind === 'science') {
         scienceDelta += eff.delta;
         effectsSummary.push(`Science: ${eff.delta > 0 ? `+${eff.delta}` : eff.delta}`);
       } else if (eff.kind === 'crew') {
         const targetLabel = eff.target === 'all' ? 'Toàn đội' : state.crew[eff.target].name;
-        if (eff.healthDelta) effectsSummary.push(`${targetLabel} Health ${eff.healthDelta > 0 ? `+${eff.healthDelta}` : eff.healthDelta}`);
-        if (eff.moraleDelta) effectsSummary.push(`${targetLabel} Morale ${eff.moraleDelta > 0 ? `+${eff.moraleDelta}` : eff.moraleDelta}`);
-        if (eff.satietyDelta) effectsSummary.push(`${targetLabel} Satiety ${eff.satietyDelta > 0 ? `+${eff.satietyDelta}` : eff.satietyDelta}`);
+        if (eff.healthDelta) {
+          effectsSummary.push(`${targetLabel} Health ${eff.healthDelta > 0 ? `+${eff.healthDelta}` : eff.healthDelta}`);
+        }
+        if (eff.moraleDelta) {
+          effectsSummary.push(`${targetLabel} Morale ${eff.moraleDelta > 0 ? `+${eff.moraleDelta}` : eff.moraleDelta}`);
+        }
+        if (eff.satietyDelta) {
+          effectsSummary.push(`${targetLabel} Satiety ${eff.satietyDelta > 0 ? `+${eff.satietyDelta}` : eff.satietyDelta}`);
+        }
       } else if (eff.kind === 'equipment-wear') {
         effectsSummary.push(`Hao mòn ${eff.equipmentId}: -${eff.wear}%`);
       } else if (eff.kind === 'system-integrity') {
-        effectsSummary.push(`Hệ thống ${eff.systemId}: ${Math.round(eff.delta * 100)}%`);
-      } else if (eff.kind === 'plan-override' && eff.wrsEnabled !== undefined) {
-        effectsSummary.push(`WRS hôm nay: ${eff.wrsEnabled ? 'BẬT' : 'TẮT'}`);
+        const pct = Math.round(eff.delta * 100);
+        effectsSummary.push(`Hệ thống ${eff.systemId}: ${pct > 0 ? `+${pct}` : pct}%`);
+      } else if (eff.kind === 'plan-override') {
+        if (eff.wrsEnabled !== undefined) {
+          effectsSummary.push(`WRS hôm nay: ${eff.wrsEnabled ? 'BẬT' : 'TẮT'}`);
+        }
+        if (eff.extraPowerCostKWh !== undefined && eff.extraPowerCostKWh !== 0) {
+          const nextDelta = Math.round(((resourceDeltas.batteryKWh ?? 0) - eff.extraPowerCostKWh) * 100) / 100;
+          resourceDeltas.batteryKWh = nextDelta;
+          effectsSummary.push(`batteryKWh: -${eff.extraPowerCostKWh}`);
+        }
+      } else if (eff.kind === 'assign-task') {
+        effectsSummary.push(`Phân công ${state.crew[eff.crewId].name}: ${eff.task}`);
+      } else if (eff.kind === 'rover-action') {
+        effectsSummary.push(`Rover: ${eff.action}`);
+      } else if (eff.kind === 'schedule-follow-up') {
+        effectsSummary.push(`Hệ quả sau +${eff.delaySols} Sol`);
       }
     }
 
     return {
       choice,
-      allowed: blockedReasons.length === 0,
-      blockedReasons,
+      allowed: reqCheck.allowed,
+      blockedReasons: reqCheck.blockedReasons,
       resourceDeltas,
       scienceDelta,
       effectsSummary,

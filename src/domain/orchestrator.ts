@@ -1,5 +1,10 @@
 import { createInitialGameState, validateGameCommand } from '../schemas/contracts.ts';
 import { resolveSol } from './endSolResolver.ts';
+import {
+  applyEventEffectsAtomic,
+  checkEventChoiceRequirements,
+  selectNextSolEvent,
+} from './eventEngine.ts';
 import { validateStateInvariants } from './invariants.ts';
 import type {
   ContentBundle,
@@ -38,23 +43,36 @@ function canOperateRover(state: GameState, crewId: keyof GameState['crew'], bund
   );
 }
 
-/** Find the first unresolved mandatory event triggered for the current Sol. */
-export function findNextPendingEvent(state: GameState, events: readonly EventNode[]): EventNode | null {
+/** Find the next eligible event for the current Sol using Phase 1.3 priority + weighted RNG rules. */
+export function findNextPendingEvent(
+  state: GameState,
+  events: readonly EventNode[],
+  bundle?: ContentBundle
+): EventNode | null {
   if (state.events.activeEventId) {
     return events.find((e) => e.id === state.events.activeEventId) ?? null;
   }
-  for (const ev of events) {
-    if (state.events.resolvedEventIds.includes(ev.id)) continue;
-    const matches = ev.when.some((cond) => {
-      if (cond.sol !== undefined && cond.sol === state.clock.sol) return true;
-      if (cond.solMin !== undefined && cond.solMax !== undefined) {
-        return state.clock.sol >= cond.solMin && state.clock.sol <= cond.solMax;
-      }
-      return false;
-    });
-    if (matches) return ev;
+  if (bundle) {
+    const picked = selectNextSolEvent(state, { ...bundle, events });
+    if (!picked.activeEvent) return null;
+    return events.find((e) => e.id === picked.activeEvent!.eventId) ?? null;
   }
-  return null;
+  const eligible = events.filter((ev) => {
+    if (state.events.resolvedEventIds.includes(ev.id)) return false;
+    return ev.when.some((cond) => {
+      if (cond.sol !== undefined && cond.sol !== state.clock.sol) return false;
+      if (cond.solMin !== undefined && state.clock.sol < cond.solMin) return false;
+      if (cond.solMax !== undefined && state.clock.sol > cond.solMax) return false;
+      return true;
+    });
+  });
+  if (eligible.length === 0) return null;
+  const maxPriority = Math.max(...eligible.map((e) => e.priority));
+  return (
+    eligible
+      .filter((e) => e.priority === maxPriority)
+      .sort((a, b) => a.id.localeCompare(b.id))[0] ?? null
+  );
 }
 
 const NEXT_PHASE: Partial<Record<SolPhase, SolPhase>> = {
@@ -105,7 +123,11 @@ export function dispatchDomainCommand(
   switch (command.type) {
     case 'phase/advance': {
       if (state.clock.phase === 'briefing' && state.events.activeEventId !== null) {
-        return fail(state, 'E_PHASE_INVALID', 'Cần xử lý sự kiện Morning Briefing trước khi sang pha Kỹ thuật.');
+        const activeEv = bundle.events.find((e) => e.id === state.events.activeEventId);
+        const isMandatory = activeEv ? activeEv.mandatory : true;
+        if (isMandatory) {
+          return fail(state, 'E_PHASE_INVALID', 'Cần xử lý sự kiện Morning Briefing trước khi sang pha Kỹ thuật.');
+        }
       }
       const next = NEXT_PHASE[state.clock.phase];
       if (!next) {
@@ -127,9 +149,6 @@ export function dispatchDomainCommand(
     }
 
     case 'event/resolve': {
-      if (state.clock.phase !== 'briefing') {
-        return fail(state, 'E_PHASE_INVALID', 'Chỉ xử lý sự kiện tại pha Morning Briefing.');
-      }
       if (state.events.activeEventId !== command.eventId) {
         return fail(state, 'E_PLAN_INVALID', 'Sự kiện không khớp activeEventId hiện tại.');
       }
@@ -138,94 +157,39 @@ export function dispatchDomainCommand(
       if (!ev || !choice) {
         return fail(state, 'E_PLAN_INVALID', 'Lựa chọn sự kiện không hợp lệ.');
       }
-      if (choice.requiresEquipment) {
-        const eq = state.equipment[choice.requiresEquipment];
-        if (!eq.owned || eq.state === 'damaged') {
-          return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần thiết bị ${choice.requiresEquipment} còn dùng được.`);
-        }
+      const allowedPhases: readonly SolPhase[] = ev.mandatory
+        ? ['briefing']
+        : ['briefing', 'engineering', 'comms', 'rationing'];
+      if (!allowedPhases.includes(state.clock.phase)) {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ xử lý sự kiện tại pha hợp lệ trước khi chốt ngày.');
       }
-      if (choice.requiresFlag && !state.events.flags[choice.requiresFlag]) {
-        return fail(state, 'E_PLAN_INVALID', `Chưa đạt điều kiện ${choice.requiresFlag}.`);
+      if (state.events.activeEvent && state.clock.sol > state.events.activeEvent.deadlineSol) {
+        return fail(state, 'E_PLAN_INVALID', 'Sự kiện đã quá hạn xử lý.');
       }
 
-      const r = { ...state.resources };
-      const s = bundle.balance.storages;
-      const nextCrew = { ...state.crew };
-      const nextEq = { ...state.equipment };
-      const nextSys = { ...state.systems };
-      const nextFlags: Record<string, boolean | string | number> = { ...state.events.flags };
-      const nextFollowUps = [...state.events.pendingFollowUps];
-      let nextWrsEnabled = state.dailyPlan.wrsEnabled;
+      const reqCheck = checkEventChoiceRequirements(state, choice);
+      if (!reqCheck.allowed) {
+        const isResourceOrEq =
+          Boolean(choice.requiresEquipment && (!state.equipment[choice.requiresEquipment].owned || state.equipment[choice.requiresEquipment].state === 'damaged')) ||
+          reqCheck.blockedReasons.some((msg) => msg.startsWith('Không đủ'));
+        return fail(
+          state,
+          isResourceOrEq ? 'E_INSUFFICIENT_RESOURCE' : 'E_PLAN_INVALID',
+          reqCheck.blockedReasons[0] ?? 'Chưa đủ điều kiện chọn phương án này.'
+        );
+      }
 
-      for (const eff of choice.effects) {
-        if (eff.kind === 'resource') {
-          if (eff.resource === 'partsKg') {
-            const nextVal = round2(r.partsKg + eff.delta);
-            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Phụ tùng cho lựa chọn này.');
-            r.partsKg = clamp(nextVal, 0, s.partsKg.max);
-          } else if (eff.resource === 'batteryKWh') {
-            const nextVal = round2(r.batteryKWh + eff.delta);
-            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Pin cho lựa chọn này.');
-            r.batteryKWh = clamp(nextVal, 0, s.batteryKWh.max);
-          } else if (eff.resource === 'oxygenKg') {
-            r.oxygenKg = clamp(round2(r.oxygenKg + eff.delta), 0, s.oxygenKg.max);
-          } else if (eff.resource === 'waterL') {
-            r.waterL = clamp(round2(r.waterL + eff.delta), 0, s.waterL.max);
-          } else if (eff.resource === 'mrePacks') {
-            const nextVal = r.mrePacks + eff.delta;
-            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ gói MRE cho lựa chọn này.');
-            r.mrePacks = clamp(nextVal, 0, bundle.balance.consumables.mrePacks.max);
-          } else if (eff.resource === 'medkits') {
-            const nextVal = r.medkits + eff.delta;
-            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Medkit cho lựa chọn này.');
-            r.medkits = clamp(nextVal, 0, bundle.balance.consumables.medkits.max);
-          }
-        } else if (eff.kind === 'crew') {
-          const targets = eff.target === 'all' ? (['cmd', 'eng', 'doc', 'geo'] as const) : ([eff.target] as const);
-          for (const id of targets) {
-            const c = nextCrew[id];
-            if (c.condition === 'evacuated') continue;
-            nextCrew[id] = {
-              ...c,
-              health: clamp(c.health + (eff.healthDelta ?? 0), 0, 100),
-              morale: clamp(c.morale + (eff.moraleDelta ?? 0), 0, 100),
-              satiety: clamp(c.satiety + (eff.satietyDelta ?? 0), 0, 100),
-            };
-          }
-        } else if (eff.kind === 'equipment-wear') {
-          const eq = nextEq[eff.equipmentId];
-          const nextDur = clamp(eq.durability - eff.wear, 0, 100);
-          nextEq[eff.equipmentId] = {
-            ...eq,
-            durability: nextDur,
-            state: nextDur > 50 ? 'good' : nextDur > 0 ? 'worn' : 'damaged',
-          };
-        } else if (eff.kind === 'system-integrity') {
-          const sys = nextSys[eff.systemId];
-          const nextInt = clamp(round2(sys.integrity + eff.delta), 0, 1);
-          nextSys[eff.systemId] = {
-            ...sys,
-            integrity: nextInt,
-            status: nextInt >= 0.85 ? 'nominal' : nextInt > 0 ? 'degraded' : 'offline',
-          };
-        } else if (eff.kind === 'plan-override') {
-          if (eff.wrsEnabled !== undefined) nextWrsEnabled = eff.wrsEnabled;
-        } else if (eff.kind === 'set-flag') {
-          nextFlags[eff.key] = eff.value;
-        } else if (eff.kind === 'clear-flag') {
-          delete nextFlags[eff.key];
-        } else if (eff.kind === 'schedule-follow-up') {
-          nextFollowUps.push({
-            eventId: eff.eventId,
-            triggerSol: state.clock.sol + eff.delaySols,
-            sourceEventId: ev.id,
-            sourceChoiceId: choice.id,
-          });
-        }
+      const applied = applyEventEffectsAtomic(state, choice.effects, bundle, {
+        mode: 'choice',
+        sourceEventId: ev.id,
+        sourceChoiceId: choice.id,
+      });
+      if (!applied.ok) {
+        return fail(state, applied.error.code, applied.error.message, applied.error.recoverable);
       }
 
       const nextOccurrenceHistory = [
-        ...state.events.occurrenceHistory,
+        ...applied.state.events.occurrenceHistory,
         {
           eventId: ev.id,
           triggeredSol: state.events.activeEvent?.triggeredAtSol ?? state.clock.sol,
@@ -241,28 +205,21 @@ export function dispatchDomainCommand(
       ];
 
       candidate = {
-        ...state,
+        ...applied.state,
         revision: state.revision + 1,
-        resources: r,
-        crew: nextCrew,
-        equipment: nextEq,
-        systems: nextSys,
-        dailyPlan: {
-          ...state.dailyPlan,
-          wrsEnabled: nextWrsEnabled,
-        },
         events: {
-          ...state.events,
+          ...applied.state.events,
           activeEventId: null,
           activeEvent: null,
           resolvedEventIds: nextResolvedIds,
           occurrenceHistory: nextOccurrenceHistory,
-          flags: nextFlags,
-          pendingFollowUps: nextFollowUps,
         },
         history: {
-          ...state.history,
-          logs: [...state.history.logs, { sol: state.clock.sol, phase: 'briefing', code: 'EVENT_RESOLVED', message: choice.log }],
+          ...applied.state.history,
+          logs: [
+            ...applied.state.history.logs,
+            { sol: state.clock.sol, phase: state.clock.phase, code: 'EVENT_RESOLVED', message: choice.log },
+          ],
         },
       };
       const invErr = validateStateInvariants(candidate, bundle);
@@ -884,20 +841,17 @@ export function dispatchDomainCommand(
         return fail(state, 'E_PHASE_INVALID', 'Không ở màn hình Debrief.');
       }
       const nextSol = state.clock.sol + 1;
+      const clearedRover =
+        state.rover.activeMission?.status === 'completed' || state.rover.activeMission?.status === 'failed'
+          ? { ...state.rover, activeMission: null }
+          : state.rover;
       const previewNextState: GameState = {
         ...state,
         clock: { ...state.clock, sol: nextSol, phase: 'briefing' },
-        events: { ...state.events, activeEventId: null, activeEvent: null },
+        rover: clearedRover,
       };
-      const pendingEv = findNextPendingEvent(previewNextState, bundle.events);
-      const nextActiveEvent = pendingEv
-        ? {
-            eventId: pendingEv.id,
-            triggeredAtSol: nextSol,
-            deadlineSol: nextSol + (pendingEv.deadlineOffsetSols ?? 0),
-            context: {},
-          }
-        : null;
+      const nextEventSelection = selectNextSolEvent(previewNextState, bundle);
+      const nextActiveEvent = nextEventSelection.activeEvent;
       candidate = {
         ...previewNextState,
         revision: state.revision + 1,
@@ -908,13 +862,11 @@ export function dispatchDomainCommand(
           powerPriority: state.dailyPlan.powerPriority,
           mreTargets: [],
         },
-        rover: state.rover.activeMission?.status === 'completed' || state.rover.activeMission?.status === 'failed'
-          ? { ...state.rover, activeMission: null }
-          : state.rover,
         events: {
           ...state.events,
           activeEventId: nextActiveEvent ? nextActiveEvent.eventId : null,
           activeEvent: nextActiveEvent,
+          pendingFollowUps: nextEventSelection.pendingFollowUps,
         },
         debrief: {
           pendingDismiss: false,

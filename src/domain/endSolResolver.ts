@@ -1,3 +1,4 @@
+import { buildDebriefContext, resolveExpiredEventAtEndSol } from './eventEngine.ts';
 import { deriveRoll } from './prng.ts';
 import {
   computeCrewWeatherRisk,
@@ -795,12 +796,16 @@ function resolveRoverTick(
       (option.requirements?.minBatteryKWh === undefined || resources.batteryKWh >= option.requirements.minBatteryKWh)
   );
 
-  const roverIncidentProb = computeRoverRiskProb(weather, bundle.balance, diffMult, {
-    threatBlocked,
-    isElenaOperating: mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
-  });
+  const savedBySol7Boost =
+    mission.expeditionId === 'regolith-field' && Boolean(state.events.flags.sol7_saved_rover);
+  const roverIncidentProb = savedBySol7Boost
+    ? 0
+    : computeRoverRiskProb(weather, bundle.balance, diffMult, {
+        threatBlocked,
+        isElenaOperating: mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
+      });
   const roll = deriveRoll(state.campaign.seed, state.clock.sol, `rover-hazard:${mission.expeditionId}`);
-  const roverIncidentTriggered = roll < roverIncidentProb;
+  const roverIncidentTriggered = !savedBySol7Boost && roll < roverIncidentProb;
 
   if (roverIncidentTriggered) {
     const incident = {
@@ -936,19 +941,21 @@ export function resolveSol(
   bundle: ContentBundle,
   mode: 'commit' | 'preview'
 ): ResolveSolOutput {
-  const sol = state.clock.sol;
+  const expiredOut = resolveExpiredEventAtEndSol(state, bundle);
+  const workingState = expiredOut.state;
+  const sol = workingState.clock.sol;
   const weather = getSolWeather(
     bundle.donki,
-    state.campaign.donkiProfileId,
+    workingState.campaign.donkiProfileId,
     sol,
-    state.campaign.spaceWeatherOverride
+    workingState.campaign.spaceWeatherOverride
   );
   const isNight = isLunarNightSol(sol, bundle.campaign);
   const surfaceTempC = computeSurfaceTempC(sol, bundle);
   const startRes = state.resources;
 
   // Tier 1: Cargo arrival + crew engineering repairs/upgrades
-  const afterCargo = applyCargoArrival(state, bundle);
+  const afterCargo = applyCargoArrival(workingState, bundle);
   const repairOut = resolveRepairAndUpgradeTasks(afterCargo.state, weather, bundle);
 
   // Tier 2: Power grid load shedding + ECLSS + WRS
@@ -956,15 +963,15 @@ export function resolveSol(
 
   // Fabricator progression using Tier 2 power confirmation
   let nextResources = eclssOut.resources;
-  let nextEquipment: Record<EquipmentId, EquipmentItemState> = { ...state.equipment };
-  let nextFabricator = state.fabricator;
+  let nextEquipment: Record<EquipmentId, EquipmentItemState> = { ...workingState.equipment };
+  let nextFabricator = workingState.fabricator;
   const fabNotes: string[] = [];
-  if (state.fabricator.activeJob && eclssOut.fabricatorCompleted) {
-    const remaining = state.fabricator.activeJob.solsRemaining - 1;
+  if (workingState.fabricator.activeJob && eclssOut.fabricatorCompleted) {
+    const remaining = workingState.fabricator.activeJob.solsRemaining - 1;
     if (remaining <= 0) {
       const done = finalizeFabricatorJob(
         { ...afterCargo.state, resources: nextResources, equipment: nextEquipment },
-        state.fabricator.activeJob,
+        workingState.fabricator.activeJob,
         bundle
       );
       nextResources = done.resources;
@@ -974,13 +981,13 @@ export function resolveSol(
     } else {
       nextFabricator = {
         usedThisSol: false,
-        activeJob: { ...state.fabricator.activeJob, solsRemaining: remaining },
+        activeJob: { ...workingState.fabricator.activeJob, solsRemaining: remaining },
       };
     }
-  } else if (!state.fabricator.activeJob) {
+  } else if (!workingState.fabricator.activeJob) {
     nextFabricator = { usedThisSol: false, activeJob: null };
   } else {
-    nextFabricator = { usedThisSol: false, activeJob: state.fabricator.activeJob };
+    nextFabricator = { usedThisSol: false, activeJob: workingState.fabricator.activeJob };
     fabNotes.push('Thiếu điện: 3D Fabricator tạm hoãn chu kỳ in sang Sol kế tiếp.');
   }
 
@@ -1018,8 +1025,8 @@ export function resolveSol(
   nextResources = { ...nextResources, oxygenZeroStreak, waterZeroStreak };
 
   const activeCrewCount = Object.values(crewOut.crew).filter((c) => c.condition !== 'evacuated').length;
-  let campaignStatus = state.campaign.status;
-  let endReason: string | null = state.campaign.endReason;
+  let campaignStatus = workingState.campaign.status;
+  let endReason: string | null = workingState.campaign.endReason;
 
   if (activeCrewCount < bundle.campaign.defeat.minActiveCrew) {
     campaignStatus = 'defeat';
@@ -1030,12 +1037,13 @@ export function resolveSol(
   } else if (waterZeroStreak >= bundle.campaign.defeat.waterZeroConsecutiveSols) {
     campaignStatus = 'defeat';
     endReason = 'Cạn kiệt nước sạch 2 Sol liên tiếp.';
-  } else if (sol >= state.campaign.targetSol) {
+  } else if (sol >= workingState.campaign.targetSol) {
     campaignStatus = 'victory';
     endReason = 'Hoàn thành xuất sắc 32 Sol sinh tồn tại Căn cứ Mặt Trăng Artemis!';
   }
 
   const highlights: string[] = [
+    ...(expiredOut.expiredNote ? [expiredOut.expiredNote] : []),
     ...(afterCargo.note ? [afterCargo.note] : []),
     ...repairOut.notes,
     ...fabNotes,
@@ -1044,7 +1052,7 @@ export function resolveSol(
   ];
 
   const weatherOutcome: SpaceWeatherOutcome = {
-    profileId: state.campaign.donkiProfileId,
+    profileId: workingState.campaign.donkiProfileId,
     solDate: weather.date,
     level: weather.level,
     solarPenaltyPct: computeWeatherPowerPenalty(weather, isNight),
@@ -1060,7 +1068,8 @@ export function resolveSol(
     headline: weather.notifications.headline,
   };
 
-  const summary: SolSummary = {
+  const baseBriefId = pickBriefId(weather, isNight, eclssOut.wrsRecoveredWaterL, bundle);
+  const summaryWithoutContext: Omit<SolSummary, 'debriefContext'> = {
     sol,
     isLunarNight: isNight,
     surfaceTempC,
@@ -1078,24 +1087,30 @@ export function resolveSol(
       medkits: nextResources.medkits - startRes.medkits,
     },
     weather: weatherOutcome,
-    briefId: pickBriefId(weather, isNight, eclssOut.wrsRecoveredWaterL, bundle),
-    debriefContext: null,
+    briefId: baseBriefId,
     highlights,
+  };
+
+  const debriefContext = buildDebriefContext(workingState, nextResources, summaryWithoutContext, bundle);
+  const summary: SolSummary = {
+    ...summaryWithoutContext,
+    briefId: debriefContext.briefId,
+    debriefContext,
   };
 
   const isTerminal = campaignStatus === 'victory' || campaignStatus === 'defeat';
 
   const nextState: GameState = {
-    ...state,
+    ...workingState,
     revision: mode === 'commit' ? state.revision + 1 : state.revision,
     campaign: {
-      ...state.campaign,
+      ...workingState.campaign,
       status: campaignStatus,
       sciencePoints: roverOut.sciencePoints,
       endReason,
     },
     clock: {
-      sol: state.clock.sol,
+      sol: workingState.clock.sol,
       phase: isTerminal ? 'terminal' : 'debrief',
       resolutionIndex: mode === 'commit' ? state.clock.resolutionIndex + 1 : state.clock.resolutionIndex,
     },
@@ -1116,9 +1131,19 @@ export function resolveSol(
             summaries: [...state.history.summaries, summary],
             logs: [
               ...state.history.logs,
+              ...(expiredOut.expiredNote
+                ? [
+                    {
+                      sol,
+                      phase: 'rationing' as const,
+                      code: 'EVENT_EXPIRED',
+                      message: expiredOut.expiredNote,
+                    },
+                  ]
+                : []),
               {
                 sol,
-                phase: 'debrief',
+                phase: 'debrief' as const,
                 code: 'SOL_RESOLVED',
                 message: `Kết thúc Sol ${sol}: Pin ${nextResources.batteryKWh} kWh, O₂ ${nextResources.oxygenKg} kg, Nước ${nextResources.waterL} L.`,
               },
