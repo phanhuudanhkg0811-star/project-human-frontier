@@ -1,0 +1,656 @@
+{
+  "stage": "Phase 1.4",
+  "buildId": "0c578bdd4c32b1b4e8b1d9191f800c82b6bc23b5",
+  "workingTreeDirty": true,
+  "versions": {
+    "content": "1.4.0-moon32",
+    "model": "1.4.0-ts-donki",
+    "catalog": "1.1.0-moon32",
+    "ranking": "1.4.0-moon32"
+  },
+  "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+  "summary": {
+    "samples": 4,
+    "outcomes": {
+      "victory": 2,
+      "defeat": 2
+    },
+    "failureReasons": {
+      "oxygen-depleted": 1,
+      "water-depleted": 1
+    },
+    "simulationErrors": 0
+  },
+  "groups": {
+    "policy": {
+      "balanced-branch-a": {
+        "samples": 1,
+        "outcomes": {
+          "victory": 1
+        },
+        "failureReasons": {},
+        "simulationErrors": 0
+      },
+      "balanced-branch-b": {
+        "samples": 1,
+        "outcomes": {
+          "victory": 1
+        },
+        "failureReasons": {},
+        "simulationErrors": 0
+      },
+      "negative-control-oxygen": {
+        "samples": 1,
+        "outcomes": {
+          "defeat": 1
+        },
+        "failureReasons": {
+          "oxygen-depleted": 1
+        },
+        "simulationErrors": 0
+      },
+      "negative-control-water": {
+        "samples": 1,
+        "outcomes": {
+          "defeat": 1
+        },
+        "failureReasons": {
+          "water-depleted": 1
+        },
+        "simulationErrors": 0
+      }
+    },
+    "difficulty": {
+      "cadet": {
+        "samples": 4,
+        "outcomes": {
+          "victory": 2,
+          "defeat": 2
+        },
+        "failureReasons": {
+          "oxygen-depleted": 1,
+          "water-depleted": 1
+        },
+        "simulationErrors": 0
+      }
+    },
+    "donkiProfileId": {
+      "may-2024-xstorm": {
+        "samples": 4,
+        "outcomes": {
+          "victory": 2,
+          "defeat": 2
+        },
+        "failureReasons": {
+          "oxygen-depleted": 1,
+          "water-depleted": 1
+        },
+        "simulationErrors": 0
+      }
+    }
+  },
+  "finalResourcePercentiles": {
+    "batteryKWh": {
+      "samples": 4,
+      "min": 20,
+      "p10": 20,
+      "median": 60,
+      "p90": 60,
+      "max": 60
+    },
+    "waterL": {
+      "samples": 4,
+      "min": 0,
+      "p10": 0,
+      "median": 113.72,
+      "p90": 113.72,
+      "max": 149.6
+    },
+    "oxygenKg": {
+      "samples": 4,
+      "min": 0,
+      "p10": 0,
+      "median": 21.2,
+      "p90": 21.2,
+      "max": 79.4
+    },
+    "partsKg": {
+      "samples": 4,
+      "min": 22,
+      "p10": 22,
+      "median": 34,
+      "p90": 37,
+      "max": 43
+    },
+    "mrePacks": {
+      "samples": 4,
+      "min": 16,
+      "p10": 16,
+      "median": 18,
+      "p90": 34,
+      "max": 34
+    }
+  },
+  "reports": [
+    {
+      "name": "victory-a",
+      "policy": "balanced-branch-a",
+      "status": "completed",
+      "error": null,
+      "seed": 205099,
+      "difficulty": "cadet",
+      "donkiProfileId": "may-2024-xstorm",
+      "completedSols": 32,
+      "outcome": "victory",
+      "reason": "Hoàn thành 32 Sol sinh tồn tại Căn cứ Mặt Trăng Artemis!",
+      "reasonCode": "moon-victory",
+      "rank": "S",
+      "requestedBranch": "A",
+      "actualBranch": "save-rover-link",
+      "rejectedCommands": 0,
+      "completedExpeditions": 3,
+      "blackouts": 0,
+      "resourceMinima": {
+        "batteryKWh": 26,
+        "oxygenKg": 14.8,
+        "waterL": 55.84,
+        "partsKg": 3,
+        "mrePacks": 20,
+        "medkits": 2
+      },
+      "finalResources": {
+        "batteryKWh": 60,
+        "oxygenKg": 21.2,
+        "waterL": 113.72,
+        "partsKg": 43,
+        "wasteWaterL": 60.8,
+        "mrePacks": 34,
+        "medkits": 6,
+        "medkitLevel": 1,
+        "waterZeroStreak": 0,
+        "oxygenZeroStreak": 0
+      },
+      "finalCrew": {
+        "cmd": {
+          "id": "cmd",
+          "name": "Sarah Chen",
+          "roleTag": "Commander",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "eng": {
+          "id": "eng",
+          "name": "Alex Rivera",
+          "roleTag": "Engineer",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "doc": {
+          "id": "doc",
+          "name": "Marcus Vance",
+          "roleTag": "Medic",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "geo": {
+          "id": "geo",
+          "name": "Elena Rostova",
+          "roleTag": "Geologist",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        }
+      },
+      "finalSystems": {
+        "solar": {
+          "id": "solar",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "recycler": {
+          "id": "recycler",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "scrubber": {
+          "id": "scrubber",
+          "level": 1,
+          "integrity": 0.8,
+          "status": "degraded"
+        },
+        "airlock": {
+          "id": "airlock",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "fabricator": {
+          "id": "fabricator",
+          "level": 2,
+          "integrity": 1,
+          "status": "nominal"
+        }
+      },
+      "wrs": {
+        "measuredSols": 32,
+        "totalSols": 32,
+        "processedL": 220.79999999999998,
+        "recoveredL": 198.72000000000003,
+        "efficiency": 0.9000000000000002
+      },
+      "trace": "victory-a.json",
+      "finalHash": "67879c487b9ee197b18e8121e354108b764e9ed8f542dd12ee10265bddcee257"
+    },
+    {
+      "name": "victory-b",
+      "policy": "balanced-branch-b",
+      "status": "completed",
+      "error": null,
+      "seed": 205099,
+      "difficulty": "cadet",
+      "donkiProfileId": "may-2024-xstorm",
+      "completedSols": 32,
+      "outcome": "victory",
+      "reason": "Hoàn thành 32 Sol sinh tồn tại Căn cứ Mặt Trăng Artemis!",
+      "reasonCode": "moon-victory",
+      "rank": "A",
+      "requestedBranch": "B",
+      "actualBranch": "prioritize-wrs",
+      "rejectedCommands": 0,
+      "completedExpeditions": 2,
+      "blackouts": 0,
+      "resourceMinima": {
+        "batteryKWh": 26,
+        "oxygenKg": 14.8,
+        "waterL": 55.84,
+        "partsKg": 3,
+        "mrePacks": 20,
+        "medkits": 2
+      },
+      "finalResources": {
+        "batteryKWh": 60,
+        "oxygenKg": 21.2,
+        "waterL": 113.72,
+        "partsKg": 37,
+        "wasteWaterL": 60.8,
+        "mrePacks": 34,
+        "medkits": 6,
+        "medkitLevel": 1,
+        "waterZeroStreak": 0,
+        "oxygenZeroStreak": 0
+      },
+      "finalCrew": {
+        "cmd": {
+          "id": "cmd",
+          "name": "Sarah Chen",
+          "roleTag": "Commander",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "eng": {
+          "id": "eng",
+          "name": "Alex Rivera",
+          "roleTag": "Engineer",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "doc": {
+          "id": "doc",
+          "name": "Marcus Vance",
+          "roleTag": "Medic",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        },
+        "geo": {
+          "id": "geo",
+          "name": "Elena Rostova",
+          "roleTag": "Geologist",
+          "health": 100,
+          "morale": 95,
+          "satiety": 50,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 48.08,
+          "assignedTask": null
+        }
+      },
+      "finalSystems": {
+        "solar": {
+          "id": "solar",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "recycler": {
+          "id": "recycler",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "scrubber": {
+          "id": "scrubber",
+          "level": 1,
+          "integrity": 0.8,
+          "status": "degraded"
+        },
+        "airlock": {
+          "id": "airlock",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "fabricator": {
+          "id": "fabricator",
+          "level": 2,
+          "integrity": 1,
+          "status": "nominal"
+        }
+      },
+      "wrs": {
+        "measuredSols": 32,
+        "totalSols": 32,
+        "processedL": 220.79999999999998,
+        "recoveredL": 198.72000000000003,
+        "efficiency": 0.9000000000000002
+      },
+      "trace": "victory-b.json",
+      "finalHash": "4e83f07062da32c821fa80285063a3f3d52c7285d05c020d5cc8926e2c6504d2"
+    },
+    {
+      "name": "defeat-oxygen",
+      "policy": "negative-control-oxygen",
+      "status": "completed",
+      "error": null,
+      "seed": 205099,
+      "difficulty": "cadet",
+      "donkiProfileId": "may-2024-xstorm",
+      "completedSols": 21,
+      "outcome": "defeat",
+      "reason": "Cạn dưỡng khí 1 Sol liên tiếp.",
+      "reasonCode": "oxygen-depleted",
+      "rank": null,
+      "requestedBranch": null,
+      "actualBranch": "save-rover-link",
+      "rejectedCommands": 0,
+      "completedExpeditions": 0,
+      "blackouts": 0,
+      "resourceMinima": {
+        "batteryKWh": 20,
+        "oxygenKg": 0,
+        "waterL": 63.76,
+        "partsKg": 14,
+        "mrePacks": 16,
+        "medkits": 2
+      },
+      "finalResources": {
+        "batteryKWh": 20,
+        "oxygenKg": 0,
+        "waterL": 149.6,
+        "partsKg": 34,
+        "wasteWaterL": 8.8,
+        "mrePacks": 16,
+        "medkits": 5,
+        "medkitLevel": 1,
+        "waterZeroStreak": 0,
+        "oxygenZeroStreak": 1
+      },
+      "finalCrew": {
+        "cmd": {
+          "id": "cmd",
+          "name": "Sarah Chen",
+          "roleTag": "Commander",
+          "health": 64,
+          "morale": 34,
+          "satiety": 35,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 36.99,
+          "assignedTask": null
+        },
+        "eng": {
+          "id": "eng",
+          "name": "Alex Rivera",
+          "roleTag": "Engineer",
+          "health": 64,
+          "morale": 34,
+          "satiety": 35,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 36.99,
+          "assignedTask": null
+        },
+        "doc": {
+          "id": "doc",
+          "name": "Marcus Vance",
+          "roleTag": "Medic",
+          "health": 64,
+          "morale": 34,
+          "satiety": 35,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 36.99,
+          "assignedTask": null
+        },
+        "geo": {
+          "id": "geo",
+          "name": "Elena Rostova",
+          "roleTag": "Geologist",
+          "health": 64,
+          "morale": 34,
+          "satiety": 35,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 36.99,
+          "assignedTask": null
+        }
+      },
+      "finalSystems": {
+        "solar": {
+          "id": "solar",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "recycler": {
+          "id": "recycler",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "scrubber": {
+          "id": "scrubber",
+          "level": 1,
+          "integrity": 0.8,
+          "status": "degraded"
+        },
+        "airlock": {
+          "id": "airlock",
+          "level": 1,
+          "integrity": 0.8,
+          "status": "degraded"
+        },
+        "fabricator": {
+          "id": "fabricator",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        }
+      },
+      "wrs": {
+        "measuredSols": 21,
+        "totalSols": 21,
+        "processedL": 176.00000000000003,
+        "recoveredL": 158.39999999999998,
+        "efficiency": 0.8999999999999997
+      },
+      "trace": "defeat-oxygen.json",
+      "finalHash": "a67df2ee0586a00dbef64f5b156ef1d90b6be1d20ff42ffdd72e05086ae64bdf"
+    },
+    {
+      "name": "defeat-water",
+      "policy": "negative-control-water",
+      "status": "completed",
+      "error": null,
+      "seed": 205099,
+      "difficulty": "cadet",
+      "donkiProfileId": "may-2024-xstorm",
+      "completedSols": 9,
+      "outcome": "defeat",
+      "reason": "Cạn nước sạch 2 Sol liên tiếp.",
+      "reasonCode": "water-depleted",
+      "rank": null,
+      "requestedBranch": null,
+      "actualBranch": "save-rover-link",
+      "rejectedCommands": 0,
+      "completedExpeditions": 0,
+      "blackouts": 0,
+      "resourceMinima": {
+        "batteryKWh": 40,
+        "oxygenKg": 56.4,
+        "waterL": 0,
+        "partsKg": 14,
+        "mrePacks": 18,
+        "medkits": 2
+      },
+      "finalResources": {
+        "batteryKWh": 60,
+        "oxygenKg": 79.4,
+        "waterL": 0,
+        "partsKg": 22,
+        "wasteWaterL": 79.2,
+        "mrePacks": 18,
+        "medkits": 3,
+        "medkitLevel": 1,
+        "waterZeroStreak": 2,
+        "oxygenZeroStreak": 0
+      },
+      "finalCrew": {
+        "cmd": {
+          "id": "cmd",
+          "name": "Sarah Chen",
+          "roleTag": "Commander",
+          "health": 80,
+          "morale": 75,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 9.37,
+          "assignedTask": null
+        },
+        "eng": {
+          "id": "eng",
+          "name": "Alex Rivera",
+          "roleTag": "Engineer",
+          "health": 80,
+          "morale": 75,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 9.37,
+          "assignedTask": null
+        },
+        "doc": {
+          "id": "doc",
+          "name": "Marcus Vance",
+          "roleTag": "Medic",
+          "health": 80,
+          "morale": 75,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 9.37,
+          "assignedTask": null
+        },
+        "geo": {
+          "id": "geo",
+          "name": "Elena Rostova",
+          "roleTag": "Geologist",
+          "health": 80,
+          "morale": 75,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 9.37,
+          "assignedTask": null
+        }
+      },
+      "finalSystems": {
+        "solar": {
+          "id": "solar",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "recycler": {
+          "id": "recycler",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "scrubber": {
+          "id": "scrubber",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "airlock": {
+          "id": "airlock",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "fabricator": {
+          "id": "fabricator",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        }
+      },
+      "wrs": {
+        "measuredSols": 9,
+        "totalSols": 9,
+        "processedL": 0,
+        "recoveredL": 0,
+        "efficiency": null
+      },
+      "trace": "defeat-water.json",
+      "finalHash": "a33fa076352986932b5036572cd08d7861fea1499e38cda8bc4cb8829327ea98"
+    }
+  ]
+}

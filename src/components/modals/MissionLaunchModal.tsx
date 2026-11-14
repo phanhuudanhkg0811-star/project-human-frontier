@@ -5,6 +5,7 @@ import type { DifficultyId } from '../../types/index.ts';
 import { MissionProgressionPanel } from '../MissionProgressionPanel.tsx';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
+import { ArtifactExportButtons, TrainingReport } from '../CampaignReportCard.tsx';
 
 interface MissionLaunchModalProps {
   onClose: () => void;
@@ -28,7 +29,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
 
   return (
     <MissionDialog
-      title="Thiết lập Chiến dịch & Mục tiêu Moon 32 Sol"
+      title={`Thiết lập Chiến dịch & Mục tiêu Moon ${bundle.campaign.targetSol} Sol`}
       eyebrow="NASA DONKI SPACE WEATHER PROFILES"
       panelType="launch"
       dockSide="center"
@@ -36,6 +37,8 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
     >
       <div className="flex flex-col gap-4 text-slate-200">
         <MissionProgressionPanel />
+        <TrainingReport state={gameState} bundle={bundle} />
+        <ArtifactExportButtons />
 
         <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70 flex flex-col gap-3 text-xs">
           <h3 className="font-bold text-cyan-300">Khởi tạo Chiến dịch Mới với Mẫu Dữ liệu NASA DONKI (32 ngày)</h3>
@@ -85,13 +88,13 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
               <input
                 type="number"
                 value={seed}
-                onChange={(e) => setSeed(Number(e.target.value) || 205001)}
+                onChange={(e) => setSeed(Number(e.target.value))}
                 className="hail-select-trigger font-mono"
               />
             </label>
           </div>
 
-          <button type="button" onClick={handleStartNew} className="hail-btn hail-btn--accent py-2 font-bold flex items-center justify-center gap-2">
+          <button type="button" disabled={!Number.isSafeInteger(seed)} onClick={handleStartNew} className="hail-btn hail-btn--accent py-2 font-bold flex items-center justify-center gap-2">
             <Rocket className="w-4 h-4" />
             Bắt đầu Chiến dịch Mới (Reset về Sol 1)
           </button>

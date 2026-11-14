@@ -1,5 +1,5 @@
 {
-  "contentVersion": "1.1.0-moon32",
+  "contentVersion": "1.4.0-moon32",
   "id": "moon-32",
   "title": "Artemis Lunar Base · 32 Sol Survival",
   "planet": "moon",
@@ -11,9 +11,13 @@
     "goldenCrisisSol": 7,
     "recommendedLastCargoSol": 10
   },
+  "training": {"reportSol":12,"minActiveCrew":4,"minExpeditions":2},
+  "ranking": {"version":"1.4.0-moon32","S":{"minFitCrew":4,"minExpeditions":3},"A":{"minActiveCrew":3,"minExpeditions":2}},
   "victory": {
     "reachSol": 32,
-    "minActiveCrew": 2
+    "minActiveCrew": 2,
+    "requirePositiveOxygen": true,
+    "requirePositiveWater": true
   },
   "defeat": {
     "minActiveCrew": 2,

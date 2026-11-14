@@ -15,7 +15,7 @@ import type {
 
 // Keep the legacy key so Phase 1.1/1.2 saves are discovered and upgraded in place.
 export const SAVE_STORAGE_KEY = 'human-frontier:moon32:save-v1';
-export const APP_VERSION = '1.3.0';
+export const APP_VERSION = '1.4.0';
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -89,7 +89,7 @@ export function computeEnvelopeChecksum(envelope: ChecksumEnvelope): string {
 
 export function buildSaveEnvelope(state: GameState, nowIso = new Date().toISOString()): SaveEnvelope {
   const unsigned: SaveEnvelopeUnsigned = {
-    schemaVersion: 3,
+    schemaVersion: 4,
     savedAt: nowIso,
     appVersion: APP_VERSION,
     contentVersion: state.contentVersion,
@@ -216,12 +216,14 @@ export function migrateSaveV2ToV3(legacy: LegacyGameStateV2, bundle: ContentBund
       ? {
           ...summary,
           debriefContext: summary.debriefContext ?? null,
+          checkpoint: null,
         }
       : null;
 
   const migrated: GameState = {
     ...legacy,
-    schemaVersion: 3,
+    schemaVersion: 4,
+    campaign: { ...legacy.campaign, outcome: legacyOutcome(legacy.campaign) },
     contentVersion: bundle.balance.contentVersion,
     modelVersion: bundle.balance.modelVersion,
     catalogVersion: bundle.catalog.catalogVersion,
@@ -245,13 +247,31 @@ export function migrateSaveV2ToV3(legacy: LegacyGameStateV2, bundle: ContentBund
   return validateGameStateStructure(migrated);
 }
 
+function legacyOutcome(campaign: GameState['campaign']): GameState['campaign']['outcome'] {
+  if (campaign.status !== 'victory' && campaign.status !== 'defeat') return null;
+  return { status: campaign.status, reasonCode: 'legacy-outcome', requirements: [], rank: null, rankingVersion: null };
+}
+
+/** Keep original terminal results; new metrics start at the first Sol resolved after migration. */
+export function migrateSaveV3ToV4(input: unknown, bundle: ContentBundle): GameState {
+  if (!input || typeof input !== 'object' || (input as { schemaVersion?: number }).schemaVersion !== 3) throw new Error('Expected GameState v3.');
+  const legacy = input as GameState;
+  const upgrade = (summary: GameState['debrief']['lastSummary']) => summary ? { ...summary, checkpoint: null } : null;
+  return validateGameStateStructure({ ...legacy, schemaVersion: 4,
+    contentVersion: bundle.balance.contentVersion, modelVersion: bundle.balance.modelVersion, catalogVersion: bundle.catalog.catalogVersion,
+    campaign: { ...legacy.campaign, outcome: legacyOutcome(legacy.campaign) },
+    debrief: { ...legacy.debrief, lastSummary: upgrade(legacy.debrief.lastSummary) },
+    history: { ...legacy.history, summaries: legacy.history.summaries.map((summary) => upgrade(summary)) },
+  });
+}
+
 export type SaveWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: DomainError };
 
 export type LoadSaveResult =
   | { readonly status: 'empty' }
-  | { readonly status: 'ok'; readonly state: GameState; readonly envelope: SaveEnvelope }
+  | { readonly status: 'ok'; readonly state: GameState; readonly envelope: SaveEnvelope; readonly migrationNotice: string | null }
   | { readonly status: 'error'; readonly error: DomainError };
 
 export function saveGameState(state: GameState, storage: StorageLike | null = getDefaultStorage(), nowIso?: string): SaveWriteResult {
@@ -274,7 +294,7 @@ function readRawEnvelope(parsed: unknown): ChecksumEnvelope {
   for (const key of ['schemaVersion', 'savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'state', 'checksum']) {
     if (!(key in value)) throw new Error(`SaveEnvelope thiếu trường ${key}.`);
   }
-  if (value.schemaVersion !== 1 && value.schemaVersion !== 2 && value.schemaVersion !== 3) {
+  if (value.schemaVersion !== 1 && value.schemaVersion !== 2 && value.schemaVersion !== 3 && value.schemaVersion !== 4) {
     throw new Error('Unsupported save schemaVersion.');
   }
   for (const key of ['savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'checksum']) {
@@ -307,6 +327,16 @@ export function loadGameState(bundle: ContentBundle, storage: StorageLike | null
     return loadError('E_CONTRACT_MISMATCH', error instanceof Error ? error.message : 'SaveEnvelope không hợp lệ.');
   }
   if (rawEnvelope.checksum !== computeEnvelopeChecksum(rawEnvelope)) return loadError('E_SAVE_CORRUPTED', 'Checksum SaveEnvelope không khớp.');
+  const sourceState = rawEnvelope.state as {
+    schemaVersion?: number; contentVersion?: string; modelVersion?: string; catalogVersion?: string;
+  } | null;
+  if (!sourceState || sourceState.schemaVersion !== rawEnvelope.schemaVersion || sourceState.contentVersion !== rawEnvelope.contentVersion || sourceState.modelVersion !== rawEnvelope.modelVersion || sourceState.catalogVersion !== rawEnvelope.catalogVersion) return loadError('E_CONTRACT_MISMATCH', 'Metadata save không khớp state.');
+  if (rawEnvelope.schemaVersion < 4) {
+    // Explicit source versions, rather than rewriting arbitrary future/unknown saves.
+    if (![bundle.balance.contentVersion, '1.1.0-moon32'].includes(rawEnvelope.contentVersion)) return loadError('E_CONTRACT_MISMATCH', 'Không nhận diện content của save cũ.');
+    if (![bundle.balance.modelVersion, '1.1.0-ts-donki'].includes(rawEnvelope.modelVersion)) return loadError('E_MODEL_MISMATCH', 'Không nhận diện model của save cũ.');
+    if (rawEnvelope.catalogVersion !== bundle.catalog.catalogVersion) return loadError('E_CATALOG_MISMATCH', 'Không nhận diện catalog của save cũ.');
+  }
 
   let state: GameState;
   let migrated = false;
@@ -316,6 +346,9 @@ export function loadGameState(bundle: ContentBundle, storage: StorageLike | null
       migrated = true;
     } else if (rawEnvelope.schemaVersion === 2) {
       state = migrateSaveV2ToV3(rawEnvelope.state as LegacyGameStateV2, bundle);
+      migrated = true;
+    } else if (rawEnvelope.schemaVersion === 3) {
+      state = migrateSaveV3ToV4(rawEnvelope.state, bundle);
       migrated = true;
     } else {
       const envelope = validateSaveEnvelopeStructure(parsed);
@@ -335,12 +368,14 @@ export function loadGameState(bundle: ContentBundle, storage: StorageLike | null
   const envelope = buildSaveEnvelope(state, migrated ? new Date().toISOString() : rawEnvelope.savedAt);
   if (migrated) {
     try {
+      // Preserve the exact original before rewriting the main slot.
+      storage.setItem(`${SAVE_STORAGE_KEY}:pre-v4`, raw);
       storage.setItem(SAVE_STORAGE_KEY, JSON.stringify(envelope));
     } catch {
       // The migrated state is usable for this session even if rewrite is denied.
     }
   }
-  return { status: 'ok', state, envelope };
+  return { status: 'ok', state, envelope, migrationNotice: migrated ? `Đã nâng cấp save v${rawEnvelope.schemaVersion} lên v4. Tiếp tục theo luật Phase 1.4; báo cáo lịch sử thiếu dữ liệu được ghi rõ. Bản gốc đã được giữ nếu bộ nhớ trình duyệt cho phép.` : null };
 }
 
 export function clearSavedGame(storage: StorageLike | null = getDefaultStorage()): void {

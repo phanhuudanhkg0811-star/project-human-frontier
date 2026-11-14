@@ -19,6 +19,7 @@ const compiled = await esbuild.build({
     export * from './src/components/EventPriorityBanner.tsx';
     export * from './src/components/eventPresentation.ts';
     export * from './src/components/DynamicSTEMBrief.tsx';
+    export * from './src/components/SystemControls.tsx';
     export * from './src/components/modals/StarlogModal.tsx';
     export * from './src/components/modals/EndOfDayModal.tsx';
     export * from './src/components/modals/NightCutsceneModal.tsx';
@@ -69,6 +70,14 @@ function renderWithState(component, fixture) {
     core.setGameStoreSnapshot(null);
   }
 }
+
+test('Phase 1.4 system UI quotes the next queued upgrade level, including engineer discount', () => {
+  const state = initialState();
+  const queued = { ...state, clock: { ...state.clock, phase: 'engineering' }, crew: { ...state.crew,
+    cmd: { ...state.crew.cmd, assignedTask: { type: 'upgrade-system', targetSystemId: 'solar', partsSpent: 4 } } } };
+  const html = renderWithState(core.SystemControls, { state: queued, content: bundle });
+  assert.match(html, /Nâng \(7P\)/);
+});
 
 test('Catalog QA: bundled schema, references and actual event art files pass', () => {
   const report = validate(inputs.events);

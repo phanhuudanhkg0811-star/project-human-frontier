@@ -1,0 +1,2131 @@
+{
+  "schemaVersion": 4,
+  "savedAt": "2026-11-14T11:58:04.065Z",
+  "appVersion": "1.4.0",
+  "contentVersion": "1.4.0-moon32",
+  "modelVersion": "1.4.0-ts-donki",
+  "catalogVersion": "1.1.0-moon32",
+  "state": {
+    "schemaVersion": 4,
+    "contentVersion": "1.4.0-moon32",
+    "modelVersion": "1.4.0-ts-donki",
+    "catalogVersion": "1.1.0-moon32",
+    "revision": 69,
+    "campaign": {
+      "id": "moon-32",
+      "runId": "run-moon32-205099-d0877af4",
+      "planet": "moon",
+      "status": "defeat",
+      "difficulty": "cadet",
+      "seed": 205099,
+      "donkiProfileId": "oct-2024-x9storm",
+      "targetSol": 32,
+      "sciencePoints": 10,
+      "endReason": "Cạn nước sạch 2 Sol liên tiếp.",
+      "outcome": {
+        "status": "defeat",
+        "reasonCode": "water-depleted",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": false,
+            "actual": 9,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 79.4,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": false,
+            "actual": 0,
+            "target": 0
+          }
+        ],
+        "rank": null,
+        "rankingVersion": "1.4.0-moon32"
+      }
+    },
+    "clock": {
+      "sol": 9,
+      "phase": "terminal",
+      "resolutionIndex": 9
+    },
+    "resources": {
+      "batteryKWh": 60,
+      "oxygenKg": 79.4,
+      "waterL": 0,
+      "partsKg": 22,
+      "wasteWaterL": 79.2,
+      "mrePacks": 18,
+      "medkits": 3,
+      "medkitLevel": 1,
+      "waterZeroStreak": 2,
+      "oxygenZeroStreak": 0
+    },
+    "systems": {
+      "solar": {
+        "id": "solar",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "recycler": {
+        "id": "recycler",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "scrubber": {
+        "id": "scrubber",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "airlock": {
+        "id": "airlock",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "fabricator": {
+        "id": "fabricator",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      }
+    },
+    "crew": {
+      "cmd": {
+        "id": "cmd",
+        "name": "Sarah Chen",
+        "roleTag": "Commander",
+        "health": 80,
+        "morale": 84,
+        "satiety": 75,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 5.83,
+        "assignedTask": null
+      },
+      "eng": {
+        "id": "eng",
+        "name": "Alex Rivera",
+        "roleTag": "Engineer",
+        "health": 80,
+        "morale": 84,
+        "satiety": 75,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 5.83,
+        "assignedTask": null
+      },
+      "doc": {
+        "id": "doc",
+        "name": "Marcus Vance",
+        "roleTag": "Medic",
+        "health": 80,
+        "morale": 84,
+        "satiety": 75,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 5.83,
+        "assignedTask": null
+      },
+      "geo": {
+        "id": "geo",
+        "name": "Elena Rostova",
+        "roleTag": "Geologist",
+        "health": 80,
+        "morale": 84,
+        "satiety": 75,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 5.83,
+        "assignedTask": null
+      }
+    },
+    "equipment": {
+      "core_drill": {
+        "id": "core_drill",
+        "owned": true,
+        "level": 1,
+        "durability": 100,
+        "state": "good",
+        "reservedForRover": false
+      },
+      "sealant_tape": {
+        "id": "sealant_tape",
+        "owned": true,
+        "level": 1,
+        "durability": 50,
+        "state": "worn",
+        "reservedForRover": false
+      },
+      "solar_lantern": {
+        "id": "solar_lantern",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "dust_shield": {
+        "id": "dust_shield",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "radio_repeater": {
+        "id": "radio_repeater",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "cryo_thermal_rig": {
+        "id": "cryo_thermal_rig",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      }
+    },
+    "fabricator": {
+      "usedThisSol": false,
+      "activeJob": null
+    },
+    "dailyPlan": {
+      "sol": 9,
+      "status": "committed",
+      "wrsEnabled": false,
+      "powerPriority": [
+        "eclss",
+        "wrs",
+        "fabricator",
+        "rover"
+      ],
+      "mreTargets": [
+        "eng",
+        "cmd",
+        "doc",
+        "geo"
+      ]
+    },
+    "rover": {
+      "activeMission": null,
+      "missionHistory": []
+    },
+    "events": {
+      "activeEventId": null,
+      "activeEvent": null,
+      "resolvedEventIds": [
+        "sol1-arrival-check",
+        "sol2-solar-particles",
+        "sol3-airlock-seal-alert",
+        "evt-crater-core-analysis",
+        "sol7-golden-comms-crisis"
+      ],
+      "occurrenceHistory": [
+        {
+          "eventId": "sol1-arrival-check",
+          "triggeredSol": 1,
+          "settledSol": 1,
+          "outcome": "resolved",
+          "choiceId": "calibrate-now"
+        },
+        {
+          "eventId": "sol2-solar-particles",
+          "triggeredSol": 2,
+          "settledSol": 2,
+          "outcome": "resolved",
+          "choiceId": "boost-shielding-power"
+        },
+        {
+          "eventId": "sol3-airlock-seal-alert",
+          "triggeredSol": 3,
+          "settledSol": 3,
+          "outcome": "resolved",
+          "choiceId": "use-sealant-tape"
+        },
+        {
+          "eventId": "evt-crater-core-analysis",
+          "triggeredSol": 6,
+          "settledSol": 6,
+          "outcome": "resolved",
+          "choiceId": "deep-spectrometry"
+        },
+        {
+          "eventId": "sol7-golden-comms-crisis",
+          "triggeredSol": 7,
+          "settledSol": 7,
+          "outcome": "resolved",
+          "choiceId": "save-rover-link"
+        }
+      ],
+      "flags": {
+        "sensors_calibrated": true,
+        "airlock_sealed": true,
+        "sol7_saved_rover": true
+      },
+      "pendingFollowUps": [
+        {
+          "eventId": "evt-rover2-aftermath",
+          "triggerSol": 9,
+          "sourceEventId": "sol7-golden-comms-crisis",
+          "sourceChoiceId": "save-rover-link"
+        }
+      ]
+    },
+    "logistics": {
+      "activeOrder": {
+        "id": "cargo-sol-7",
+        "orderedAtSol": 7,
+        "arrivalSol": 11,
+        "slots": {
+          "water-pack": 0,
+          "power-parts-pack": 1,
+          "oxygen-pack": 2,
+          "food-med-pack": 1
+        }
+      },
+      "padCooldownSols": 0,
+      "radioMessages": []
+    },
+    "debrief": {
+      "pendingDismiss": false,
+      "lastSummary": {
+        "checkpoint": {
+          "resources": {
+            "batteryKWh": 60,
+            "oxygenKg": 79.4,
+            "waterL": 0,
+            "partsKg": 22,
+            "wasteWaterL": 79.2,
+            "mrePacks": 18,
+            "medkits": 3,
+            "medkitLevel": 1,
+            "waterZeroStreak": 2,
+            "oxygenZeroStreak": 0
+          },
+          "crew": {
+            "cmd": {
+              "id": "cmd",
+              "name": "Sarah Chen",
+              "roleTag": "Commander",
+              "health": 80,
+              "morale": 84,
+              "satiety": 75,
+              "condition": "fit",
+              "hungerState": "ok",
+              "radiationMgy": 5.83,
+              "assignedTask": null
+            },
+            "eng": {
+              "id": "eng",
+              "name": "Alex Rivera",
+              "roleTag": "Engineer",
+              "health": 80,
+              "morale": 84,
+              "satiety": 75,
+              "condition": "fit",
+              "hungerState": "ok",
+              "radiationMgy": 5.83,
+              "assignedTask": null
+            },
+            "doc": {
+              "id": "doc",
+              "name": "Marcus Vance",
+              "roleTag": "Medic",
+              "health": 80,
+              "morale": 84,
+              "satiety": 75,
+              "condition": "fit",
+              "hungerState": "ok",
+              "radiationMgy": 5.83,
+              "assignedTask": null
+            },
+            "geo": {
+              "id": "geo",
+              "name": "Elena Rostova",
+              "roleTag": "Geologist",
+              "health": 80,
+              "morale": 84,
+              "satiety": 75,
+              "condition": "fit",
+              "hungerState": "ok",
+              "radiationMgy": 5.83,
+              "assignedTask": null
+            }
+          },
+          "systems": {
+            "solar": {
+              "id": "solar",
+              "level": 1,
+              "integrity": 1,
+              "status": "nominal"
+            },
+            "recycler": {
+              "id": "recycler",
+              "level": 1,
+              "integrity": 1,
+              "status": "nominal"
+            },
+            "scrubber": {
+              "id": "scrubber",
+              "level": 1,
+              "integrity": 1,
+              "status": "nominal"
+            },
+            "airlock": {
+              "id": "airlock",
+              "level": 1,
+              "integrity": 1,
+              "status": "nominal"
+            },
+            "fabricator": {
+              "id": "fabricator",
+              "level": 1,
+              "integrity": 1,
+              "status": "nominal"
+            }
+          },
+          "completedExpeditions": 0,
+          "sciencePoints": 10,
+          "wrsProcessedWasteWaterL": 0,
+          "solarGeneratedKWh": 23.04,
+          "fissionGeneratedKWh": 8,
+          "batteryOverflowKWh": 19.04,
+          "essentialUnmetKWh": 0
+        },
+        "sol": 9,
+        "isLunarNight": false,
+        "surfaceTempC": 111.29,
+        "powerGeneratedKWh": 31.04,
+        "powerConsumedKWh": 12,
+        "unmetLoads": [],
+        "blackout": false,
+        "wrsRecoveredWaterL": 0,
+        "resourceDeltas": {
+          "batteryKWh": 0,
+          "oxygenKg": -3.4,
+          "waterL": 0,
+          "partsKg": 0,
+          "mrePacks": -4,
+          "medkits": 0
+        },
+        "weather": {
+          "profileId": "oct-2024-x9storm",
+          "solDate": "2024-09-28",
+          "level": "moderate",
+          "solarPenaltyPct": 0.04,
+          "radiationRiskIndex": 0,
+          "commsNoiseIndex": 0.34,
+          "hardwareStressIndex": 0.28,
+          "repairSuccessProb": 0.8865,
+          "repairRollOk": true,
+          "roverIncidentProb": 0,
+          "roverIncidentTriggered": false,
+          "radiationDoseMgy": 0.361,
+          "stormDegradedSystem": null,
+          "headline": null
+        },
+        "briefId": "brief-lunar-cycle",
+        "highlights": [],
+        "debriefContext": {
+          "briefId": "brief-lunar-cycle",
+          "reasonTag": "baseline",
+          "sourceEventId": null,
+          "sourceChoiceId": null,
+          "evidenceType": "observed",
+          "metricHighlights": [
+            {
+              "key": "batteryKWh",
+              "label": "Pin",
+              "delta": 0,
+              "unit": "kWh"
+            },
+            {
+              "key": "waterL",
+              "label": "Nước sạch",
+              "delta": 0,
+              "unit": "L"
+            },
+            {
+              "key": "oxygenKg",
+              "label": "Oxy",
+              "delta": -3.4,
+              "unit": "kg"
+            },
+            {
+              "key": "partsKg",
+              "label": "Phụ tùng",
+              "delta": 0,
+              "unit": "kg"
+            }
+          ]
+        }
+      }
+    },
+    "history": {
+      "summaries": [
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 66.6,
+              "waterL": 70,
+              "partsKg": 14,
+              "wasteWaterL": 8.8,
+              "mrePacks": 24,
+              "medkits": 2,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 85,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.36,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 85,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.36,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 85,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.36,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 85,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.36,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 0,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 24,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 0,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 1,
+          "isLunarNight": false,
+          "surfaceTempC": 70.24,
+          "powerGeneratedKWh": 32,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 20,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": 0,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-20",
+            "level": "quiet",
+            "solarPenaltyPct": 0,
+            "radiationRiskIndex": 0,
+            "commsNoiseIndex": 0,
+            "hardwareStressIndex": 0,
+            "repairSuccessProb": 1,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.361,
+            "stormDegradedSystem": null,
+            "headline": null
+          },
+          "briefId": "brief-lunar-cycle",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-lunar-cycle",
+            "reasonTag": "event-choice",
+            "sourceEventId": "sol1-arrival-check",
+            "sourceChoiceId": "calibrate-now",
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 20,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 63.2,
+              "waterL": 60,
+              "partsKg": 14,
+              "wasteWaterL": 17.6,
+              "mrePacks": 24,
+              "medkits": 2,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 90,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.87,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 90,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.87,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 90,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.87,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 90,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 0.87,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 0,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 23.04,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 17.04,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 2,
+          "isLunarNight": false,
+          "surfaceTempC": 83.03,
+          "powerGeneratedKWh": 31.04,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 2,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": 0,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-21",
+            "level": "moderate",
+            "solarPenaltyPct": 0.04,
+            "radiationRiskIndex": 0.052,
+            "commsNoiseIndex": 0.284,
+            "hardwareStressIndex": 0.08,
+            "repairSuccessProb": 0.939,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.5084,
+            "stormDegradedSystem": null,
+            "headline": "GOES \"greater than 2.0 MeV\" integral electron flux remains elevated, recently crossing the threshold of 1000 pfu at 2024-09-21T14:40Z."
+          },
+          "briefId": "brief-donki-sep-flare",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-donki-sep-flare",
+            "reasonTag": "event-choice",
+            "sourceEventId": "sol2-solar-particles",
+            "sourceChoiceId": "boost-shielding-power",
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 2,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 59.8,
+              "waterL": 50,
+              "partsKg": 14,
+              "wasteWaterL": 26.4,
+              "mrePacks": 20,
+              "medkits": 2,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 88,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.04,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 88,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.04,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 88,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.04,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 88,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.04,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 0,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 21.6,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 17.6,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 3,
+          "isLunarNight": false,
+          "surfaceTempC": 94.5,
+          "powerGeneratedKWh": 29.6,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 0,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": -4,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-22",
+            "level": "storm",
+            "solarPenaltyPct": 0.1,
+            "radiationRiskIndex": 0.2858,
+            "commsNoiseIndex": 0.5997,
+            "hardwareStressIndex": 0.2358,
+            "repairSuccessProb": 0.8981,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 1.1712,
+            "stormDegradedSystem": null,
+            "headline": "O-type CME detected by SOHO."
+          },
+          "briefId": "brief-oxygen-eclss",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-oxygen-eclss",
+            "reasonTag": "event-choice",
+            "sourceEventId": "sol3-airlock-seal-alert",
+            "sourceChoiceId": "use-sealant-tape",
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 0,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 56.4,
+              "waterL": 40,
+              "partsKg": 14,
+              "wasteWaterL": 35.2,
+              "mrePacks": 20,
+              "medkits": 2,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.94,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.94,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.94,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 2.94,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 0,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 21.6,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 17.6,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 4,
+          "isLunarNight": false,
+          "surfaceTempC": 104.08,
+          "powerGeneratedKWh": 29.6,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 0,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": 0,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-23",
+            "level": "storm",
+            "solarPenaltyPct": 0.1,
+            "radiationRiskIndex": 0.1906,
+            "commsNoiseIndex": 0.5149,
+            "hardwareStressIndex": 0.4178,
+            "repairSuccessProb": 0.8503,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.9014,
+            "stormDegradedSystem": null,
+            "headline": "Significantly elevated energetic electron fluxes in the Earth's outer radiation belt. GOES \"greater than 2.0 MeV\" integral electron flux remains elevated, recen"
+          },
+          "briefId": "brief-donki-sep-flare",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-donki-sep-flare",
+            "reasonTag": "donki-storm",
+            "sourceEventId": null,
+            "sourceChoiceId": null,
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 0,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 93,
+              "waterL": 30,
+              "partsKg": 20,
+              "wasteWaterL": 44,
+              "mrePacks": 26,
+              "medkits": 3,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 86,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 3.45,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 86,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 3.45,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 86,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 3.45,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 86,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 3.45,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 0,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 24,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 20,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 5,
+          "isLunarNight": false,
+          "surfaceTempC": 111.29,
+          "powerGeneratedKWh": 32,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 0,
+            "oxygenKg": 36.6,
+            "waterL": -10,
+            "partsKg": 6,
+            "mrePacks": 6,
+            "medkits": 1
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-24",
+            "level": "quiet",
+            "solarPenaltyPct": 0,
+            "radiationRiskIndex": 0.052,
+            "commsNoiseIndex": 0.124,
+            "hardwareStressIndex": 0.08,
+            "repairSuccessProb": 0.939,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.5084,
+            "stormDegradedSystem": null,
+            "headline": null
+          },
+          "briefId": "brief-lunar-cycle",
+          "highlights": [
+            "Tàu hàng tiếp tế từ Trái Đất đã hạ cánh an toàn."
+          ],
+          "debriefContext": {
+            "briefId": "brief-lunar-cycle",
+            "reasonTag": "baseline",
+            "sourceEventId": null,
+            "sourceChoiceId": null,
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 0,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": 36.6,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 6,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 89.6,
+              "waterL": 20,
+              "partsKg": 22,
+              "wasteWaterL": 52.8,
+              "mrePacks": 26,
+              "medkits": 3,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.2,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.2,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.2,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 86,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.2,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 10,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 24,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 18,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 6,
+          "isLunarNight": false,
+          "surfaceTempC": 115.77,
+          "powerGeneratedKWh": 32,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 2,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": 0,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-25",
+            "level": "moderate",
+            "solarPenaltyPct": 0,
+            "radiationRiskIndex": 0.1386,
+            "commsNoiseIndex": 0.2109,
+            "hardwareStressIndex": 0.0578,
+            "repairSuccessProb": 0.9448,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.7539,
+            "stormDegradedSystem": null,
+            "headline": "Solar activity was between low and moderate levels during this reporting period with 2 M-class flares, 1 O-type CME, and 10 C-type CMEs (see details below)."
+          },
+          "briefId": "brief-regolith-isru",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-regolith-isru",
+            "reasonTag": "event-choice",
+            "sourceEventId": "evt-crater-core-analysis",
+            "sourceChoiceId": "deep-spectrometry",
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 2,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 86.2,
+              "waterL": 10,
+              "partsKg": 22,
+              "wasteWaterL": 61.6,
+              "mrePacks": 22,
+              "medkits": 3,
+              "medkitLevel": 1,
+              "waterZeroStreak": 0,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.96,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.96,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.96,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 4.96,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 10,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 21.6,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 15.6,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 7,
+          "isLunarNight": false,
+          "surfaceTempC": 117.29,
+          "powerGeneratedKWh": 29.6,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 2,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": -4,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-26",
+            "level": "storm",
+            "solarPenaltyPct": 0.1,
+            "radiationRiskIndex": 0.1404,
+            "commsNoiseIndex": 0.4726,
+            "hardwareStressIndex": 0.0585,
+            "repairSuccessProb": 0.9446,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.759,
+            "stormDegradedSystem": null,
+            "headline": "Significantly elevated energetic electron fluxes in the Earth's outer radiation belt. GOES \"greater than 2.0 MeV\" integral electron flux is above 1000 pfu start"
+          },
+          "briefId": "brief-wrs-eclss",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-wrs-eclss",
+            "reasonTag": "event-choice",
+            "sourceEventId": "sol7-golden-comms-crisis",
+            "sourceChoiceId": "save-rover-link",
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 2,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 82.8,
+              "waterL": 0,
+              "partsKg": 22,
+              "wasteWaterL": 70.4,
+              "mrePacks": 22,
+              "medkits": 3,
+              "medkitLevel": 1,
+              "waterZeroStreak": 1,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 84,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.47,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 84,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.47,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 84,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.47,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 84,
+                "satiety": 50,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.47,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 10,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 24,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 20,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 8,
+          "isLunarNight": false,
+          "surfaceTempC": 115.77,
+          "powerGeneratedKWh": 32,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 0,
+            "oxygenKg": -3.4,
+            "waterL": -10,
+            "partsKg": 0,
+            "mrePacks": 0,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-27",
+            "level": "quiet",
+            "solarPenaltyPct": 0,
+            "radiationRiskIndex": 0.052,
+            "commsNoiseIndex": 0.124,
+            "hardwareStressIndex": 0.08,
+            "repairSuccessProb": 0.939,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.5084,
+            "stormDegradedSystem": null,
+            "headline": "C-type CME detected by STEREO A / SOHO."
+          },
+          "briefId": "brief-lunar-cycle",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-lunar-cycle",
+            "reasonTag": "baseline",
+            "sourceEventId": null,
+            "sourceChoiceId": null,
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 0,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": -10,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        },
+        {
+          "checkpoint": {
+            "resources": {
+              "batteryKWh": 60,
+              "oxygenKg": 79.4,
+              "waterL": 0,
+              "partsKg": 22,
+              "wasteWaterL": 79.2,
+              "mrePacks": 18,
+              "medkits": 3,
+              "medkitLevel": 1,
+              "waterZeroStreak": 2,
+              "oxygenZeroStreak": 0
+            },
+            "crew": {
+              "cmd": {
+                "id": "cmd",
+                "name": "Sarah Chen",
+                "roleTag": "Commander",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.83,
+                "assignedTask": null
+              },
+              "eng": {
+                "id": "eng",
+                "name": "Alex Rivera",
+                "roleTag": "Engineer",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.83,
+                "assignedTask": null
+              },
+              "doc": {
+                "id": "doc",
+                "name": "Marcus Vance",
+                "roleTag": "Medic",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.83,
+                "assignedTask": null
+              },
+              "geo": {
+                "id": "geo",
+                "name": "Elena Rostova",
+                "roleTag": "Geologist",
+                "health": 80,
+                "morale": 84,
+                "satiety": 75,
+                "condition": "fit",
+                "hungerState": "ok",
+                "radiationMgy": 5.83,
+                "assignedTask": null
+              }
+            },
+            "systems": {
+              "solar": {
+                "id": "solar",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "recycler": {
+                "id": "recycler",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "scrubber": {
+                "id": "scrubber",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "airlock": {
+                "id": "airlock",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              },
+              "fabricator": {
+                "id": "fabricator",
+                "level": 1,
+                "integrity": 1,
+                "status": "nominal"
+              }
+            },
+            "completedExpeditions": 0,
+            "sciencePoints": 10,
+            "wrsProcessedWasteWaterL": 0,
+            "solarGeneratedKWh": 23.04,
+            "fissionGeneratedKWh": 8,
+            "batteryOverflowKWh": 19.04,
+            "essentialUnmetKWh": 0
+          },
+          "sol": 9,
+          "isLunarNight": false,
+          "surfaceTempC": 111.29,
+          "powerGeneratedKWh": 31.04,
+          "powerConsumedKWh": 12,
+          "unmetLoads": [],
+          "blackout": false,
+          "wrsRecoveredWaterL": 0,
+          "resourceDeltas": {
+            "batteryKWh": 0,
+            "oxygenKg": -3.4,
+            "waterL": 0,
+            "partsKg": 0,
+            "mrePacks": -4,
+            "medkits": 0
+          },
+          "weather": {
+            "profileId": "oct-2024-x9storm",
+            "solDate": "2024-09-28",
+            "level": "moderate",
+            "solarPenaltyPct": 0.04,
+            "radiationRiskIndex": 0,
+            "commsNoiseIndex": 0.34,
+            "hardwareStressIndex": 0.28,
+            "repairSuccessProb": 0.8865,
+            "repairRollOk": true,
+            "roverIncidentProb": 0,
+            "roverIncidentTriggered": false,
+            "radiationDoseMgy": 0.361,
+            "stormDegradedSystem": null,
+            "headline": null
+          },
+          "briefId": "brief-lunar-cycle",
+          "highlights": [],
+          "debriefContext": {
+            "briefId": "brief-lunar-cycle",
+            "reasonTag": "baseline",
+            "sourceEventId": null,
+            "sourceChoiceId": null,
+            "evidenceType": "observed",
+            "metricHighlights": [
+              {
+                "key": "batteryKWh",
+                "label": "Pin",
+                "delta": 0,
+                "unit": "kWh"
+              },
+              {
+                "key": "waterL",
+                "label": "Nước sạch",
+                "delta": 0,
+                "unit": "L"
+              },
+              {
+                "key": "oxygenKg",
+                "label": "Oxy",
+                "delta": -3.4,
+                "unit": "kg"
+              },
+              {
+                "key": "partsKg",
+                "label": "Phụ tùng",
+                "delta": 0,
+                "unit": "kg"
+              }
+            ]
+          }
+        }
+      ],
+      "logs": [
+        {
+          "sol": 1,
+          "phase": "briefing",
+          "code": "MISSION_INIT",
+          "message": "Artemis Lunar Base đi vào vận hành. Chuẩn bị cho chu kỳ 32 Sol và Đêm Trăng sắp tới."
+        },
+        {
+          "sol": 1,
+          "phase": "briefing",
+          "code": "EVENT_RESOLVED",
+          "message": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis."
+        },
+        {
+          "sol": 1,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 1: Pin 60 kWh, O₂ 66.6 kg, Nước 70 L."
+        },
+        {
+          "sol": 2,
+          "phase": "briefing",
+          "code": "EVENT_RESOLVED",
+          "message": "Đã tăng công suất che chắn bức xạ, phi hành đoàn yên tâm làm việc."
+        },
+        {
+          "sol": 2,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 2: Pin 60 kWh, O₂ 63.2 kg, Nước 60 L."
+        },
+        {
+          "sol": 3,
+          "phase": "briefing",
+          "code": "EVENT_RESOLVED",
+          "message": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng."
+        },
+        {
+          "sol": 3,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 3: Pin 60 kWh, O₂ 59.8 kg, Nước 50 L."
+        },
+        {
+          "sol": 4,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 4: Pin 60 kWh, O₂ 56.4 kg, Nước 40 L."
+        },
+        {
+          "sol": 5,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 5: Pin 60 kWh, O₂ 93 kg, Nước 30 L."
+        },
+        {
+          "sol": 6,
+          "phase": "briefing",
+          "code": "EVENT_RESOLVED",
+          "message": "Đã tách chiết thêm 2 kg hợp kim phụ tùng và thu +10 điểm Khoa học từ mẫu lõi khoan."
+        },
+        {
+          "sol": 6,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 6: Pin 60 kWh, O₂ 89.6 kg, Nước 20 L."
+        },
+        {
+          "sol": 7,
+          "phase": "briefing",
+          "code": "EVENT_RESOLVED",
+          "message": "Đã giữ tín hiệu liên lạc Rover an toàn trong ca Sol 7."
+        },
+        {
+          "sol": 7,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 7: Pin 60 kWh, O₂ 86.2 kg, Nước 10 L."
+        },
+        {
+          "sol": 8,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 8: Pin 60 kWh, O₂ 82.8 kg, Nước 0 L."
+        },
+        {
+          "sol": 9,
+          "phase": "debrief",
+          "code": "SOL_RESOLVED",
+          "message": "Kết thúc Sol 9: Pin 60 kWh, O₂ 79.4 kg, Nước 0 L."
+        }
+      ]
+    }
+  },
+  "checksum": "dd9261e7d9ff2d56e5c3cb98c2bd62ebe3a5ce65593a1388b1420cbd30afe5c6"
+}

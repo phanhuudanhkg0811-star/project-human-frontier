@@ -5,7 +5,7 @@ import type { CargoPackId } from '../types/index.ts';
 
 export function CommsLogisticsPanel() {
   const { gameState, bundle, dispatch } = useGameStore();
-  const [messageInput, setMessageInput] = useState('Kiểm tra thời tiết Mặt Trời DONKI & đề xuất tiếp tế trước Sol 15');
+  const [messageInput, setMessageInput] = useState(`Kiểm tra thời tiết Mặt Trời DONKI & đề xuất tiếp tế trước Sol ${bundle.campaign.milestones.lunarNight.startSol}`);
   const [slots, setSlots] = useState<Partial<Record<CargoPackId, number>>>({
     'water-pack': 2,
     'power-parts-pack': 2,
@@ -116,8 +116,8 @@ export function CommsLogisticsPanel() {
             <Truck className="w-4 h-4" />
             Tàu Tiếp tế 80 kg ({totalSlots * 20} / 80 kg) · Bay 4 Sol
           </h3>
-          {gameState.clock.sol >= 10 && !gameState.logistics.activeOrder && (
-            <span className="text-[11px] text-amber-300 font-mono">Đặt trước Sol 11 để kịp Đêm Trăng</span>
+          {gameState.clock.sol >= bundle.campaign.milestones.recommendedLastCargoSol && !gameState.logistics.activeOrder && (
+            <span className="text-[11px] text-amber-300 font-mono">Mốc đặt hàng khuyến nghị: Sol {bundle.campaign.milestones.recommendedLastCargoSol}, trước Đêm Trăng Sol {bundle.campaign.milestones.lunarNight.startSol}</span>
           )}
         </div>
 

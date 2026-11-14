@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { ActiveModalType, CrewId, EquipmentId, SystemId, ToastMessage, UiState } from '../types/index.ts';
 
 interface UiStoreActions {
+  resetCampaignUi: () => void;
   openModal: (modal: ActiveModalType) => void;
   closeModal: () => void;
   selectCrew: (crewId: CrewId | null) => void;
@@ -27,6 +28,7 @@ const initialUiState: UiState = {
 
 export const useUiStore = create<UiState & UiStoreActions>((set) => ({
   ...initialUiState,
+  resetCampaignUi: () => set({ activeModal: null, selectedCrewId: 'cmd', selectedSystemId: 'solar', selectedEquipmentIds: [], toasts: [] }),
   openModal: (modal) => set({ activeModal: modal }),
   closeModal: () => set({ activeModal: null }),
   selectCrew: (crewId) => set({ selectedCrewId: crewId }),

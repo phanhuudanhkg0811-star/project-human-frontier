@@ -1,0 +1,194 @@
+{
+  "method": "All campaign actions use rendered UI buttons, with read-only localStorage snapshots. No state injection or store.dispatch from DevTools.",
+  "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+  "checks": [
+    "New mission is clean Sol 1 with requested seed",
+    "Training report appears after End-Sol 12 without terminating campaign",
+    "Lunar Night reload preserves exact state",
+    "A: terminal report renders correct outcome",
+    "Mobile report has no horizontal overflow",
+    "Keyboard focus remains in terminal dialog",
+    "A: exported replay verifies the exact UI result",
+    "A: exported snapshot checksum and state match UI",
+    "New mission is clean Sol 1 with requested seed",
+    "B: terminal report renders correct outcome",
+    "B: exported replay verifies the exact UI result",
+    "B: exported snapshot checksum and state match UI",
+    "New mission is clean Sol 1 with requested seed",
+    "oxygen: terminal report renders correct outcome",
+    "oxygen: exported replay verifies the exact UI result",
+    "oxygen: exported snapshot checksum and state match UI",
+    "New mission is clean Sol 1 with requested seed",
+    "water: terminal report renders correct outcome",
+    "water: exported replay verifies the exact UI result",
+    "water: exported snapshot checksum and state match UI",
+    "Same-scenario restart clears prior history, cargo, jobs, events and report",
+    "Escape closes settings and returns focus",
+    "No browser runtime exceptions"
+  ],
+  "errors": [],
+  "screenshots": [
+    "training-sol12.png",
+    "transition-sol14.png",
+    "transition-sol28.png",
+    "A-desktop-report.png",
+    "A-mobile-report.png",
+    "B-desktop-report.png",
+    "oxygen-desktop-report.png",
+    "water-desktop-report.png"
+  ],
+  "campaigns": [
+    {
+      "scenario": "A",
+      "steps": 369,
+      "outcome": {
+        "status": "victory",
+        "reasonCode": "moon-victory",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": true,
+            "actual": 32,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 21.2,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": true,
+            "actual": 113.72,
+            "target": 0
+          }
+        ],
+        "rank": "S",
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "c8de3d4a7e45a871c11e25c0f3e2a5d2bc2bb8017bcdb75dd8fef6fae34f33f7",
+      "completedSols": 32
+    },
+    {
+      "scenario": "B",
+      "steps": 370,
+      "outcome": {
+        "status": "victory",
+        "reasonCode": "moon-victory",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": true,
+            "actual": 32,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 21.2,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": true,
+            "actual": 113.72,
+            "target": 0
+          }
+        ],
+        "rank": "A",
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "adda71c1945ac6f85784cc9054faa17e9d64786e4789981137ce61dc1674abf8",
+      "completedSols": 32
+    },
+    {
+      "scenario": "oxygen",
+      "steps": 158,
+      "outcome": {
+        "status": "defeat",
+        "reasonCode": "oxygen-depleted",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": false,
+            "actual": 21,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": false,
+            "actual": 0,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": true,
+            "actual": 149.6,
+            "target": 0
+          }
+        ],
+        "rank": null,
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "ea3c50b2d214394a0e3f7f24f6cdf14b6efe7294d2d10b39d0a0200863d5a3e0",
+      "completedSols": 21
+    },
+    {
+      "scenario": "water",
+      "steps": 68,
+      "outcome": {
+        "status": "defeat",
+        "reasonCode": "water-depleted",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": false,
+            "actual": 9,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 79.4,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": false,
+            "actual": 0,
+            "target": 0
+          }
+        ],
+        "rank": null,
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "0e2d6fa37abf339e7160a782f812b70aa956211237cc7f7e277def2561ca3cfc",
+      "completedSols": 9
+    }
+  ]
+}

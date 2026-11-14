@@ -7,6 +7,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
 import { HAIL_EQUIPMENT, HAIL_SVG } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
+import { NightReadinessChecklist } from '../NightReadinessChecklist.tsx';
 
 interface EndOfDayModalProps {
   onClose: () => void;
@@ -186,6 +187,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
         </div>
 
         <DynamicSTEMBrief view={debriefView} bundle={bundle} />
+        <NightReadinessChecklist state={gameState} bundle={bundle} />
 
         <button
           type="button"
