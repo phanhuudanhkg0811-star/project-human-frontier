@@ -2,32 +2,38 @@
 
 > Cập nhật ngày **14/11/2026** theo quyết định mới nhất của chủ dự án. Tài liệu này cao hơn các GDD/handoff/roadmap cũ khi có mâu thuẫn.
 
-## 1. Ba chế độ/campaign độc lập
+## 1. Campaign architecture và delivery phases
+
+Moon Survival và Mars Survival là hai campaign độc lập; Advanced Two-Arc là mode kết hợp về sau. Delivery phase không đồng nghĩa với campaign mới: PHASE 1 và PHASE 2 cùng hoàn thiện Moon campaign.
 
 ```text
 PHASE 1                         PHASE 2
-Moon Survival                  Mars Survival
-32 Sol                         Campaign riêng
-Save/state riêng               Save/state riêng
+Moon Survival core             Moon Complete
+32 Sol                         Onboarding/narrative/hardening
+Deterministic gameplay         Cùng Moon campaign/save
+
+PHASE 3
+Mars Survival
+Campaign và save/state riêng
 
               ADVANCED MODE — về sau
               Moon → Mars hai chặng
               Độ khó cao, không phải default
 ```
 
-### Moon Campaign
+### Moon Campaign — PHASE 1 + PHASE 2
 
 - Màn độc lập 32 Sol.
 - Không cần phóng sang Mars để thắng.
 - Trọng tâm: rover training, Sol 7 crisis, chuẩn bị và sống qua Lunar Night 14 Sol.
 
-### Mars Campaign
+### Mars Campaign — PHASE 3
 
 - Màn độc lập, bắt đầu từ Mars initial state riêng.
 - Không nhận crew/resource/save từ Moon Campaign.
-- MOXIE, radio latency, dust storm và Mars rover thuộc PHASE 2.
+- MOXIE, radio latency, dust storm và Mars rover thuộc PHASE 3.
 
-### Advanced Two-Arc Mode
+### Advanced Two-Arc Mode — PHASE 4
 
 - Moon → Hohmann transfer → Mars.
 - Là difficulty/mode cao hơn, mở sau khi hai campaign độc lập ổn định.
@@ -78,6 +84,8 @@ Ngưỡng rank cụ thể được khóa ở PHASE 1.4 bằng simulation, không
 
 Code Mars prototype hiện có không cần xóa. Nó phải được cô lập theo `campaignId`/feature boundary để không xuất hiện hoặc ảnh hưởng Moon 32.
 
+PHASE 2 chỉ hoàn thiện Moon: title/continue flow, intro bối cảnh, Guided Sol 1, contextual hints, milestone presentation và release hardening. Kế hoạch chi tiết nằm tại [`PHASE_2_MOON_COMPLETE_MASTER_PLAN.md`](../plan/second-phase/PHASE_2_MOON_COMPLETE_MASTER_PLAN.md).
+
 ## 6. Campaign contract
 
 ```ts
@@ -107,4 +115,4 @@ State/save luôn ghi `campaignId`. Không được load save Moon vào Mars ho�
 
 Tọa độ V12 đã được nhận vào PHASE 1.5. `assets_staging/hail-v12-rack-consolidation/` chưa có trong repository hiện tại; Visual Lead phải bàn giao asset/contract hoặc xác nhận fallback trước integration gate.
 
-**Kết luận:** toàn team tập trung phát hành Moon Survival 32 Sol trước; Mars và chế độ hai chặng không được chen vào critical path PHASE 1.
+**Kết luận:** toàn team hoàn thiện Moon Survival qua PHASE 1 và Moon Complete PHASE 2 trước; Mars PHASE 3 và chế độ hai chặng PHASE 4 không được chen vào critical path.

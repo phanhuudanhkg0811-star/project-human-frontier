@@ -47,29 +47,25 @@ Every choice incurs immediate costs and delayed consequences across multiple tur
 
 ---
 
-## 🗺️ Campaign Architecture
+## 🗺️ Campaign Architecture & Delivery Roadmap
 
-Project Hail is designed with three clean, independent campaigns (as reconciled in [SCOPE_RECONCILIATION.md](docs/product/SCOPE_RECONCILIATION.md)):
+Project Hail keeps Moon and Mars as independent campaigns. Delivery phases describe when those campaigns are built; PHASE 2 is a Moon product-completion phase, not a third campaign.
 
 ```text
-PHASE 1 (Current Focus)                 PHASE 2 (Post-Phase 1)
-┌───────────────────────────┐           ┌───────────────────────────┐
-│       Moon Survival       │           │       Mars Survival       │
-│          32 Sol           │           │        Independent        │
-│   Dedicated Save/State    │           │    Dedicated Save/State   │
-└───────────────────────────┘           └───────────────────────────┘
-              ▲                                       ▲
-              │                                       │
-              └───────────────┬───────────────────────┘
-                              │
-                    ADVANCED TWO-ARC MODE
-                   Moon 32 Sol → Hohmann → Mars
-                     (High-difficulty unlock)
+PHASE 1                      PHASE 2
+Moon Survival Core    →      Moon Complete
+Engine & gameplay            Intro · Guided Sol · UX
+            (same Moon campaign/save)
+
+PHASE 3                      PHASE 4
+Mars Survival         →      Advanced Two-Arc
+Independent save             Moon → Hohmann → Mars
 ```
 
-1. **Phase 1: Moon Survival (32 Sol)**: Self-contained lunar campaign from Sol 1 to Sol 32. Players do not need to launch to Mars to win. Core focus: Rover training, the Sol 7 crisis, surviving the 14-Sol Lunar Night, and post-dawn recovery.
-2. **Phase 2: Mars Survival**: Independent campaign with separate saves, featuring MOXIE oxygen generation, global dust storms, and 14-minute radio latency.
-3. **Advanced Two-Arc Mode**: Two-stage challenge combining both campaigns via orbital transfer.
+1. **Phase 1: Moon Survival Core (32 Sol)**: Deterministic engine, campaign rules, rover, Sol 7, Lunar Night and cockpit gameplay.
+2. **Phase 2: Moon Complete**: Title/continue flow, narrative intro, action-driven Guided Sol 1, contextual help, Moon milestone presentation and release hardening.
+3. **Phase 3: Mars Survival**: Independent campaign with separate saves, featuring MOXIE oxygen generation, global dust storms and 14-minute radio latency.
+4. **Phase 4: Advanced Two-Arc Mode**: Two-stage challenge combining both campaigns via orbital transfer.
 
 ---
 
@@ -232,7 +228,7 @@ project-human-frontier/
 │   ├── asset-pipeline/          # WebP/SVG specifications, Web Audio guidelines
 │   └── plan/
 │       ├── first-phase/         # Phase 1.1 - 1.6 plans, master plan, team execution
-│       └── second-phase/        # Phase 2 Mars campaign placeholder
+│       └── second-phase/        # Phase 2 Moon Complete plans (2.0–2.6)
 ├── public/
 │   └── assets/hail/             # Cockpit backgrounds, crew portraits, UI assets
 ├── src/
@@ -293,7 +289,7 @@ project-human-frontier/
 
 ## 🗺️ MVP Scope & Phased Roadmap
 
-### Phase 1: Moon Survival 32 Sol (Current Scope)
+### Phase 1: Moon Survival 32 Sol Core
 - [x] Official Product Scope Reconciliation & 3-Campaign Architecture.
 - [x] Technical foundation: Vite + React + TypeScript + CI workflow.
 - [x] Phase 1.1: Domain state, command handlers, and versioned save system (`SaveEnvelope v4`).
@@ -301,13 +297,22 @@ project-human-frontier/
 - [x] Phase 1.3: 22 branching VI/EN events and Sol 7 Golden Crisis.
 - [x] Phase 1.4: 14-Sol Lunar Night balance, load shedding, and NASA Cadet Report Card.
 - [x] Phase 1.5: Tactile Cockpit UI, 2D ambient canvas, Web Audio, asset manifest, and bilingual VI/EN copy.
-- [ ] Phase 1.6: Bundle/asset budget, `ErrorBoundary`, accessibility polish, 5-journey E2E gate & release.
+- [x] Phase 1.6: Bundle/asset budget, `ErrorBoundary`, accessibility polish, campaign E2E gate & release candidate.
 
-### Phase 2: Mars Survival Campaign (Independent)
+### Phase 2: Moon Complete (Current Scope)
+- [ ] Title/Continue/Recovery entry flow and 60–90 second narrative intro.
+- [ ] Versioned onboarding foundation and Driver.js adapter.
+- [ ] Action-driven Guided Sol 1 with skip/resume/replay.
+- [ ] Sol 7, Lunar Night, sunrise and ending narrative presentation.
+- [ ] Contextual hints, accessibility, persistence and E2E hardening.
+
+See [PHASE 2 Moon Complete master plan](docs/plan/second-phase/PHASE_2_MOON_COMPLETE_MASTER_PLAN.md).
+
+### Phase 3: Mars Survival Campaign (Independent)
 - [ ] Standalone 36+ Sol Mars expedition.
 - [ ] Atmospheric dust storms, MOXIE systems, and 14-minute radio communication latency.
 
-### Phase 3: Advanced Two-Arc Mode
+### Phase 4: Advanced Two-Arc Mode
 - [ ] Integrated campaign connecting Moon Survival to Mars via Hohmann transfer orbital trajectory.
 
 ---

@@ -31,7 +31,7 @@ Save/state riêng               Save/state riêng
 
 - Màn độc lập, bắt đầu từ Mars initial state riêng.
 - Không nhận crew/resource/save từ Moon Campaign.
-- MOXIE, radio latency, dust storm và Mars rover thuộc PHASE 2.
+- MOXIE, radio latency, dust storm và Mars rover thuộc Mars campaign; theo roadmap mới ngày 14/11/2026, implementation được dời sang PHASE 3 sau Moon Complete PHASE 2.
 
 ### Advanced Two-Arc Mode
 

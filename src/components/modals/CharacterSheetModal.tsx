@@ -108,9 +108,8 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
             return (
               <div
                 key={crewId}
-                className={`p-3 rounded-lg bg-slate-900/75 border flex flex-col gap-2 ${
-                  isSelected ? 'border-teal-400/80 ring-1 ring-teal-400/40' : 'border-slate-700/80'
-                }`}
+                className={`p-3 rounded-lg bg-slate-900/75 border flex flex-col gap-2 ${isSelected ? 'border-teal-400/80 ring-1 ring-teal-400/40' : 'border-slate-700/80'
+                  }`}
               >
                 <div className="flex items-start gap-3">
                   <img
