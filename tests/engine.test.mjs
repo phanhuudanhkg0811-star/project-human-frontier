@@ -774,3 +774,392 @@ test('Phase 1.3 contract selectors and events catalog validation work end-to-end
     /cannot combine sol with solMin\/solMax/
   );
 });
+
+// ---------------------------------------------------------------------------
+// Internal mechanics depth (modelVersion 1.4.1-ts-mechanics)
+// Interface is unchanged: these tests only observe GameState/SolSummary output.
+// ---------------------------------------------------------------------------
+
+function variant(base, overrides) {
+  return {
+    ...base,
+    ...overrides,
+    clock: { ...base.clock, ...(overrides.clock ?? {}) },
+    dailyPlan: { ...base.dailyPlan, ...(overrides.dailyPlan ?? {}) },
+    resources: { ...base.resources, ...(overrides.resources ?? {}) },
+    systems: { ...base.systems, ...(overrides.systems ?? {}) },
+    crew: { ...base.crew, ...(overrides.crew ?? {}) },
+    equipment: { ...base.equipment, ...(overrides.equipment ?? {}) },
+  };
+}
+
+function committedPlan(sol, extra = {}) {
+  return {
+    sol,
+    status: 'committed',
+    wrsEnabled: false,
+    powerPriority: ['eclss', 'wrs', 'fabricator', 'rover'],
+    mreTargets: [],
+    ...extra,
+  };
+}
+
+test('Diviner lunar thermal curve peaks at midday and bottoms out at lunar night', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 11, spaceWeatherOverride: 'quiet' });
+  const thermal = bundle.catalog.environment.temperatureC;
+
+  const tempAt = (sol, overrides = {}) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol, phase: 'rationing', resolutionIndex: sol - 1 },
+        dailyPlan: committedPlan(sol),
+        ...overrides,
+      }),
+      bundle,
+      'preview'
+    ).summary.surfaceTempC;
+
+  const round2 = (n) => Math.round(n * 100) / 100;
+  assert.equal(tempAt(8), round2(thermal.dayMaxC), 'midday of the 28-Sol cycle must hit the Diviner day maximum');
+  assert.equal(tempAt(15), round2(thermal.nightMinC), 'lunar nightfall must hit the Diviner night minimum');
+  assert.equal(tempAt(22), round2(thermal.nightMinC), 'deep lunar night stays at the night minimum');
+  assert.ok(tempAt(3) > tempAt(2), 'temperature rises monotonically after sunrise');
+  assert.ok(tempAt(12) < tempAt(8), 'temperature falls after midday toward sunset');
+});
+
+test('Battery applies round-trip efficiency, caps at max, and self-discharges on idle nights', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 12, spaceWeatherOverride: 'quiet' });
+  const solar3 = { id: 'solar', level: 3, integrity: 1, status: 'nominal' };
+
+  // Night Sol: no solar, fission 8, battery 40, essential load 12, no WRS.
+  const night = core.resolveSol(
+    variant(base, {
+      clock: { sol: 15, phase: 'rationing', resolutionIndex: 14 },
+      dailyPlan: committedPlan(15),
+      resources: { batteryKWh: 40 },
+    }),
+    bundle,
+    'preview'
+  );
+  assert.equal(night.summary.resourceDeltas.batteryKWh, -4.07, '4 kWh load + 0.2% self-discharge');
+  assert.equal(night.nextState.resources.batteryKWh, 35.93);
+
+  // Day Sol with a low battery: net charge is derated by round-trip losses.
+  const day = core.resolveSol(
+    variant(base, {
+      clock: { sol: 2, phase: 'rationing', resolutionIndex: 1 },
+      dailyPlan: committedPlan(2),
+      resources: { batteryKWh: 10 },
+      systems: { solar: solar3 },
+    }),
+    bundle,
+    'preview'
+  );
+  // 10 + 8 fission + 35.8 derated solar - 12 essential = 41.8 kWh available.
+  // Net charge 31.8 * 0.96 = 30.528, then 0.2% self-discharge.
+  assert.equal(day.summary.resourceDeltas.batteryKWh, 30.45);
+  assert.ok(day.summary.resourceDeltas.batteryKWh < 31.8, 'round-trip efficiency must lose energy on net charge');
+
+  // Battery never exceeds its storage cap.
+  const capped = core.resolveSol(
+    variant(base, {
+      clock: { sol: 2, phase: 'rationing', resolutionIndex: 1 },
+      dailyPlan: committedPlan(2),
+      resources: { batteryKWh: 59 },
+      systems: { solar: solar3 },
+    }),
+    bundle,
+    'preview'
+  );
+  assert.equal(capped.nextState.resources.batteryKWh, bundle.balance.storages.batteryKWh.max);
+  assert.ok(capped.nextState.resources.batteryKWh <= bundle.balance.storages.batteryKWh.max);
+});
+
+test('Airlock leak scales with lost integrity and a degraded scrubber raises O2 consumption', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 13, spaceWeatherOverride: 'quiet' });
+  const o2Delta = (airlockIntegrity, scrubberIntegrity = 1) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+        dailyPlan: committedPlan(3),
+        systems: {
+          airlock: { id: 'airlock', level: 1, integrity: airlockIntegrity, status: airlockIntegrity >= 0.85 ? 'nominal' : 'degraded' },
+          scrubber: { id: 'scrubber', level: 1, integrity: scrubberIntegrity, status: scrubberIntegrity >= 0.85 ? 'nominal' : 'degraded' },
+        },
+      }),
+      bundle,
+      'preview'
+    ).summary.resourceDeltas.oxygenKg;
+
+  // 4 crew * 0.85 kg
+  assert.equal(o2Delta(1.0), -3.4);
+  // 50% airlock integrity -> 1.0 kg * 0.5 = 0.5 kg leak
+  assert.equal(o2Delta(0.5), -3.9);
+  // 20% lost integrity -> 0.2 kg leak (proportional, not flat)
+  assert.equal(o2Delta(0.8), -3.6);
+  // 50% scrubber integrity -> +7.5% O2 use
+  assert.equal(o2Delta(1.0, 0.5), -3.66);
+  assert.ok(o2Delta(1.0, 0.5) < o2Delta(1.0), 'a degraded scrubber must cost extra O2');
+});
+
+test('WRS recovery is proportional to recycler integrity', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 14, spaceWeatherOverride: 'quiet' });
+  const sol7 = (recyclerIntegrity) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 7, phase: 'rationing', resolutionIndex: 6 },
+        dailyPlan: committedPlan(7, { wrsEnabled: true }),
+        resources: { batteryKWh: 8, wasteWaterL: 10, waterL: 35 },
+        systems: {
+          solar: { id: 'solar', level: 1, integrity: 0, status: 'offline' },
+          recycler: {
+            id: 'recycler',
+            level: 1,
+            integrity: recyclerIntegrity,
+            status: recyclerIntegrity >= 0.85 ? 'nominal' : 'degraded',
+          },
+        },
+      }),
+      bundle,
+      'preview'
+    );
+
+  const healthy = sol7(1.0);
+  assert.equal(healthy.summary.wrsRecoveredWaterL, 9, '10 L greywater * 90% at full integrity');
+  assert.equal(healthy.summary.resourceDeltas.waterL, -1);
+
+  const half = sol7(0.5);
+  assert.equal(half.summary.wrsRecoveredWaterL, 4.5, 'half the recovery rate at half integrity');
+  assert.equal(half.summary.resourceDeltas.waterL, -5.5);
+  assert.ok(half.nextState.resources.waterL < healthy.nextState.resources.waterL);
+});
+
+test('Continuous wear degrades systems every Sol and storm hardware stress accelerates it', () => {
+  const bundle = core.loadContentBundle();
+  const quiet = core.createInitialGameState(bundle, { seed: 15, spaceWeatherOverride: 'quiet' });
+  const quietOut = core.resolveSol(
+    variant(quiet, {
+      clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+      dailyPlan: committedPlan(3),
+    }),
+    bundle,
+    'preview'
+  );
+  for (const id of ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator']) {
+    assert.equal(quietOut.nextState.systems[id].integrity, 0.997, `${id} wears 0.003 per quiet Sol`);
+    assert.equal(quietOut.nextState.systems[id].status, 'nominal');
+  }
+
+  const storm = core.createInitialGameState(bundle, { seed: 15, donkiProfileId: 'may-2024-xstorm' });
+  const stormOut = core.resolveSol(
+    variant(storm, {
+      clock: { sol: 16, phase: 'rationing', resolutionIndex: 15 },
+      dailyPlan: committedPlan(16),
+    }),
+    bundle,
+    'preview'
+  );
+  const quietWear = 1 - quietOut.nextState.systems.recycler.integrity;
+  const stormWear = 1 - (stormOut.nextState.systems.recycler.integrity ?? 1);
+  assert.ok(stormWear >= quietWear, 'storm wear must be at least the quiet-Sol baseline');
+  assert.ok(stormOut.summary.weather.hardwareStressIndex > 0, 'fixture Sol must carry hardware stress');
+});
+
+test('Chronic radiation dose applies thresholded health penalties', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 16, spaceWeatherOverride: 'quiet' });
+  const withDose = (dose) => {
+    const crew = Object.fromEntries(
+      Object.entries(base.crew).map(([id, member]) => [id, { ...member, radiationMgy: dose, health: 100 }])
+    );
+    return core.resolveSol(
+      variant(base, {
+        clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+        dailyPlan: committedPlan(3),
+        crew,
+      }),
+      bundle,
+      'preview'
+    ).nextState.crew;
+  };
+
+  // Quiet Sol adds background GCR dose, so compare against the no-dose baseline.
+  const clean = withDose(0).cmd.health;
+  const first = withDose(30).cmd.health;
+  const second = withDose(70).cmd.health;
+  assert.equal(first, clean - 0.5, '>= 25 mGy costs 0.5 health per Sol');
+  assert.equal(second, clean - 1.0, '>= 60 mGy costs 1.0 health per Sol');
+  assert.equal(withDose(30).eng.health, first, 'penalty applies to every crew member');
+});
+
+test('Rover mitigation needs remaining durability and operator health scales incident risk', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, {
+    seed: 17,
+    donkiProfileId: 'may-2024-xstorm',
+  });
+  const mission = {
+    expeditionId: 'regolith-field',
+    status: 'exploring',
+    scheduledSol: 5,
+    launchedSol: 5,
+    statusEnteredSol: 6,
+    expectedReturnSol: 9,
+    launchOperatorCrewId: 'cmd',
+    recoveryOperatorCrewId: null,
+    equippedItems: ['dust_shield'],
+    travelTicksCompleted: 2,
+    signalLostSols: 0,
+    resumeStatus: null,
+    recoveryDelaySols: 0,
+    incidents: [],
+  };
+
+  const riskFor = (durability, health) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 16, phase: 'rationing', resolutionIndex: 15 },
+        dailyPlan: committedPlan(16),
+        rover: { activeMission: mission, missionHistory: [] },
+        equipment: {
+          dust_shield: {
+            ...base.equipment.dust_shield,
+            owned: true,
+            durability,
+            state: durability > 0 ? 'good' : 'damaged',
+          },
+        },
+        crew: { cmd: { ...base.crew.cmd, health } },
+      }),
+      bundle,
+      'preview'
+    ).summary.weather.roverIncidentProb;
+
+  const pristine = riskFor(100, 100);
+  const broken = riskFor(0, 100);
+  const injured = riskFor(100, 50);
+
+  assert.ok(pristine < 0.1, 'an intact mitigation item keeps storm risk low');
+  assert.ok(broken > pristine * 5, 'a spent mitigation item must stop blocking the threat');
+  assert.ok(injured > pristine, 'an injured operator raises incident risk');
+  assert.ok(injured <= pristine * 1.25, 'operator health factor is capped at 1.25x');
+});
+
+test('Repair success scales with crew health without breaking deterministic quiet repairs', () => {
+  const bundle = core.loadContentBundle();
+  const repairState = (seed, health, quiet) => {
+    const base = quiet
+      ? core.createInitialGameState(bundle, { seed, spaceWeatherOverride: 'quiet' })
+      : core.createInitialGameState(bundle, { seed, donkiProfileId: 'may-2024-xstorm' });
+    return variant(base, {
+      clock: { sol: quiet ? 3 : 16, phase: 'rationing', resolutionIndex: quiet ? 2 : 15 },
+      dailyPlan: committedPlan(quiet ? 3 : 16),
+      systems: { airlock: { id: 'airlock', level: 1, integrity: 0.5, status: 'degraded' } },
+      crew: {
+        eng: {
+          ...base.crew.eng,
+          health,
+          assignedTask: { type: 'repair-system', targetSystemId: 'airlock' },
+        },
+      },
+    });
+  };
+
+  // Quiet Sols are deterministic for every health value.
+  const quietOut = core.resolveSol(repairState(1, 40, true), bundle, 'preview');
+  assert.equal(quietOut.summary.weather.repairSuccessProb, 1);
+  assert.equal(quietOut.summary.weather.repairRollOk, true);
+
+  // Under a storm, healthy crews succeed at least as often as injured crews.
+  const successCount = (health) => {
+    let ok = 0;
+    for (let seed = 1; seed <= 40; seed += 1) {
+      const out = core.resolveSol(repairState(seed, health, false), bundle, 'preview');
+      if (out.summary.weather.repairRollOk) ok += 1;
+    }
+    return ok;
+  };
+  const healthy = successCount(100);
+  const injured = successCount(50);
+  const fragile = successCount(20);
+  assert.ok(healthy >= injured, 'injured crews cannot repair more often than healthy crews');
+  assert.ok(injured >= fragile, 'lower health cannot improve repair odds');
+  assert.ok(healthy > fragile, 'health must materially change storm repair odds');
+});
+
+test('Fabricator refuses to run below minimum integrity', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 18, spaceWeatherOverride: 'quiet' });
+  const job = {
+    action: 'craft',
+    itemId: 'medkit',
+    startedSol: 3,
+    solsRemaining: 2,
+    partsSpent: 2,
+    waterSpent: 2,
+    batteryReserved: 4,
+  };
+  const runAt = (integrity) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+        dailyPlan: committedPlan(3),
+        fabricator: { usedThisSol: false, activeJob: job },
+        systems: {
+          fabricator: {
+            id: 'fabricator',
+            level: 1,
+            integrity,
+            status: integrity >= 0.85 ? 'nominal' : 'degraded',
+          },
+        },
+      }),
+      bundle,
+      'preview'
+    );
+
+  const healthy = runAt(1.0);
+  assert.equal(healthy.summary.unmetLoads.includes('fabricator'), false);
+  assert.equal(healthy.nextState.fabricator.activeJob.solsRemaining, 1);
+
+  const broken = runAt(0.3);
+  assert.equal(broken.summary.unmetLoads.includes('fabricator'), true);
+  assert.equal(broken.nextState.fabricator.activeJob.solsRemaining, 2, 'no progress while fabricator is unreliable');
+});
+
+test('Preview and commit remain byte-identical under the new physics', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 19, spaceWeatherOverride: 'quiet' });
+  const state = variant(base, {
+    clock: { sol: 7, phase: 'rationing', resolutionIndex: 6 },
+    dailyPlan: committedPlan(7, { wrsEnabled: true }),
+    resources: { batteryKWh: 8, wasteWaterL: 10, waterL: 35 },
+    systems: {
+      solar: { id: 'solar', level: 1, integrity: 0, status: 'offline' },
+      recycler: { id: 'recycler', level: 1, integrity: 0.5, status: 'degraded' },
+      scrubber: { id: 'scrubber', level: 1, integrity: 0.5, status: 'degraded' },
+      airlock: { id: 'airlock', level: 1, integrity: 0.5, status: 'degraded' },
+    },
+  });
+
+  const preview = core.resolveSol(state, bundle, 'preview');
+  const commit = core.resolveSol(state, bundle, 'commit');
+
+  assert.deepEqual(preview.summary, commit.summary);
+  assert.deepEqual(preview.nextState.resources, commit.nextState.resources);
+  assert.deepEqual(preview.nextState.systems, commit.nextState.systems);
+  assert.deepEqual(preview.nextState.crew, commit.nextState.crew);
+  assert.deepEqual(preview.nextState.fabricator, commit.nextState.fabricator);
+  assert.deepEqual(preview.nextState.rover, commit.nextState.rover);
+  // Only bookkeeping fields (revision/history/debrief clock) may differ in preview.
+  assert.equal(preview.nextState.revision, commit.nextState.revision - 1);
+  assert.equal(preview.nextState.history.summaries.length, commit.nextState.history.summaries.length - 1);
+  assert.equal(
+    core.sha256Hex(core.canonicalStringify({ summary: preview.summary, resources: preview.nextState.resources })),
+    core.sha256Hex(core.canonicalStringify({ summary: commit.summary, resources: commit.nextState.resources }))
+  );
+});

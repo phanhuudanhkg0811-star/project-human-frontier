@@ -33,25 +33,61 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
+function round4(n: number): number {
+  return Math.round(n * 10000) / 10000;
+}
+
 function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
 }
+
+/**
+ * Internal physics constants.
+ *
+ * These are deliberately NOT in balance.json: adding fields would change the
+ * ContentBundle/BalanceConfig interface and therefore the save contract. They
+ * are calibrated (not "realistic") so the 32-Sol envelope in
+ * tests/phase-1-4-simulation.test.mjs still reaches victory.
+ */
+const BATTERY_SELF_DISCHARGE_PER_SOL = 0.002; // fraction of stored energy per Sol
+const BATTERY_ROUND_TRIP_EFFICIENCY = 0.96; // applies only to net charging
+const SOLAR_TEMP_DERATE_PER_C = 0.0015; // panel efficiency vs. ambient temperature
+const SOLAR_TEMP_DERATE_MIN = 0.88;
+const SOLAR_TEMP_DERATE_MAX = 1.02;
+const SYSTEM_WEAR_BASE_PER_SOL = 0.003; // integrity lost per Sol to thermal cycling
+const SYSTEM_WEAR_STORM_PER_INDEX = 0.01; // extra wear per unit hardwareStressIndex
+const SYSTEM_WEAR_FLOOR = 0.05;
+const SCRUBBER_O2_PENALTY = 0.15; // extra O2 consumption at zero scrubber integrity
+const REPAIR_HEALTH_FLOOR = 0.75; // repair success multiplier at zero health
+const REPAIR_HEALTH_WEIGHT = 0.25;
+const CHRONIC_DOSE_FIRST_MGY = 25;
+const CHRONIC_DOSE_SECOND_MGY = 60;
+const CHRONIC_DOSE_FIRST_PENALTY = 0.5; // health per Sol
+const CHRONIC_DOSE_SECOND_PENALTY = 1.0;
+const ROVER_OPERATOR_HEALTH_WEIGHT = 0.25; // risk multiplier per missing health point
+const LUNAR_CYCLE_SOLS = 28; // 14 Sol day + 14 Sol night in the Moon-32 campaign
 
 function isLunarNightSol(sol: number, campaign: CampaignConfig): boolean {
   return sol >= campaign.milestones.lunarNight.startSol && sol <= campaign.milestones.lunarNight.endSol;
 }
 
+/**
+ * Representative surface temperature for the Sol, from the Diviner-calibrated
+ * airless-surface form T = night + (day - night) * max(0, sin el)^0.25.
+ * The campaign window is a 28-Sol lunar cycle starting at sunrise.
+ */
 function computeSurfaceTempC(sol: number, bundle: ContentBundle): number {
   const thermal = bundle.catalog.environment.temperatureC;
-  const night = isLunarNightSol(sol, bundle.campaign);
-  if (night) {
-    const progress = (sol - bundle.campaign.milestones.lunarNight.startSol) / 13;
-    const dip = Math.sin(progress * Math.PI);
-    return round2(thermal.meanC + (thermal.nightMinC - thermal.meanC) * (0.6 + 0.4 * dip));
-  }
-  const dayLen = 14;
-  const dayPhase = clamp((sol <= 14 ? sol : sol - 28) / dayLen, 0, 1);
-  return round2(thermal.meanC + (thermal.dayMaxC - thermal.meanC) * (0.65 + 0.35 * Math.sin(dayPhase * Math.PI)));
+  const phase = ((((sol - 1) % LUNAR_CYCLE_SOLS) + LUNAR_CYCLE_SOLS) % LUNAR_CYCLE_SOLS) / LUNAR_CYCLE_SOLS;
+  const sunElevation = phase < 0.5 ? Math.sin(Math.PI * (phase / 0.5)) : 0;
+  const surface = thermal.nightMinC + (thermal.dayMaxC - thermal.nightMinC) * Math.pow(sunElevation, 0.25);
+  return round2(surface);
+}
+
+function deriveSystemStatus(integrity: number): StationSystemState['status'] {
+  if (integrity >= 0.85) return 'nominal';
+  if (integrity > 0) return 'degraded';
+  return 'offline';
 }
 
 function deriveEquipmentCondition(durability: number): EquipmentCondition {
@@ -138,6 +174,18 @@ function resolveRepairAndUpgradeTasks(
 
   const systems: Record<SystemId, StationSystemState> = { ...state.systems };
   const notes: string[] = [];
+
+  // Continuous wear: thermal cycling every Sol plus storm hardware stress.
+  // Applied before repairs so a repaired system ends the Sol at full integrity.
+  const wear =
+    SYSTEM_WEAR_BASE_PER_SOL + weather.hardwareStressIndex * SYSTEM_WEAR_STORM_PER_INDEX;
+  for (const systemId of ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'] as const) {
+    const system = systems[systemId];
+    if (system.integrity <= 0 || system.status === 'offline') continue;
+    const integrity = clamp(round4(system.integrity - wear), SYSTEM_WEAR_FLOOR, 1);
+    systems[systemId] = { ...system, integrity, status: deriveSystemStatus(integrity) };
+  }
+
   let aggregatedProb = baselineRepairProb;
   let allRepairsSucceeded = true;
 
@@ -145,9 +193,17 @@ function resolveRepairAndUpgradeTasks(
     let probSum = 0;
     for (const worker of repairWorkers) {
       const sysId = worker.assignedTask!.targetSystemId!;
-      const taskProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
+      const fitness = clamp(
+        REPAIR_HEALTH_FLOOR + REPAIR_HEALTH_WEIGHT * (worker.health / 100),
+        REPAIR_HEALTH_FLOOR,
+        1
+      );
+      const baseProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
         isAlexAssigned: worker.id === 'eng',
       });
+      // Health degrades the *storm penalty*, not the quiet-Sol baseline, so a
+      // healthy crew still completes routine repairs deterministically.
+      const taskProb = clamp(1 - (1 - baseProb) / fitness, 0, 1);
       probSum += taskProb;
       const taskRoll = deriveRoll(state.campaign.seed, state.clock.sol, `repair:${worker.id}:${sysId}`);
       const ok = taskRoll <= taskProb;
@@ -266,7 +322,15 @@ function resolvePowerAndEclss(
   const solarPenalty = computeWeatherPowerPenalty(weather, isNight);
   const solarSys = systems.solar;
   const baseSolar = bundle.balance.power.solarByLevelKWh[String(solarSys.level) as '1' | '2' | '3'];
-  const solarKWh = isNight ? 0 : round2(baseSolar * solarSys.integrity * (1 - solarPenalty));
+  const ambientTempC = computeSurfaceTempC(sol, bundle);
+  const thermalDerate = clamp(
+    1 - SOLAR_TEMP_DERATE_PER_C * (ambientTempC - 25),
+    SOLAR_TEMP_DERATE_MIN,
+    SOLAR_TEMP_DERATE_MAX
+  );
+  const solarKWh = isNight
+    ? 0
+    : round2(baseSolar * solarSys.integrity * (1 - solarPenalty) * thermalDerate);
   const fissionKWh = bundle.balance.power.fissionKWhPerSol;
   const powerGeneratedKWh = round2(fissionKWh + solarKWh);
 
@@ -314,7 +378,9 @@ function resolvePowerAndEclss(
       }
     } else if (consumer === 'fabricator' && activeJob && systems.fabricator.status !== 'offline') {
       const need = activeJob.batteryReserved;
-      if (availableKWh + 1e-6 >= need) {
+      if (systems.fabricator.integrity < 0.35) {
+        unmetLoads.push('fabricator');
+      } else if (availableKWh + 1e-6 >= need) {
         availableKWh = round2(availableKWh - need);
         consumedKWh = round2(consumedKWh + need);
         fabricatorRan = true;
@@ -343,16 +409,33 @@ function resolvePowerAndEclss(
   }
 
   const s = bundle.balance.storages;
-  const nextBattery = clamp(round2(availableKWh), 0, s.batteryKWh.max);
+  const startBatteryKWh = state.resources.batteryKWh;
+  let storedKWh = availableKWh;
+  if (storedKWh > startBatteryKWh) {
+    // Only the net charge is subject to round-trip losses; discharge losses are
+    // already represented by the load ledger.
+    storedKWh = startBatteryKWh + (storedKWh - startBatteryKWh) * BATTERY_ROUND_TRIP_EFFICIENCY;
+  }
+  const nextBattery = round2(
+    clamp(storedKWh * (1 - BATTERY_SELF_DISCHARGE_PER_SOL), 0, s.batteryKWh.max)
+  );
 
   const livingCrewCount = Object.values(state.crew).filter((c) => c.condition !== 'evacuated').length;
-  const airlockLeak = systems.airlock.integrity < 1.0 ? bundle.balance.eclss.airlockDegradedLeakO2Kg : 0;
-  const oxygenUse = round2(livingCrewCount * bundle.balance.eclss.oxygenKgPerCrewPerSol + airlockLeak);
+  const airlockLeak =
+    systems.airlock.integrity < 1
+      ? round2(bundle.balance.eclss.airlockDegradedLeakO2Kg * (1 - systems.airlock.integrity))
+      : 0;
+  const scrubberPenalty = 1 + SCRUBBER_O2_PENALTY * (1 - systems.scrubber.integrity);
+  const oxygenUse = round2(
+    (livingCrewCount * bundle.balance.eclss.oxygenKgPerCrewPerSol + airlockLeak) * scrubberPenalty
+  );
   const nextOxygen = clamp(round2(state.resources.oxygenKg - oxygenUse), 0, s.oxygenKg.max);
 
   const waterUse = round2(livingCrewCount * bundle.balance.eclss.waterLPerCrewPerSol);
   const processedWaste = wrsRan ? Math.min(state.resources.wasteWaterL, wrsCfg.maxBatchL) : 0;
-  const wrsRecoveredWaterL = round2(processedWaste * wrsCfg.recoveryRate);
+  const wrsRecoveredWaterL = Math.round(
+    processedWaste * wrsCfg.recoveryRate * clamp(systems.recycler.integrity, 0, 1) * 10
+  ) / 10;
   const nextWater = clamp(round2(state.resources.waterL - waterUse + wrsRecoveredWaterL), 0, s.waterL.max);
 
   const newGreywater = round2(livingCrewCount * bundle.balance.eclss.wasteWaterGeneratedPerCrewPerSol);
@@ -487,6 +570,15 @@ function resolveCrewAndWeather(
       if (!immune) {
         morale = clamp(morale + crewRisk.stormMoralePenalty, 0, 100);
       }
+    }
+    const chronicPenalty =
+      radiationMgy >= CHRONIC_DOSE_SECOND_MGY
+        ? CHRONIC_DOSE_SECOND_PENALTY
+        : radiationMgy >= CHRONIC_DOSE_FIRST_MGY
+          ? CHRONIC_DOSE_FIRST_PENALTY
+          : 0;
+    if (chronicPenalty > 0) {
+      health = clamp(health - chronicPenalty, 0, 100);
     }
     if (radBurnTriggered) {
       health = clamp(health - 8, 0, 100);
@@ -804,18 +896,33 @@ function resolveRoverTick(
   const diffMult = bundle.campaign.difficultyProfiles[state.campaign.difficulty].weatherRiskMultiplier;
   const threatBlocked = exp.mitigationOptions.some(
     (option) =>
-      option.allOf.every((required) => mission.equippedItems.includes(required)) &&
+      option.allOf.every(
+        (required) => mission.equippedItems.includes(required) && equipment[required].durability > 0
+      ) &&
       (option.requirements?.minBatteryKWh === undefined || resources.batteryKWh >= option.requirements.minBatteryKWh)
   );
 
   const savedBySol7Boost =
     mission.expeditionId === 'regolith-field' && Boolean(state.events.flags.sol7_saved_rover);
+  const operatorHealth = state.crew[mission.launchOperatorCrewId]?.health ?? 100;
+  const operatorRiskFactor = clamp(
+    1 + ROVER_OPERATOR_HEALTH_WEIGHT * (1 - operatorHealth / 100),
+    1,
+    1.25
+  );
   const roverIncidentProb = savedBySol7Boost
     ? 0
-    : computeRoverRiskProb(weather, bundle.balance, diffMult, {
-        threatBlocked,
-        isElenaOperating: mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
-      });
+    : round4(
+        clamp(
+          computeRoverRiskProb(weather, bundle.balance, diffMult, {
+            threatBlocked,
+            isElenaOperating:
+              mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
+          }) * operatorRiskFactor,
+          0.005,
+          0.92
+        )
+      );
   const roll = deriveRoll(state.campaign.seed, state.clock.sol, `rover-hazard:${mission.expeditionId}`);
   const roverIncidentTriggered = !savedBySol7Boost && roll < roverIncidentProb;
 
