@@ -766,7 +766,9 @@ export function validateScienceBriefs(input: unknown): readonly ScienceBrief[] {
     const tags = assertStringArray(b.tags, `briefs[${idx}].tags`);
     if (tags.length === 0) throw new Error(`briefs[${idx}].tags must not be empty`);
     assertString(b.title, `briefs[${idx}].title`);
+    if (b.titleEn !== undefined) assertString(b.titleEn, `briefs[${idx}].titleEn`);
     assertString(b.content, `briefs[${idx}].content`);
+    if (b.contentEn !== undefined) assertString(b.contentEn, `briefs[${idx}].contentEn`);
     assertString(b.source, `briefs[${idx}].source`);
     assertEnum(b.provenance, PROVENANCE_TAGS, `briefs[${idx}].provenance`);
   }
