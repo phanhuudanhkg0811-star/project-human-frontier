@@ -678,7 +678,7 @@ test('Phase 1.2 deadline failure, OR mitigation, immediate Medkit, and signal re
   assert.equal(cancelled.state.crew.geo.assignedTask, null);
 });
 
-test('SaveEnvelope v1 migrates to v3 without inventing historical operators and rewrites storage', () => {
+test('SaveEnvelope v1 migrates to v4 without inventing historical operators and rewrites storage', () => {
   const bundle = core.loadContentBundle();
   const storage = createMemoryStorage();
   const current = core.createInitialGameState(bundle, { seed: 5050 });
@@ -709,14 +709,14 @@ test('SaveEnvelope v1 migrates to v3 without inventing historical operators and 
   storage.setItem(core.SAVE_STORAGE_KEY, JSON.stringify({ ...unsigned, checksum: core.computeEnvelopeChecksum(unsigned) }));
   const loaded = core.loadGameState(bundle, storage);
   assert.equal(loaded.status, 'ok');
-  assert.equal(loaded.state.schemaVersion, 3);
+  assert.equal(loaded.state.schemaVersion, 4);
   assert.equal(loaded.state.campaign.sciencePoints, 20);
   assert.equal(loaded.state.rover.missionHistory[0].launchOperatorCrewId, null);
   assert.equal(loaded.state.events.activeEvent?.eventId, 'sol1-arrival-check');
-  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 3);
+  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 4);
 });
 
-test('SaveEnvelope v2 migrates to v3 preserving resolved events and active event deadline', () => {
+test('SaveEnvelope v2 migrates to v4 preserving resolved events and active event deadline', () => {
   const bundle = core.loadContentBundle();
   const storage = createMemoryStorage();
   const current = core.createInitialGameState(bundle, { seed: 6060 });
@@ -742,12 +742,12 @@ test('SaveEnvelope v2 migrates to v3 preserving resolved events and active event
   storage.setItem(core.SAVE_STORAGE_KEY, JSON.stringify({ ...unsigned, checksum: core.computeEnvelopeChecksum(unsigned) }));
   const loaded = core.loadGameState(bundle, storage);
   assert.equal(loaded.status, 'ok');
-  assert.equal(loaded.state.schemaVersion, 3);
+  assert.equal(loaded.state.schemaVersion, 4);
   assert.equal(loaded.state.events.activeEventId, 'sol3-airlock-seal-alert');
   assert.equal(loaded.state.events.activeEvent?.deadlineSol, 3);
   assert.deepEqual(loaded.state.events.resolvedEventIds, ['sol1-arrival-check']);
   assert.equal(loaded.state.events.occurrenceHistory.length, 1);
-  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 3);
+  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 4);
 });
 
 test('Phase 1.3 contract selectors and events catalog validation work end-to-end', () => {

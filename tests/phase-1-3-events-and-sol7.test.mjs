@@ -257,7 +257,8 @@ test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8)
   const bundle = core.loadContentBundle();
   const fixturePath = path.join(rootDir, 'tests', 'fixtures', 'sol7-save-rover.json');
   const rawFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
-  const sol7State = core.validateGameStateStructure(rawFixture);
+  // Preserve the Phase 1.3 golden fixture as a legacy save; only migrate its contract.
+  const sol7State = core.migrateSaveV3ToV4(rawFixture, bundle);
   core.assertGameState(sol7State, bundle);
 
   // Verify Golden Sol 7 initial conditions
@@ -338,7 +339,7 @@ test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8)
   assert.equal(saved.ok, true);
   const loaded = core.loadGameState(bundle, storage);
   assert.equal(loaded.status, 'ok');
-  assert.equal(loaded.envelope.schemaVersion, 3);
+  assert.equal(loaded.envelope.schemaVersion, 4);
   assert.equal(loaded.state.resources.waterL, 34);
   assert.equal(loaded.state.resources.batteryKWh, 0);
   assert.equal(loaded.state.events.flags.sol7_prioritized_station, true);

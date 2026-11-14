@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 3,
-  "contentVersion": "1.1.0-moon32",
-  "modelVersion": "1.1.0-ts-donki",
+  "schemaVersion": 4,
+  "contentVersion": "1.4.0-moon32",
+  "modelVersion": "1.4.0-ts-donki",
   "catalogVersion": "1.1.0-moon32",
   "revision": 0,
   "campaign": {
@@ -14,7 +14,8 @@
     "donkiProfileId": "oct-2024-x9storm",
     "targetSol": 32,
     "sciencePoints": 0,
-    "endReason": null
+    "endReason": null,
+    "outcome": null
   },
   "clock": {
     "sol": 1,

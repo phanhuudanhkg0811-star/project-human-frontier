@@ -1,0 +1,1584 @@
+{
+  "replayVersion": 1,
+  "policy": "human-player",
+  "coverage": "full-campaign",
+  "provenance": {
+    "buildId": null,
+    "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+    "rankingVersion": "1.4.0-moon32"
+  },
+  "initialState": {
+    "schemaVersion": 4,
+    "contentVersion": "1.4.0-moon32",
+    "modelVersion": "1.4.0-ts-donki",
+    "catalogVersion": "1.1.0-moon32",
+    "revision": 1,
+    "campaign": {
+      "id": "moon-32",
+      "runId": "run-moon32-205099-7f6554a7",
+      "planet": "moon",
+      "status": "active",
+      "difficulty": "cadet",
+      "seed": 205099,
+      "donkiProfileId": "oct-2024-x9storm",
+      "targetSol": 32,
+      "sciencePoints": 0,
+      "endReason": null,
+      "outcome": null
+    },
+    "clock": {
+      "sol": 1,
+      "phase": "briefing",
+      "resolutionIndex": 0
+    },
+    "resources": {
+      "batteryKWh": 40,
+      "oxygenKg": 70,
+      "waterL": 80,
+      "partsKg": 16,
+      "wasteWaterL": 0,
+      "mrePacks": 24,
+      "medkits": 2,
+      "medkitLevel": 1,
+      "waterZeroStreak": 0,
+      "oxygenZeroStreak": 0
+    },
+    "systems": {
+      "solar": {
+        "id": "solar",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "recycler": {
+        "id": "recycler",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "scrubber": {
+        "id": "scrubber",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "airlock": {
+        "id": "airlock",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      },
+      "fabricator": {
+        "id": "fabricator",
+        "level": 1,
+        "integrity": 1,
+        "status": "nominal"
+      }
+    },
+    "crew": {
+      "cmd": {
+        "id": "cmd",
+        "name": "Sarah Chen",
+        "roleTag": "Commander",
+        "health": 80,
+        "morale": 80,
+        "satiety": 100,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 0,
+        "assignedTask": null
+      },
+      "eng": {
+        "id": "eng",
+        "name": "Alex Rivera",
+        "roleTag": "Engineer",
+        "health": 80,
+        "morale": 80,
+        "satiety": 100,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 0,
+        "assignedTask": null
+      },
+      "doc": {
+        "id": "doc",
+        "name": "Marcus Vance",
+        "roleTag": "Medic",
+        "health": 80,
+        "morale": 80,
+        "satiety": 100,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 0,
+        "assignedTask": null
+      },
+      "geo": {
+        "id": "geo",
+        "name": "Elena Rostova",
+        "roleTag": "Geologist",
+        "health": 80,
+        "morale": 80,
+        "satiety": 100,
+        "condition": "fit",
+        "hungerState": "ok",
+        "radiationMgy": 0,
+        "assignedTask": null
+      }
+    },
+    "equipment": {
+      "core_drill": {
+        "id": "core_drill",
+        "owned": true,
+        "level": 1,
+        "durability": 100,
+        "state": "good",
+        "reservedForRover": false
+      },
+      "sealant_tape": {
+        "id": "sealant_tape",
+        "owned": true,
+        "level": 1,
+        "durability": 100,
+        "state": "good",
+        "reservedForRover": false
+      },
+      "solar_lantern": {
+        "id": "solar_lantern",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "dust_shield": {
+        "id": "dust_shield",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "radio_repeater": {
+        "id": "radio_repeater",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      },
+      "cryo_thermal_rig": {
+        "id": "cryo_thermal_rig",
+        "owned": false,
+        "level": 1,
+        "durability": 0,
+        "state": "damaged",
+        "reservedForRover": false
+      }
+    },
+    "fabricator": {
+      "usedThisSol": false,
+      "activeJob": null
+    },
+    "dailyPlan": {
+      "sol": 1,
+      "status": "draft",
+      "wrsEnabled": true,
+      "powerPriority": [
+        "eclss",
+        "wrs",
+        "fabricator",
+        "rover"
+      ],
+      "mreTargets": []
+    },
+    "rover": {
+      "activeMission": null,
+      "missionHistory": []
+    },
+    "events": {
+      "activeEventId": "sol1-arrival-check",
+      "activeEvent": {
+        "eventId": "sol1-arrival-check",
+        "triggeredAtSol": 1,
+        "deadlineSol": 1,
+        "context": {}
+      },
+      "resolvedEventIds": [],
+      "occurrenceHistory": [],
+      "flags": {},
+      "pendingFollowUps": []
+    },
+    "logistics": {
+      "activeOrder": null,
+      "padCooldownSols": 0,
+      "radioMessages": []
+    },
+    "debrief": {
+      "pendingDismiss": false,
+      "lastSummary": null
+    },
+    "history": {
+      "summaries": [],
+      "logs": [
+        {
+          "sol": 1,
+          "phase": "briefing",
+          "code": "MISSION_INIT",
+          "message": "Artemis Lunar Base đi vào vận hành. Chuẩn bị cho chu kỳ 32 Sol và Đêm Trăng sắp tới."
+        }
+      ]
+    }
+  },
+  "initialHash": "1b7c43d173cdb1941a786c8051f91209db54ec395b89c5fdb34360307f92773b",
+  "steps": [
+    {
+      "command": {
+        "choiceId": "calibrate-now",
+        "eventId": "sol1-arrival-check",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "8d6e22022af6687a3d9338053be48e272921e98678246350a4d8971f2a8fa0b2"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9262b8219df8a1f81be6276134517294f940e73ddf4bfc831ae74135f4a5bc7a"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "fa7bf193ddc862968b067a3e69168c078471b27efce6368d85d719d90fec477b"
+    },
+    {
+      "command": {
+        "slots": {
+          "food-med-pack": 1,
+          "power-parts-pack": 1,
+          "water-pack": 2
+        },
+        "type": "comms/order-cargo"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d0c13cbda4a9eb93170071732b012ebac9b771f532221ce9d8911e576a239f18"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f9dda193db2fa9ffac47f4ebe2faa9fa17506a8ddd49ea200878132803e70a06"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c348a3d83c82baa1a10a5d522c871be4f0a22e2122351f0c8a5467bb8c72f2f2"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "5204f2a6914538a616385aeff69e5e389c8e10431f128bdef356ed81964e8d5c"
+    },
+    {
+      "command": {
+        "choiceId": "boost-shielding-power",
+        "eventId": "sol2-solar-particles",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0bd97ea555c59ea0dd58d2ab09c095725980f447873e9bbdadc9752558ad758d"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e3951430b147dccc95f90a623c8c2a6a5e1a690bee53de2363b3d97b2cb8352f"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "44c1b7b821fe63342baddc2c9f2e072932430ea15ce625f033d2e0115c6165bf"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1e5a406ddfd14b42a8ba2c87bd94fdb216998ed2b9cac0bef132bf0f7070b091"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "45e784781ccdad249811cb37b4543c0517d8373442d89b53b46a140f399d865b"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c8c2241c204891c6c5a28e6486a9fb16845a4e4b46d27a972b2f830a5c7a7aaf"
+    },
+    {
+      "command": {
+        "choiceId": "use-sealant-tape",
+        "eventId": "sol3-airlock-seal-alert",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "13b9eccb0a64dc265508f1546907cdbbaa7e14332e9497f423f714941983f3e1"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "076abbe59d6b3f6f5b04806d51653545f766da168b166b1dbebdd39d8413a5c7"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "12a6ed4df3dee27d23b01bcf720a099d5776f990afa09399a115d66db0d58b19"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "157e997650016e2b42086a621359bb8a639b5eb644eded75e3c2f42122df6128"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "6fd99f4bbba5981a3fbfc89a447907e0bbc96507e44fc0bf057683793b60f549"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4aa9e423f44161868307aa92f5ad9f2d37cb5b921ae1099b9c7a93a041064894"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "26f61aae360ff1c340db3ea799f9c7ac6a369cc75046fc7693744e029309d81a"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "bed8673922d4bd49228c85526a13f0dbe479b9f3d72d81156fedd954c28fcb99"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "2442e9a0690d87f4699714ca0e5c45f7bf40e00639ae17c6d82c455c94561706"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "56a7f35d1f40e0bd15f480255deb6da2751ed9720b9283759e3e3e785a49785e"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e40267a41fd24ffa1c3e9498096bf0ef08219e8e4e33613dcfb8a2452ab48285"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "48809418d4323d6e4aae91356741e5a48703af8cf17966be299e177a7a3ad7f0"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e6459a5760fa76ecc2aa4de83195d736bfb0fb1ac50c7e4fe6d742458a853531"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "847cfdf9a7b834019dda2f7970ed1efddcc675c7672e6d1f2152f46b7af0f6c8"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "68bec2f2403b4d47a266ec45435f7342e912c32f3c1430507684a1d6f2b05177"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f5cba5941a63227a649ba9b68db523d21848e1b05bd94a4cc47e944d3c0b3e75"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e19e20944b6fe2135cc2e6eaa642283d59f5e479aa7ccd051d52f618ac924f6d"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "86ac637494677ddb262a74ae4aeceeae27e0ac1548599c9a954064bed34b9586"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "57b28c15fd01161016cf55bc22ba1595e67859fe9cc2a4bded6cf4ee1e59bbbc"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4d91c6c96f4c0834b76b12bb435acc3b6038ba8cf0eb339f4b74e11e76830ef9"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b8f193e896d45c9065b96413041170e7a3286900d4c67eb4c2c5518b983d1611"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0f5c8242caa027ff1300e800276d9c8d9ea8d56fdb405a4ee7b6bef54241ddd7"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4b07883a5afb030ebc05e3feae41018ac4c05148b8211fcf633cfb2612aa8125"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "94e82e2f8a9ffbebb0d09a1924617dbee37b14265ae1001c5a1b786c283e7b8d"
+    },
+    {
+      "command": {
+        "choiceId": "deep-spectrometry",
+        "eventId": "evt-crater-core-analysis",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c5970f7acebbc8417a6dd247d759dd22fe29ed133e2198134b60a4eecad03a96"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "745baabe1ff42f272794a02b62bbf220478fc9002552ae1f58a8fbc962107e19"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "044332a49cc326ec5b10de91625c05e8d9d32c77541884b6f64a25f3f9d571e2"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "7c1d31b85d6f1035f3b561f6771d803741d846cf3a563da0202c4be39ef4b6f7"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d55f9c8aaae84a796add285ee1eb9fbf68ea60bdcac2664b2c0eef9ad42e3b09"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1e50e63ca212ad8d03082b5aec885d1824e78a2f606be66d664a14f13497ddba"
+    },
+    {
+      "command": {
+        "choiceId": "save-rover-link",
+        "eventId": "sol7-golden-comms-crisis",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1213f99db740d1745e7a695450a2a0efb739a620cc26e7201d715ab6e9c27189"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "95b0de5fe8f367ecbc754c998cbc1db66ffdb2f45e01e326947d94033adb6720"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "924a6081bd660c6071b1690ed8a08c8700e4b4c88cce74ca2e7dd32ebc2f9b39"
+    },
+    {
+      "command": {
+        "slots": {
+          "food-med-pack": 1,
+          "power-parts-pack": 1,
+          "water-pack": 2
+        },
+        "type": "comms/order-cargo"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "936a636c2e8795d4bd635e5e29efbaa436c8249f317b76b7dd1c8bd139468ca3"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "80b0dfb5d3443988b241a37e8adbdfa69b827e7d97c8bc33e614c3c61ec73932"
+    },
+    {
+      "command": {
+        "enabled": true,
+        "type": "rationing/set-wrs"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "3718e3409d86e80ac455fda5797458081de2dc194e1784bd50d276e41ae55c99"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "599f6f4974237644f5411e3d087737d6f857f5b5b89ca240eb2e2fb2eda11e58"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1fdc889f75a924722826dbea344f700bf79bb366a8d64398ba0e53821896d567"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c9636f4e49e6a45a442e7d42a61513b6434af6b09c8390a26a9204ba687d8412"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "3dc6da93bd99cf72e38f09047c2a96125ad066c8b5f7f94263d3042bbf87e704"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e3936908fbccb663eb216ac23039dc365be69d940871d57073a306f1a78a12fb"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "dabfcf793998c1f8a55bb01cabdea6f71577f5f6d98d8867f8616c206363843e"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "7783200884fece016d8b05ec10c2bdaa974f626966f982d2ef5a097e8d9fcf56"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "a362561dbbbac342784066e858e3b10a86b429167c4e74c1662afe93667d542c"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "ba652b4fc6440bf5185b59ca170cc2c3d789e3a8626d963969b4ad926165c08f"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "23fb36e69087cc1b69fa0ba0c9c6fb3a7c327d413aae8ec058c3530503332ea6"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "ccaeb321a0fb70dd7b808690a949f771dd02d743e6f72d0e2b5c7e697ba75164"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b8ebd6b69cf9d233c857362904ea5acfd8ae449f0e21ea267c8ea6765c0c87df"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "2de27d35d49a29e2225879d4233dc2795d507c4d6407581a6c324910b557b5ab"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "8a2cb2e95032e865ba7d3385f3646fd6c266c81e5d122f67ef8b7ac8c690d66f"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e7d5b37c6ab7053e5514fddbc6e5d95eb32ddf9d0a2dca785c77e0a04bfb5ed6"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d28f5b67500120ab48de8c98d0a10b032a67170ddb28475d5c3e96d1e9ee72aa"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1e0056350ad199b42bbff1761f495e8ddfb2f90d6b040be3eae0468ba41661b1"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "a56df69cb7379f00f22140ff2e4501985aff894821df691e58e62cd83012612a"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9f7b295671eb05efaf9467c62ba52fe173ec8fd85f715e805959ab90f49e22db"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "6e34f22aa162fb8f2389efa23c0746ee70b537a07fa5eede1c48895d1aec49e6"
+    },
+    {
+      "command": {
+        "choiceId": "prep-landing-beacon",
+        "eventId": "evt-sol10-last-cargo-window",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "715894bcdde6bbeba335997c078981b86042383da24d8ecf9c616075b898d9b3"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "22efbef2e7bc574517061816d315014033731a7a423574d5caadad40a92b02f2"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "59ebcd070cffd9dbb1d16395afb2ae8e274271f6e237035db6d081243e88bfb1"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b7ffebb00176389a65805de52c6832fa1fb9b316cb3b5d36a5607c00407d6f82"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9a86a35d1f9c223221da678a08687b7e78b7bfbfc36a8a9ab653d98af8c9e5f6"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "5969d3acbd060718ada2315bad54b54f5a251b6292512b65dc1f5edeffa1536c"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b589cb2f2573d407bb4f02b371c66a77ab3730989cabcc177809e20cecf0a9f7"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "91bcedf239feec152f443b1f25865c907d0678891417ce8a1f8ca0d9982bc4aa"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e12a5fd7ea54e77a9730eddc835723a098e565b84710500a66eb630b314437b3"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0b1e89ad4a5d367e9b3b78961c01552b9d22bddee635fcdbd8c6d140e779a2ee"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "76fb8ea0f6ef2c5391bcc5e2ed69722bade5d333dd6684c4809ff37e75256052"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f0acfb1756fd22f3301a7e7b803b383cc9f45b1e55436f708ed8e3803c15b6d9"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "2a601f2ec697044a3f628a04f1016e4cb0c466ca67099f0cdb6074dcc7f3dd2f"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f7d1664b3735ab9d9e70694912741e1ea960030107bdbfe448afcb46b1ecafa2"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d5012d3e250ac82b5e893b4c347056be29b60f9c517492b14e84e7dbae73d529"
+    },
+    {
+      "command": {
+        "choiceId": "standard-telemetry",
+        "eventId": "evt-sol12-training-report",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "035263bbbc222ac493506b90e9f0ff3d3dbb346ae5178a49e619ab47bbb8a739"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f583eeb781aa691fdc57bf9dae73780bb29c48eeef0c363861c2cb9b34837a31"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c5dd1b249c44bf5bbf1b72de3f8a07f612037fec37454762d9e0fe353d814510"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "2d2d85e57e938ab221cfd5e3dd090c61dd93ed6281e49880f5f5660c52da39cc"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1f2e8c35aa55a2d36baf9b0f82cc83e1e81e41ceadacb71ad60d67903fd058a8"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1d51a32a506b505c3f19bc3e05777d4a4654eddb00c42f597472204c24847a00"
+    },
+    {
+      "command": {
+        "choiceId": "melt-psr-ice-sample",
+        "eventId": "evt-psr-ice-vein",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d472eef7f328b2bff75cd8dc887d8f905f9575db28c0f9ef273dd2bd05a211c1"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "a27e788cfdcff92f913fd54b8d96161ee4c361272425ec9dbb198ef555e48c51"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "909b15b1d0a0be55f99e6899cb9c073e0f911e98b3227b6d5ef45beb6165e79f"
+    },
+    {
+      "command": {
+        "slots": {
+          "food-med-pack": 1,
+          "power-parts-pack": 1,
+          "water-pack": 2
+        },
+        "type": "comms/order-cargo"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0c5709b84d91e86ae94f755f6f80ff91131a20f492ecd0cf713c5658d9501b50"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "7f693c1008faba5bdcbf2fc38c060afff51abc6a852e3f78a44e4a5257f38c1b"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4a7943064cbf4efae9e558b570e42faba132d4d3f40ff8c670c1db93043939b4"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d6f89118fbdd376a6c00225e80e807a343a0d7dcb3a32fa4bd1ae18b4911d274"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "da03051d0a7a2c88a928bf82d6ad505bbde9bd2080a86a544c00011d4d48f06c"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "800a55a9672cc5a47072a0fb9ad1e9ee2efe53b24cef53d9c6363909b994124f"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c27ed7e9e55b640b09c1f49b8d7bb596f3242ddea24a5b04c157bd1555ae251f"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "ff09c66786039a69df318c71d6b7ea647f739c35927a34b8d52dcd18dce334de"
+    },
+    {
+      "command": {
+        "choiceId": "top-up-battery-bank",
+        "eventId": "evt-sol14-sunset-warning",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4d21e491b648aaa474fdda99b955e03d7768a40ad8b2dbc6ca72f1fcb2e9abe6"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "16886a7fcff44729d5e310286825fc39a376586dd7215378542d3d6bb1d66b99"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "2b1a0115485da895a0c7b5186ccf1b7eb8574ee27944667f1c9b1ea5dc381179"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "5d823069c8d511fffd4c229c5d6efe3f6770bd7f0d02ba3b435ec6ec278c3d3e"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f1cd10b49a9b5cc3506a7751ed89fb912e42d1fab8760441c6cd4ea7fdd3604d"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "135c7fa6245340e5bbebefeb665e55b86e16586958716306b2425472afd82230"
+    },
+    {
+      "command": {
+        "choiceId": "night-protocol",
+        "eventId": "sol15-lunar-nightfall",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "52a8e8eaa2f0fbb773d2d576a6e6e17330217eccaf7d4cf927359dbb9f065b9c"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "5646a9471835b48a6690707bd410137a4ee53c9b854be7b002be93ca81f7a7fd"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4a2a8e00fc33aee40f06113aa717f261e25c750b1533a89e84012fca4a13b661"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "37669888fdb13a58ad90ad0a1a4f1216d39c6917b78c01ae2ad94a946cb7fb31"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9c0b7ede1e147b1de345f31ec045905f294078d4c691872856febbd9589024da"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "483453da0507bffc4fdfcc2fa7756892d567c39e69090d96b86b0f916c377fa1"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "75b38ca312ccca74c1b46b2670b32db23dca59fa9b13462d08107b32fb7f14d6"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "408e106ecc799e04583c307aa6b90b4c0a0fc822a51dbbe4c67d7a656b6c48cc"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "fbc439687b14954b4ff11cdfe1a1a2766addf36b5f8aab5eeb296fd5d910cb59"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d5d1ed0c71cd8b054cb13c4ecf2fe566f47eba210857cfdd2f34ae75956382e4"
+    },
+    {
+      "command": {
+        "choiceId": "eng-stabilize-coolant",
+        "eventId": "evt-fission-coolant",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0a54608d9486e0db7b4800436b8cd62824827fee34455765ff2a6a641de6d173"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "4e100b36a9010a99f00007df292ac62e6b52d633640f5bc232d7a64eb8c09518"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "729471b6de495e3783a6f9b02d7d7278d8b36d9e1bcb041a8a41291706751b55"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "8fac12adfb2da8dc568bb5b15e57f21db542dca3d424e70d0fb90814269ef0ca"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "a27418dfce588fad28a4c369eec3c549d7763d50a182e7aea9406a3b4ac22c79"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9e357762b158f0614eff0e39204c41c6b2ccd15709dc90999e231704e9a22313"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d483918b71226fc3a231b6705640b5071e23e790f404afbd3eb01c6ca4a38d83"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "e42c5abc0c0e54f3e0aaecb541ac26bbf05aae7b7fc3a2d7fc6287231103b879"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f38b2016b9d01dceae912ab98448a80f4b3c871725830574b92398e1eed22524"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "9651060cbfb4b25cf9403a22ec69bd6fcfa9d7fe301aac683744248513eb136d"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "c07562f0160a9f81c5bfbde03dc54fb7da5233db615a9597c72ef4623f3322d9"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0e8eb5ed2e6b12fcfa80fb0ea964fc17038d401398582fdd9d5dcc9b6b9f5e71"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1f3ca5bfcd7b9ad08d4d4afcbfb7cb8278803602c5d95d63750143412550f6a4"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "6587c403db0a302bf1bf354c19cdb9d17da33b657947afb34e01e2b28baf1a82"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d6f320a02627435a53febf391fb89173368ad6fc6aafe15387dd09382c5480df"
+    },
+    {
+      "command": {
+        "choiceId": "seal-with-tape",
+        "eventId": "evt-cryo-seal-crack",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "871ecac9e2565d377417064266765709a6c1d236d42d4eaff997052871120c16"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "47dd59926d70eb798af6aa8a83db9277e5a7e42431bd16d116156b2ef6c3abe0"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "1c4fd5024a583eb57d963b36a695cb7c6d60000ed857adbb674e5476f20de34e"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "0b9a89152c672d2e75b7cb30c212938225bd67730d56fb66af1c90ebc8891d8b"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "7a6f5c9eb19b9da78d46bde689977694cc9ed24afce2eaa9a1f9fb1faa3a7164"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "aa085e8a2da91e40bd32b8eae284f98b653a5cf3ed9a5effb8577159aac9a9ce"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f819c493a6c371905fd4844b17573cdd5957ee1171cae3d631418fc91d9c6be7"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "067c1ea2c4fb03286a63bb5e422ebd8440e6631569859517b00a4a9cddb0cdec"
+    },
+    {
+      "command": {
+        "slots": {
+          "food-med-pack": 1,
+          "power-parts-pack": 1,
+          "water-pack": 2
+        },
+        "type": "comms/order-cargo"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "56af02fad2baf92c2a588360709fcd5ed9ddd396f2d3e47f2b3f77e6b826b069"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "279c911cb59d32afecd10d3e8669c23a3d606786956a566810a54db40c1d4eb7"
+    },
+    {
+      "command": {
+        "crewId": "cmd",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "287e72586171e1d8f641c1035a7bb5909c670df01947a5a80386bd8f61b46968"
+    },
+    {
+      "command": {
+        "crewId": "eng",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "f1d22845bd5363e709b837ceef998a8dfe370db3e3e72bd958663343060aca2a"
+    },
+    {
+      "command": {
+        "crewId": "doc",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "5181629e29dc0099e5cbbab2b16aa156bf06529434a7a60a8eddad9b9cfaf137"
+    },
+    {
+      "command": {
+        "crewId": "geo",
+        "type": "rationing/toggle-mre"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "3b263fcc76d197ded19bb844c6265180a130ea151094be23f210d051c8edb3b5"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "df93448d9dbe734d0b850ad94cb2bc907db12fed220ae99f7e1f71e71cdbe949"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d3edf6ada95392868b0ed52970b75093ae2a444a3f2052c9654e8c6bae722b55"
+    },
+    {
+      "command": {
+        "choiceId": "shared-feast-mre",
+        "eventId": "evt-cabin-fever",
+        "type": "event/resolve"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "03a5421309f455f057451ccd1850149969fb2ed5985ca8ab9859f10f2a4ca4ef"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "d1ce35f28a73338307e74e056ed86a64b117d330c5d1906c4af8e1d3ebea5c8e"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b608af0e37f0c91bae89eae6d6e58055cf515062714b13617ce61ecf51d01d1e"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "73a5c12213dcda7fad04f1daaba40f2199d901207972ee1721e9d8c1b29d9d93"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "968765de3b433dedab7ac1f65a759d8075b72ca233eef4b90ced9f4f394f5df1"
+    },
+    {
+      "command": {
+        "type": "debrief/dismiss"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "bafdc4307f683e5e4915fec31374e6f6debb9747e71aab431a2b45e7e45b1719"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "3d49e29331dbbac6b4a3baaa08ab38d0693f440feda7b70871ab58e8e0a246e0"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "b21787dd0c22ce34f683a23d82d55f45f23b1e4d704d1199962db593a127887d"
+    },
+    {
+      "command": {
+        "type": "phase/advance"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "30c216c8fb0ea3f76b31e3b0d8ef4f182c24b29d55a76475a9e86e3d9b6f6787"
+    },
+    {
+      "command": {
+        "type": "sol/end"
+      },
+      "ok": true,
+      "errorCode": null,
+      "stateHash": "ea3c50b2d214394a0e3f7f24f6cdf14b6efe7294d2d10b39d0a0200863d5a3e0"
+    }
+  ],
+  "finalHash": "ea3c50b2d214394a0e3f7f24f6cdf14b6efe7294d2d10b39d0a0200863d5a3e0",
+  "expectedOutcome": "defeat"
+}

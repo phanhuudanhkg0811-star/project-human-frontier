@@ -265,7 +265,36 @@ export interface DebriefContext {
   readonly metricHighlights: readonly DebriefMetricDelta[];
 }
 
+export type CampaignReason = 'moon-victory' | 'crew-collapse' | 'oxygen-depleted' | 'water-depleted' | 'final-requirements-unmet' | 'legacy-outcome';
+export interface CampaignRequirement {
+  readonly id: string;
+  readonly met: boolean;
+  readonly actual: number;
+  readonly target: number;
+}
+export interface CampaignEvaluation {
+  readonly status: 'active' | 'victory' | 'defeat';
+  readonly reasonCode: CampaignReason | null;
+  readonly requirements: readonly CampaignRequirement[];
+  readonly rank: 'S' | 'A' | 'B' | null;
+  readonly rankingVersion: string | null;
+}
+export interface CampaignCheckpoint {
+  readonly resources: ResourceState;
+  readonly crew: Readonly<Record<CrewId, CrewMemberState>>;
+  readonly systems: Readonly<Record<SystemId, StationSystemState>>;
+  readonly completedExpeditions: number;
+  readonly sciencePoints: number;
+  readonly wrsProcessedWasteWaterL: number;
+  readonly solarGeneratedKWh: number;
+  readonly fissionGeneratedKWh: number;
+  readonly batteryOverflowKWh: number;
+  readonly essentialUnmetKWh: number;
+}
+
 export interface SolSummary {
+  /** Null for legacy Sols: historical crew/resources must never be inferred from the current state. */
+  readonly checkpoint: CampaignCheckpoint | null;
   readonly sol: number;
   readonly isLunarNight: boolean;
   readonly surfaceTempC: number;
@@ -306,6 +335,7 @@ export interface MissionHistory {
 }
 
 export interface CampaignState {
+  readonly outcome: CampaignEvaluation | null;
   readonly id: CampaignId;
   readonly runId: string;
   readonly planet: 'moon';
@@ -326,7 +356,7 @@ export interface MissionClock {
 }
 
 export interface GameState {
-  readonly schemaVersion: 3;
+  readonly schemaVersion: 4;
   readonly contentVersion: string;
   readonly modelVersion: string;
   readonly catalogVersion: string;
@@ -558,6 +588,12 @@ export interface ExpeditionConfig {
 }
 
 export interface CampaignConfig {
+  readonly training: { readonly reportSol: number; readonly minActiveCrew: number; readonly minExpeditions: number };
+  readonly ranking: {
+    readonly version: string;
+    readonly S: { readonly minFitCrew: number; readonly minExpeditions: number };
+    readonly A: { readonly minActiveCrew: number; readonly minExpeditions: number };
+  };
   readonly contentVersion: string;
   readonly id: CampaignId;
   readonly title: string;
@@ -570,7 +606,7 @@ export interface CampaignConfig {
     readonly goldenCrisisSol: number;
     readonly recommendedLastCargoSol: number;
   };
-  readonly victory: { readonly reachSol: number; readonly minActiveCrew: number };
+  readonly victory: { readonly reachSol: number; readonly minActiveCrew: number; readonly requirePositiveOxygen: boolean; readonly requirePositiveWater: boolean };
   readonly defeat: { readonly minActiveCrew: number; readonly o2ZeroConsecutiveSols: number; readonly waterZeroConsecutiveSols: number };
   readonly difficultyProfiles: Readonly<
     Record<DifficultyId, { readonly id: DifficultyId; readonly label: string; readonly weatherRiskMultiplier: number; readonly eventSeverityMultiplier: number }>
@@ -862,7 +898,7 @@ export interface SimulationRuntimeState {
 }
 
 export interface SaveEnvelope {
-  readonly schemaVersion: 3;
+  readonly schemaVersion: 4;
   readonly savedAt: string;
   readonly appVersion: string;
   readonly contentVersion: string;

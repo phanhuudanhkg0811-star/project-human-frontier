@@ -1,0 +1,130 @@
+{
+  "stage": "P1 baseline, before Phase 1.4 balance/outcome changes",
+  "buildId": "0c578bdd4c32b1b4e8b1d9191f800c82b6bc23b5",
+  "workingTreeDirty": true,
+  "policy": "phase-1-3-baseline",
+  "versions": {
+    "content": "1.1.0-moon32",
+    "model": "1.1.0-ts-donki",
+    "catalog": "1.1.0-moon32"
+  },
+  "reports": [
+    {
+      "status": "completed",
+      "error": null,
+      "seed": 205099,
+      "difficulty": "cadet",
+      "donkiProfileId": "oct-2024-x9storm",
+      "completedSols": 32,
+      "outcome": "victory",
+      "reason": "Hoàn thành xuất sắc 32 Sol sinh tồn tại Căn cứ Mặt Trăng Artemis!",
+      "rejectedCommands": 0,
+      "completedExpeditions": 0,
+      "blackouts": 0,
+      "resourceMinima": {
+        "batteryKWh": 5,
+        "oxygenKg": 6.8,
+        "waterL": 63.76,
+        "partsKg": 14,
+        "mrePacks": 10,
+        "medkits": 2
+      },
+      "finalResources": {
+        "batteryKWh": 60,
+        "oxygenKg": 9.2,
+        "waterL": 157.92,
+        "partsKg": 26,
+        "wasteWaterL": 8.8,
+        "mrePacks": 12,
+        "medkits": 6,
+        "medkitLevel": 1,
+        "waterZeroStreak": 0,
+        "oxygenZeroStreak": 0
+      },
+      "finalCrew": {
+        "cmd": {
+          "id": "cmd",
+          "name": "Sarah Chen",
+          "roleTag": "Commander",
+          "health": 80,
+          "morale": 78,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 34.38,
+          "assignedTask": null
+        },
+        "eng": {
+          "id": "eng",
+          "name": "Alex Rivera",
+          "roleTag": "Engineer",
+          "health": 85,
+          "morale": 78,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 34.38,
+          "assignedTask": null
+        },
+        "doc": {
+          "id": "doc",
+          "name": "Marcus Vance",
+          "roleTag": "Medic",
+          "health": 85,
+          "morale": 78,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 34.38,
+          "assignedTask": null
+        },
+        "geo": {
+          "id": "geo",
+          "name": "Elena Rostova",
+          "roleTag": "Geologist",
+          "health": 85,
+          "morale": 78,
+          "satiety": 75,
+          "condition": "fit",
+          "hungerState": "ok",
+          "radiationMgy": 34.38,
+          "assignedTask": null
+        }
+      },
+      "finalSystems": {
+        "solar": {
+          "id": "solar",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "recycler": {
+          "id": "recycler",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "scrubber": {
+          "id": "scrubber",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        },
+        "airlock": {
+          "id": "airlock",
+          "level": 1,
+          "integrity": 0.8,
+          "status": "degraded"
+        },
+        "fabricator": {
+          "id": "fabricator",
+          "level": 1,
+          "integrity": 1,
+          "status": "nominal"
+        }
+      },
+      "trace": "baseline-205099.json",
+      "finalHash": "905690ae8bada18d73c51394e4778ab39b2ffd22efe211f180b8de682fb54c0c"
+    }
+  ]
+}

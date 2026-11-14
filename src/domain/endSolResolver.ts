@@ -1,5 +1,6 @@
 import { buildDebriefContext, resolveExpiredEventAtEndSol } from './eventEngine.ts';
 import { deriveRoll } from './prng.ts';
+import { campaignReasonText, evaluateCampaign } from './campaignEvaluator.ts';
 import {
   computeCrewWeatherRisk,
   computeRepairSuccessProb,
@@ -254,6 +255,11 @@ function resolvePowerAndEclss(
   unmetLoads: PowerConsumerId[];
   blackout: boolean;
   wrsRecoveredWaterL: number;
+  wrsProcessedWasteWaterL: number;
+  solarGeneratedKWh: number;
+  fissionGeneratedKWh: number;
+  batteryOverflowKWh: number;
+  essentialUnmetKWh: number;
 } {
   const sol = state.clock.sol;
   const isNight = isLunarNightSol(sol, bundle.campaign);
@@ -268,6 +274,7 @@ function resolvePowerAndEclss(
   let consumedKWh = 0;
   const unmetLoads: PowerConsumerId[] = [];
   let blackout = false;
+  const essentialUnmetKWh = Math.max(0, round2(bundle.balance.power.essentialLoadKWh - availableKWh));
   let wrsRan = false;
   let fabricatorRan = false;
   let roverLaunchPowered = false;
@@ -370,6 +377,11 @@ function resolvePowerAndEclss(
     unmetLoads,
     blackout,
     wrsRecoveredWaterL,
+    wrsProcessedWasteWaterL: processedWaste,
+    solarGeneratedKWh: solarKWh,
+    fissionGeneratedKWh: fissionKWh,
+    batteryOverflowKWh: Math.max(0, round2(availableKWh - s.batteryKWh.max)),
+    essentialUnmetKWh,
   };
 }
 
@@ -1024,23 +1036,9 @@ export function resolveSol(
   const waterZeroStreak = nextResources.waterL <= 0 ? nextResources.waterZeroStreak + 1 : 0;
   nextResources = { ...nextResources, oxygenZeroStreak, waterZeroStreak };
 
-  const activeCrewCount = Object.values(crewOut.crew).filter((c) => c.condition !== 'evacuated').length;
-  let campaignStatus = workingState.campaign.status;
-  let endReason: string | null = workingState.campaign.endReason;
-
-  if (activeCrewCount < bundle.campaign.defeat.minActiveCrew) {
-    campaignStatus = 'defeat';
-    endReason = 'Đội phi hành gia dưới ngưỡng an toàn tối thiểu (< 2 người hoạt động).';
-  } else if (oxygenZeroStreak >= bundle.campaign.defeat.o2ZeroConsecutiveSols) {
-    campaignStatus = 'defeat';
-    endReason = 'Cạn kiệt dưỡng khí O₂ trong kho (0 kg).';
-  } else if (waterZeroStreak >= bundle.campaign.defeat.waterZeroConsecutiveSols) {
-    campaignStatus = 'defeat';
-    endReason = 'Cạn kiệt nước sạch 2 Sol liên tiếp.';
-  } else if (sol >= workingState.campaign.targetSol) {
-    campaignStatus = 'victory';
-    endReason = 'Hoàn thành xuất sắc 32 Sol sinh tồn tại Căn cứ Mặt Trăng Artemis!';
-  }
+  const outcome = evaluateCampaign({ ...workingState, resources: nextResources, crew: crewOut.crew, rover: roverOut.rover }, bundle.campaign, sol);
+  const campaignStatus = outcome.status;
+  const endReason = campaignReasonText(outcome.reasonCode, bundle.campaign);
 
   const highlights: string[] = [
     ...(expiredOut.expiredNote ? [expiredOut.expiredNote] : []),
@@ -1070,6 +1068,14 @@ export function resolveSol(
 
   const baseBriefId = pickBriefId(weather, isNight, eclssOut.wrsRecoveredWaterL, bundle);
   const summaryWithoutContext: Omit<SolSummary, 'debriefContext'> = {
+    checkpoint: {
+      resources: nextResources, crew: crewOut.crew, systems: crewOut.systems,
+      completedExpeditions: roverOut.rover.missionHistory.filter((mission) => mission.outcome === 'completed').length,
+      sciencePoints: roverOut.sciencePoints,
+      wrsProcessedWasteWaterL: eclssOut.wrsProcessedWasteWaterL,
+      solarGeneratedKWh: eclssOut.solarGeneratedKWh, fissionGeneratedKWh: eclssOut.fissionGeneratedKWh,
+      batteryOverflowKWh: eclssOut.batteryOverflowKWh, essentialUnmetKWh: eclssOut.essentialUnmetKWh,
+    },
     sol,
     isLunarNight: isNight,
     surfaceTempC,
@@ -1106,6 +1112,7 @@ export function resolveSol(
     campaign: {
       ...workingState.campaign,
       status: campaignStatus,
+      outcome,
       sciencePoints: roverOut.sciencePoints,
       endReason,
     },

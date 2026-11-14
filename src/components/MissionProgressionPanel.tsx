@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle2, Compass, Lock } from 'lucide-react';
 import { selectMissionProgress } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
+import { NightReadinessChecklist } from './NightReadinessChecklist.tsx';
 
 export const MissionProgressionPanel: React.FC = () => {
   const { gameState, bundle } = useGameStore();
@@ -15,7 +16,7 @@ export const MissionProgressionPanel: React.FC = () => {
       <div className="flex items-center justify-between border-b border-cyan-500/30 pb-2">
         <h2 className="text-sm font-bold tracking-wider text-cyan-300 flex items-center gap-2">
           <Compass className="w-4 h-4 text-yellow-400" />
-          TIẾN TRÌNH SINH TỒN ARTEMIS (32 SOL MẶT TRĂNG)
+          TIẾN TRÌNH SINH TỒN ARTEMIS ({bundle.campaign.targetSol} SOL MẶT TRĂNG)
         </h2>
         <span className="text-[11px] font-mono bg-slate-950 border border-cyan-500/40 text-cyan-300 px-2 py-0.5 rounded font-bold">
           {metCount}/{totalCount} ({progressPct}%)
@@ -58,6 +59,7 @@ export const MissionProgressionPanel: React.FC = () => {
           </div>
         ))}
       </div>
+      <NightReadinessChecklist state={gameState} bundle={bundle} />
     </div>
   );
 };
