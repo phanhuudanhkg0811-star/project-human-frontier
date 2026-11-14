@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const POC_ENV_PATH = process.env.MOON_ENV_PROFILE
-  ?? path.join(ROOT, 'nasa/data/calibration/environment_profile_moon_polar.json');
+  ?? path.join(ROOT, 'src/data/environment-profile-moon-polar.json');
 const OUT_CATALOG = path.join(ROOT, 'src', 'data', 'simulation-catalog.json');
 
 function sha256Hex(text) {
@@ -73,7 +73,7 @@ function main() {
   const simulationCatalog = {
     ...coreCatalog,
     provenanceMeta: {
-      sourceFiles: ['data/calibration/environment_profile_moon_polar.json'],
+      sourceFiles: ['src/data/environment-profile-moon-polar.json'],
       sourceUrls: [
         'https://pds-geosciences.wustl.edu/missions/lro/diviner.htm',
         'https://ssd.jpl.nasa.gov/horizons/',

@@ -1,7 +1,7 @@
 {
   "catalogVersion": "1.2.0-moon32-polar",
   "modelVersion": "1.4.2-ts-polar",
-  "generatedAtUtc": "2026-11-14T17:17:57.078Z",
+  "generatedAtUtc": "2026-11-14T17:35:25.390Z",
   "campaign": {
     "id": "moon-32",
     "planet": "moon",
@@ -48,7 +48,7 @@
   },
   "provenanceMeta": {
     "sourceFiles": [
-      "data/calibration/environment_profile_moon_polar.json"
+      "src/data/environment-profile-moon-polar.json"
     ],
     "sourceUrls": [
       "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm",
