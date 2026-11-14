@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "lint": "oxlint",
     "assets:manifest": "node scripts/build-hail-asset-manifest.mjs",
+    "budget:check": "node scripts/check-bundle-budget.mjs",
     "simulate": "node scripts/simulate.mjs",
     "replay": "node scripts/replay.mjs"
   },

@@ -33,9 +33,13 @@ export function playSfx(name: SfxName, volume = 0.6): void {
 }
 
 let music: HTMLAudioElement | null = null;
+let desiredMusicVolume = 0.35;
+let hasUserGesture = false;
 
 /** Starts the looping background music; browsers only allow it after a user gesture. */
 export function startMusic(volume = 0.35): void {
+  hasUserGesture = true;
+  desiredMusicVolume = volume;
   if (useUiStore.getState().audioMuted) {
     music?.pause();
     return;
@@ -50,10 +54,15 @@ export function startMusic(volume = 0.35): void {
 }
 
 export function syncMusicMuted(muted: boolean): void {
-  if (!music) return;
   if (muted) {
-    music.pause();
-  } else {
-    void music.play().catch(() => undefined);
+    music?.pause();
+    return;
   }
+  if (!music) {
+    if (hasUserGesture) {
+      startMusic(desiredMusicVolume);
+    }
+    return;
+  }
+  void music.play().catch(() => undefined);
 }

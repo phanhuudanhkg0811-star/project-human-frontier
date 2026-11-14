@@ -588,7 +588,7 @@
       "id": "environments:PH_ENV_COCKPIT_SHELL_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_COCKPIT_SHELL_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 845202,
+      "bytes": 157364,
       "dimensions": {
         "width": 1920,
         "height": 1080
@@ -602,7 +602,7 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "7d1a585d09c200b5cc6efbd57e8580d284d267a51d9d780bf58c20e99afb5b2a"
+      "sha256": "d8f1723cbac966087583ac57778644c6638d099c0c451417c5c65a64bdeb4ce5"
     },
     {
       "id": "environments:PH_ENV_LUNAR_CRATER_BASE_V01",
@@ -1568,10 +1568,10 @@
       "id": "nhân vật cho project hail:trạng thái bệnh:nv 1",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 1.webp",
       "mediaType": "image/webp",
-      "bytes": 312460,
+      "bytes": 82426,
       "dimensions": {
-        "width": 1002,
-        "height": 1366
+        "width": 660,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1582,16 +1582,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "6fb9d5e5701dfd8fc27926d9b2b949aa10725203db375655fbf49d11773c5a82"
+      "sha256": "dfbfc1c526c0fbc798c839c74bb5c41e0194c94d4bd27547100b1e4004f7f638"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bệnh:nv 2",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 2.webp",
       "mediaType": "image/webp",
-      "bytes": 142378,
+      "bytes": 48314,
       "dimensions": {
-        "width": 517,
-        "height": 1034
+        "width": 450,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1602,16 +1602,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "10c302fcbb25f644c20cc66b27c30c3151a064736ca891292d45c7ec34c87b8e"
+      "sha256": "7ba43e9aabbf42d88513828ee97cddb40f0f428adaf5f5c1da9b3017523be27a"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bệnh:nv 3",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 3.webp",
       "mediaType": "image/webp",
-      "bytes": 223580,
+      "bytes": 60334,
       "dimensions": {
-        "width": 448,
-        "height": 1145
+        "width": 352,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1622,16 +1622,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "be4dad40b008fbd81ecea9cd4c1da9769e3b5b9123c9f6450f71f5d732fd1c9e"
+      "sha256": "372c77e0e5abd4ed3a59b7350d9c6c4f96704b11fc951c8ad098e0282ee55f83"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bệnh:nv 4",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 4.webp",
       "mediaType": "image/webp",
-      "bytes": 322096,
+      "bytes": 71608,
       "dimensions": {
-        "width": 769,
-        "height": 1321
+        "width": 524,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1642,16 +1642,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "69814c433caa038896db2272f3a65d139965bf8e0ad1da1610dbcf482f640afa"
+      "sha256": "f65013c097e82eb249c75156b3d2f1fcdbc6c1fe91a7102a4bfaf2ee63597b32"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bình thường:nv 1",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 1.webp",
       "mediaType": "image/webp",
-      "bytes": 307026,
+      "bytes": 82124,
       "dimensions": {
-        "width": 1004,
-        "height": 1364
+        "width": 662,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1662,16 +1662,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "f8f5cb866c3539f2f61c0f2abb6624c88f2144b256aea8fd16a56c0e0dd2a175"
+      "sha256": "c6465befc1177f7d4e3b4fd3bfa9a5a09bbdbf70188b9dab563778317add470e"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bình thường:nv 2",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 2.webp",
       "mediaType": "image/webp",
-      "bytes": 139472,
+      "bytes": 49794,
       "dimensions": {
-        "width": 526,
-        "height": 1026
+        "width": 461,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1682,16 +1682,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "2e3dbb310144812abaefc0fce6405b2810f0f6b44f7ee04fabca8902033cf536"
+      "sha256": "473e6b88173be3f368d3b7d23018667428bb4d97d2aaecbf49cae74dfe3d4008"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bình thường:nv 3",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 3.webp",
       "mediaType": "image/webp",
-      "bytes": 221442,
+      "bytes": 60846,
       "dimensions": {
-        "width": 451,
-        "height": 1135
+        "width": 358,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1702,16 +1702,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "0b61fe7b2706def1d47de313c18cc7731a4ddf941aea0f91bbf53aedb1df84be"
+      "sha256": "092d6b6dc111c16e1047c6837fc132600e5a8febecf4a56a6bf205bc9b79fb18"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bình thường:nv 4",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 4.webp",
       "mediaType": "image/webp",
-      "bytes": 316028,
+      "bytes": 71170,
       "dimensions": {
-        "width": 769,
-        "height": 1323
+        "width": 523,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1722,16 +1722,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ff7c47f9fdf59b3ef619f64ade5ab233662b652475e111b0ef0e6955cbdab37b"
+      "sha256": "f289c16bfa8d2af64771bfc9d017efd33cb1df76d460629d236d3a778d3184b5"
     },
     {
       "id": "nhân vật cho project hail:trạng thái đói:nv 1",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 1.webp",
       "mediaType": "image/webp",
-      "bytes": 306802,
+      "bytes": 82020,
       "dimensions": {
-        "width": 1001,
-        "height": 1366
+        "width": 660,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1742,16 +1742,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "6a7bad838fb3925e14d9ef35129e042c4beeca8ec95a4e4b623e9d8238e2c0f8"
+      "sha256": "0d8b3ab0353062ad121b4e184ce446d74b2081370afbba7db2a63240dbef609d"
     },
     {
       "id": "nhân vật cho project hail:trạng thái đói:nv 2",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 2.webp",
       "mediaType": "image/webp",
-      "bytes": 138774,
+      "bytes": 47608,
       "dimensions": {
-        "width": 531,
-        "height": 1050
+        "width": 455,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1762,16 +1762,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "3dcd57859cc4757e1dccd0035b0099ab1ee6902a3a46d8b2f04385b39bcf01f2"
+      "sha256": "a97f7a4fd21e90fe398a053d7f350b90cf9391ea36de1857ffc9be548c2e390e"
     },
     {
       "id": "nhân vật cho project hail:trạng thái đói:nv 3",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 3.webp",
       "mediaType": "image/webp",
-      "bytes": 221234,
+      "bytes": 61616,
       "dimensions": {
-        "width": 436,
-        "height": 1126
+        "width": 348,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1782,16 +1782,16 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "fd07689e7ec9f118b95a50571054eec18858133f4b8806ddccb3b26bc592b4a2"
+      "sha256": "918de965c9280473d8490e8ee81eb70fd8cab0ada21d418d3da19ea71921a0f5"
     },
     {
       "id": "nhân vật cho project hail:trạng thái đói:nv 4",
       "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 4.webp",
       "mediaType": "image/webp",
-      "bytes": 315124,
+      "bytes": 71768,
       "dimensions": {
-        "width": 758,
-        "height": 1316
+        "width": 518,
+        "height": 900
       },
       "anchor": {
         "x": 0.5,
@@ -1802,7 +1802,7 @@
       "source": "Project Human Frontier internal AeroMatte 2050 production",
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "801e4db51b38edfac08b684c4ce622f73125a5ede81f3324f2f74e9ace47fbce"
+      "sha256": "6af62d2cfa26dd835e31713e96a6e5e91e576035e0325518894c3e2047b28618"
     },
     {
       "id": "resources:PH_UI_RES_FOOD_V01",

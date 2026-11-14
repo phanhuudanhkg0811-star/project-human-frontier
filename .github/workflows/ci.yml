@@ -47,3 +47,6 @@ jobs:
 
       - name: 🏗️ Production Build Check
         run: npm run build
+
+      - name: 📏 Option B Bundle & Critical Asset Budget
+        run: npm run budget:check
