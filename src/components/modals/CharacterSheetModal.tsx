@@ -36,6 +36,15 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
     setNote(res.ok ? res.effects[0]?.message ?? 'Đã hủy lệnh.' : res.error.message);
   };
 
+  const handleMedkit = async (withMarcus: boolean) => {
+    const res = await dispatch({
+      type: 'crew/use-medkit',
+      targetCrewId: medTarget,
+      administeredByCrewId: withMarcus ? 'doc' : undefined,
+    });
+    setNote(res.ok ? res.effects[0]?.message ?? 'Đã dùng Medkit.' : res.error.message);
+  };
+
   return (
     <MissionDialog
       title="Hồ sơ & Phân công Phi hành đoàn (1 người – 1 việc – 1 Sol)"
@@ -50,6 +59,16 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
             {note}
           </div>
         )}
+
+        <div className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/80 flex flex-wrap items-center gap-2 text-xs">
+          <HeartPulse className="w-4 h-4 text-rose-300" />
+          <strong>Medkit tức thời: {gameState.resources.medkits} liều</strong>
+          <select value={medTarget} onChange={(event) => setMedTarget(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1">
+            {(['cmd', 'eng', 'doc', 'geo'] as const).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
+          </select>
+          <button type="button" onClick={() => handleMedkit(false)} className="hail-btn">Tự dùng (+{gameState.resources.medkitLevel === 2 ? 50 : 30})</button>
+          <button type="button" onClick={() => handleMedkit(true)} className="hail-btn hail-btn--accent">Marcus tiêm (+20, chiếm task)</button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId) => {
