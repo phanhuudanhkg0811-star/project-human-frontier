@@ -1,0 +1,107 @@
+{
+  "contentVersion": "1.1.0-moon32",
+  "modelVersion": "1.1.0-ts-donki",
+  "catalogVersion": "1.1.0-moon32",
+  "storages": {
+    "batteryKWh": { "initial": 40, "max": 60 },
+    "oxygenKg": { "initial": 70, "max": 120 },
+    "waterL": { "initial": 80, "max": 160 },
+    "partsKg": { "initial": 16, "max": 60 },
+    "wasteWaterL": { "initial": 0, "max": 80 }
+  },
+  "consumables": {
+    "mrePacks": { "initial": 24, "max": 60, "satietyRestore": 75, "massKgApprox": 0.62 },
+    "medkits": { "initial": 2, "max": 6, "healLv1": 30, "healLv2": 50, "medicBonus": 20 }
+  },
+  "power": {
+    "fissionKWhPerSol": 8,
+    "essentialLoadKWh": 12,
+    "solarByLevelKWh": { "1": 24, "2": 30, "3": 36 },
+    "blackoutPenalty": { "healthDelta": -10, "moraleDelta": -15 }
+  },
+  "eclss": {
+    "oxygenKgPerCrewPerSol": 0.85,
+    "waterLPerCrewPerSol": 2.5,
+    "wasteWaterGeneratedPerCrewPerSol": 2.2,
+    "airlockDegradedLeakO2Kg": 1.0,
+    "wrsByLevel": {
+      "1": { "recoveryRate": 0.90, "powerKWh": 4, "maxBatchL": 20 },
+      "2": { "recoveryRate": 0.95, "powerKWh": 4, "maxBatchL": 20 },
+      "3": { "recoveryRate": 0.95, "powerKWh": 3, "maxBatchL": 20 }
+    }
+  },
+  "crew": {
+    "satietyDrainPerSol": 25,
+    "injuredBelowHealth": 50,
+    "fitRecoverAtHealth": 65,
+    "tiredBelowMorale": 30,
+    "normalRecoverAtMorale": 45,
+    "restMoraleGain": 30,
+    "restHealthGain": 5,
+    "medicalCareMoraleGain": 15,
+    "medicalCareHealthGain": 10,
+    "hungryMoraleDelta": -5,
+    "starvingHealthDelta": -15,
+    "starvingMoraleDelta": -10
+  },
+  "systems": {
+    "maxLevel": 3,
+    "repairPartsCost": 2,
+    "upgradePartsByTargetLevel": { "2": 4, "3": 8 }
+  },
+  "logistics": {
+    "maxSlots": 4,
+    "slotWeightKg": 20,
+    "maxPayloadKg": 80,
+    "transitSols": 4,
+    "padCooldownSols": 1,
+    "radioLatencyMs": 1300,
+    "groundProcessingMs": 1200,
+    "packs": [
+      {
+        "id": "oxygen-pack",
+        "name": "Gói Oxy (20 kg)",
+        "weightKg": 20,
+        "summary": "+20 kg O₂",
+        "grant": { "oxygenKg": 20 }
+      },
+      {
+        "id": "water-pack",
+        "name": "Gói Nước (20 kg)",
+        "weightKg": 20,
+        "summary": "+25 L Nước sạch",
+        "grant": { "waterL": 25 }
+      },
+      {
+        "id": "food-med-pack",
+        "name": "Gói Lương thực & Y tế (20 kg)",
+        "weightKg": 20,
+        "summary": "+10 MRE + 1 Medkit",
+        "grant": { "mrePacks": 10, "medkits": 1 }
+      },
+      {
+        "id": "power-parts-pack",
+        "name": "Gói Pin & Phụ tùng (20 kg)",
+        "weightKg": 20,
+        "summary": "+25 kWh Pin + 6 kg Phụ tùng",
+        "grant": { "batteryKWh": 25, "partsKg": 6 }
+      }
+    ]
+  },
+  "donkiProbability": {
+    "repairBaseSuccessProb": 0.96,
+    "repairHardwareStressWeight": 0.35,
+    "repairAlexBonus": 0.12,
+    "repairMinSuccessProb": 0.45,
+    "roverBaseIncidentProb": 0.10,
+    "roverStressWeight": 0.45,
+    "roverBlockedMultiplier": 0.12,
+    "roverElenaMultiplier": 0.65,
+    "crewHighRadiationThreshold": 0.45,
+    "crewShelterProtectionByLevel": { "1": 0.20, "2": 0.55, "3": 0.90 },
+    "dustShieldRadiationBonus": 0.10,
+    "backgroundMgyPerSol": 0.38,
+    "stormPeakExtraMgy": 4.5,
+    "stormSystemDegradeChance": 0.35
+  }
+}

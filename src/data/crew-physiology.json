@@ -1,0 +1,19 @@
+{
+  "datasetId": "radlab-crater-d1d2-2010-01-01-3day-sample",
+  "instrumentId": "CRaTER-D1D2",
+  "trajectory": "LRO lunar orbit",
+  "queryUrl": "https://visualization.osdr.nasa.gov/radlab/api/?instrument_id=CRaTER-D1D2&timestamp%3E=2010-01-01&timestamp%3C2010-01-04&absorbed_dose_rate&format=json",
+  "sampledPeriod": { "startInclusive": "2010-01-01", "endExclusive": "2010-01-04" },
+  "recordCount": 72,
+  "absorbedDoseRateUGyPerHour": {
+    "mean": 13.169461805555555,
+    "min": 12.121666666666668,
+    "max": 14.383333333333335
+  },
+  "convertedMeanMgyPerDay": 0.3160670833333333,
+  "conversionFormula": "mean_uGy_per_hour * 24 / 1000",
+  "sha256": "d42fb16adb08e2a2d7ce1ad50f975d60ac776564245640bc89e5436c147b637e",
+  "provenance": "observed",
+  "caveat": "CRaTER-D1D2 is an orbital LRO measurement. It is a relative educational reference and is not direct lunar-surface astronaut dose.",
+  "source": "https://visualization.osdr.nasa.gov/radlab/gui/data-api/"
+}

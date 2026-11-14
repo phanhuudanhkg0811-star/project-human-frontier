@@ -1,0 +1,69 @@
+{
+  "contentVersion": "1.1.0-moon32",
+  "id": "moon-32",
+  "title": "Artemis Lunar Base · 32 Sol Survival",
+  "planet": "moon",
+  "targetSol": 32,
+  "milestones": {
+    "lunarDay": { "startSol": 1, "endSol": 14 },
+    "lunarNight": { "startSol": 15, "endSol": 28 },
+    "lunarDawn": { "startSol": 29, "endSol": 32 },
+    "goldenCrisisSol": 7,
+    "recommendedLastCargoSol": 10
+  },
+  "victory": {
+    "reachSol": 32,
+    "minActiveCrew": 2
+  },
+  "defeat": {
+    "minActiveCrew": 2,
+    "o2ZeroConsecutiveSols": 1,
+    "waterZeroConsecutiveSols": 2
+  },
+  "difficultyProfiles": {
+    "cadet": { "id": "cadet", "label": "Cadet (Chuẩn STEM)", "weatherRiskMultiplier": 0.75, "eventSeverityMultiplier": 0.85 },
+    "standard": { "id": "standard", "label": "Commander (Cân bằng 32 Sol)", "weatherRiskMultiplier": 1.0, "eventSeverityMultiplier": 1.0 },
+    "hardcore": { "id": "hardcore", "label": "Artemis Veteran", "weatherRiskMultiplier": 1.25, "eventSeverityMultiplier": 1.15 }
+  },
+  "expeditions": [
+    {
+      "id": "lunar-crater",
+      "name": "Lunar Crater Core Survey",
+      "windowStartSol": 1,
+      "windowEndSol": 4,
+      "durationSols": 3,
+      "launchPowerKWh": 4,
+      "threat": "steep-terrain-crater",
+      "mitigationOptions": [{ "allOf": ["core_drill"] }],
+      "rewardSample": "crater_core_sample",
+      "rewards": { "partsKg": 0, "batteryKWh": 0, "oxygenKg": 0, "waterL": 0, "science": 20 }
+    },
+    {
+      "id": "regolith-field",
+      "name": "Regolith Field Dust Traverse",
+      "windowStartSol": 5,
+      "windowEndSol": 8,
+      "durationSols": 3,
+      "launchPowerKWh": 4,
+      "threat": "electrostatic-dust",
+      "mitigationOptions": [{ "allOf": ["dust_shield"] }, { "allOf": ["radio_repeater"] }],
+      "rewardSample": "regolith_mineral_sample",
+      "rewards": { "partsKg": 4, "oxygenKg": 0, "batteryKWh": 0, "waterL": 0, "science": 0 }
+    },
+    {
+      "id": "polar-psr",
+      "name": "Permanently Shadowed Region (Ice Hunt)",
+      "windowStartSol": 9,
+      "windowEndSol": 12,
+      "durationSols": 3,
+      "launchPowerKWh": 4,
+      "threat": "cryo-extreme",
+      "mitigationOptions": [
+        { "allOf": ["cryo_thermal_rig"] },
+        { "allOf": ["solar_lantern"], "requirements": { "minBatteryKWh": 20 } }
+      ],
+      "rewardSample": "polar_ice_core_sample",
+      "rewards": { "waterL": 20, "partsKg": 0, "oxygenKg": 0, "batteryKWh": 0, "science": 0 }
+    }
+  ]
+}

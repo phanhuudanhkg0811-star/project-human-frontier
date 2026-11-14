@@ -1,0 +1,170 @@
+import { useEffect, useState } from 'react';
+import { Radio, PackageCheck, Send, Truck, AlertTriangle } from 'lucide-react';
+import { useGameStore } from '../store/gameStore.ts';
+import type { CargoPackId } from '../types/index.ts';
+
+export function CommsLogisticsPanel() {
+  const { gameState, bundle, dispatch } = useGameStore();
+  const [messageInput, setMessageInput] = useState('Kiểm tra thời tiết Mặt Trời DONKI & đề xuất tiếp tế trước Sol 15');
+  const [slots, setSlots] = useState<Partial<Record<CargoPackId, number>>>({
+    'water-pack': 2,
+    'power-parts-pack': 2,
+  });
+  const [statusNote, setStatusNote] = useState<string | null>(null);
+
+  const inComms = gameState.clock.phase === 'comms';
+  const totalSlots = Object.values(slots).reduce((a, b) => a + (b ?? 0), 0);
+  const maxSlots = bundle.balance.logistics.maxSlots;
+
+  useEffect(() => {
+    const hasPending = gameState.logistics.radioMessages.some((m) => m.status === 'transmitting');
+    if (!hasPending) return;
+    const timer = window.setInterval(() => {
+      dispatch({ type: 'comms/tick-radio', nowMs: Date.now() });
+    }, 400);
+    return () => clearInterval(timer);
+  }, [gameState.logistics.radioMessages, dispatch]);
+
+  const adjustSlot = (id: CargoPackId, delta: number) => {
+    setSlots((prev) => {
+      const nextCount = Math.max(0, (prev[id] ?? 0) + delta);
+      const nextTotal = totalSlots - (prev[id] ?? 0) + nextCount;
+      if (nextTotal > maxSlots) return prev;
+      return { ...prev, [id]: nextCount };
+    });
+  };
+
+  const handleOrderCargo = async () => {
+    const res = await dispatch({ type: 'comms/order-cargo', slots });
+    setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã đặt tàu hàng.' : res.error.message);
+  };
+
+  const handleSendRadio = async () => {
+    if (!messageInput.trim()) return;
+    const res = await dispatch({
+      type: 'comms/send-radio',
+      id: `tx-sol${gameState.clock.sol}-${Date.now()}`,
+      message: messageInput.trim(),
+      nowMs: Date.now(),
+    });
+    setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã gửi.' : res.error.message);
+  };
+
+  return (
+    <div className="flex flex-col gap-4 text-slate-200">
+      {!inComms && (
+        <div className="text-xs px-3 py-2 rounded bg-amber-950/60 border border-amber-500/40 text-amber-200 flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          Hãy chuyển sang Pha 3 (Liên lạc & Rover) để gửi điện tín hoặc đặt tàu hàng 80 kg.
+        </div>
+      )}
+
+      {statusNote && (
+        <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
+          {statusNote}
+        </div>
+      )}
+
+      {/* Radio CAPCOM Section */}
+      <section className="p-3 rounded-lg bg-slate-900/70 border border-slate-700/70 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
+            <Radio className="w-4 h-4" />
+            Vô tuyến Houston CAPCOM (Độ trễ ~1.3s/chiều)
+          </h3>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            className="flex-1 bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-100"
+          />
+          <button
+            type="button"
+            disabled={!inComms}
+            onClick={handleSendRadio}
+            className="hail-btn hail-btn--accent flex items-center gap-1"
+          >
+            <Send className="w-3.5 h-3.5" />
+            Phát sóng
+          </button>
+        </div>
+
+        <div className="max-h-32 overflow-y-auto flex flex-col gap-1.5 text-xs">
+          {gameState.logistics.radioMessages.length === 0 ? (
+            <p className="text-slate-400">Chưa có phiên liên lạc nào trong chiến dịch.</p>
+          ) : (
+            gameState.logistics.radioMessages.slice(-4).map((m) => (
+              <div key={m.id} className="p-2 rounded bg-slate-950/80 border border-slate-800">
+                <div className="text-cyan-200">
+                  <strong>[Sol {m.sentSol}]</strong> {m.prompt}
+                </div>
+                <div className="text-emerald-300 mt-1">
+                  {m.status === 'transmitting' ? 'Đang truyền tín hiệu tới Trái Đất...' : m.reply}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Cargo 80 kg Section */}
+      <section className="p-3 rounded-lg bg-slate-900/70 border border-slate-700/70 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
+            <Truck className="w-4 h-4" />
+            Tàu Tiếp tế 80 kg ({totalSlots * 20} / 80 kg) · Bay 4 Sol
+          </h3>
+          {gameState.clock.sol >= 10 && !gameState.logistics.activeOrder && (
+            <span className="text-[11px] text-amber-300 font-mono">Đặt trước Sol 11 để kịp Đêm Trăng</span>
+          )}
+        </div>
+
+        {gameState.logistics.activeOrder ? (
+          <div className="p-3 rounded bg-emerald-950/40 border border-emerald-500/40 text-xs flex items-center gap-2 text-emerald-200">
+            <PackageCheck className="w-4 h-4 shrink-0" />
+            Tàu hàng đang trên đường bay (Đặt ở Sol {gameState.logistics.activeOrder.orderedAtSol}, dự kiến hạ cánh tại Sol{' '}
+            <strong>{gameState.logistics.activeOrder.arrivalSol}</strong>).
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {bundle.balance.logistics.packs.map((pack) => {
+                const count = slots[pack.id] ?? 0;
+                return (
+                  <div key={pack.id} className="p-2.5 rounded bg-slate-950/75 border border-slate-800 flex items-center justify-between gap-2">
+                    <div>
+                      <div className="text-xs font-bold text-white">{pack.name}</div>
+                      <div className="text-[11px] text-slate-400">{pack.summary}</div>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-mono text-xs">
+                      <button type="button" disabled={count <= 0} onClick={() => adjustSlot(pack.id, -1)} className="hail-btn px-2 py-0.5">-</button>
+                      <span className="w-4 text-center">{count}</span>
+                      <button type="button" disabled={totalSlots >= maxSlots} onClick={() => adjustSlot(pack.id, 1)} className="hail-btn px-2 py-0.5">+</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs text-slate-400">
+                {gameState.logistics.padCooldownSols > 0
+                  ? `Bãi đáp đang hồi phục (${gameState.logistics.padCooldownSols} Sol)`
+                  : 'Bãi đáp sẵn sàng nhận chuyến tiếp tế mới.'}
+              </span>
+              <button
+                type="button"
+                disabled={!inComms || totalSlots < 1 || gameState.logistics.padCooldownSols > 0}
+                onClick={handleOrderCargo}
+                className="hail-btn hail-btn--accent"
+              >
+                Phóng tàu hàng ({totalSlots * 20} kg)
+              </button>
+            </div>
+          </>
+        )}
+      </section>
+    </div>
+  );
+}

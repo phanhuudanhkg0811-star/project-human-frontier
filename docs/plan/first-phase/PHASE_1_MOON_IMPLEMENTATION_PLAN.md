@@ -1,5 +1,11 @@
 # PHASE 1 — Kế hoạch hoàn chỉnh Moon Survival 32 Sol từ project trắng
 
+> [!IMPORTANT]
+> **CẬP NHẬT CHỐT GAMEPLAY (14/11/2026 — Option B):** Nội dung gốc bên dưới được giữ nguyên để tham chiếu kiến trúc/flow. Khi code & cân bằng số liệu, **ưu tiên chuẩn chốt duy nhất** tại [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) và xem bảng diff tại [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - Gỡ bỏ quy tắc *"loại bỏ chế tạo phức tạp"*: **`3D Fabricator` + `6 Equipment` + Wall-Rack Cockpit là P0 bắt buộc** (`0` slot Crew, chỉ tốn `Parts + Battery (+ Water)`).
+> - Đổi thông số sang **Option A**: `WRS = 90% (Lv1) / 95% (Lv2–3)`, Golden Sol 7 (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`), `Hunger FSM` (`Ok / Hungry / Starving` với `MRE +75 Satiety`), Cargo `80 kg (4 x 20 kg, 4 Sol)`.
+> - Asset Cockpit Wall-Rack mới do Lead/User tự sinh; phạm vi QA rút gọn nhẹ hơn (không bắt buộc 10k simulation hay 13 E2E matrix).
+
 > **Mục tiêu:** xây dựng từ repository trống thành campaign Mặt Trăng độc lập hoàn chỉnh, chơi từ Sol 1 đến hết Sol 32, bao gồm 14 Sol Lunar Night và màn tổng kết thắng/thua.
 >
 > **Phạm vi tài liệu:** toàn bộ product, game design, code, data, UI/UX, asset, nội dung STEM, kiểm thử và phát hành cần thiết cho PHASE 1. Không giả định bất kỳ code hay asset nào đã tồn tại.
@@ -98,14 +104,14 @@ Mỗi chuyến cần tối thiểu: mục tiêu, thời lượng, chi phí đi�
 State đầu vào của scenario kiểm chứng phải được cố định bằng fixture:
 
 - 35 L nước sạch, 10 L nước thải, 8 kWh nguồn trong Sol và 8 kWh pin.
-- Tải thiết yếu 12 kWh; WRS cần 4 kWh; thu hồi 93% tối đa 10 L.
+- Tải thiết yếu 12 kWh; WRS Lv1 cần 4 kWh; thu hồi 90% tối đa 20 L/mẻ.
 - Ba người đã bận xử lý rò khí, kiểm tra nguồn điện và cô lập mạch lỗi.
 - Elena là người duy nhất còn có thể nhận việc.
 
 Hai lựa chọn bắt buộc:
 
 - **Cứu rover:** tốn 2 kWh, hoãn WRS, chuyến 2 có thể hoàn thành; cuối Sol mục tiêu là 25.0 L nước và 2 kWh pin.
-- **Ưu tiên trạm:** chạy WRS, bỏ hạn cứu dữ liệu rover; cuối Sol mục tiêu là 34.3 L nước và 0 kWh pin; chuyến 2 thất bại nhưng rover còn dùng được cho chuyến 3.
+- **Ưu tiên trạm:** chạy WRS, bỏ hạn cứu dữ liệu rover; cuối Sol mục tiêu là 34.0 L nước và 0 kWh pin; chuyến 2 thất bại nhưng rover còn dùng được cho chuyến 3.
 
 Đây là acceptance scenario quan trọng nhất của PHASE 1 và phải có golden test.
 
@@ -113,31 +119,36 @@ Hai lựa chọn bắt buộc:
 
 ```mermaid
 flowchart TD
-    Data[JSON content + JSON Schema]
-    Engine[Pure TypeScript simulation engine]
+    Data[Static JSON content + Diviner/DONKI catalogs + Schema]
+    Domain[Pure TS domain orchestrator & deterministic resolver]
     Store[Zustand store + persistence adapter]
     UI[React cockpit + panels + modals]
     Save[Versioned LocalStorage save]
     Tests[Unit + integration + E2E]
 
-    Data --> Engine
-    Engine --> Store
+    Data --> Domain
+    Domain --> Store
     Store <--> Save
     Store --> UI
-    Engine --> Tests
+    Domain --> Tests
     Store --> Tests
     UI --> Tests
 ```
 
 ### Nguyên tắc bắt buộc
 
-- Engine không import React, DOM, Zustand hoặc LocalStorage.
-- Cùng `initialState + commands + seed + content` phải cho cùng kết quả.
+- Toàn bộ End-Sol simulation, forecast preview và hàm xác suất DONKI chạy bằng **Pure TypeScript** trong `src/domain/`; không dùng Pyodide Web Worker, không cần Python runtime khi chơi.
+- Dữ liệu NASA (Diviner LRO + 3 mẫu × 32 ngày NASA DONKI) được cào trước bằng script offline (`scripts/`) và đóng gói dưới dạng static JSON (`src/data/`).
+- Domain engine (`src/domain/`) là nguồn tính toán duy nhất; không truy cập React, DOM, Zustand hoặc LocalStorage.
+- Cùng `state (có committed plan) + seed + modelVersion + catalogVersion` phải cho cùng canonical output/hash.
 - UI không chứa công thức cân bằng hoặc tự sửa state.
 - Mọi event, mission, brief và thông số balance phải nằm trong data.
 - Command sai phase hoặc không hợp lệ trả về lỗi domain có mã và giải thích; UI dùng lỗi đó để phản hồi cho trẻ, không im lặng.
-- Save có `schemaVersion` và migration từ ngày đầu.
+- Save có `schemaVersion`, `modelVersion`, `catalogVersion` và migration/compatibility check từ ngày đầu.
 - Mỗi số liệu STEM phải được đánh dấu là `observed`, `inferred` hoặc `simulated`.
+- Validation error hoặc version mismatch không được âm thầm ghi đè/mutate state; save lỗi phải báo khôi phục an toàn.
+
+State và JSON schema contract chi tiết được khóa tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 5. Cấu trúc repository đề xuất
 
@@ -154,6 +165,7 @@ project-hail/
 │   └── asset-pipeline/
 ├── public/
 │   └── assets/hail/
+├── scripts/                 # Offline NASA DONKI & Diviner catalog builders
 ├── src/
 │   ├── app/                 # bootstrap, providers, routes/error boundary
 │   ├── components/          # common UI primitives
@@ -165,27 +177,32 @@ project-hail/
 │   │   ├── rover/
 │   │   ├── rationing/
 │   │   └── debrief/
-│   ├── engine/
-│   │   ├── actions/
-│   │   ├── events/
-│   │   ├── resolver/
-│   │   ├── rng/
-│   │   ├── selectors/
-│   │   └── validation/
+│   ├── domain/              # Pure TS orchestrator, End-Sol resolver, DONKI probability & PRNG
+│   │   ├── orchestrator.ts
+│   │   ├── endSolResolver.ts
+│   │   ├── spaceWeather.ts
+│   │   ├── prng.ts
+│   │   ├── invariants.ts
+│   │   └── selectors.ts
 │   ├── data/
 │   │   ├── balance.json
 │   │   ├── crew.json
+│   │   ├── recipes.json
+│   │   ├── campaign-moon32.json
+│   │   ├── donki-space-weather.json
 │   │   ├── events.json
-│   │   ├── expeditions.json
 │   │   ├── initial-state.json
-│   │   └── science-briefs.json
+│   │   ├── simulation-catalog.json
+│   │   └── nasa-briefs.json
+│   ├── persistence/
 │   ├── schemas/
 │   ├── store/
 │   ├── types/
 │   ├── utils/
 │   └── styles/
 ├── tests/
-│   ├── engine/
+│   ├── domain/
+│   ├── simulation/
 │   ├── fixtures/
 │   ├── integration/
 │   └── e2e/
@@ -200,11 +217,11 @@ Trước khi làm UI, phải khóa type/schema cho các entity sau:
 
 | Entity | Field quan trọng |
 | --- | --- |
-| `GameState` | campaign, sol, phase, seed, outcome, resources, crew, systems, assignments, roverMissions, event, radio, cargo, log |
-| `CrewMember` | id, name, role, health, stress, fatigue, hunger, thirst, condition, assignmentId |
-| `StationSystem` | id, level, integrity, powered, assignedCrewId, status |
-| `ResourceState` | oxygenKg, waterL, wasteWaterL, foodKg, partsKg, batteryKWh |
-| `DailyPlan` | ration fractions, recycler enabled, power priorities, assignments |
+| `GameState` | versions, revision, campaign, clock, resources, systems, crew, dailyPlan, rover, events, logistics, debrief, history |
+| `CrewMemberState` | id, health, stress, fatigue, hunger, thirst, radiationMgy, condition, illness, lastResolvedSol |
+| `StationSystemState` | id, level, integrity, status, operatingState, ageSols, lastResolvedSol |
+| `ResourceState` | oxygenKg, waterCleanL, waterGreyL, foodKg, partsKg, batteryKwh |
+| `DailyPlan` | status, sol, ration, systemModes, powerPriority, WRS request, assignments, roverAction |
 | `RoverMission` | id, site, startSol, duration, status, progress, crew slots, power cost, equipment, result |
 | `GameEvent` | id, trigger, choices, requirements, outcomes, scienceBriefId |
 | `RadioMessage` | id, sentAt, receiveAt, replyAt, status, content |
@@ -274,7 +291,7 @@ Thứ tự xử lý phải cố định:
 | Solar cấp 1 | 25 kWh/Sol |
 | Pin tối đa | 60 kWh |
 | Recycler | 4 kWh/chu kỳ |
-| Hiệu suất WRS | 85% / 90% / 93% |
+| Hiệu suất WRS | 90% / 95% / 95% (Lv3 giảm còn 3 kWh) |
 | Sửa chữa | 2 kg phụ tùng |
 | Nâng cấp | 4 kg lên cấp 2; 8 kg lên cấp 3 |
 | Radio một chiều | 1.3 giây |

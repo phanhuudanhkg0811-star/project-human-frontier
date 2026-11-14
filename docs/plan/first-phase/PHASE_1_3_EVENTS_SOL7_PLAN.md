@@ -1,5 +1,10 @@
 # PHASE 1.3 — Event system, content catalog và golden scenario Sol 7
 
+> [!IMPORTANT]
+> **CẬP NHẬT SỐ LIỆU GOLDEN SOL 7 (14/11/2026 — Option B):** Giữ nguyên DSL event & cấu trúc test bên dưới, đồng bộ lại giá trị **Option A** từ [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - `WRS Lv1 = 90%` (`20 L` batch tối đa, `4 kWh/mẻ`). Ở fixture Sol 7 (`35.0 L` đầu ngày, `10.0 L` nước thải, `4` crew tiêu thụ `10.0 L`, `16 kWh` tổng điện): **Nhánh A (Cứu Rover, tắt WRS, `-2 kWh`)** còn **`25.0 L / 2.0 kWh`**; **Nhánh B (Ưu tiên Trạm, bật WRS `90%`, `-4 kWh`)** hồi `10 x 90% = +9.0 L`, còn **`34.0 L / 0.0 kWh`** (xem Mục 7.2 trong `HUMAN_FRONTIER_2050_GAME_SETUP.md`).
+> - Event catalog kết nối thêm thưởng/phạt Equipment (6 món P0) và `Satiety` / `MRE`.
+
 > **Mục tiêu:** xây hệ sự kiện data-driven đủ dùng cho campaign Mặt Trăng và khóa nhánh quyết định Sol 7 bằng golden test deterministic.
 
 ## 1. Điều kiện đầu vào
@@ -98,7 +103,7 @@ Mỗi outcome tạo `DebriefContext` gồm metric thay đổi, evidence type và
 - Elena chưa được giao việc.
 - 35 L nước sạch, 10 L nước thải.
 - 8 kWh nguồn trong Sol, 8 kWh pin.
-- Essential load 12 kWh; WRS 4 kWh; recovery 93%; water demand 10 L.
+- Essential load 12 kWh; WRS Lv1 4 kWh; recovery 90%; water demand 10 L.
 
 ### Choice A — Cứu rover
 
@@ -110,7 +115,7 @@ Mỗi outcome tạo `DebriefContext` gồm metric thay đổi, evidence type và
 ### Choice B — Ưu tiên trạm
 
 - Elena kiểm tra/bảo trì filter; WRS chạy đủ chu kỳ.
-- Cuối Sol: 34.3 L nước sạch, 0 kWh pin.
+- Cuối Sol: 34.0 L nước sạch, 0 kWh pin.
 - Expedition 2 hết deadline và thất bại mục tiêu.
 - Rover vẫn khả dụng cho Expedition 3.
 

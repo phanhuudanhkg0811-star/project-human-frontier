@@ -1,11 +1,17 @@
 # PHASE 1.2 — Rover lifecycle, ba expedition và crew task
 
+> [!IMPORTANT]
+> **CẬP NHẬT CREW & EXPEDITION (14/11/2026 — Option B):** Luật Rover 9 trạng thái & 3 expedition giữ nguyên để tham chiếu, áp dụng thêm các điểm chốt tại [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **`3D Fabricator` không tốn slot Crew:** Máy tự chạy khi có đủ `Parts + Battery (+ Water)`; `Alex` chỉ giảm `1 kg Parts` khi nâng cấp hệ thống Console (`solar / recycler / scrubber / airlock`), không liên quan slot Fabricator.
+> - **Ràng buộc Starving & Equipment:** Crew ở trạng thái `Starving (Satiety = 0)` bị cấm đi Rover; Expedition hỗ trợ mang tối đa `3` Equipment trong 6 món chuẩn (`Core Drill`, `Sealant Tape`, `Solar Lantern`, `Dust Shield`, `Radio Repeater`, `Cryo Thermal Rig`). Cargo là `80 kg` (`4` slots x `20 kg`, `4` Sol).
+
 > **Mục tiêu:** mở rộng lõi PHASE 1.1 thành hệ thống phân công nhân sự và thám hiểm rover hoàn chỉnh, deterministic, chạy được bằng test/headless UI.
 
 ## 1. Điều kiện đầu vào
 
 - PHASE 1.1 đã đạt DoD: Sol 1 chạy được, save/load được, command contract ổn định.
-- `GameState`, `GameCommand`, `EngineResult`, selector và content loader đã có version.
+- `GameState`, `GameCommand`, async `DispatchResult`, JSON schema/catalog contract, selector và content loader đã có version.
+- Pure TypeScript Domain Engine & Resolver (`src/domain/`) là nguồn simulation duy nhất (đọc static JSON từ `src/data/` và áp dụng xác suất thời tiết DONKI theo seed); rover model mới phải mở rộng cùng contract, không tạo công thức rời rạc ở UI.
 - Crew assignment cơ bản đã enforce quy tắc một người–một việc–một Sol.
 
 ## 2. Kết quả cần đạt

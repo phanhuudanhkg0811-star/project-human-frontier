@@ -1,8 +1,15 @@
 # PHASE 1.1 — State Foundation và kế hoạch triển khai song song
 
+> [!IMPORTANT]
+> **CẬP NHẬT STATE & COMMAND (14/11/2026 — Option B):** Giữ nguyên kiến trúc 5 nhóm state + `GameCommand` / `EngineResult` bên dưới, bổ sung/chỉnh theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - Bắt buộc có từ P0: `fabricator` queue (`1` lệnh/Sol, **tự động `0` Crew slot**, `1d/2d`, chỉ tốn `Parts + Battery (+ Water)`), `inventory` (`2` Consumables + `6` Equipment), `crew[i].satiety` (`0–100`) + `HungerState` (`Ok / Hungry / Starving`).
+> - Tài nguyên chuẩn: `4` kho hiển thị (`Battery 40/60`, `O2 70/120`, `Water 80/160`, `Parts 16/60`) + `wasteWaterL` ẩn nội bộ; **không** thêm `Chemicals`. `WRS` áp dụng **Option A (`90% -> 95%`)**.
+
 > **Mục tiêu phase con:** từ project trắng tạo được lõi state theo `campaignId` ổn định, deterministic, lưu/khôi phục được và chạy trọn một Sol bằng test — trước khi xây Moon Survival 32 Sol và cockpit hoàn chỉnh.
 >
 > **Đầu ra quan trọng nhất:** không phải UI đẹp, mà là một `GameState` duy nhất có quy tắc rõ ràng, được thay đổi qua command và không thể rơi vào trạng thái bất hợp lệ.
+>
+> **Runtime đã chốt:** **Pure TypeScript Deterministic Engine** (`src/domain/`) + **Pre-scraped Static JSON** (`src/data/donki-space-weather.json`, `simulation-catalog.json`, v.v.); **không dùng Pyodide** Web Worker hay local Python sidecar. TypeScript quản lý trọn vẹn phase, command, End-Sol resolver, hàm xác suất DONKI, store và persistence. Chi tiết field và contract nằm tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 1. Cách quản lý “một mớ state”
 
@@ -10,35 +17,38 @@ Không đặt mọi thứ vào một object Zustand rồi cho component sửa tr
 
 | Nhóm | Ví dụ | Nơi quản lý | Có lưu save? |
 | --- | --- | --- | --- |
-| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | Pure TypeScript engine | Có |
+| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | TypeScript snapshot + Pure TS Resolver | Có |
 | UI state | Modal đang mở, tab, hover, toast, animation | UI store/local component | Không |
 | Draft state | Khẩu phần đang kéo, payload tiếp tế chưa xác nhận | Form/local state | Không; chỉ commit khi xác nhận |
-| Content/config | Balance, event catalog, crew, brief | JSON đã validate | Lưu `contentVersion`, không copy cả catalog |
-| Derived state | Có sửa được không, dự báo cuối Sol, cảnh báo | Selector thuần | Không |
+| Content/config | Balance, event catalog, crew, DONKI 3×32d, brief | Static JSON đã validate | Lưu `contentVersion`, không copy cả catalog |
+| Derived state | Có sửa được không, dự báo cuối Sol, rủi ro DONKI | Selector thuần | Không |
+| Runtime state | Save status / loading / domain error tạm | Adapter/store | Không |
 
 ### Quy tắc nguồn sự thật
 
 ```text
-JSON content ───────┐
-                    ▼
-Player command → Engine → GameState mới → Store → UI
-                    │          │
-                    │          └→ Save adapter
-                    └→ Domain result/effects → toast, sound, animation
+Static JSON (balance/DONKI/Diviner) ──┐
+                                      ▼
+Player command → TS Orchestrator → Pure TS End-Sol / Preview Resolver → GameState → Store → UI
+                         │                   │                            │
+                         │                   └→ SHA-256 PRNG + DONKI prob └→ SaveEnvelope v1
+                         └→ DomainError / Effects
 ```
 
-- `GameState` trong engine là nguồn sự thật duy nhất của gameplay.
+- `GameState` trong store là snapshot gameplay có thẩm quyền duy nhất.
+- `src/domain/` là nguồn tính toán duy nhất cho phase transition, End-Sol, preview forecast và DONKI probability rolls.
 - Component không được tự trừ tài nguyên hoặc đổi phase.
 - Zustand không chứa công thức gameplay; chỉ giữ snapshot và gọi `dispatch`.
 - UI không lưu lại giá trị có thể tính từ `GameState`.
 - Save không lưu modal, toast, loading hay form đang nhập dở.
-- Thời gian gameplay dùng game clock/command; engine không gọi `Date.now()` hoặc `Math.random()`.
+- Thời gian gameplay dùng game clock/command; simulation không đọc `Date.now()` hay `Math.random()` (dùng `prng.ts` SHA-256 theo `(missionSeed, sol, subsystem)`).
+- Validation error hoặc save version mismatch thì giữ nguyên state (fail closed), không tự ý mutate `GameState`.
 
 ## 2. Hình dạng state đề xuất
 
 Không cần tách thành hàng chục store. PHASE 1 dùng hai store:
 
-1. `gameStore`: domain snapshot, dispatch, save/load status.
+1. `gameStore`: domain snapshot, async dispatch, save/load status và runtime status không persist.
 2. `uiStore`: modal, selection và presentation state dùng chung.
 
 Form chỉ dùng state cục bộ trong component nếu không cần chia sẻ.
@@ -49,6 +59,9 @@ Form chỉ dùng state cục bộ trong component nếu không cần chia sẻ.
 interface GameState {
   readonly schemaVersion: 1;
   readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly revision: number;
   readonly campaign: {
     readonly id: 'moon-32';
     readonly status: 'not-started' | 'active' | 'victory' | 'defeat';
@@ -57,13 +70,13 @@ interface GameState {
   readonly clock: {
     readonly sol: number;
     readonly phase: GamePhase;
-    readonly seed: number;
-    readonly elapsedMissionMs: number;
+    readonly missionSeed: number;
+    readonly missionElapsedHours: number;
+    readonly resolutionIndex: number;
   };
   readonly resources: ResourceState;
   readonly systems: Readonly<Record<SystemId, StationSystem>>;
   readonly crew: Readonly<Record<CrewId, CrewMember>>;
-  readonly assignments: readonly Assignment[];
   readonly dailyPlan: DailyPlan;
   readonly rover: RoverState;
   readonly eventQueue: readonly ScheduledEvent[];
@@ -72,6 +85,8 @@ interface GameState {
   readonly history: MissionHistory;
 }
 ```
+
+Đây là overview; type chuẩn, mục đích từng field, state không được lưu và invariant nằm trong [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md). `revision` là bắt buộc để response bất đồng bộ cũ không ghi đè snapshot mới.
 
 ### Vì sao dùng record thay vì array cho entity chính
 
@@ -121,7 +136,7 @@ type GameCommand =
 Engine trả về kết quả có cấu trúc thay vì im lặng:
 
 ```ts
-type EngineResult =
+type DispatchResult =
   | {
       ok: true;
       state: GameState;
@@ -135,6 +150,8 @@ type EngineResult =
 ```
 
 `DomainEffect` chỉ mô tả điều đã xảy ra (`resource-changed`, `system-repaired`, `phase-changed`). UI quyết định biến effect thành toast, âm thanh hay animation; engine không biết UI.
+
+`dispatch` trả `Promise<DispatchResult>` để giữ interface `GamePort` đồng nhất cho mọi command (sync hoặc bất đồng bộ nếu mở rộng sau này) và cho phép SHA-256 PRNG (`crypto.subtle` / Node `crypto`) chạy sạch qua một biên chung.
 
 ## 4. Derived state bằng selector
 
@@ -194,11 +211,11 @@ Viết `assertGameState()` cho development/test và chạy sau mỗi command tro
         ↓
 2. Domain types + command contract
         ↓
-3. JSON schema + fixtures + config loader
+3. JSON schema + DONKI 3×32d / Diviner static catalog + fixtures
         ↓
-4. Engine reducer + state machine
+4. SHA-256 PRNG + DONKI probabilistic functions
         ↓
-5. End-Sol resolver cho một Sol
+5. TS state machine + Pure TS End-Sol resolver
         ↓
 6. Selectors + forecast
         ↓
@@ -219,10 +236,9 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 
 - Project foundation và CI.
 - Domain types, command, error, effect và invariant.
-- JSON loader/schema cho balance, crew, initial state.
-- State machine đủ các phase.
-- Resource/ECLSS resolver cho một Sol.
-- Crew assignment cơ bản và sửa chữa một system.
+- Static JSON loader/schema cho balance, crew, recipes, campaign, initial state, `donki-space-weather.json` (3×32 ngày) và `simulation-catalog.json` (Diviner).
+- Pure TS state machine đủ các phase + End-Sol / preview resolver + hàm xác suất thời tiết DONKI theo seed.
+- Crew assignment cơ bản, 3D Fabricator queue và sửa chữa system.
 - Selector permission + resource forecast.
 - Predictor phải gọi cùng resolver ở chế độ preview; không viết công thức thứ hai trong UI.
 - Zustand adapter và hai store.
@@ -230,6 +246,7 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 - Campaign definition (`targetSol`, victory requirements), Mission Seed và difficulty profile được load từ content/config.
 - Dev UI tối thiểu chạy hết Sol 1.
 - Test engine, store và persistence.
+- Benchmark cold boot, warm resolve và forecast theo budget trong state contract.
 
 ### Chưa làm trong phase con này
 
@@ -246,7 +263,7 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 Cả team làm chung một nhịp ngắn để khóa:
 
 - Tên domain entity và ID convention.
-- `GameState`, `GameCommand`, `EngineResult` bản v0.
+- `GameState`, `GameCommand`, `DispatchResult` và JSON worker contract bản v0.
 - Invariant và phase diagram.
 - Folder ownership.
 - Fixture Sol 1 và expected output.
@@ -272,32 +289,32 @@ flowchart LR
     D --> Join
 ```
 
-### Workstream A — Domain và engine
+### Workstream A — Domain, resolver và DONKI simulation
 
-**Sở hữu file:** `src/types/`, `src/engine/`.
+**Sở hữu file:** `src/types/`, `src/domain/`.
 
-- Implement state machine và command dispatcher.
-- Implement invariant validation.
-- Implement crew assignment.
-- Implement repair system.
-- Implement power/ECLSS End-Sol resolver cho Sol 1.
+- Implement TypeScript state machine, command dispatcher và invariant validation.
+- Implement SHA-256 subsystem PRNG (`src/domain/prng.ts`) và DONKI probabilistic space weather functions (`src/domain/spaceWeather.ts`).
+- Implement crew assignment, 3D Fabricator queue và repair system.
+- Implement power/ECLSS End-Sol & preview resolver (`src/domain/endSolResolver.ts`) bằng Pure TypeScript.
 - Phát `DomainEffect` và `DomainError`.
-- Viết unit test sát engine trong cùng PR/branch.
+- Viết unit test domain, resolver, DONKI probability và determinism trong cùng PR/branch.
 
 **Không làm:** Zustand, component, JSON copy, save adapter.
 
-**Đầu ra:** từ fixture có thể chạy command script và nhận state Sol 2 đúng expected snapshot.
+**Đầu ra:** từ fixture Sol 1 có thể chạy full phase đến End-Sol và nhận state Sol 2 đúng expected snapshot; replay nhiều lần với cùng seed luôn cho cùng output/hash.
 
 ### Workstream B — Data, schema và science contract
 
-**Sở hữu file:** `src/data/`, `src/schemas/`, `src/content/`.
+**Sở hữu file:** `src/data/`, `src/schemas/`, `scripts/`.
 
-- Tạo `balance.json`, `crew.json`, `initial-state.json`.
-- Tạo schema và decoder/validator.
-- Định nghĩa content version.
+- Tạo `balance.json`, `crew.json`, `recipes.json`, `campaign-moon32.json`, `initial-state.json`.
+- Tạo schema và validator cho content, save envelope và DONKI/Diviner catalog.
+- Chạy script cào trước 3 mẫu × 32 ngày NASA DONKI (`donki-space-weather.json`) và tạo `simulation-catalog.json` từ Diviner LRO; không đưa raw NASA dump hay API key vào runtime bundle.
+- Định nghĩa `contentVersion`, `modelVersion`, `catalogVersion` và provenance.
 - Chuẩn hóa unit/description/source metadata.
 - Tạo fixture valid/invalid cho validation.
-- Chuẩn bị event/brief mẫu Sol 1, chưa cần full catalog.
+- Chuẩn bị event/brief mẫu Sol 1 và Moon DONKI brief.
 
 **Không làm:** sửa engine types sau contract freeze; thay đổi phải qua proposal.
 
@@ -325,9 +342,10 @@ flowchart LR
 
 - Setup TypeScript strict, lint, format, unit/integration/E2E runner.
 - Setup CI và coverage/report.
-- Implement `gameStore` facade theo interface đã khóa.
+- Implement async `gameStore` facade theo interface đã khóa.
 - Implement save envelope, LocalStorage adapter và migration v1.
 - Tạo command replay harness và state snapshot viewer.
+- Test schema mismatch, corrupted save recovery và version mismatch giữ nguyên state.
 - Viết integration test store/save/reload.
 
 **Không làm:** gameplay formula hoặc UI component.
@@ -339,12 +357,12 @@ flowchart LR
 | Hạng mục | Phụ thuộc | Có thể làm song song? |
 | --- | --- | --- |
 | Types/commands v0 | Product lock | Không; làm đầu tiên |
-| Engine state machine | Types v0 | Có với schema/UI/tooling |
-| JSON schema/content | Types v0 | Có |
+| TS state machine + PRNG/DONKI model | Types/contract v0 | Có với schema/UI/tooling |
+| JSON schema/content + scraped DONKI | Types v0 | Có |
 | UI shell/design system | Store interface v0 | Có, dùng mock |
 | Save envelope/adapter | GameState v0 | Có |
-| End-Sol resolver | Balance contract | A và B phối hợp qua fixture |
-| Store integration | Engine result + persistence | Chờ A/D hoàn thiện interface |
+| Pure TS End-Sol & preview resolver | Balance + JSON contract | A và B phối hợp qua fixture |
+| Store integration | Async dispatch + persistence | Chờ A/D hoàn thiện interface |
 | Playable Sol 1 | A + B + C + D | Integration gate cuối |
 
 ### Những việc tuyệt đối không chia song song
@@ -361,7 +379,8 @@ flowchart LR
 - Shared contracts chỉ thay đổi qua PR nhỏ, review bởi đại diện A–D.
 - Dùng `contracts-v0.md` hoặc TypeScript types làm giao diện chung.
 - UI dùng mock `GamePort`; không import fixture trực tiếp.
-- Engine nhận config qua tham số; không import JSON.
+- `src/domain/endSolResolver.ts` nhận state/plan/catalog/donkiProfile đã version hóa; không biết Zustand hay React.
+- UI và store không chứa công thức End-Sol/forecast riêng.
 - Data loader trả đúng `ContentBundle`; không biết Zustand.
 - Persistence nhận/ghi `SaveEnvelope`; không biết component.
 - Merge contract → schema/data → engine → persistence/store → UI integration.
@@ -371,9 +390,10 @@ flowchart LR
 ```ts
 interface GamePort {
   getSnapshot(): GameState;
-  dispatch(command: GameCommand): EngineResult;
+  dispatch(command: GameCommand): Promise<DispatchResult>;
   subscribe(listener: () => void): () => void;
-  reset(): void;
+  getRuntimeState(): SimulationRuntimeState;
+  reset(): Promise<void>;
 }
 ```
 
@@ -383,12 +403,18 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 
 ### Gate 1 — Contract freeze v0
 
-- Phase diagram, types, command, result, error, invariant đã review.
+- Phase diagram, state types, command contract, schema/DONKI contract, error và invariant đã review.
 - Fixture Sol 1 và expected Sol 2 đã chốt.
+
+### Gate 1.5 — Data & Resolver ready
+
+- `donki-space-weather.json` (3×32 ngày) và `simulation-catalog.json` (Diviner) validate pass schema.
+- End-Sol resolver báo `modelVersion`/`catalogVersion` và chạy deterministic `preview` / `commit`.
+- Lỗi validation không làm đổi `GameState`.
 
 ### Gate 2 — Headless Sol 1
 
-- CLI/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol.
+- Harness/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol qua Pure TS resolver.
 - Nhận state Sol 2, log và delta đúng.
 - Không có resource âm hoặc duplicate assignment.
 
@@ -416,12 +442,12 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 | ---: | --- | --- |
 | 1 | Project scaffold + CI tối thiểu | D |
 | 2 | Domain contract v0 + invariants | A, review chung |
-| 3 | Content schemas + fixtures Sol 1 | B |
-| 4 | State machine + command dispatcher | A |
+| 3 | Static JSON schemas + DONKI 3×32d & Diviner scripts/fixtures | B |
+| 4 | SHA-256 PRNG + DONKI probabilistic functions | A |
 | 5 | Design tokens + primitives + mock port | C |
 | 6 | Save envelope + persistence adapter | D |
-| 7 | Resource/ECLSS resolver + forecast | A + fixture B |
-| 8 | Game store facade + selectors wiring | D + A review |
+| 7 | TS state machine + Pure TS Resource/ECLSS resolver | A + fixture B |
+| 8 | Async game store + selectors wiring | D + A review |
 | 9 | Sol 1 feature panels trên mock | C |
 | 10 | Store/UI integration | C + D |
 | 11 | Full Sol 1 integration/E2E | D, cả team fix |
@@ -432,18 +458,22 @@ PR 3–6 có thể chạy đồng thời sau PR 2. PR 5 và 9 không cần chờ
 ## 13. Definition of Done PHASE 1.1
 
 - [ ] Chỉ có một authoritative `GameState`.
-- [ ] Domain/UI/draft/content/derived state được phân tách đúng.
+- [ ] Domain/UI/draft/runtime/content/derived state được phân tách đúng.
 - [ ] Không component nào sửa domain state trực tiếp.
 - [ ] Tất cả domain mutation đi qua typed command.
-- [ ] Engine pure, deterministic và không phụ thuộc trình duyệt.
+- [ ] Pure TS resolver stateless, deterministic; `preview` và `commit` dùng chung một hàm.
+- [ ] UI và store không có công thức End-Sol/forecast thứ hai.
+- [ ] Validation error hoặc version mismatch không mutate state.
 - [ ] Invariant được kiểm tra bằng test.
-- [ ] JSON được schema validation và có content version.
+- [ ] JSON (bao gồm 3×32 ngày DONKI và Diviner catalog) được schema validation và có version.
 - [ ] Selector trả permission kèm lý do.
 - [ ] Zustand chỉ làm adapter/snapshot, không chứa công thức gameplay.
 - [ ] Save version 1 có validation và recovery.
 - [ ] Reload được ở mọi phase trong Sol 1.
 - [ ] Sol 1 chạy headless và chạy bằng UI đến Sol 2.
-- [ ] Test cùng seed/commands cho cùng state/log.
+- [ ] Test cùng seed/commands cho cùng state/log/hash.
+- [ ] Reload save rồi replay vẫn cho cùng canonical response/hash.
+- [ ] Bundle không chứa Pyodide runtime; resolve và forecast chạy tức thì `< 10 ms`.
 - [ ] Typecheck, lint, unit, integration, E2E smoke và build đều đạt CI.
 - [ ] Có tài liệu contract và sơ đồ ownership để phase sau không phá kiến trúc.
 

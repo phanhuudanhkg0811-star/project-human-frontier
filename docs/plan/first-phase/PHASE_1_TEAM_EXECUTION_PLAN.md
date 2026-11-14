@@ -1,5 +1,11 @@
 # PHASE 1 — Kế hoạch chia việc cho team
 
+> [!IMPORTANT]
+> **CẬP NHẬT PHÂN CÔNG & SCOPE (14/11/2026 — Option B):** Giữ nguyên khung phối hợp 6 lane bên dưới, nhưng áp dụng các điểm chốt mới từ [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Core & UI:** `3D Fabricator` (máy tự chạy `0` Crew slot, tối đa `1` lệnh/Sol) và `Wall-Rack Cockpit` (`UL Food`, `LL Fabricator`, `UR CAPCOM`, `LR Inventory`, `Center Telemetry Console`) được nâng thành **P0**.
+> - **Visual/Asset:** Lead/User trực tiếp sinh bộ asset Wall-Rack & 6 Equipment theo AeroMatte 2050 — team Visual/UI chỉ tích hợp asset được bàn giao & hoàn thiện Console/Window.
+> - **QA/Release:** Chuyển sang bộ kiểm thử thực tế nhẹ hơn (`~100` seed smoke, `4–5` E2E cốt lõi, `< 2.5 MB` bundle).
+
 > **Mục tiêu:** tổ chức triển khai Moon Survival 32 Sol theo PHASE 1.1–1.6, cho phép làm song song nhưng giữ một nguồn state/contract duy nhất.
 
 ## 1. Các lane trách nhiệm
@@ -7,7 +13,7 @@
 | Lane | Owner đề xuất | Sở hữu chính |
 | --- | --- | --- |
 | Product/Game Design | Nhóm trưởng | Scope, GDD, acceptance, event tree, balance approval |
-| Core/Simulation | Web Developer A | Types, engine, resolver, selectors, deterministic replay |
+| Core/Simulation | Web Developer A | Types, TS orchestrator, Pure TS deterministic resolver, DONKI probability model, replay |
 | UI/Integration | Web Developer B | Zustand adapter, cockpit, feature panels, i18n, accessibility |
 | Visual/Audio | Artist/Visual Lead | V12 assets, illustration, animation spec, audio/Web Audio direction |
 | Content/STEM | Content/Game Designer | Event JSON, VI/EN copy, NASA source, dynamic brief mapping |
@@ -19,8 +25,8 @@ Nếu team ít người, một người có thể giữ nhiều lane nhưng owne
 
 | Khu vực | Owner | Reviewer bắt buộc |
 | --- | --- | --- |
-| `src/types`, `src/engine` | Core | Product + QA |
-| `src/data`, schema | Content | Core + QA |
+| `src/types`, `src/domain`, `src/schemas` | Core | Product + QA |
+| `src/data`, schema, simulation catalog | Content | Core + QA |
 | `src/store`, persistence | UI/Integration | Core + QA |
 | `src/components`, styles | UI/Integration | Visual + QA |
 | `public/assets` | Visual | UI |
@@ -47,10 +53,10 @@ Shared contract không sửa trực tiếp trong PR UI/content lớn. Tách thà
 ## 4. Giao việc PHASE 1.1
 
 - Product: khóa `moon-32`, milestone 12/15/29/32 và difficulty profiles.
-- Core: `GameState`, commands/results/errors, selectors, preview resolver.
+- Core: `GameState`, commands/results/errors, Pure TS deterministic resolver, DONKI space weather probability functions, selectors và preview qua cùng resolver.
 - UI: `GamePort`, Zustand facade, UI store và dev panel.
-- Content: balance/initial state/schema/content version.
-- QA: CI, invariant tests, save/reload/migration.
+- Content: balance/initial state/static DONKI & Diviner catalog, content/model/catalog version và provenance.
+- QA: CI, invariant, JSON schema validation, corrupted save recovery, save/reload/migration, deterministic seed replay.
 - Visual: V12 asset inventory và production schedule.
 
 **Merge gate:** chơi hết một Sol, reload được, target/env lấy từ config.

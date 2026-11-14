@@ -1,26 +1,32 @@
 # 🏗️ Kiến trúc Hệ thống — Project Hail
 
-> Căn cứ theo kế hoạch kỹ thuật tại `PHASE_1_1_STATE_FOUNDATION_PLAN.md` và `PHASE_1_MOON_IMPLEMENTATION_PLAN.md`.
+> Căn cứ theo kế hoạch kỹ thuật tại `PHASE_1_1_STATE_FOUNDATION_PLAN.md`, [`PHASE_1_1_STATE_CONTRACT.md`](../plan/first-phase/PHASE_1_1_STATE_CONTRACT.md) và `PHASE_1_MOON_IMPLEMENTATION_PLAN.md`.
 
 ---
 
 ## 1. Nguyên Tắc Cốt Lõi (Core Architectural Tenets)
 
-1. **Headless & Deterministic Simulation Engine**:
-   - Toàn bộ logic trò chơi, phương trình cân bằng tài nguyên, xử lý End-Sol và điều kiện sự kiện chạy bằng **Pure TypeScript**.
-   - **Zero Dependency**: Thư mục `src/engine/` tuyệt đối không import React, DOM (`window`, `document`), Zustand, hay LocalStorage.
-   - **Determinsitic Replay**: Cùng bộ `(initialState, commands, seed, content)` luôn cho ra 100% cùng một kết quả trên mọi môi trường.
-   - Dùng pseudo-random generator có seed (`SeededPRNG - Mulberry32`), nghiêm cấm dùng `Math.random()`.
+1. **Pure TypeScript Deterministic Engine & Static JSON**:
+   - Toàn bộ End-Sol resolver, forecast preview và hàm xác suất thời tiết vũ trụ chạy trực tiếp bằng **Pure TypeScript** (`src/domain/`) — không dùng Pyodide Web Worker, không cần Python runtime hay local sidecar khi chơi.
+   - Domain engine tách biệt hoàn toàn khỏi React, Zustand, DOM và LocalStorage.
+   - Mọi dữ liệu NASA (Diviner LRO nhiệt độ bề mặt từ pipeline offline và 3 mẫu × 32 ngày NASA DONKI space weather) được cào trước, chuẩn hóa và đóng gói thành static JSON có version hóa và validate (`src/data/simulation-catalog.json`, `src/data/donki-space-weather.json`).
+   - **Deterministic Replay**: cùng `(state có committed plan, seed, modelVersion, catalogVersion)` luôn cho cùng canonical output/hash.
+   - RNG được dẫn xuất theo SHA-256 `(missionSeed, sol, subsystem)`; nghiêm cấm `Math.random()` và wall clock trong simulation.
 
 2. **Decoupled State & UI Layer**:
-   - Quản lý state thông qua **Zustand store** làm facade/adapter giữa Headless Engine và React Components.
+   - Quản lý state thông qua **Zustand store** (`ZustandGamePort`) làm facade/adapter giữa domain orchestrator và React Components.
    - UI chỉ đóng vai trò hiển thị (presentation) và dispatch domain commands; UI không tự tính toán hay trực tiếp đột biến giá trị tài nguyên.
 
 3. **Data-Driven Architecture**:
-   - Toàn bộ chỉ số cân bằng, sự kiện, kịch bản thám hiểm rover và bài học STEM nằm trong các tệp JSON có JSON Schema kiểm thực chặt chẽ (`src/data/*.json`).
+   - Toàn bộ chỉ số cân bằng, sự kiện, kịch bản thám hiểm rover, dữ liệu DONKI 32 ngày và bài học STEM nằm trong các tệp static JSON (`src/data/*.json`) có contract/schema kiểm thực chặt chẽ (`src/schemas/`).
+   - Raw NASA data được cào & hiệu chỉnh ngoài runtime (`scripts/`); game chỉ đóng gói static JSON nhỏ gọn cùng provenance `observed | inferred | assumption | simulated`.
 
 4. **Versioned Save State**:
-   - Lưu trữ tiến trình chơi qua LocalStorage với `schemaVersion` và cơ chế migration tự động.
+   - Lưu trữ tiến trình chơi qua LocalStorage (`SaveEnvelope` v1) với `schemaVersion`, `contentVersion`, `modelVersion`, `catalogVersion`, SHA-256 checksum và cơ chế migration/compatibility check.
+
+5. **Fail Closed**:
+   - Validation error, phase mismatch hoặc version mismatch trong command/save không được sửa `GameState`.
+   - Khi save lỗi hoặc version không khớp, UI hiển thị cảnh báo khôi phục thay vì âm thầm ghi đè dữ liệu.
 
 ---
 
@@ -28,37 +34,46 @@
 
 ```mermaid
 flowchart TD
-    subgraph DataLayer ["Data & Config (JSON + Schema)"]
-        BalanceJSON["balance.json"]
-        EventsJSON["events.json"]
-        ExpeditionsJSON["expeditions.json"]
-        ScienceJSON["science-briefs.json"]
+    subgraph DataLayer ["Static JSON & Calibrated NASA Data"]
+        BalanceJSON["balance.json / recipes.json"]
+        SimCatalog["simulation-catalog.json (Diviner LRO)"]
+        DonkiJSON["donki-space-weather.json (3x32d FLR/CME/SEP/IPS)"]
+        EventsJSON["events.json / expeditions.json"]
+        ScienceJSON["nasa-briefs.json"]
     end
 
-    subgraph CoreEngine ["Deterministic Core Engine (Pure TypeScript)"]
-        StateReducer["State Reducer / Action Handlers"]
-        EndSolResolver["End-Sol Deterministic Resolver"]
-        EventScheduler["Event Condition Evaluator"]
-        PRNG["Seeded PRNG (Mulberry32)"]
+    subgraph Domain ["Pure TypeScript Domain Engine (src/domain/)"]
+        StateReducer["Phase / Plan Orchestrator"]
+        Invariants["Schema & Invariant Guard"]
+        SpaceWeather["DONKI Probability Functions"]
+        EndSolResolver["Deterministic End-Sol & Preview Resolver"]
+        PRNG["SHA-256 Subsystem PRNG"]
+        Selectors["Pure Selectors"]
     end
 
     subgraph StoreLayer ["State Facade & Persistence"]
-        ZustandStore["Zustand Store (GamePort Adapter)"]
-        SaveAdapter["LocalStorage Save Adapter (Versioned)"]
+        ZustandStore["Zustand Store (GamePort)"]
+        SaveAdapter["LocalStorage SaveEnvelope v1"]
     end
 
-    subgraph Presentation ["Presentation Layer (React 19)"]
-        CockpitView["Cockpit V12 Dashboard"]
-        Panels["Crew / Systems / Rover / Comms Panels"]
+    subgraph Presentation ["Presentation Layer (React 18)"]
+        CockpitView["Wall-Rack Cockpit & Console"]
+        Panels["Crew / Systems / Fabricator / CAPCOM / LR Rack"]
         Modals["Morning Brief / End-Sol Debrief / STEM Report"]
     end
 
-    DataLayer --> CoreEngine
-    CoreEngine --> ZustandStore
+    DataLayer --> Domain
+    SimCatalog --> EndSolResolver
+    DonkiJSON --> SpaceWeather
+    SpaceWeather --> EndSolResolver
+    EndSolResolver --> PRNG
+    StateReducer --> Invariants
+    StateReducer --> EndSolResolver
+    Domain --> ZustandStore
     ZustandStore <--> SaveAdapter
     ZustandStore --> Presentation
-    Presentation --"Dispatch Domain Commands"--> ZustandStore
-    ZustandStore --"Execute Pure Actions"--> CoreEngine
+    Presentation --"Domain Commands"--> ZustandStore
+    ZustandStore --"Dispatch"--> StateReducer
 ```
 
 ---
@@ -105,23 +120,29 @@ src/
 │   ├── rover/               # Lập kế hoạch 3 chuyến thám hiểm Rover
 │   ├── rationing/           # Phân phối khẩu phần & ưu tiên tải điện
 │   └── debrief/             # Báo cáo End-Sol, STEM brief & Report Card
-├── engine/                  # Headless Deterministic Game Engine
-│   ├── actions/             # Các hàm xử lý command nghiệp vụ thuần khiết
-│   ├── events/              # Bộ thẩm định điều kiện kích hoạt sự kiện
-│   ├── resolver/            # Bộ giải mô phỏng chuyển đổi ngày End-Sol
-│   ├── rng/                 # Mulberry32 Seeded PRNG
-│   ├── selectors/           # Pure state queries & Resource Predictor
-│   └── validation/          # Guard rules & domain error codes
-├── data/                    # JSON content đóng gói sẵn
+├── domain/                  # Pure TS Domain Engine (orchestrator + simulation resolver)
+│   ├── orchestrator.ts      # Phase/plan command handlers
+│   ├── endSolResolver.ts    # End-Sol & preview forecast resolver
+│   ├── spaceWeather.ts      # DONKI probabilistic hazard functions
+│   ├── prng.ts              # Deterministic SHA-256 subsystem PRNG
+│   ├── invariants.ts        # State invariant, guard và domain errors
+│   └── selectors.ts         # Pure state queries & permissions
+├── data/                    # Static JSON content & pre-scraped NASA data
 │   ├── balance.json
 │   ├── crew.json
+│   ├── recipes.json
+│   ├── campaign-moon32.json
+│   ├── donki-space-weather.json
 │   ├── events.json
-│   ├── expeditions.json
 │   ├── initial-state.json
-│   └── science-briefs.json
-├── schemas/                 # JSON Schemas cho dữ liệu và save file
-├── store/                   # Zustand store & LocalStorage persistence
+│   ├── simulation-catalog.json
+│   └── nasa-briefs.json
+├── persistence/             # LocalStorage SaveEnvelope v1 & recovery
+├── schemas/                 # Schema validators cho dữ liệu và save file
+├── store/                   # Zustand store (`ZustandGamePort`, `uiStore`, `mockGamePort`)
 ├── types/                   # Khai báo TypeScript types chuẩn cho toàn bộ domain
-├── utils/                   # Hàm định dạng số liệu, tính toán vật lý, audio
+├── utils/                   # Hàm định dạng số liệu, âm thanh
 └── styles/                  # Toàn bộ CSS hệ thống
 ```
+
+Scripts cào & hiệu chỉnh dữ liệu NASA (`scripts/`) chạy offline bằng Node (không đưa `NASA_API_KEY` vào bundle trình duyệt); game chỉ đọc các tệp static JSON trong `src/data/`.
