@@ -92,7 +92,10 @@ export function SystemControls() {
           const sys = gameState.systems[meta.id];
           const sprite = getHailSystemSprite(meta.id, sys.integrity);
           const repairPerm = selectCanRepair(gameState, meta.id, bundle);
-          const targetLvl = sys.level < 3 ? (String(sys.level + 1) as '2' | '3') : null;
+          const pendingUpgrades = Object.values(gameState.crew).filter((crew) => crew.condition !== 'evacuated'
+            && crew.assignedTask?.type === 'upgrade-system' && crew.assignedTask.targetSystemId === meta.id).length;
+          const nextLevel = sys.level + pendingUpgrades + 1;
+          const targetLvl = nextLevel <= bundle.balance.systems.maxLevel ? (String(nextLevel) as '2' | '3') : null;
           const baseUpCost = targetLvl ? bundle.balance.systems.upgradePartsByTargetLevel[targetLvl] : 0;
           const discount = selectedWorker === 'eng' && meta.id !== 'fabricator' ? 1 : 0;
           const upCost = targetLvl ? Math.max(1, baseUpCost - discount) : 0;

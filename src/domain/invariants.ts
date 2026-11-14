@@ -19,7 +19,10 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     recoverable: false,
   });
 
-  if (state.schemaVersion !== 3) return makeErr('Invalid schemaVersion');
+  if (state.schemaVersion !== 4) return makeErr('Invalid schemaVersion');
+  if (state.campaign.outcome && state.campaign.outcome.status !== state.campaign.status) return makeErr('Campaign outcome/status mismatch');
+  if (state.campaign.status !== 'victory' && state.campaign.outcome?.rank) return makeErr('Only victory may have a rank');
+  if (new Set(state.history.summaries.map((summary) => summary.sol)).size !== state.history.summaries.length) return makeErr('Duplicate Sol summary');
   if (!Number.isInteger(state.revision) || state.revision < 0) return makeErr('revision must be a non-negative integer');
   if (!Number.isInteger(state.clock.resolutionIndex) || state.clock.resolutionIndex < 0) {
     return makeErr('resolutionIndex must be a non-negative integer');
@@ -59,6 +62,9 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
   if (r.partsKg > bundle.balance.storages.partsKg.max + 1e-6) {
     return makeErr(`partsKg (${r.partsKg}) exceeds max capacity (${bundle.balance.storages.partsKg.max})`);
   }
+  if (r.wasteWaterL > bundle.balance.storages.wasteWaterL.max + 1e-6) return makeErr('wasteWaterL exceeds max capacity');
+  if (!Number.isInteger(r.mrePacks) || r.mrePacks > bundle.balance.consumables.mrePacks.max) return makeErr('mrePacks exceeds capacity or is fractional');
+  if (!Number.isInteger(r.medkits) || r.medkits > bundle.balance.consumables.medkits.max) return makeErr('medkits exceeds capacity or is fractional');
 
   for (const sysId of SYSTEM_IDS) {
     const sys = state.systems[sysId];

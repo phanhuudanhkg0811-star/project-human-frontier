@@ -7,6 +7,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
+import { NightReadinessChecklist } from '../NightReadinessChecklist.tsx';
 
 const CREW_IDS: readonly CrewId[] = ['cmd', 'eng', 'doc', 'geo'];
 

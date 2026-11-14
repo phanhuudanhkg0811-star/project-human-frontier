@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../../store/gameStore.ts';
+import { useUiStore } from '../../store/uiStore.ts';
 import { selectDynamicDebrief, type DynamicDebriefView } from '../../domain/eventSelectors.ts';
 import type { ContentBundle, GameState, SolSummary } from '../../types/index.ts';
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
+import { CampaignReportCard, TrainingReport } from '../CampaignReportCard.tsx';
 import { HAIL_ENV, HAIL_SVG } from '../cabin/hailAssets.ts';
 
 function DebriefDialogBody({
@@ -12,6 +14,7 @@ function DebriefDialogBody({
   bundle,
   onDismiss,
   onReset,
+  onReplay,
 }: {
   gameState: GameState;
   summary: SolSummary;
@@ -19,6 +22,7 @@ function DebriefDialogBody({
   bundle: ContentBundle;
   onDismiss: () => void;
   onReset: () => void;
+  onReplay: () => void;
 }) {
   const fullText = debriefView.scienceBrief?.content ?? '';
   const prefersReduced =
@@ -29,6 +33,7 @@ function DebriefDialogBody({
 
   useEffect(() => {
     const el = dialog.current;
+    const previous = document.activeElement as HTMLElement | null;
     if (el && !el.open) {
       el.showModal();
     }
@@ -42,6 +47,7 @@ function DebriefDialogBody({
     return () => {
       clearInterval(timer);
       if (el?.open) el.close();
+      previous?.focus();
     };
   }, [fullText, prefersReduced]);
 
@@ -52,7 +58,7 @@ function DebriefDialogBody({
       ref={dialog}
       className="night-cutscene hail-night-cutscene"
       aria-labelledby="night-title"
-      onCancel={(e) => e.preventDefault()}
+      onCancel={(e) => { e.preventDefault(); if (!isTerminal) onDismiss(); }}
     >
       <div className="hail-night-backdrop" aria-hidden="true">
         <img src={HAIL_ENV.spaceDeep} alt="" className="hail-night-space" draggable={false} />
@@ -68,7 +74,7 @@ function DebriefDialogBody({
         <h2 id="night-title">
           {isTerminal
             ? gameState.campaign.status === 'victory'
-              ? 'HOÀN THÀNH SỨ MỆNH 32 SOL!'
+              ? `HOÀN THÀNH SỨ MỆNH ${bundle.campaign.targetSol} SOL!`
               : 'CHIẾN DỊCH DỪNG KHẨN CẤP'
             : `Sol ${String(summary.sol).padStart(2, '0')} `}
           {!isTerminal && <span>đã khép lại ({summary.surfaceTempC}°C).</span>}
@@ -77,6 +83,8 @@ function DebriefDialogBody({
         {gameState.campaign.endReason && (
           <p className="text-sm text-amber-300 font-semibold mt-1">{gameState.campaign.endReason}</p>
         )}
+        {isTerminal ? <CampaignReportCard state={gameState} bundle={bundle} />
+          : summary.sol === bundle.campaign.training.reportSol && <TrainingReport state={gameState} bundle={bundle} />}
 
         <dl className="night-stats">
           {[
@@ -122,9 +130,13 @@ function DebriefDialogBody({
             </button>
           )}
           {isTerminal ? (
+            <>
+            <button type="button" className="mission-button" onClick={onReplay}>Chơi lại cùng seed, difficulty và weather →</button>
             <button type="button" className="mission-button" onClick={onReset}>
-              Khởi động Chiến dịch 32 Sol Mới →
+              Chọn cấu hình cho ván mới →
             </button>
+            <p>Cùng seed tạo cùng kịch bản; lựa chọn khác có thể cho kết quả khác.</p>
+            </>
           ) : (
             <button type="button" className="mission-button" onClick={onDismiss}>
               Thức dậy vào Sol {summary.sol + 1} →
@@ -138,10 +150,11 @@ function DebriefDialogBody({
 
 export function NightCutsceneModal() {
   const { gameState, bundle, dispatch, resetCampaign } = useGameStore();
+  const activeModal = useUiStore((state) => state.activeModal);
   const isDebrief = gameState.clock.phase === 'debrief' || gameState.clock.phase === 'terminal';
   const debriefView = selectDynamicDebrief(gameState, bundle);
   const summary = debriefView.summary;
-  if (!isDebrief || !summary) return null;
+  if (!isDebrief || !summary || activeModal === 'launch') return null;
 
   return (
     <DebriefDialogBody
@@ -154,8 +167,10 @@ export function NightCutsceneModal() {
         dispatch({ type: 'debrief/dismiss' });
       }}
       onReset={() => {
-        resetCampaign();
+        useUiStore.getState().openModal('launch');
       }}
+      onReplay={() => { resetCampaign({ seed: gameState.campaign.seed, difficulty: gameState.campaign.difficulty,
+        donkiProfileId: gameState.campaign.donkiProfileId, spaceWeatherOverride: gameState.campaign.spaceWeatherOverride }); }}
     />
   );
 }

@@ -253,14 +253,14 @@ export function selectMissionProgress(state: GameState, bundle: ContentBundle) {
       label: 'Vượt qua Ban ngày Mặt Trăng (Sol 1–14)',
       met: state.clock.sol > bundle.campaign.milestones.lunarDay.endSol || state.campaign.status === 'victory',
       currentText: `Sol ${state.clock.sol}`,
-      targetText: 'Sol 15',
+      targetText: `Sol ${bundle.campaign.milestones.lunarNight.startSol}`,
     },
     {
       id: 'sol-28-night',
       label: 'Sống sót qua Đêm Trăng (Sol 15–28)',
       met: state.clock.sol > bundle.campaign.milestones.lunarNight.endSol || state.campaign.status === 'victory',
       currentText: `Pin ${state.resources.batteryKWh} kWh`,
-      targetText: 'Qua Sol 28',
+      targetText: `Qua Sol ${bundle.campaign.milestones.lunarNight.endSol}`,
     },
     {
       id: 'crew-alive',
@@ -280,8 +280,8 @@ export function selectMissionProgress(state: GameState, bundle: ContentBundle) {
       id: 'target-sol-32',
       label: 'Chạm đích Chiến dịch Artemis (Sol 32)',
       met: state.campaign.status === 'victory',
-      currentText: `Sol ${state.clock.sol}/32`,
-      targetText: 'Sol 32',
+      currentText: `Sol ${state.clock.sol}/${bundle.campaign.targetSol}`,
+      targetText: `Sol ${bundle.campaign.targetSol}`,
     },
   ];
   return {

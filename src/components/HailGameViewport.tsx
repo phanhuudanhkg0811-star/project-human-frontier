@@ -6,6 +6,8 @@ import { EventPriorityBanner } from './EventPriorityBanner.tsx';
 import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import { useUiStore } from '../store/uiStore.ts';
+import { downloadArtifact } from '../persistence/downloadArtifact.ts';
+import { SAVE_STORAGE_KEY } from '../persistence/saveAdapter.ts';
 import type { ActiveModalType, CrewId, EquipmentId } from '../types/index.ts';
 import { SystemControls } from './SystemControls.tsx';
 import {
@@ -26,6 +28,7 @@ import { MissionDialog } from './modals/MissionDialog.tsx';
 import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
 import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
 import { StarlogModal } from './modals/StarlogModal.tsx';
+import { TutorialModal } from './modals/TutorialModal.tsx';
 
 const EQUIPMENT_RACK_META: ReadonlyArray<{
   id: EquipmentId;
@@ -52,7 +55,7 @@ const CREW_SLOTS: ReadonlyArray<{
 ];
 
 export function HailGameViewport() {
-  const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError } = useGameStore();
+  const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError, migrationNotice, dismissMigrationNotice } = useGameStore();
   const roverSamples = selectRoverSamples(gameState);
   const { activeModal, openModal, closeModal, selectCrew } = useUiStore();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
@@ -111,6 +114,9 @@ export function HailGameViewport() {
 
   return (
     <main className="hail-viewport">
+      {migrationNotice && <div role="status" className="campaign-migration-notice">
+        <p>{migrationNotice}</p><button type="button" className="hail-btn" onClick={dismissMigrationNotice}>Đã hiểu</button>
+      </div>}
       {/* Fail-Closed Save Recovery Banner */}
       {saveRecoveryError && (
         <div
@@ -123,6 +129,10 @@ export function HailGameViewport() {
               <strong>Lỗi Khôi phục Save [{saveRecoveryError.code}]:</strong> {saveRecoveryError.message}
             </div>
           </div>
+          <button type="button" className="hail-btn" onClick={() => { try {
+            const raw = localStorage.getItem(SAVE_STORAGE_KEY);
+            if (raw) downloadArtifact('moon32-original-save.json', raw, true);
+          } catch { /* Storage errors are already displayed by recovery. */ } }}>Export save gốc</button>
           <button
             type="button"
             onClick={() => resetCampaign()}
@@ -361,8 +371,8 @@ export function HailGameViewport() {
                 onClick={() => openPanel('journal')}
                 aria-label="Mở Nhật ký Trạm 4-Tab"
               >
-                <span className="hail-screen-code">NHẬT KÝ</span>
-                <strong>S{String(gameState.clock.sol).padStart(2, '0')}/{gameState.campaign.targetSol}</strong>
+                <span className="hail-screen-code">SOL</span>
+                <strong>{String(gameState.clock.sol).padStart(2, '0')}/{bundle.campaign.targetSol}</strong>
               </button>
               <button
                 type="button"
@@ -475,6 +485,7 @@ export function HailGameViewport() {
         />
       )}
       {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
+      {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
       {sysModalOpen && (
         <MissionDialog
           title="Telemetry Console · 5 Hệ thống Trạm & WRS"

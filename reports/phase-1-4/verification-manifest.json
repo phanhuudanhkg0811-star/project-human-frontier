@@ -1,0 +1,389 @@
+{
+  "baseCommit": "0c578bdd4c32b1b4e8b1d9191f800c82b6bc23b5",
+  "branch": "feat/phase-1-4-campaign-balance",
+  "workingTreeDirty": true,
+  "versions": {
+    "content": "1.4.0-moon32",
+    "model": "1.4.0-ts-donki",
+    "catalog": "1.1.0-moon32",
+    "ranking": "1.4.0-moon32"
+  },
+  "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+  "checks": {
+    "tests": {
+      "pass": 58,
+      "fail": 0,
+      "todo": 0
+    },
+    "typecheck": "pass",
+    "lint": "pass",
+    "build": "pass",
+    "eventReleaseValidator": "pass (22 events)",
+    "diffWhitespace": "pass",
+    "smoke": {
+      "samples": 108,
+      "outcomes": {
+        "victory": 107,
+        "defeat": 1
+      },
+      "failureReasons": {
+        "oxygen-depleted": 1
+      },
+      "simulationErrors": 0
+    },
+    "browser": {
+      "checks": 23,
+      "campaigns": 4,
+      "errors": 0,
+      "failure": null
+    },
+    "realDevice60Fps": "not measured",
+    "buildWarning": "Vite JS chunk > 500 kB; code splitting deferred to Phase 1.5?1.6"
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/plan/first-phase/PHASE_1_4_IMPLEMENTATION_AND_ACCEPTANCE.md",
+      "sha256": "d413fedd8e098d1a0ab02168e43ac211d86b77fbe6a474d528ae0daeb2b74a73"
+    },
+    {
+      "path": "package.json",
+      "sha256": "7446df6520da71f1a237185245423c74903afae1e3ed62d90dee21621db4a813"
+    },
+    {
+      "path": "scripts/load-simulation.mjs",
+      "sha256": "b7308be6c21fb228772a47b6a0d5ae5a767e2f3c5fbd7d4b6aacf164f6718740"
+    },
+    {
+      "path": "scripts/replay.mjs",
+      "sha256": "3967f63462e444f2cb6caae87b2dc8284bc0ea7baee43dc2fac4d8635ffdc402"
+    },
+    {
+      "path": "scripts/simulate.mjs",
+      "sha256": "c429c5d52e35f3f7680512fb1f8f55ed99d3d640381d84d8a77c7a4b10a1c28e"
+    },
+    {
+      "path": "scripts/verify-phase-1-4-browser.mjs",
+      "sha256": "740c9b0287719bdcd828246e2db2c7212de0be592b0708b10ce16ed8e1c17e90"
+    },
+    {
+      "path": "src/components/CampaignReportCard.tsx",
+      "sha256": "6a5799206dcd65f19109c5715fea79e2f9dee7316df554e60623841489d6fe0b"
+    },
+    {
+      "path": "src/components/CommsLogisticsPanel.tsx",
+      "sha256": "a7113951332ef2d38aca11fac7b47ef197ecb328a8c2370c9c1cf7ae4d680ac8"
+    },
+    {
+      "path": "src/components/HailGameViewport.tsx",
+      "sha256": "1c19f863c41c70023bf88294d85f25761ebe2f41f1317f44c5b8e2f12b373416"
+    },
+    {
+      "path": "src/components/MissionProgressionPanel.tsx",
+      "sha256": "3e7379e7d83dd488f3a297af8d22db1b21356f36da0b3e8d0091adf824fee1db"
+    },
+    {
+      "path": "src/components/NightReadinessChecklist.tsx",
+      "sha256": "e4f38204bd1aa1efa111902da643657a6d4a5052a823dd6fd48ea21563ea1786"
+    },
+    {
+      "path": "src/components/SystemControls.tsx",
+      "sha256": "de89c15d64b4f7be424714b0fade8c1879f8f7240500f8641eae0083966b59fc"
+    },
+    {
+      "path": "src/components/modals/EndOfDayModal.tsx",
+      "sha256": "7cea9477fcbf58732d63c9b08f06343dd9d20fef2aec7c1bdf7d2d24b6cc4f8c"
+    },
+    {
+      "path": "src/components/modals/MissionLaunchModal.tsx",
+      "sha256": "64380f3619b04739c22edfcda22c190f621055a5c291e038e6ac8fa2a50779f4"
+    },
+    {
+      "path": "src/components/modals/NightCutsceneModal.tsx",
+      "sha256": "38413858f5430d421e7408458a4c473414b525708fed33301435ddad244f0d7c"
+    },
+    {
+      "path": "src/data/balance.json",
+      "sha256": "0fd2e2ad17a68bbaf358007fa03a012eea604c9b6e771bc53b8fdcaebfbff2cf"
+    },
+    {
+      "path": "src/data/campaign-moon32.json",
+      "sha256": "7636bd1581ed5ebaefd0089607bdef7313c94a39526228366c5dcd4a820662a6"
+    },
+    {
+      "path": "src/data/crew.json",
+      "sha256": "2e59acd19fe4cc60bb3c8e2a0684c3112a2d68bc044b75a5a110974f86318460"
+    },
+    {
+      "path": "src/data/initial-state.json",
+      "sha256": "f74e221f227dee5cd3cd25ba6dec0c8ee826f8ba7f0f245b94c5861f5cda4d8d"
+    },
+    {
+      "path": "src/data/recipes.json",
+      "sha256": "1ac188d714e356d66efc4ae1e38ec41c9d0d13f2e95a0922c7a2b0e782782916"
+    },
+    {
+      "path": "src/data/simulation-catalog.json",
+      "sha256": "5d4599ec7c88d42d4d7333f15e8737aa50429109ca81e8efd38300f7d465a567"
+    },
+    {
+      "path": "src/domain/campaignEvaluator.ts",
+      "sha256": "9eda446098b37d43598fa5dae0f90b0caa2c7eb015650fbd5c289c0836cd2c49"
+    },
+    {
+      "path": "src/domain/campaignSelectors.ts",
+      "sha256": "1d71666c5bc6c03dec11001e9f8305edb88621c3ebc2cddc613686380409c8d1"
+    },
+    {
+      "path": "src/domain/endSolResolver.ts",
+      "sha256": "2e5755d12906618cbae654b334371956be3af48c969cec53b5fb544d41bcf127"
+    },
+    {
+      "path": "src/domain/invariants.ts",
+      "sha256": "38e3828e947b3c9f25650175690798ddb4dcd71ae561bffa7db6a9b23dee15dc"
+    },
+    {
+      "path": "src/domain/orchestrator.ts",
+      "sha256": "7c7085b409e54717a2655cf36ec0b6877f94aa8cae1491541e3c8d72e7a184af"
+    },
+    {
+      "path": "src/domain/selectors.ts",
+      "sha256": "e177ea10cd0731e05260c0f878d4b5f6322da1cafe51b8aac2b99fb7bb44e1d3"
+    },
+    {
+      "path": "src/hail.css",
+      "sha256": "e2e0442880480185c2fbeee8184433a4dc1af6d50d38179452e11ec271aa98e7"
+    },
+    {
+      "path": "src/persistence/downloadArtifact.ts",
+      "sha256": "337c5de2ea2021de47a9178582fbea879834a71b69d6c04882c8db0738436a50"
+    },
+    {
+      "path": "src/persistence/replayRecorder.ts",
+      "sha256": "8c6dbc716d673a57fd0f367145d33f9b1d006811b31c684cab72d9f7349bfd60"
+    },
+    {
+      "path": "src/persistence/saveAdapter.ts",
+      "sha256": "d0fbc19f54613b80dc73d6bfc4bb3e3de45de8fe5563f5f37645dc9ceca74ecc"
+    },
+    {
+      "path": "src/schemas/contracts.ts",
+      "sha256": "a9e0f367776a81f556dfb2ce01a26007402fecc3f37c9067eff330569b7405ac"
+    },
+    {
+      "path": "src/simulation/campaignRunner.ts",
+      "sha256": "2c4113e4c0acd5faba131728aa7106fe3920065d87fcb05bc8770e73a37db711"
+    },
+    {
+      "path": "src/simulation/policies.ts",
+      "sha256": "6e2fbd69bf080a7b72e75544a8ceaf41c137e5c6c49a4158ff089ec66e359ede"
+    },
+    {
+      "path": "src/simulation/replay.ts",
+      "sha256": "c52f16559ec82b3e594a356fd7dccfea651cebfcfe75f8527c5194b77d1fe6e3"
+    },
+    {
+      "path": "src/store/gameStore.ts",
+      "sha256": "29e7f9be6e0910587ca0f156f24474d1bbe7955f9ccf636532efb13d2e212744"
+    },
+    {
+      "path": "src/store/uiStore.ts",
+      "sha256": "4106959eb67fb6e02d0f9844689f87f8afb2f6ba81afecc28f1c7ae58e4fc756"
+    },
+    {
+      "path": "src/types/index.ts",
+      "sha256": "ce0780ebda74e9070d2d9ef6fdfbd971e5cc3924274839606a41cdd70c6fc2ad"
+    },
+    {
+      "path": "tests/engine.test.mjs",
+      "sha256": "370097ee3fc8dc25ef12f7b972cf3e21e01b52d95679235eb4b37dc7679c2486"
+    },
+    {
+      "path": "tests/phase-1-3-catalog-and-ui-selectors.test.mjs",
+      "sha256": "6ab2e1a3accc3fa1561b2f3efab34be17f74d8324f85e0d29912acd0a7ab6186"
+    },
+    {
+      "path": "tests/phase-1-3-events-and-sol7.test.mjs",
+      "sha256": "a38e9e4674cdb49abf8d8c073b03185545fc263051b2251a9cd952242e200454"
+    },
+    {
+      "path": "tests/phase-1-4-campaign.test.mjs",
+      "sha256": "6c5e07d871d47210d7ccbab5acca9212e1aaa0da11be3b72d3a848854ec7df36"
+    },
+    {
+      "path": "tests/phase-1-4-simulation.test.mjs",
+      "sha256": "f83f005242c4b5649bd64ad9c8728c480cd01cf7dfb65f0d068f68dd998e474f"
+    },
+    {
+      "path": "docs/plan/first-phase/PHASE_1_4_CONTEXT_AND_HANDOFF.md",
+      "sha256": "08d773d9455f9b96ec382a9ebdf01f167f8c2ed6f8ae6ebc059a2a4b2feca627"
+    }
+  ],
+  "build": [
+    {
+      "path": "dist/assets/index-B8KjPmYV.css",
+      "bytes": 57321,
+      "gzipBytes": 11970
+    },
+    {
+      "path": "dist/assets/index-CzUrzOhy.js",
+      "bytes": 508593,
+      "gzipBytes": 145485
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "reports/phase-1-4/baseline/baseline-205099.json",
+      "sha256": "43d1513f74c92d5a9bdb28bd9781789269782cd109d49dd0043c63e431060292",
+      "bytes": 62140
+    },
+    {
+      "path": "reports/phase-1-4/baseline/report.csv",
+      "sha256": "4fc6d4897a83e3c3cb089b337dddb4e57a80f772d2c8bf761d4cad840fbcc47c",
+      "bytes": 415
+    },
+    {
+      "path": "reports/phase-1-4/baseline/report.json",
+      "sha256": "e7788cc6977fc9a90ee6cd3c67d6eb4d33b864851fe124ca92d50336cb34ce50",
+      "bytes": 3334
+    },
+    {
+      "path": "reports/phase-1-4/browser/A-desktop-report.png",
+      "sha256": "0659a85b24ae6fde2cd8ec26246e259dcfa07594d485de8a342132e13ad1fc00",
+      "bytes": 331258
+    },
+    {
+      "path": "reports/phase-1-4/browser/A-mobile-report.png",
+      "sha256": "6b4adc007c5b24d519852f8e43cce5db49af1d50b1f237e24a1841110e564b16",
+      "bytes": 90592
+    },
+    {
+      "path": "reports/phase-1-4/browser/A-ui-replay.json",
+      "sha256": "69010682fae648b6f95bff3c3e578bb2e3713aa177158a95e10b4f9c760c500c",
+      "bytes": 90596
+    },
+    {
+      "path": "reports/phase-1-4/browser/A-ui-save.json",
+      "sha256": "aaf6223ed009231f57c366c4fefab9e9460a5d779efc8173edcb5f30722e87bf",
+      "bytes": 200454
+    },
+    {
+      "path": "reports/phase-1-4/browser/B-desktop-report.png",
+      "sha256": "891afd70283a1363c16c8a499c9f6b332a6e5afb5924094be9248a3d32d45a3a",
+      "bytes": 329815
+    },
+    {
+      "path": "reports/phase-1-4/browser/B-ui-replay.json",
+      "sha256": "0836b0f29e4f7dede36ce7e28490913dc4f8e9ef25d3090b241aa3a60cb28471",
+      "bytes": 90829
+    },
+    {
+      "path": "reports/phase-1-4/browser/B-ui-save.json",
+      "sha256": "d81ace815b3138b0e92e66835af44a6d25dabca867d47b5a6533658d8c45730b",
+      "bytes": 200547
+    },
+    {
+      "path": "reports/phase-1-4/browser/oxygen-desktop-report.png",
+      "sha256": "7a39d0efe3e0f68404e81ac80fcaadd885ac4f31b270a7f9cadd7218b09a2114",
+      "bytes": 316117
+    },
+    {
+      "path": "reports/phase-1-4/browser/oxygen-ui-replay.json",
+      "sha256": "0229b8a558bcd99f7a2f90cf378a43e939c24789946994e3f44ad24d30edb247",
+      "bytes": 40159
+    },
+    {
+      "path": "reports/phase-1-4/browser/oxygen-ui-save.json",
+      "sha256": "7e64ff64d6c9ea74f146e6aa76466a0ee06d1f04e8458fc257e059714d59275a",
+      "bytes": 133240
+    },
+    {
+      "path": "reports/phase-1-4/browser/results.json",
+      "sha256": "735e0d4b5490efd386cb577e21df00064eb8414e9b2274333810fc8fe0704e5b",
+      "bytes": 5442
+    },
+    {
+      "path": "reports/phase-1-4/browser/training-sol12.png",
+      "sha256": "d409238174ebaa123069f472152f87756f7f8086d9c8b6e084107ff3424b76e8",
+      "bytes": 366685
+    },
+    {
+      "path": "reports/phase-1-4/browser/transition-sol14.png",
+      "sha256": "1d01671d0eb69e291d5ef422dabca17dc797af6889353ef88e923ea98cecc863",
+      "bytes": 390820
+    },
+    {
+      "path": "reports/phase-1-4/browser/transition-sol28.png",
+      "sha256": "75541704ed39aa1b699e192b862be29720cfc08fdb3ff73b16e92e2816ed358b",
+      "bytes": 392922
+    },
+    {
+      "path": "reports/phase-1-4/browser/water-desktop-report.png",
+      "sha256": "d46ee788c4bf2ef167909984e2d4f8be7859c95427df57152daef8767730c205",
+      "bytes": 348291
+    },
+    {
+      "path": "reports/phase-1-4/browser/water-ui-replay.json",
+      "sha256": "68344e5588af9da51a48b221a4cdb2fd94d5bae75f0ec8fbdb62e24253efa3ae",
+      "bytes": 20516
+    },
+    {
+      "path": "reports/phase-1-4/browser/water-ui-save.json",
+      "sha256": "a803e2dac77db235ca20e6d69c5e5d52cc907d09a6ae2267abed76b3d116f2df",
+      "bytes": 63136
+    },
+    {
+      "path": "reports/phase-1-4/references/defeat-oxygen.json",
+      "sha256": "bed38b28167ea1c9c471dcb29c3c05f33dbd1aa4d0219828114c1eb83a2949af",
+      "bytes": 41145
+    },
+    {
+      "path": "reports/phase-1-4/references/defeat-water.json",
+      "sha256": "23f93bf41c110b8b15330f632147d42fd31a669875522baa04fc36e6796479ae",
+      "bytes": 20946
+    },
+    {
+      "path": "reports/phase-1-4/references/report.csv",
+      "sha256": "990e115b6b5f7dfe9fca6a198b6b8a6a1c3e5bf43b3031f2b32f5071841a9168",
+      "bytes": 1181
+    },
+    {
+      "path": "reports/phase-1-4/references/report.json",
+      "sha256": "26203fe65c07c4aa30a0a3372755d49e5369b225a0aee1163c673eee238155d5",
+      "bytes": 16154
+    },
+    {
+      "path": "reports/phase-1-4/references/victory-a.json",
+      "sha256": "d4cb8b39d3a35971dac94e7f8922f4a60653ca5a1930884f9b7ecbe8ef050499",
+      "bytes": 91670
+    },
+    {
+      "path": "reports/phase-1-4/references/victory-b.json",
+      "sha256": "3ac018fa1a2de8cf216d88ce62a20ee5128e30f53d2eb2a675c298ae998dba9b",
+      "bytes": 91903
+    },
+    {
+      "path": "reports/phase-1-4/smoke/report.csv",
+      "sha256": "5a8e8b56f4d062e65fdabff91e287564f3045222cfeba19c5fe721ef2b0533c5",
+      "bytes": 28088
+    },
+    {
+      "path": "reports/phase-1-4/smoke/report.json",
+      "sha256": "bf3459b9caf6171b9dc75578a802eb127e281906b71615858f6a9ceb6eff0e30",
+      "bytes": 373199
+    }
+  ],
+  "teamPlanRestoration": {
+    "path": "docs/plan/first-phase/PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md",
+    "restoredFrom": "e02450062e5bc6e6259445702f4bec2371dc708c",
+    "sha256": "90c1141640eef025292c928c95aadb4426967026fe66c6d9afd8259e66fd7f72",
+    "note": "Restored the original shared team plan; implementation decisions remain in the separate acceptance report. No gameplay source changed."
+  },
+  "publication": {
+    "targetBranch": "dev",
+    "headBranch": "feat/phase-1-4-campaign-balance",
+    "verifiedDevBase": "0c578bdd4c32b1b4e8b1d9191f800c82b6bc23b5",
+    "stage": "pre-commit",
+    "note": "Historical run buildId/workingTreeDirty metadata is preserved. Documentation updated for authorized PR publication; gameplay source and recorded evidence unchanged."
+  },
+  "sourceHashScope": "Raw working-tree bytes at verification; Git may normalize CRLF/LF on checkout. Gameplay replay uses canonical state/content hashes independent of source line endings."
+}

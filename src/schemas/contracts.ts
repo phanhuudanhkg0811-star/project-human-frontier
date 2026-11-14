@@ -409,6 +409,21 @@ export function validateCampaignConfig(input: unknown): CampaignConfig {
   const vic = assertRecord(c.victory, 'campaign.victory');
   assertInt(vic.reachSol, 'victory.reachSol', 1, 32);
   assertInt(vic.minActiveCrew, 'victory.minActiveCrew', 1, 4);
+  assertBool(vic.requirePositiveOxygen, 'victory.requirePositiveOxygen');
+  assertBool(vic.requirePositiveWater, 'victory.requirePositiveWater');
+  if (vic.reachSol !== c.targetSol) throw new Error('Victory reachSol must equal campaign targetSol.');
+  const training = assertRecord(c.training, 'campaign.training');
+  assertInt(training.reportSol, 'training.reportSol', 1, Number(c.targetSol) - 1);
+  assertInt(training.minActiveCrew, 'training.minActiveCrew', 1, 4);
+  assertInt(training.minExpeditions, 'training.minExpeditions', 0, 3);
+  const ranking = assertRecord(c.ranking, 'campaign.ranking');
+  assertString(ranking.version, 'ranking.version');
+  const rankS = assertRecord(ranking.S, 'ranking.S');
+  const rankA = assertRecord(ranking.A, 'ranking.A');
+  assertInt(rankS.minFitCrew, 'ranking.S.minFitCrew', Number(vic.minActiveCrew), 4);
+  assertInt(rankA.minActiveCrew, 'ranking.A.minActiveCrew', Number(vic.minActiveCrew), Number(rankS.minFitCrew));
+  assertInt(rankS.minExpeditions, 'ranking.S.minExpeditions', 0, 3);
+  assertInt(rankA.minExpeditions, 'ranking.A.minExpeditions', 0, Number(rankS.minExpeditions));
 
   const def = assertRecord(c.defeat, 'campaign.defeat');
   assertInt(def.minActiveCrew, 'defeat.minActiveCrew', 1, 4);
@@ -751,7 +766,9 @@ export function validateScienceBriefs(input: unknown): readonly ScienceBrief[] {
     const tags = assertStringArray(b.tags, `briefs[${idx}].tags`);
     if (tags.length === 0) throw new Error(`briefs[${idx}].tags must not be empty`);
     assertString(b.title, `briefs[${idx}].title`);
+    if (b.titleEn !== undefined) assertString(b.titleEn, `briefs[${idx}].titleEn`);
     assertString(b.content, `briefs[${idx}].content`);
+    if (b.contentEn !== undefined) assertString(b.contentEn, `briefs[${idx}].contentEn`);
     assertString(b.source, `briefs[${idx}].source`);
     assertEnum(b.provenance, PROVENANCE_TAGS, `briefs[${idx}].provenance`);
   }
@@ -814,33 +831,7 @@ export function validateCrewPhysiology(input: unknown): CrewPhysiologyDataset {
   return data as unknown as CrewPhysiologyDataset;
 }
 
-export function validateGameStateStructure(input: unknown): GameState {
-  const s = assertRecord(input, 'state');
-  if (s.schemaVersion !== 3) throw new Error('GameState schemaVersion must be 3');
-  assertString(s.contentVersion, 'state.contentVersion');
-  assertString(s.modelVersion, 'state.modelVersion');
-  assertString(s.catalogVersion, 'state.catalogVersion');
-  assertInt(s.revision, 'state.revision', 0);
-
-  const camp = assertRecord(s.campaign, 'state.campaign');
-  if (camp.id !== 'moon-32' || camp.planet !== 'moon') throw new Error('Invalid campaign id/planet');
-  assertString(camp.runId, 'campaign.runId');
-  assertEnum(camp.status, CAMPAIGN_STATUSES, 'campaign.status');
-  assertEnum(camp.difficulty, DIFFICULTIES, 'campaign.difficulty');
-  assertFiniteNum(camp.seed, 'campaign.seed');
-  assertString(camp.donkiProfileId, 'campaign.donkiProfileId');
-  if (camp.spaceWeatherOverride !== undefined && camp.spaceWeatherOverride !== 'quiet') {
-    throw new Error('Invalid campaign.spaceWeatherOverride');
-  }
-  assertInt(camp.targetSol, 'campaign.targetSol', 1, 32);
-  assertInt(camp.sciencePoints, 'campaign.sciencePoints', 0);
-  assertNullableString(camp.endReason, 'campaign.endReason');
-
-  const clock = assertRecord(s.clock, 'state.clock');
-  assertInt(clock.sol, 'clock.sol', 1, 32);
-  assertEnum(clock.phase, SOL_PHASES, 'clock.phase');
-  assertInt(clock.resolutionIndex, 'clock.resolutionIndex', 0);
-
+function validateLifeSupportSnapshot(s: Record<string, unknown>): void {
   const res = assertRecord(s.resources, 'state.resources');
   for (const rk of ['batteryKWh', 'oxygenKg', 'waterL', 'partsKg', 'wasteWaterL']) {
     assertFiniteNum(res[rk], `resources.${rk}`, 0);
@@ -880,6 +871,53 @@ export function validateGameStateStructure(input: unknown): GameState {
       if (task.partsSpent !== undefined) assertFiniteNum(task.partsSpent, 'assignedTask.partsSpent', 0);
     }
   }
+
+}
+
+export function validateGameStateStructure(input: unknown): GameState {
+  const s = assertRecord(input, 'state');
+  if (s.schemaVersion !== 4) throw new Error('GameState schemaVersion must be 4');
+  assertString(s.contentVersion, 'state.contentVersion');
+  assertString(s.modelVersion, 'state.modelVersion');
+  assertString(s.catalogVersion, 'state.catalogVersion');
+  assertInt(s.revision, 'state.revision', 0);
+
+  const camp = assertRecord(s.campaign, 'state.campaign');
+  if (camp.id !== 'moon-32' || camp.planet !== 'moon') throw new Error('Invalid campaign id/planet');
+  assertString(camp.runId, 'campaign.runId');
+  assertEnum(camp.status, CAMPAIGN_STATUSES, 'campaign.status');
+  assertEnum(camp.difficulty, DIFFICULTIES, 'campaign.difficulty');
+  assertFiniteNum(camp.seed, 'campaign.seed');
+  assertString(camp.donkiProfileId, 'campaign.donkiProfileId');
+  if (camp.spaceWeatherOverride !== undefined && camp.spaceWeatherOverride !== 'quiet') {
+    throw new Error('Invalid campaign.spaceWeatherOverride');
+  }
+  assertInt(camp.targetSol, 'campaign.targetSol', 1, 32);
+  assertInt(camp.sciencePoints, 'campaign.sciencePoints', 0);
+  assertNullableString(camp.endReason, 'campaign.endReason');
+  if (camp.outcome !== null) {
+    const outcome = assertRecord(camp.outcome, 'campaign.outcome');
+    assertEnum(outcome.status, ['active', 'victory', 'defeat'] as const, 'outcome.status');
+    if (outcome.reasonCode !== null) assertEnum(outcome.reasonCode, ['moon-victory', 'crew-collapse', 'oxygen-depleted', 'water-depleted', 'final-requirements-unmet', 'legacy-outcome'] as const, 'outcome.reasonCode');
+    if (outcome.rank !== null) assertEnum(outcome.rank, ['S', 'A', 'B'] as const, 'outcome.rank');
+    assertNullableString(outcome.rankingVersion, 'outcome.rankingVersion');
+    assertArray(outcome.requirements, 'outcome.requirements').forEach((rawRequirement) => {
+      const requirement = assertRecord(rawRequirement, 'outcome.requirement');
+      assertString(requirement.id, 'requirement.id');
+      assertBool(requirement.met, 'requirement.met');
+      assertFiniteNum(requirement.actual, 'requirement.actual');
+      assertFiniteNum(requirement.target, 'requirement.target');
+    });
+    if (outcome.status !== camp.status) throw new Error('Outcome must match campaign status.');
+    if (outcome.status !== 'victory' && outcome.rank !== null) throw new Error('Only victory may have a rank.');
+  }
+
+  const clock = assertRecord(s.clock, 'state.clock');
+  assertInt(clock.sol, 'clock.sol', 1, 32);
+  assertEnum(clock.phase, SOL_PHASES, 'clock.phase');
+  assertInt(clock.resolutionIndex, 'clock.resolutionIndex', 0);
+
+  validateLifeSupportSnapshot(s);
 
   const equipment = assertRecord(s.equipment, 'state.equipment');
   for (const eqId of EQUIPMENT_IDS) {
@@ -1017,10 +1055,25 @@ export function validateGameStateStructure(input: unknown): GameState {
 
   const debrief = assertRecord(s.debrief, 'state.debrief');
   assertBool(debrief.pendingDismiss, 'debrief.pendingDismiss');
-  if (debrief.lastSummary !== null) assertRecord(debrief.lastSummary, 'debrief.lastSummary');
+  const validateSummary = (value: unknown) => {
+    const summary = assertRecord(value, 'SolSummary');
+    assertInt(summary.sol, 'summary.sol', 1, 32);
+    assertBool(summary.isLunarNight, 'summary.isLunarNight');
+    assertBool(summary.blackout, 'summary.blackout');
+    for (const key of ['powerGeneratedKWh', 'powerConsumedKWh', 'wrsRecoveredWaterL']) assertFiniteNum(summary[key], `summary.${key}`, 0);
+    if (summary.checkpoint !== null) {
+      const checkpoint = assertRecord(summary.checkpoint, 'summary.checkpoint');
+      validateLifeSupportSnapshot(checkpoint);
+      for (const key of ['wrsProcessedWasteWaterL', 'solarGeneratedKWh', 'fissionGeneratedKWh', 'batteryOverflowKWh', 'essentialUnmetKWh']) assertFiniteNum(checkpoint[key], `checkpoint.${key}`, 0);
+      assertInt(checkpoint.completedExpeditions, 'checkpoint.completedExpeditions', 0, 3);
+      assertInt(checkpoint.sciencePoints, 'checkpoint.sciencePoints', 0);
+      if (Number(summary.wrsRecoveredWaterL) > Number(checkpoint.wrsProcessedWasteWaterL) + 0.01) throw new Error('WRS cannot recover more than processed water.');
+    }
+  };
+  if (debrief.lastSummary !== null) validateSummary(debrief.lastSummary);
 
   const hist = assertRecord(s.history, 'state.history');
-  assertArray(hist.summaries, 'history.summaries');
+  assertArray(hist.summaries, 'history.summaries').forEach(validateSummary);
   assertArray(hist.logs, 'history.logs');
 
   return s as unknown as GameState;
@@ -1028,7 +1081,7 @@ export function validateGameStateStructure(input: unknown): GameState {
 
 export function validateSaveEnvelopeStructure(input: unknown): SaveEnvelope {
   const env = assertRecord(input, 'saveEnvelope');
-  if (env.schemaVersion !== 3) throw new Error('Unsupported save schemaVersion');
+  if (env.schemaVersion !== 4) throw new Error('Unsupported save schemaVersion');
   assertString(env.savedAt, 'save.savedAt');
   assertString(env.appVersion, 'save.appVersion');
   assertString(env.contentVersion, 'save.contentVersion');

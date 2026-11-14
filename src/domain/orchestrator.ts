@@ -325,6 +325,18 @@ export function dispatchDomainCommand(
       if (!member.assignedTask) {
         return fail(state, 'E_PLAN_INVALID', `${member.name} chưa được giao việc.`);
       }
+      if (member.assignedTask.type === 'upgrade-system') {
+        const targetSystemId = member.assignedTask.targetSystemId;
+        // Upgrade costs are reserved in level order. Cancel the highest level first
+        // so removing Lv2 never leaves another worker paying Lv3 for a Lv2 result.
+        const baseCost = (crew: typeof member) => (crew.assignedTask?.partsSpent ?? 0)
+          + (crew.id === 'eng' && targetSystemId !== 'fabricator' ? 1 : 0);
+        if (Object.values(state.crew).some((crew) => crew.id !== member.id
+          && crew.assignedTask?.type === 'upgrade-system' && crew.assignedTask.targetSystemId === targetSystemId
+          && baseCost(crew) > baseCost(member))) {
+          return fail(state, 'E_PLAN_INVALID', 'Hãy hủy nâng cấp cấp cao hơn của cùng hệ thống trước để giữ đúng chi phí.');
+        }
+      }
       const mission = state.rover.activeMission;
       if (
         member.assignedTask.type === 'rover-operate' &&

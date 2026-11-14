@@ -3332,3 +3332,16 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   .hail-event-priority-meta { font-size: 9px; }
   .hail-event-priority .hail-btn { min-height: 26px; font-size: 10px; }
 }
+.campaign-report, .campaign-readiness { margin: 16px 0; padding: 14px; border: 1px solid #5b9293; border-radius: 8px; background: #10212bf2; color: #e5f0f2; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.campaign-report h3, .campaign-readiness h3 { color: #a8eee1; font-size: 17px; font-weight: 700; }
+.campaign-report ul, .campaign-report ol { padding-left: 20px; list-style: disc; }
+.campaign-report p, .campaign-report details { margin: 8px 0; }
+.campaign-report summary { cursor: pointer; color: #f1dba0; }
+.campaign-report .campaign-rank { font-size: 22px; color: #f1dba0; font-weight: 700; }
+.campaign-report .campaign-rank small { font-size: 12px; font-weight: 400; }
+.campaign-export-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.campaign-export-actions p { flex-basis: 100%; font-size: 11px; color: #b6c8d1; }
+.campaign-readiness dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 8px 0; }
+.campaign-readiness dt { color: #a6c6cb; }.campaign-readiness dd { margin: 0; }
+.campaign-readiness p { font-size: 11px; margin-top: 8px; }.campaign-readiness [role="status"] { color: #ffdb9a; }
+.campaign-migration-notice { position: fixed; z-index: 70; top: 65px; left: 4%; width: 92%; max-width: 680px; padding: 14px; border: 1px solid #91d6c6; border-radius: 8px; color: #edf7f4; background: #163d3ef5; font-size: 13px; }
