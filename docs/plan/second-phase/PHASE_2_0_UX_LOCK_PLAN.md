@@ -1,6 +1,8 @@
 # PHASE 2.0 — UX lock và onboarding contract
 
 > **Mục tiêu:** khóa trải nghiệm trước khi cài thư viện hoặc sản xuất cinematic, tránh tutorial và gameplay điều khiển lẫn nhau.
+>
+> **Trạng thái (2026-11-14):** ĐÃ KHÓA SPEC — xem hợp đồng chi tiết tại [`PHASE_2_0_ONBOARDING_CONTRACT.md`](PHASE_2_0_ONBOARDING_CONTRACT.md) và test kiểm chứng tại [`tests/phase-2-0-ux-contract.test.mjs`](../../../tests/phase-2-0-ux-contract.test.mjs).
 
 ## Deliverables
 
@@ -36,8 +38,8 @@
 
 ## Gate
 
-- [ ] Storyboard và tutorial script review xong ở VI/EN.
-- [ ] Mỗi bước có target, action, condition, fallback và analytics-free test event.
-- [ ] Không có bước chỉ để giới thiệu decoration.
-- [ ] Tổng copy trên một popover không quá 45 từ mỗi ngôn ngữ.
-- [ ] Có test plan cho keyboard, mobile và reduced motion.
+- [x] Storyboard và tutorial script review xong ở VI/EN (`PHASE_2_0_ONBOARDING_CONTRACT.md` §3–4).
+- [x] Mỗi bước có target, action, condition, fallback và analytics-free test event (`PHASE_2_0_ONBOARDING_CONTRACT.md` §4 & §8).
+- [x] Không có bước chỉ để giới thiệu decoration (kiểm chứng bởi `tests/phase-2-0-ux-contract.test.mjs`).
+- [x] Tổng copy trên một popover không quá 45 từ mỗi ngôn ngữ (Guided Sol 1 ≤ 45 từ; Contextual Hints ≤ 35 từ).
+- [x] Có test plan cho keyboard, mobile và reduced motion (`PHASE_2_0_ONBOARDING_CONTRACT.md` §7.3).
