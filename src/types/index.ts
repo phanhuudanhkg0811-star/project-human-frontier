@@ -945,7 +945,8 @@ export type ActiveModalType =
   | 'comms'
   | 'launch'
   | 'menu'
-  | 'tutorial';
+  | 'tutorial'
+  | 'about';
 
 export interface UiState {
   readonly activeModal: ActiveModalType;
