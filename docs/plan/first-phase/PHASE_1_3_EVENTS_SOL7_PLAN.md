@@ -103,7 +103,7 @@ Mỗi outcome tạo `DebriefContext` gồm metric thay đổi, evidence type và
 - Elena chưa được giao việc.
 - 35 L nước sạch, 10 L nước thải.
 - 8 kWh nguồn trong Sol, 8 kWh pin.
-- Essential load 12 kWh; WRS 4 kWh; recovery 93%; water demand 10 L.
+- Essential load 12 kWh; WRS Lv1 4 kWh; recovery 90%; water demand 10 L.
 
 ### Choice A — Cứu rover
 
@@ -115,7 +115,7 @@ Mỗi outcome tạo `DebriefContext` gồm metric thay đổi, evidence type và
 ### Choice B — Ưu tiên trạm
 
 - Elena kiểm tra/bảo trì filter; WRS chạy đủ chu kỳ.
-- Cuối Sol: 34.3 L nước sạch, 0 kWh pin.
+- Cuối Sol: 34.0 L nước sạch, 0 kWh pin.
 - Expedition 2 hết deadline và thất bại mục tiêu.
 - Rover vẫn khả dụng cho Expedition 3.
 

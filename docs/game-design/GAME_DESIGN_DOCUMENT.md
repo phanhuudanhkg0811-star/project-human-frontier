@@ -19,7 +19,7 @@
 |---|---|---:|---:|---:|---|
 | **Oxy (`oxygenKg`)** | kg | 80 kg | 100 kg | 0.84 kg / người | Dưỡng khí hô hấp. Thiếu hụt dẫn tới ngạt thở và nguy hiểm tính mạng ngay lập tức. |
 | **Nước sạch (`waterL`)** | L | 100 L | 120 L | 2.5 L / người | Nước uống và duy trì thể lực cho phi hành đoàn. |
-| **Nước thải (`wasteWaterL`)** | L | 10 L | 100 L | Sinh ra từ sinh hoạt | Được đưa vào máy tái chế WRS để thu hồi lại nước sạch (tỷ lệ 85% - 93%). |
+| **Nước thải (`wasteWaterL`)** | L | 10 L | 100 L | Sinh ra từ sinh hoạt | Được đưa vào máy tái chế WRS để thu hồi lại nước sạch (tỷ lệ 90% - 95%). |
 | **Thực phẩm / MRE (`foodKg`)** | kg | 60 kg | 100 kg | 0.62 kg / người | Khẩu phần dinh dưỡng không gian. Có thể áp dụng chế độ ăn kiêng nếu thiếu thốn. |
 | **Phụ tùng (`partsKg`)** | kg | 15 kg | 50 kg | 2 kg / lần sửa | Dùng để bảo trì, sửa chữa linh kiện hư hại hoặc nâng cấp hệ thống (4-8 kg). |
 | **Pin lưu trữ (`batteryKWh`)** | kWh | 45 kWh | 60 kWh | - | Tích lũy năng lượng dự phòng cho ban đêm và các tình huống khẩn cấp. |
@@ -32,7 +32,7 @@
    - Loại bỏ thán khí độc hại khỏi khoang sinh hoạt. Hư hại sẽ làm tích tụ khí CO2 gây suy giảm sức khỏe phi hành đoàn.
 2. **Water Recycler (WRS - Hệ thống tái chế nước)**:
    - Tái chế nước thải thành nước sạch uống được. Chi phí tiêu tốn: 4 kWh/chu kỳ.
-   - Hiệu suất phục hồi: Cấp 1 (85%) -> Cấp 2 (90%) -> Cấp 3 (93%).
+   - Hiệu suất phục hồi: Cấp 1 (90%) -> Cấp 2 (95%) -> Cấp 3 (95%, giảm điện năng còn 3 kWh).
 3. **Power Grid (Lưới điện hỗn hợp: Fission + Solar Array)**:
    - Máy phát hạt nhân mini (Fission Generator): Cung cấp nguồn nền liên tục **8 kWh/Sol** (bất kể ngày hay đêm).
    - Mảng pin Mặt Trời (Solar Arrays): Tạo ra **25 kWh/Sol** khi có ánh sáng; giảm về **0 kWh/Sol** trong 14 ngày Đêm Mặt Trăng (Lunar Night).
@@ -66,7 +66,7 @@ Chỉ còn **Elena Chen** là thành viên duy nhất chưa nhận nhiệm vụ:
 * **Phương án B — Bảo vệ sinh mệnh Trạm**:
   - Chạy máy tái chế WRS để bảo toàn nguồn nước sạch cho căn cứ.
   - Buộc phải hy sinh dữ liệu của chuyến rover 2.
-  - *Hậu quả*: Expedition 2 thất bại (nhưng rover vẫn bảo toàn cho chuyến 3); kết thúc Sol 7 trạm có 34.3 L nước và 0 kWh pin.
+  - *Hậu quả*: Expedition 2 thất bại (nhưng rover vẫn bảo toàn cho chuyến 3); kết thúc Sol 7 trạm có 34.0 L nước và 0 kWh pin.
 
 ---
 

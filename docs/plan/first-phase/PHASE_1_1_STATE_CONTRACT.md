@@ -1,54 +1,53 @@
 # PHASE 1.1 — GameState và JSON Contract
 
 > [!IMPORTANT]
-> **ĐỒNG BỘ SCHEMA GAMEPLAY CHỐT (14/11/2026 — Option B):** Kiến trúc **Pyodide Web Worker** bên dưới được giữ nguyên. Khi hiện thực các field của `GameState`, đồng bộ theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> **ĐỒNG BỘ SCHEMA GAMEPLAY & KIẾN TRÚC CHỐT (14/11/2026 — Option B + Pure TS / Static JSON):** **Bỏ hoàn toàn Pyodide** Web Worker và local Python sidecar khỏi runtime game. Toàn bộ End-Sol resolver, forecast preview và hàm xác suất thời tiết NASA DONKI chạy trực tiếp bằng **Pure TypeScript** (`src/domain/`) trên bộ dữ liệu NASA đã cào/hiệu chỉnh sẵn dưới dạng static JSON (`src/data/donki-space-weather.json`, `simulation-catalog.json`). Đồng bộ gameplay theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
 > - Bắt buộc có từ **P0**: `fabricator` queue (`0` slot Crew, tối đa `1` lệnh/Sol, `1d/2d`), `inventory` (`2` Consumables `MRE/Medkit` + `6` Equipment), `crew[i].satiety` (`0–100`, `Hunger FSM`: `Ok / Hungry / Starving`).
 > - Tài nguyên chuẩn **Option A**: `4` kho (`Battery 40/60`, `O2 70/120`, `Water 80/160`, `Parts 16/60`) + `wasteWaterL` nội bộ (không `Chemicals`); `WRS 90% -> 95%`; Golden Sol 7 (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`).
 
-> **Trạng thái quyết định:** Đã chốt cho Phase 1.1 ngày 2026-11-14.
+> **Trạng thái quyết định:** Đã chốt và cập nhật cho Phase 1.1 ngày 2026-11-14.
 >
-> **Runtime:** React/TypeScript giữ snapshot, phase flow, store và persistence. Python chạy trong **Pyodide Web Worker** và là nguồn tính toán duy nhất cho End-Sol, forecast và các model khoa học. Hai phía chỉ giao tiếp bằng JSON đã validate.
+> **Runtime:** Pure TypeScript Domain Engine (`src/domain/`) là nguồn tính toán duy nhất cho phase transition, End-Sol, forecast preview và mô hình xác suất thời tiết DONKI theo seed (`SHA-256`). React/UI chỉ đọc snapshot qua `GamePort` và dispatch typed commands.
 >
-> **Mục tiêu tài liệu:** quy định state nào phải tồn tại, state đó dùng để làm gì, state nào được lưu, và biên trách nhiệm giữa TypeScript với Python.
+> **Mục tiêu tài liệu:** quy định state nào phải tồn tại, state đó dùng để làm gì, state nào được lưu, và contract dữ liệu NASA DONKI/Diviner + SaveEnvelope.
 >
-> **Thay thế quyết định cũ:** phương án local Python sidecar/API port `8765` trong tài liệu khảo sát dữ liệu được thay bằng worker message contract. Phase 1 không cần process Python, localhost API hay Python cài sẵn trên máy người chơi.
+> **Thay thế quyết định cũ:** bỏ hoàn toàn phương án Pyodide Web Worker và local Python sidecar/API port `8765`. Dữ liệu NASA được cào trước bằng script offline (`scripts/`) vào static JSON; Phase 1 chạy 100% thuần client TS + JSON, zero runtime Python/WASM.
 
 ## 1. Quyết định kiến trúc
 
 ```text
-NASA raw data
+NASA Diviner (POC calibration) + NASA DONKI API (3×32 ngày: FLR/CME/SEP/IPS)
       │
       ▼
-Python calibration pipeline (build-time, có thể dùng Pandas/SciPy)
+Offline Node Scripts (scripts/fetch-donki.mjs & build-catalog.mjs)
       │
       ▼
-simulation-catalog.json + provenance
+src/data/simulation-catalog.json + donki-space-weather.json + balance/recipes/crew.json
       │
       ▼
-React UI → TypeScript command orchestrator → Zustand GameState
-                                                │
-                                                │ ResolveSolRequest JSON
-                                                ▼
-                                    Persistent Web Worker
-                                    Pyodide + Python resolver
-                                                │
-                                                │ ResolveSolResponse JSON
-                                                ▼
-                                    Validate → commit snapshot → save
+React UI → GamePort → TypeScript Orchestrator (src/domain/orchestrator.ts)
+                            │
+                            │ ResolveSolRequest / Preview
+                            ▼
+                Pure TS Deterministic Resolver (endSolResolver.ts + spaceWeather.ts + prng.ts)
+                            │
+                            │ Validation + Seeded DONKI Probability Rolls
+                            ▼
+                Commit snapshot → Zustand Store → LocalStorage SaveEnvelope v1
 ```
 
 Các quy tắc không được phá:
 
 1. `GameState` là snapshot gameplay có thẩm quyền duy nhất ở phía ứng dụng.
-2. TypeScript quản lý phase, command, draft/commit và persistence; không tự tính physics/resource balance.
-3. Python là nơi duy nhất tính End-Sol, forecast, environment, resource/ECLSS, equipment và crew consequences.
-4. Python resolver phải stateless: request chứa đủ `state` (bao gồm committed plan), `seed` và versions; response không phụ thuộc lịch sử process.
-5. Không truyền object/proxy sống qua biên JS–Python. Chỉ truyền JSON UTF-8.
+2. Mọi thay đổi gameplay phải đi qua typed `GameCommand` → `orchestrator` → `assertGameState()`.
+3. `endSolResolver.ts` là nơi duy nhất tính End-Sol, forecast (`preview` mode), resource/ECLSS, equipment và crew consequences (`spaceWeather.ts` tính xác suất rủi ro DONKI).
+4. Resolver phải stateless & deterministic: cùng `state` (bao gồm committed plan), `missionSeed`, `donkiProfileId`, `modelVersion`, `catalogVersion` luôn cho cùng canonical output/hash.
+5. Không dùng `Math.random()` hay wall clock (`Date.now()`) trong simulation; mọi roll dùng `SHA-256(missionSeed, sol, subsystem)` qua `prng.ts`.
 6. Cùng request canonical phải cho cùng response canonical.
-7. Nếu worker/Pyodide lỗi, `GameState` không đổi. UI cho phép retry hoặc reload worker; không chạy công thức dự phòng bằng TypeScript.
-8. Pyodide được load một lần trong worker và giữ sống suốt phiên chơi.
-9. Pandas/SciPy chỉ dùng trong calibration/build-time nếu resolver runtime không thật sự cần; tránh tăng cold start và RAM.
-10. Pin chính xác Pyodide và Python package version trong lock/build config; runtime được self-host, không tải CDN động khi chơi.
+7. Nếu validation/invariant hoặc version check lỗi, `GameState` không đổi (fail closed).
+8. UI và `uiStore` không tự trừ tài nguyên hay viết công thức simulation thứ hai; luôn dùng `selectors.ts`.
+9. Tuyệt đối không đưa `NASA_API_KEY` hay raw NASA dumps vào bundle trình duyệt (`src/`).
+10. Không tải runtime Pyodide/CDN động khi chơi; chạy hoàn toàn offline với static JSON.
 
 ## 2. Sáu loại state
 
@@ -58,8 +57,8 @@ Các quy tắc không được phá:
 | Plan state | Assignment, ration, power priority, WRS request | `GameState.dailyPlan` sau khi commit | Có | Reload giữa Sol không làm mất quyết định đã xác nhận |
 | Draft state | Slider đang kéo, form chưa xác nhận | React local/form state | Không | Chưa phải quyết định gameplay |
 | UI state | Modal, tab, hover, animation, toast | `uiStore`/component | Không | Không ảnh hưởng simulation |
-| Runtime state | Worker booting/ready/error, request đang chạy | `gameStore.runtime` (không persist) | Không | Là tình trạng kỹ thuật của phiên hiện tại |
-| Content/derived | Catalog, permission, forecast preview | JSON bundle/selectors/cache | Chỉ lưu version | Có thể load hoặc tính lại |
+| Runtime state | Booted/ready/resolving, save status, domain error tạm | `gameStore.runtime` (không persist) | Không | Là tình trạng kỹ thuật của phiên hiện tại |
+| Content/derived | DONKI 3×32d catalog, Diviner catalog, permission, forecast preview | JSON bundle/selectors/cache | Chỉ lưu version + `donkiProfileId` | Có thể load hoặc tính lại |
 
 Không được copy catalog NASA/balance vào save. Save chỉ giữ `contentVersion`, `modelVersion` và `catalogVersion` để phát hiện mismatch.
 
@@ -93,7 +92,7 @@ interface GameState {
 | --- | --- |
 | `schemaVersion` | Migrate cấu trúc save |
 | `contentVersion` | Khóa campaign, event, crew và balance content |
-| `modelVersion` | Khóa công thức Python resolver |
+| `modelVersion` | Khóa phiên bản công thức Pure TS resolver + DONKI probability |
 | `catalogVersion` | Khóa bộ hệ số đã calibrate từ NASA/assumption |
 | `revision` | Chặn response cũ ghi đè state mới khi có request bất đồng bộ |
 
@@ -146,7 +145,13 @@ interface MissionClock {
 
 Khi resolver hoàn tất, `clock.sol` vẫn là Sol vừa resolve và phase chuyển sang `debrief`. Command `debrief/dismiss` của TypeScript mới tăng sang Sol kế tiếp, reset `dailyPlan` về `planning`, rồi chuyển phase sang `briefing`. Nhờ vậy reload ở màn debrief không skip hoặc resolve lặp một Sol.
 
-## 5. Resource state
+## 5. Resource state (Authoritative runtime schema: `src/types/index.ts`)
+
+> **Đồng bộ code thực tế (Option A/B + Pure TS Engine):** Schema runtime chính thức được định nghĩa tại [`src/types/index.ts`](../../../src/types/index.ts) và kiểm tra runtime bởi [`src/schemas/contracts.ts`](../../../src/schemas/contracts.ts):
+> - `ResourceState`: `batteryKWh`, `oxygenKg`, `waterL`, `partsKg`, `wasteWaterL`, `mrePacks` (thay `foodKg`), `medkits`, `medkitLevel`, `waterZeroStreak`, `oxygenZeroStreak`.
+> - `StationSystemState`: 5 hệ thống (`solar`, `recycler`, `scrubber`, `airlock`, `fabricator`).
+> - `CrewMemberState`: `health`, `morale`, `satiety`, `condition` (`fit` | `injured` | `evacuated`), `hungerState`, `radiationMgy`, `assignedTask` (kèm `partsSpent`).
+> - Bổ sung `EquipmentItemState` (6 thiết bị Rover/Shelter) và `FabricatorState` (`usedThisSol`, `activeJob` kèm `startedSol`).
 
 ```ts
 interface ResourceState {
@@ -353,7 +358,7 @@ interface UiState {
 }
 ```
 
-### Runtime/worker state
+### Runtime state
 
 ```ts
 interface SimulationRuntimeState {
@@ -361,48 +366,31 @@ interface SimulationRuntimeState {
   readonly activeRequestId: string | null
   readonly loadedModelVersion: string | null
   readonly loadedCatalogVersion: string | null
-  readonly progress: number | null
   readonly error: RuntimeError | null
 }
 ```
 
-Runtime state không save. Reload trang luôn boot worker lại rồi mới cho phép `sol/end` hoặc forecast.
+Runtime state không save. Reload trang load static JSON catalogs và kiểm tra version với save trước khi mở gameplay.
 
 ### Derived state
 
 Không lưu các field sau:
 
 - `canAdvancePhase`, `canRepair`, `availableCrewCount`.
-- `predictedOxygen`, `predictedBattery`, graph forecast.
+- `predictedOxygen`, `predictedBattery`, graph forecast, `predictedRepairSuccessProb`, `predictedRoverRiskProb`.
 - `isLunarNight` nếu có thể tính từ Sol + catalog.
 - `resourcePercent`, warning color hoặc localized label.
 - Tổng tải điện nếu có thể dựng từ plan + catalog.
 
-## 12. JSON contract TypeScript ↔ Python
+## 12. Resolver & DONKI Probability Contract (Pure TS)
 
-Tất cả message dùng envelope:
-
-```ts
-interface WorkerRequest<T> {
-  readonly contractVersion: '1.0'
-  readonly requestId: string
-  readonly kind: 'boot' | 'resolve-sol' | 'forecast' | 'validate-state'
-  readonly payload: T
-}
-
-interface WorkerResponse<T> {
-  readonly contractVersion: '1.0'
-  readonly requestId: string
-  readonly ok: boolean
-  readonly payload?: T
-  readonly error?: ContractError
-}
-```
-
-### Resolve request
+Mọi lời gọi End-Sol và Forecast đều dùng chung envelope chuẩn hóa (phân tách rõ `commit` vs `preview`):
 
 ```ts
 interface ResolveSolRequest {
+  readonly contractVersion: '1.0'
+  readonly requestId: string
+  readonly mode: 'commit' | 'preview'
   readonly expectedRevision: number
   readonly modelVersion: string
   readonly catalogVersion: string
@@ -410,6 +398,8 @@ interface ResolveSolRequest {
   readonly runId: string
   readonly sol: number
   readonly seed: number
+  readonly donkiProfileId: string
+  readonly spaceWeatherOverride?: 'quiet'
   readonly state: GameState
 }
 ```
@@ -489,7 +479,7 @@ Forecast phải gọi cùng resolver trên bản clone ở preview mode. Không 
 
 ## 15. Command flow và async port
 
-Command thay đổi plan/phase có thể được TypeScript xử lý đồng bộ. Command gọi Python phải async.
+Tất cả command thay đổi plan/phase và End-Sol được Pure TypeScript orchestrator xử lý đồng bộ phía domain và bọc qua `GamePort.dispatch` bất đồng bộ (chuẩn bị sẵn cho worker nếu sau này mở rộng). Không sử dụng Python/Pyodide.
 
 ```ts
 type DispatchResult =
@@ -501,7 +491,6 @@ interface GamePort {
   dispatch(command: GameCommand): Promise<DispatchResult>
   subscribe(listener: () => void): () => void
   getRuntimeState(): SimulationRuntimeState
-  retryWorker(): Promise<void>
   reset(): Promise<void>
 }
 ```
@@ -512,14 +501,14 @@ Luồng `sol/end`:
 UI dispatch sol/end
   → TS guard phase + plan
   → set runtime=resolving, không mutate resource
-  → worker resolve-sol
-  → validate response + revision + versions
+  → Pure TS endSolResolver (mode: 'commit') + DONKI probability rolls
+  → validate response + invariants + revision + versions
   → atomic commit state mới
-  → persist
+  → persist SaveEnvelope v1
   → runtime=ready
 ```
 
-Không cho gửi hai request resolve đồng thời. Forecast có thể hủy hoặc bỏ response cũ bằng `requestId`.
+Không cho gửi hai request resolve đồng thời. Forecast gọi cùng `endSolResolver` với `mode: 'preview'` (không mutate state).
 
 ## 16. Save envelope
 
@@ -544,10 +533,9 @@ Load flow:
 2. Validate envelope/schema.
 3. Verify checksum.
 4. Migrate `schemaVersion` nếu có migration.
-5. Boot worker.
-6. So sánh `modelVersion`/`catalogVersion` với worker.
-7. Gửi `validate-state`.
-8. Chỉ sau đó mới commit vào store và cho chơi tiếp.
+5. Kiểm tra `modelVersion`/`catalogVersion`/`contentVersion` khớp runtime bundle.
+6. Validate domain invariants (`assertGameState`).
+7. Chỉ sau đó mới commit vào store và cho chơi tiếp; nếu lỗi, bật recovery UI và không tự ghi đè save.
 
 ## 17. Simulation catalog và provenance
 
@@ -585,16 +573,15 @@ Phase 1.1 dùng trực tiếp:
 - CSA/ISS public values làm prior cho WRS và nutrition, có nhãn phù hợp.
 - Fission/solar/base load theo GDD có nhãn `assumption` cho tới khi có nguồn calibrate tương ứng.
 
-MEDA, MOXIE và MSL RAD là dữ liệu Mars; không được gắn nhãn là quan sát trực tiếp cho Moon. DONKI được chuẩn bị dưới dạng cache offline nhưng chỉ đưa vào event resolver từ Phase 1.3.
+MEDA, MOXIE và MSL RAD là dữ liệu Mars; không được gắn nhãn là quan sát trực tiếp cho Moon. NASA DONKI (3 mẫu × 32 ngày liên tiếp tại `src/data/donki-space-weather.json`) được đưa trực tiếp vào mô hình xác suất thời tiết vũ trụ của Pure TS End-Sol resolver ngay từ Phase 1.1.
 
-## 18. Worker lifecycle và performance budget
+## 18. Runtime Performance Budget & Static Data Footprint
 
 ```text
 App boot
-  → spawn worker
-  → load local Pyodide runtime
-  → load Python package + catalog
-  → worker sends ready(modelVersion, catalogVersion)
+  → validate & index static JSON (balance, crew, recipes, simulation-catalog, donki-space-weather)
+  → verify/restore SaveEnvelope v1 (nếu có)
+  → runtime = ready(modelVersion, catalogVersion)
   → enable New Mission / Continue
 ```
 
@@ -602,33 +589,23 @@ Mục tiêu benchmark trên máy cấu hình thấp của nhóm:
 
 | Operation | Budget |
 | --- | ---: |
-| Cold boot worker + Pyodide | p95 < 5 s |
-| Warm resolve một Sol | p95 < 200 ms |
-| Forecast 5 Sol | p95 < 500 ms |
-| Request hoặc response JSON | < 100 KB |
+| Cold boot static JSON + UI | p95 < 500 ms |
+| End-Sol resolve một Sol | p95 < 10 ms |
+| Forecast 5 Sol (`preview` mode) | p95 < 25 ms |
+| Total production gzip/bundle | < 2.5 MB |
 | UI trong lúc resolve | Không block main thread |
-
-Nếu vượt budget, tối ưu theo thứ tự:
-
-1. Bỏ import Pandas/SciPy khỏi runtime.
-2. Giữ worker persistent và prewarm từ title screen.
-3. Gọi một request lớn mỗi Sol thay vì nhiều request nhỏ.
-4. Không serialize hourly trace/history không cần thiết.
-5. Cache Pyodide và Python assets để chạy offline.
-6. Profile Python model trước khi giảm độ chính xác gameplay.
 
 ## 19. Error model
 
 | Code | Khi nào | State có đổi? |
 | --- | --- | --- |
-| `E_WORKER_NOT_READY` | Pyodide chưa boot xong | Không |
-| `E_WORKER_CRASHED` | Worker/Python exception không phục hồi | Không |
-| `E_CONTRACT_MISMATCH` | Contract version khác | Không |
-| `E_MODEL_MISMATCH` | Save/request khác Python model | Không |
+| `E_CONTRACT_MISMATCH` | Schema/contract version khác | Không |
+| `E_MODEL_MISMATCH` | Save/request khác modelVersion | Không |
 | `E_CATALOG_MISMATCH` | Catalog khác save/request | Không |
-| `E_STALE_RESPONSE` | Revision/requestId không còn hiện hành | Không |
+| `E_SAVE_CORRUPTED` | JSON hỏng hoặc checksum mismatch | Không |
 | `E_STATE_INVALID` | State không qua schema/invariant | Không |
 | `E_PLAN_INVALID` | Plan sai Sol/chưa commit | Không |
+| `E_PHASE_INVALID` | Command gửi sai phase | Không |
 | `E_INSUFFICIENT_RESOURCE` | Command cần resource mà không có | Không với command; resolver ghi unmet theo rule |
 | `E_RESOLVE_FAILED` | Resolver không tạo được output hợp lệ | Không |
 
@@ -661,7 +638,7 @@ Fixture phải khóa:
 - Initial resources và capacity.
 - Bốn crew fit và chưa có assignment.
 - Bốn system nominal.
-- Fission 8 kWh/Sol, solar 25 kWh/Sol, base load 12 kWh/Sol theo GDD.
+- Fission 8 kWh/Sol, solar 24 kWh/Sol (Option A, `balance.json`), base load Essential 12 kWh/Sol.
 - Một repair assignment.
 - Một WRS request.
 - Ration chuẩn.
@@ -669,18 +646,17 @@ Fixture phải khóa:
 
 ### Test matrix
 
-- JSON schema round-trip TS → Python → TS.
-- Cùng request chạy 100 lần cho cùng canonical response/hash.
-- Worker restart rồi replay vẫn cùng output.
-- Response stale không ghi đè state.
-- Worker crash giữ nguyên state và retry được.
+- Schema validation trên tất cả static JSON (`balance`, `crew`, `recipes`, `simulation-catalog`, `donki-space-weather`).
+- Cùng request chạy 100 lần cho cùng canonical response/hash (bao gồm DONKI probability rolls).
+- Reload từ SaveEnvelope rồi replay phần còn lại vẫn cho cùng output.
+- Corrupted save / version mismatch giữ nguyên state an toàn và cho phép recovery.
 - Resolve thiếu điện ghi load unmet đúng thứ tự priority.
 - WRS không chạy khi thiếu điện/greywater hoặc recycler failed.
 - Resource không âm và deficit được giải thích.
 - Save/reload ở mọi phase giữ đúng plan/assignment.
-- Forecast không mutate state và dùng cùng resolver.
-- Invalid save/model/catalog mismatch có recovery rõ ràng.
-- UI vẫn responsive khi resolve/forecast.
+- Forecast không mutate state và dùng cùng `endSolResolver` ở `mode: 'preview'`.
+- DONKI probability test: cùng seed lặp lại 100% và bão X-class/SEP làm tăng rủi ro hỏng/giảm tỷ lệ sửa thành công có ý nghĩa thống kê so với Sol yên tĩnh.
+- Golden Sol 1 & Golden Sol 7 Option A (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`) khớp tuyệt đối.
 
 ## 22. State tối thiểu phải hoàn thành trong Phase 1.1
 
@@ -688,31 +664,30 @@ Fixture phải khóa:
 | --- | --- | --- |
 | Campaign/clock/phase/version | Có | — |
 | Resources | Có | — |
-| Systems | Có: power, recycler, một repair | Airlock behavior sâu |
-| Crew | Có: availability, assignment, basic consequence | Illness/radiation sâu |
-| DailyPlan | Có: ration, power priority, WRS, assignment | Rover action sâu |
+| Systems | Có: 5 hệ thống (`solar`, `recycler`, `scrubber`, `airlock`, `fabricator`), repair | Airlock behavior sâu |
+| Crew | Có: availability, assignment, basic consequence + DONKI hazard | Illness/radiation sâu |
+| DailyPlan | Có: ration, power priority, WRS, assignment, fabricator queue | Rover action sâu |
 | Rover | — | Có |
-| Events | Brief mẫu/guard active event | Full scheduler/catalog |
+| Events | Brief mẫu/guard active event + DONKI space weather | Full scheduler/catalog |
 | Logistics | — | Có |
-| Debrief/history | Có một SolSummary | Full STEM/report card |
-| Runtime worker state | Có | — |
-| UI state | Có tối thiểu cho vertical slice | Full cockpit polish |
+| Debrief/history | Có `SolSummary` + DONKI outcome | Full report card |
+| Runtime state | Có | — |
+| UI state | Có tối thiểu + cockpit bindings | Audio/VFX nâng cao |
 
 ## 23. Definition of Done cho state contract
 
-- Có JSON Schema hoặc runtime validator tương ứng cho request, response, catalog và save.
-- Pyodide chạy trong Web Worker, không chạy trên UI thread.
-- Worker boot một lần và báo đúng version.
-- `GamePort.dispatch()` là async và UI xử lý loading/error.
-- `sol/end` gửi đúng một JSON request và atomic commit đúng một response.
-- Không có công thức End-Sol/forecast thứ hai trong TypeScript.
+- Có schema/runtime validator tương ứng cho static JSON catalogs, command/state và save.
+- Không có Pyodide, Python runtime hay localhost sidecar trong repo runtime; chạy thuần TypeScript.
+- `GamePort.dispatch()` là async-ready và UI xử lý error/save recovery an toàn.
+- `sol/end` commit qua `endSolResolver.ts`; `forecast` dùng chung `endSolResolver` ở `mode: 'preview'`.
+- Không có công thức End-Sol/forecast thứ hai trong UI hoặc Zustand store.
 - State/UI/draft/runtime/content/derived được tách đúng như tài liệu.
-- Golden Sol 1 deterministic và reload được.
-- Worker crash, stale response và version mismatch không làm hỏng save.
-- Performance đạt budget đã chốt hoặc có benchmark ghi rõ ngoại lệ.
+- Golden Sol 1, Golden Sol 7 Option A và DONKI probability tests deterministic và pass 100%.
+- Corrupted save và version mismatch không làm hỏng app.
+- Production bundle `< 2.5 MB` và resolve `< 10 ms`.
 
 ---
 
 ## Quyết định ngắn gọn
 
-Phase 1.1 không “chạy Python bên cạnh website”. Python được đóng gói trong browser bằng Pyodide, chạy trong persistent Web Worker và nhận/trả một JSON contract versioned. TypeScript sở hữu flow và snapshot; Python sở hữu toàn bộ phép tính mô phỏng. `GameState` chỉ lưu tiến trình cần thiết, còn catalog NASA, UI state, worker state và forecast được tách khỏi save theo đúng trách nhiệm.
+Phase 1.1 dùng **Pure TypeScript Deterministic Engine** kết hợp **Pre-scraped Static JSON** (hiệu chỉnh từ NASA Diviner LRO và 3 mẫu × 32 ngày NASA DONKI: `FLR`, `CME`, `SEP`, `IPS`, `notifications`) và **SHA-256 Seeded Probability**. Không dùng Pyodide hay Python runtime ở trình duyệt. TypeScript sở hữu trọn vẹn flow, snapshot, End-Sol / forecast resolver và hàm xác suất DONKI; còn catalog NASA, UI state, runtime state và forecast được tách khỏi SaveEnvelope theo đúng trách nhiệm.
