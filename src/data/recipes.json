@@ -1,0 +1,100 @@
+{
+  "contentVersion": "1.1.0-moon32",
+  "rules": {
+    "maxQueueCommandsPerSol": 1,
+    "crewSlotsRequired": 0,
+    "repairCost": { "partsKg": 2, "batteryKWh": 2, "waterL": 0, "durationSols": 1 },
+    "recycleReturnRate": 0.5,
+    "recycleDurationSols": 1
+  },
+  "items": [
+    {
+      "id": "mre_pack",
+      "name": "MRE Pack",
+      "category": "consumable",
+      "rack": "UL",
+      "requiredFabricatorLevel": 1,
+      "craftCost": { "partsKg": 2, "waterL": 2, "batteryKWh": 4, "durationSols": 1 },
+      "upgradeCost": null,
+      "effectSummary": "+75 Satiety (về trạng thái Ok) cho 1 phi hành gia.",
+      "blockThreat": null
+    },
+    {
+      "id": "medkit",
+      "name": "Medkit",
+      "category": "consumable",
+      "rack": "UL",
+      "requiredFabricatorLevel": 1,
+      "craftCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 4, "durationSols": 2 },
+      "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "effectSummary": "Xóa trạng thái Injured, +30 Health (Lv2: +50 Health).",
+      "blockThreat": null
+    },
+    {
+      "id": "core_drill",
+      "name": "Core Drill",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 1,
+      "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "effectSummary": "Chặn hiểm họa địa hình dốc tại Lunar Crater và thu mẫu lõi; Lv2 giảm 50% hao mòn.",
+      "blockThreat": "steep-terrain-crater"
+    },
+    {
+      "id": "sealant_tape",
+      "name": "Sealant Tape",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 1,
+      "craftCost": { "partsKg": 2, "waterL": 0, "batteryKWh": 2, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 2, "waterL": 0, "batteryKWh": 2, "durationSols": 1 },
+      "effectSummary": "Bịt rò Airlock / sửa khẩn trong Event không tốn Parts; Lv2 dùng 2 lần.",
+      "blockThreat": "airlock-leak"
+    },
+    {
+      "id": "solar_lantern",
+      "name": "Solar Lantern",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 1,
+      "craftCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 3, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 3, "durationSols": 1 },
+      "effectSummary": "Chiếu sáng vùng tối vĩnh viễn (PSR) & chống tụt Morale Đêm Trăng; Lv2 +10 Morale Đêm Trăng.",
+      "blockThreat": "darkness-psr"
+    },
+    {
+      "id": "dust_shield",
+      "name": "Dust Shield",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 2,
+      "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "effectSummary": "Chặn bụi tĩnh điện Regolith Field & bão hạt; Lv2 miễn hao mòn.",
+      "blockThreat": "electrostatic-dust"
+    },
+    {
+      "id": "radio_repeater",
+      "name": "Radio Repeater",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 2,
+      "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 6, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
+      "effectSummary": "Giữ tín hiệu Rover vùng khuất (Regolith / Sol 7) & hỗ trợ CAPCOM; Lv2 giảm 50% chi phí cứu Sol 7.",
+      "blockThreat": "signal-blackout"
+    },
+    {
+      "id": "cryo_thermal_rig",
+      "name": "Cryo Thermal Rig",
+      "category": "equipment",
+      "rack": "LR",
+      "requiredFabricatorLevel": 3,
+      "craftCost": { "partsKg": 6, "waterL": 0, "batteryKWh": 6, "durationSols": 1 },
+      "upgradeCost": { "partsKg": 5, "waterL": 0, "batteryKWh": 5, "durationSols": 1 },
+      "effectSummary": "Chặn lạnh cực đoan -173°C tại PSR & bảo vệ Đêm Trăng; Lv2 miễn tụt Pin phụ trong PSR.",
+      "blockThreat": "cryo-extreme"
+    }
+  ]
+}
