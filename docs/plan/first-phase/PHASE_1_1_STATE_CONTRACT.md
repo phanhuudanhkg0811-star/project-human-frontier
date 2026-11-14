@@ -1,5 +1,10 @@
 # PHASE 1.1 — GameState và JSON Contract
 
+> [!IMPORTANT]
+> **ĐỒNG BỘ SCHEMA GAMEPLAY CHỐT (14/11/2026 — Option B):** Kiến trúc **Pyodide Web Worker** bên dưới được giữ nguyên. Khi hiện thực các field của `GameState`, đồng bộ theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - Bắt buộc có từ **P0**: `fabricator` queue (`0` slot Crew, tối đa `1` lệnh/Sol, `1d/2d`), `inventory` (`2` Consumables `MRE/Medkit` + `6` Equipment), `crew[i].satiety` (`0–100`, `Hunger FSM`: `Ok / Hungry / Starving`).
+> - Tài nguyên chuẩn **Option A**: `4` kho (`Battery 40/60`, `O2 70/120`, `Water 80/160`, `Parts 16/60`) + `wasteWaterL` nội bộ (không `Chemicals`); `WRS 90% -> 95%`; Golden Sol 7 (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`).
+
 > **Trạng thái quyết định:** Đã chốt cho Phase 1.1 ngày 2026-11-14.
 >
 > **Runtime:** React/TypeScript giữ snapshot, phase flow, store và persistence. Python chạy trong **Pyodide Web Worker** và là nguồn tính toán duy nhất cho End-Sol, forecast và các model khoa học. Hai phía chỉ giao tiếp bằng JSON đã validate.

@@ -1,5 +1,10 @@
 # PHASE 1.4 — Full Moon 32, victory/defeat và balance simulation
 
+> [!IMPORTANT]
+> **CẬP NHẬT BALANCE & VERIFY (14/11/2026 — Option B):** Giữ nguyên cấu trúc 7 chặng & Victory/Defeat (Moon 32 Sol), áp dụng cân bằng mới & mức kiểm thử nhẹ hơn theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Balance mới:** `Hunger FSM` (`-25 Satiety/Sol`, `1 MRE = +75`), `WRS 90%/95%`, `3D Fabricator` tự chạy tốn `Parts + Battery (+ Water)`, Cargo `80 kg / 4 Sol`.
+> - **Kiểm thử thực tế nhẹ hơn:** Thay 10.000 lượt chạy bot nặng nề bằng **trace kiểm chứng Victory/Defeat deterministic + ~100 seed smoke simulation** để kiểm tra tỷ lệ sống sót & tránh soft-lock.
+
 > **Mục tiêu:** ghép toàn bộ system thành Moon Survival 32 Sol có Lunar Night, thắng/thua/rank rõ ràng và balance được kiểm chứng bằng mô phỏng hàng loạt.
 
 ## 1. Điều kiện đầu vào

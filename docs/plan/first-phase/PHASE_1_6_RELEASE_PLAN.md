@@ -1,5 +1,10 @@
 # PHASE 1.6 — Accessibility, performance, E2E toàn campaign và release
 
+> [!IMPORTANT]
+> **CẬP NHẬT MỤC TIÊU QA/RELEASE (14/11/2026 — Option B):** Mức kiểm thử/release được điều chỉnh thực tế & nhẹ hơn cho Hackathon theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Performance budget thực tế:** Tổng bundle nén `< 2.5 MB`, FCP `< 2.0s`, mục tiêu `60 FPS` (không ép trần cứng `150 kB` initial JS / `30 kB` CSS nếu gây cản trở tích hợp UI/Audio).
+> - **E2E & QA cốt lõi:** Rút từ ma trận `13` E2E xuống **`4–5` luồng E2E trọng tâm** (Khởi tạo -> Chế đồ `3D Fabricator` -> End-Sol & Golden Sol 7 -> Rover/Cargo -> Lunar Night + Victory/Defeat + Save/Reload) kèm responsive desktop/mobile & keyboard/contrast cơ bản.
+
 > **Mục tiêu:** harden bản Mặt Trăng, chứng minh chất lượng bằng test/audit và phát hành một build public có thể demo ổn định.
 
 ## 1. Điều kiện đầu vào

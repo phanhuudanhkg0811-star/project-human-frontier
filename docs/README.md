@@ -13,6 +13,8 @@ docs/
 │   └── SCOPE_RECONCILIATION.md        # Quyết định phạm vi chính thức (Moon 32 Sol, Mars tách riêng)
 ├── plan/                              # Kế hoạch thực thi chi tiết theo từng giai đoạn
 │   ├── first-phase/                   # PHASE 1: Moon Survival 32 Sol (Hiện tại)
+│   │   ├── PHASE_1_SYNC_HANDOFF_FOR_TEAM.md      # Tóm tắt diff chốt mới 14/11 + checklist team
+│   │   ├── PHASE_1_GAMEPLAY_KISS_SPEC.md         # Đặc tả KISS + Wall-Rack Cockpit
 │   │   ├── PHASE_1_DOCUMENT_RECONCILIATION.md
 │   │   ├── PHASE_1_MOON_IMPLEMENTATION_PLAN.md   # Master implementation plan
 │   │   ├── PHASE_1_TEAM_EXECUTION_PLAN.md        # Phân công lane & ownership team
@@ -21,13 +23,14 @@ docs/
 │   │   ├── PHASE_1_2_ROVER_CREW_PLAN.md          # Crew assignment, inventory, rover
 │   │   ├── PHASE_1_3_EVENTS_SOL7_PLAN.md         # Event tree, Sol 7 crisis
 │   │   ├── PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md    # Lunar Night, balance, ranking
-│   │   ├── PHASE_1_5_COCKPIT_POLISH_PLAN.md      # Cockpit V12, audio, i18n VI/EN
+│   │   ├── PHASE_1_5_COCKPIT_POLISH_PLAN.md      # Cockpit V12 -> Wall-Rack, audio, i18n VI/EN
 │   │   └── PHASE_1_6_RELEASE_PLAN.md             # E2E test, performance, release gate
 │   └── second-phase/                  # PHASE 2: Mars Survival (Độc lập, sau Phase 1)
 ├── architecture/                      # Kiến trúc kỹ thuật và hợp đồng dữ liệu
 │   └── SYSTEM_ARCHITECTURE.md         # Pyodide Worker, State Machine, Zustand Store
 ├── game-design/                       # Tài liệu thiết kế trò chơi (GDD)
-│   └── GAME_DESIGN_DOCUMENT.md        # Cơ chế 6 tài nguyên, 4 hệ thống, 3 Rover, Sol 7
+│   ├── HUMAN_FRONTIER_2050_GAME_SETUP.md         # CHUẨN CHỐT CHÍNH THỨC (14/11/2026)
+│   └── GAME_DESIGN_DOCUMENT.md        # GDD nền (tham chiếu lịch sử)
 ├── ui-ux/                             # Đặc tả giao diện người dùng
 │   └── COCKPIT_V12_SPEC.md            # Thiết kế Cockpit V12 (6 module, 2 rack, Observation Window)
 └── asset-pipeline/                    # Quản lý tài nguyên đồ họa & âm thanh
@@ -60,7 +63,7 @@ Dự án được phân tách thành các chiến dịch độc lập theo quy�
 ## 📖 Hướng Dẫn Đọc Tài Liệu
 
 - **Nếu bạn là Product Lead / Game Designer**:
-  - Đọc [SCOPE_RECONCILIATION.md](product/SCOPE_RECONCILIATION.md) và [GAME_DESIGN_DOCUMENT.md](game-design/GAME_DESIGN_DOCUMENT.md).
+  - Đọc **chuẩn chốt chính thức** [HUMAN_FRONTIER_2050_GAME_SETUP.md](game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md), [PHASE_1_SYNC_HANDOFF_FOR_TEAM.md](plan/first-phase/PHASE_1_SYNC_HANDOFF_FOR_TEAM.md), [SCOPE_RECONCILIATION.md](product/SCOPE_RECONCILIATION.md) và [GAME_DESIGN_DOCUMENT.md](game-design/GAME_DESIGN_DOCUMENT.md).
 - **Nếu bạn là Core / Simulation Engine Developer**:
   - Đọc [SYSTEM_ARCHITECTURE.md](architecture/SYSTEM_ARCHITECTURE.md), [PHASE 1.1 State Contract](plan/first-phase/PHASE_1_1_STATE_CONTRACT.md) và các kế hoạch [PHASE_1_1](plan/first-phase/PHASE_1_1_STATE_FOUNDATION_PLAN.md), [PHASE_1_3](plan/first-phase/PHASE_1_3_EVENTS_SOL7_PLAN.md), [PHASE_1_4](plan/first-phase/PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md).
 - **Nếu bạn là Frontend / UI/UX Developer**:

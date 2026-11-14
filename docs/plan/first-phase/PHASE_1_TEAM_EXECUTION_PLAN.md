@@ -1,5 +1,11 @@
 # PHASE 1 — Kế hoạch chia việc cho team
 
+> [!IMPORTANT]
+> **CẬP NHẬT PHÂN CÔNG & SCOPE (14/11/2026 — Option B):** Giữ nguyên khung phối hợp 6 lane bên dưới, nhưng áp dụng các điểm chốt mới từ [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Core & UI:** `3D Fabricator` (máy tự chạy `0` Crew slot, tối đa `1` lệnh/Sol) và `Wall-Rack Cockpit` (`UL Food`, `LL Fabricator`, `UR CAPCOM`, `LR Inventory`, `Center Telemetry Console`) được nâng thành **P0**.
+> - **Visual/Asset:** Lead/User trực tiếp sinh bộ asset Wall-Rack & 6 Equipment theo AeroMatte 2050 — team Visual/UI chỉ tích hợp asset được bàn giao & hoàn thiện Console/Window.
+> - **QA/Release:** Chuyển sang bộ kiểm thử thực tế nhẹ hơn (`~100` seed smoke, `4–5` E2E cốt lõi, `< 2.5 MB` bundle).
+
 > **Mục tiêu:** tổ chức triển khai Moon Survival 32 Sol theo PHASE 1.1–1.6, cho phép làm song song nhưng giữ một nguồn state/contract duy nhất.
 
 ## 1. Các lane trách nhiệm

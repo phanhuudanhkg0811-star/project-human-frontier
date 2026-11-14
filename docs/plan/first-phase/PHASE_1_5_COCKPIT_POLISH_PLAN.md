@@ -1,5 +1,10 @@
 # PHASE 1.5 — Cockpit, art, audio, tutorial và educational polish
 
+> [!IMPORTANT]
+> **CẬP NHẬT BỐ CỤC COCKPIT & ASSET (14/11/2026 — Option B):** Đã chốt thay đổi bố cục cockpit V12 cũ (6 module gồm Oxygen/Water/Power treo tường) sang **Wall-Rack Cockpit** theo [`HUMAN_FRONTIER_2050_GAME_SETUP.md`](../../game-design/HUMAN_FRONTIER_2050_GAME_SETUP.md) & [`PHASE_1_SYNC_HANDOFF_FOR_TEAM.md`](PHASE_1_SYNC_HANDOFF_FOR_TEAM.md):
+> - **Bố cục mới:** `UL` Food & Aid Rack (`MRE`, `Medkit`), `LL` `3D Fabricator` (máy tự chạy `IDLE/WORKING/DAMAGED`), `UR` CAPCOM & Rover Comms, `LR` Inventory & Sample Rack (`6` Equipment + Cargo), `Center` Observation Window + `4` Crew Seats + **Telemetry Console** (hiển thị `O2`, `Water`, `Battery`, `Parts` và nút nâng cấp/bật WRS) + End-Sol Lever. **Gỡ bỏ** 3 module Oxygen/Water/Power khỏi tường cockpit.
+> - **Asset:** Toàn bộ asset Wall-Rack & 6 Equipment do Lead/User trực tiếp sinh theo AeroMatte 2050 để bàn giao tích hợp.
+
 > **Mục tiêu:** chuyển campaign đã hoàn chỉnh về luật thành trải nghiệm cockpit 2.5D dễ hiểu, hấp dẫn và có giá trị giáo dục cho trẻ 7–12 tuổi.
 
 ## 1. Điều kiện đầu vào

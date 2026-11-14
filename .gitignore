@@ -23,3 +23,18 @@ dist-ssr
 *.sln
 *.sw?
 /local-docs
+
+# Unrelated Local Staging, Sandboxes, Archives & AI Tooling
+/sandbox
+/assets_staging
+/qa
+/archive
+/NASA Data
+*.zip
+*.rar
+.agent/
+.agents/
+.codex/
+.env
+.env.*
+!.env.example
