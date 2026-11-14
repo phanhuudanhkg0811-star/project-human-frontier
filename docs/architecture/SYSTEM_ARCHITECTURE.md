@@ -1,26 +1,33 @@
 # 🏗️ Kiến trúc Hệ thống — Project Hail
 
-> Căn cứ theo kế hoạch kỹ thuật tại `PHASE_1_1_STATE_FOUNDATION_PLAN.md` và `PHASE_1_MOON_IMPLEMENTATION_PLAN.md`.
+> Căn cứ theo kế hoạch kỹ thuật tại `PHASE_1_1_STATE_FOUNDATION_PLAN.md`, [`PHASE_1_1_STATE_CONTRACT.md`](../plan/first-phase/PHASE_1_1_STATE_CONTRACT.md) và `PHASE_1_MOON_IMPLEMENTATION_PLAN.md`.
 
 ---
 
 ## 1. Nguyên Tắc Cốt Lõi (Core Architectural Tenets)
 
-1. **Headless & Deterministic Simulation Engine**:
-   - Toàn bộ logic trò chơi, phương trình cân bằng tài nguyên, xử lý End-Sol và điều kiện sự kiện chạy bằng **Pure TypeScript**.
-   - **Zero Dependency**: Thư mục `src/engine/` tuyệt đối không import React, DOM (`window`, `document`), Zustand, hay LocalStorage.
-   - **Determinsitic Replay**: Cùng bộ `(initialState, commands, seed, content)` luôn cho ra 100% cùng một kết quả trên mọi môi trường.
-   - Dùng pseudo-random generator có seed (`SeededPRNG - Mulberry32`), nghiêm cấm dùng `Math.random()`.
+1. **Pyodide Web Worker Simulation**:
+   - Python resolver chạy trong **persistent Pyodide Web Worker** và là nguồn tính toán duy nhất cho End-Sol, forecast và model khoa học.
+   - TypeScript quản lý phase, command orchestration, snapshot, store và persistence; không nhân đôi công thức simulation.
+   - Main thread không chạy Python hoặc model nặng. Worker không truy cập React, Zustand, DOM và LocalStorage.
+   - Hai phía chỉ trao đổi JSON contract đã version hóa và validate.
+   - **Deterministic Replay**: cùng `(state có committed plan, seed, modelVersion, catalogVersion)` luôn cho cùng canonical response/hash.
+   - RNG được dẫn xuất theo seed và subsystem; nghiêm cấm `Math.random()`, Python RNG global và wall clock trong simulation.
 
 2. **Decoupled State & UI Layer**:
-   - Quản lý state thông qua **Zustand store** làm facade/adapter giữa Headless Engine và React Components.
+   - Quản lý state thông qua **Zustand store** làm facade/adapter giữa domain orchestrator, worker client và React Components.
    - UI chỉ đóng vai trò hiển thị (presentation) và dispatch domain commands; UI không tự tính toán hay trực tiếp đột biến giá trị tài nguyên.
 
 3. **Data-Driven Architecture**:
    - Toàn bộ chỉ số cân bằng, sự kiện, kịch bản thám hiểm rover và bài học STEM nằm trong các tệp JSON có JSON Schema kiểm thực chặt chẽ (`src/data/*.json`).
+   - Raw NASA data được calibration ngoài runtime; game chỉ đóng gói `simulation-catalog.json` nhỏ cùng provenance `observed | inferred | assumption | simulated`.
 
 4. **Versioned Save State**:
-   - Lưu trữ tiến trình chơi qua LocalStorage với `schemaVersion` và cơ chế migration tự động.
+   - Lưu trữ tiến trình chơi qua LocalStorage với `schemaVersion`, `contentVersion`, `modelVersion`, `catalogVersion` và cơ chế migration/compatibility check.
+
+5. **Fail Closed**:
+   - Worker lỗi, response stale hoặc version mismatch không được sửa `GameState`.
+   - UI cho phép retry/reload worker; không fallback sang một resolver TypeScript khác.
 
 ---
 
@@ -28,22 +35,29 @@
 
 ```mermaid
 flowchart TD
-    subgraph DataLayer ["Data & Config (JSON + Schema)"]
+    subgraph DataLayer ["Data, Catalog & Schema"]
         BalanceJSON["balance.json"]
+        SimCatalog["simulation-catalog.json + provenance"]
         EventsJSON["events.json"]
         ExpeditionsJSON["expeditions.json"]
         ScienceJSON["science-briefs.json"]
     end
 
-    subgraph CoreEngine ["Deterministic Core Engine (Pure TypeScript)"]
-        StateReducer["State Reducer / Action Handlers"]
-        EndSolResolver["End-Sol Deterministic Resolver"]
-        EventScheduler["Event Condition Evaluator"]
-        PRNG["Seeded PRNG (Mulberry32)"]
+    subgraph Domain ["TypeScript Domain Orchestrator"]
+        StateReducer["Phase / Plan Command Handlers"]
+        ContractValidator["JSON Contract Validator"]
+        WorkerClient["Async Worker Client"]
+        Selectors["Pure Selectors"]
+    end
+
+    subgraph Simulation ["Persistent Web Worker"]
+        Pyodide["Pyodide Runtime"]
+        PythonResolver["Python End-Sol / Forecast Resolver"]
+        PRNG["Subsystem Seeded RNG"]
     end
 
     subgraph StoreLayer ["State Facade & Persistence"]
-        ZustandStore["Zustand Store (GamePort Adapter)"]
+        ZustandStore["Zustand Store (Async GamePort)"]
         SaveAdapter["LocalStorage Save Adapter (Versioned)"]
     end
 
@@ -53,12 +67,17 @@ flowchart TD
         Modals["Morning Brief / End-Sol Debrief / STEM Report"]
     end
 
-    DataLayer --> CoreEngine
-    CoreEngine --> ZustandStore
+    DataLayer --> Domain
+    SimCatalog --> PythonResolver
+    Domain --> WorkerClient
+    WorkerClient <-->|"Versioned JSON"| Pyodide
+    Pyodide --> PythonResolver
+    PythonResolver --> PRNG
+    Domain --> ZustandStore
     ZustandStore <--> SaveAdapter
     ZustandStore --> Presentation
-    Presentation --"Dispatch Domain Commands"--> ZustandStore
-    ZustandStore --"Execute Pure Actions"--> CoreEngine
+    Presentation --"Async Domain Commands"--> ZustandStore
+    ZustandStore --"Dispatch"--> Domain
 ```
 
 ---
@@ -105,19 +124,21 @@ src/
 │   ├── rover/               # Lập kế hoạch 3 chuyến thám hiểm Rover
 │   ├── rationing/           # Phân phối khẩu phần & ưu tiên tải điện
 │   └── debrief/             # Báo cáo End-Sol, STEM brief & Report Card
-├── engine/                  # Headless Deterministic Game Engine
-│   ├── actions/             # Các hàm xử lý command nghiệp vụ thuần khiết
-│   ├── events/              # Bộ thẩm định điều kiện kích hoạt sự kiện
-│   ├── resolver/            # Bộ giải mô phỏng chuyển đổi ngày End-Sol
-│   ├── rng/                 # Mulberry32 Seeded PRNG
-│   ├── selectors/           # Pure state queries & Resource Predictor
-│   └── validation/          # Guard rules & domain error codes
+├── domain/                  # TypeScript orchestration, không chứa physics
+│   ├── commands/            # Phase/plan command handlers
+│   ├── selectors/           # Pure state queries
+│   └── validation/          # State invariant, guard và domain errors
+├── simulation/              # Biên TypeScript ↔ Python
+│   ├── simulation.worker.ts # Web Worker entry
+│   ├── workerClient.ts      # Async correlation/timeout/retry
+│   └── contracts/           # Request/response types + validators
 ├── data/                    # JSON content đóng gói sẵn
 │   ├── balance.json
 │   ├── crew.json
 │   ├── events.json
 │   ├── expeditions.json
 │   ├── initial-state.json
+│   ├── simulation-catalog.json
 │   └── science-briefs.json
 ├── schemas/                 # JSON Schemas cho dữ liệu và save file
 ├── store/                   # Zustand store & LocalStorage persistence
@@ -125,3 +146,19 @@ src/
 ├── utils/                   # Hàm định dạng số liệu, tính toán vật lý, audio
 └── styles/                  # Toàn bộ CSS hệ thống
 ```
+
+Python runtime assets được đóng gói riêng:
+
+```text
+public/
+├── pyodide/                 # Runtime self-host để offline và cache
+└── python/
+    └── hail_sim/
+        ├── contract.py      # Validate/serialize JSON contract
+        ├── resolver.py      # End-Sol và forecast
+        ├── rng.py           # Seed dẫn xuất theo subsystem
+        ├── models/          # Environment/equipment/crew/resources
+        └── version.py       # modelVersion + contractVersion
+```
+
+Pipeline calibration dùng Python native/Pandas/SciPy có thể nằm ngoài bundle runtime; output duy nhất game cần là catalog JSON đã version hóa.

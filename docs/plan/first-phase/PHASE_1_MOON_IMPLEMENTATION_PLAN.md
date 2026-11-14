@@ -113,31 +113,42 @@ Hai lựa chọn bắt buộc:
 
 ```mermaid
 flowchart TD
-    Data[JSON content + JSON Schema]
-    Engine[Pure TypeScript simulation engine]
+    Data[JSON content + simulation catalog + JSON Schema]
+    Domain[TypeScript domain orchestrator]
+    Worker[Pyodide Web Worker]
+    Engine[Python simulation resolver]
     Store[Zustand store + persistence adapter]
     UI[React cockpit + panels + modals]
     Save[Versioned LocalStorage save]
     Tests[Unit + integration + E2E]
 
+    Data --> Domain
     Data --> Engine
-    Engine --> Store
+    Domain <-->|Versioned JSON| Worker
+    Worker --> Engine
+    Domain --> Store
     Store <--> Save
     Store --> UI
     Engine --> Tests
+    Domain --> Tests
     Store --> Tests
     UI --> Tests
 ```
 
 ### Nguyên tắc bắt buộc
 
-- Engine không import React, DOM, Zustand hoặc LocalStorage.
-- Cùng `initialState + commands + seed + content` phải cho cùng kết quả.
+- Python simulation chạy trong persistent Pyodide Web Worker; không chạy trên main thread.
+- TypeScript quản lý phase/plan/store nhưng không chứa công thức End-Sol hoặc forecast thứ hai.
+- Worker/resolver không truy cập React, DOM, Zustand hoặc LocalStorage.
+- Cùng `state (có committed plan) + seed + modelVersion + catalogVersion` phải cho cùng canonical response/hash.
 - UI không chứa công thức cân bằng hoặc tự sửa state.
 - Mọi event, mission, brief và thông số balance phải nằm trong data.
 - Command sai phase hoặc không hợp lệ trả về lỗi domain có mã và giải thích; UI dùng lỗi đó để phản hồi cho trẻ, không im lặng.
-- Save có `schemaVersion` và migration từ ngày đầu.
+- Save có `schemaVersion`, `modelVersion`, `catalogVersion` và migration/compatibility check từ ngày đầu.
 - Mỗi số liệu STEM phải được đánh dấu là `observed`, `inferred` hoặc `simulated`.
+- Worker lỗi, response stale hoặc version mismatch phải giữ nguyên state và cho phép retry.
+
+State và JSON worker contract chi tiết được khóa tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 5. Cấu trúc repository đề xuất
 
@@ -153,7 +164,9 @@ project-hail/
 │   ├── ui-ux/
 │   └── asset-pipeline/
 ├── public/
-│   └── assets/hail/
+│   ├── assets/hail/
+│   ├── pyodide/             # self-host để offline/cache
+│   └── python/hail_sim/     # Python runtime resolver package
 ├── src/
 │   ├── app/                 # bootstrap, providers, routes/error boundary
 │   ├── components/          # common UI primitives
@@ -165,19 +178,21 @@ project-hail/
 │   │   ├── rover/
 │   │   ├── rationing/
 │   │   └── debrief/
-│   ├── engine/
-│   │   ├── actions/
-│   │   ├── events/
-│   │   ├── resolver/
-│   │   ├── rng/
+│   ├── domain/              # TypeScript phase/plan orchestration
+│   │   ├── commands/
 │   │   ├── selectors/
 │   │   └── validation/
+│   ├── simulation/          # Worker client + JSON contract
+│   │   ├── simulation.worker.ts
+│   │   ├── workerClient.ts
+│   │   └── contracts/
 │   ├── data/
 │   │   ├── balance.json
 │   │   ├── crew.json
 │   │   ├── events.json
 │   │   ├── expeditions.json
 │   │   ├── initial-state.json
+│   │   ├── simulation-catalog.json
 │   │   └── science-briefs.json
 │   ├── schemas/
 │   ├── store/
@@ -185,7 +200,8 @@ project-hail/
 │   ├── utils/
 │   └── styles/
 ├── tests/
-│   ├── engine/
+│   ├── domain/
+│   ├── simulation/
 │   ├── fixtures/
 │   ├── integration/
 │   └── e2e/
@@ -200,11 +216,11 @@ Trước khi làm UI, phải khóa type/schema cho các entity sau:
 
 | Entity | Field quan trọng |
 | --- | --- |
-| `GameState` | campaign, sol, phase, seed, outcome, resources, crew, systems, assignments, roverMissions, event, radio, cargo, log |
-| `CrewMember` | id, name, role, health, stress, fatigue, hunger, thirst, condition, assignmentId |
-| `StationSystem` | id, level, integrity, powered, assignedCrewId, status |
-| `ResourceState` | oxygenKg, waterL, wasteWaterL, foodKg, partsKg, batteryKWh |
-| `DailyPlan` | ration fractions, recycler enabled, power priorities, assignments |
+| `GameState` | versions, revision, campaign, clock, resources, systems, crew, dailyPlan, rover, events, logistics, debrief, history |
+| `CrewMemberState` | id, health, stress, fatigue, hunger, thirst, radiationMgy, condition, illness, lastResolvedSol |
+| `StationSystemState` | id, level, integrity, status, operatingState, ageSols, lastResolvedSol |
+| `ResourceState` | oxygenKg, waterCleanL, waterGreyL, foodKg, partsKg, batteryKwh |
+| `DailyPlan` | status, sol, ration, systemModes, powerPriority, WRS request, assignments, roverAction |
 | `RoverMission` | id, site, startSol, duration, status, progress, crew slots, power cost, equipment, result |
 | `GameEvent` | id, trigger, choices, requirements, outcomes, scienceBriefId |
 | `RadioMessage` | id, sentAt, receiveAt, replyAt, status, content |

@@ -82,7 +82,7 @@ PHASE 1 (Current Focus)                 PHASE 2 (Post-Phase 1)
 - 🤖 **3 Remote Rover Expeditions**: Explore the *Lunar Crater*, *Regolith Field*, and *Permanently Shadowed Region (PSR)* for water-ice deposits.
 - ⚖️ **Sol 7 Golden Crisis**: A signature branching decision: sacrifice rover telemetry to guarantee habitat life support, or spend vital power to save groundbreaking scientific data.
 - 📊 **Dynamic Daily STEM Debrief & 5-Sol Trend Predictor**: Plain-language science explanations linking observed data, inferred context, and simulated station impacts.
-- 🔁 **100% Deterministic & Replay-Friendly**: Mulberry32 seeded PRNG paired with headless TypeScript simulation guarantees identical outcomes for scenario sharing and automated grading.
+- 🔁 **100% Deterministic & Replay-Friendly**: A subsystem-seeded Python resolver running in a Pyodide Web Worker produces versioned, canonical JSON results for scenario sharing and automated grading.
 - 🌐 **Bilingual (VI / EN)**: Full bilingual Vietnamese and English support across all UI text, briefs, and dialogues.
 
 ---
@@ -173,18 +173,23 @@ The Cockpit V12 layout provides an intuitive retro cartoon sci-fi interface:
 
 ```mermaid
 flowchart TD
-    subgraph Data ["Data & Schema Layer (JSON + JSON Schema)"]
+    subgraph Data ["Data, Catalog & Schema Layer"]
         Balance["balance.json"]
+        Catalog["simulation-catalog.json + provenance"]
         Events["events.json (18-24 Branching Events)"]
         Expeditions["expeditions.json"]
         Science["science-briefs.json (Observed / Inferred / Simulated)"]
     end
 
-    subgraph Engine ["Headless Simulation Core (Pure TypeScript)"]
-        Actions["Pure Action Handlers"]
-        Resolver["End-Sol Deterministic Resolver"]
-        Scheduler["Event Condition & Graph Evaluator"]
-        PRNG["Mulberry32 Seeded PRNG"]
+    subgraph Domain ["TypeScript Domain Orchestrator"]
+        Actions["Phase & Plan Command Handlers"]
+        WorkerClient["Async JSON Worker Client"]
+        Selectors["Pure State Selectors"]
+    end
+
+    subgraph Engine ["Persistent Pyodide Web Worker"]
+        Resolver["Python End-Sol & Forecast Resolver"]
+        PRNG["Subsystem-Seeded RNG"]
     end
 
     subgraph Store ["State Facade & Persistence (Zustand)"]
@@ -198,19 +203,22 @@ flowchart TD
         Modals["Debrief & NASA Cadet Report Card"]
     end
 
-    Data --> Engine
-    Engine --> Store
+    Data --> Domain
+    Catalog --> Engine
+    Domain <-->|"Versioned JSON"| Engine
+    Domain --> Store
     Store <--> LocalStorage
     Store --> UI
     UI --"Dispatch Commands"--> Store
-    Store --"Execute Reducers"--> Engine
+    Store --"Async Dispatch"--> Domain
 ```
 
 ### Engineering Principles
-- **Zero Coupling**: `src/engine/` contains pure TypeScript logic with **zero imports from React, DOM, or LocalStorage**, enabling automated CLI testing and simulation bots.
-- **Zustand State Store**: Acts as a reactive facade between the deterministic core and UI components.
-- **Strict Determinism**: Replaying the same `(initialState, commands, seed)` always yields the identical state.
-- **Versioned LocalStorage**: Auto-saves after every committed command and End-Sol transition with migration handlers.
+- **Worker Isolation**: Python/Pyodide runs only in a persistent Web Worker and never blocks the React main thread.
+- **Single Simulation Authority**: TypeScript orchestrates phase/plan state, while Python alone computes End-Sol and forecast results.
+- **Strict Determinism**: Replaying the same `(state with committed plan, seed, modelVersion, catalogVersion)` yields the same canonical response/hash.
+- **Fail Closed**: Worker failures, stale responses, or version mismatches leave `GameState` unchanged and can be retried.
+- **Versioned LocalStorage**: Saves include schema, content, model, and catalog versions with migration/compatibility checks.
 
 ---
 
@@ -224,7 +232,7 @@ project-human-frontier/
 ├── docs/                        # Complete Documentation Hub
 │   ├── README.md                # Documentation index & map
 │   ├── product/                 # Scope reconciliation & product vision
-│   ├── architecture/            # Headless engine, state machine, data contracts
+│   ├── architecture/            # Pyodide worker, state machine, data contracts
 │   ├── game-design/             # GDD, balance formulas, event tree, rover specs
 │   ├── ui-ux/                   # Cockpit V12 specs, wireframes, accessibility
 │   ├── asset-pipeline/          # WebP/SVG specifications, Web Audio guidelines
@@ -233,18 +241,21 @@ project-human-frontier/
 │       └── second-phase/        # Phase 2 Mars campaign placeholder
 ├── public/
 │   ├── assets/hail/             # Cockpit backgrounds, crew portraits, audio
+│   ├── pyodide/                 # Self-hosted offline runtime
+│   ├── python/hail_sim/         # Python simulation package
 │   └── favicon.svg
 ├── src/
 │   ├── app/                     # Bootstrap, providers, error boundaries
 │   ├── components/              # Shared UI primitives (gauges, buttons, cards)
 │   ├── features/                # UI feature modules (briefing, crew, comms, rover, etc.)
-│   ├── engine/                  # Headless Deterministic Engine (Pure TS)
-│   │   ├── actions/             # Business command reducers
-│   │   ├── events/              # Event trigger condition evaluator
-│   │   ├── resolver/            # End-Sol deterministic resolver
-│   │   ├── rng/                 # Mulberry32 Seeded PRNG
-│   │   ├── selectors/           # Pure queries & Resource Predictor
-│   │   └── validation/          # Action guards and domain error codes
+│   ├── domain/                  # TypeScript phase/plan orchestration
+│   │   ├── commands/            # Business command handlers
+│   │   ├── selectors/           # Pure state queries
+│   │   └── validation/          # Action guards and state invariants
+│   ├── simulation/              # Pyodide worker client and JSON contracts
+│   │   ├── simulation.worker.ts
+│   │   ├── workerClient.ts
+│   │   └── contracts/
 │   ├── data/                    # JSON balance, events, expeditions, science briefs
 │   ├── schemas/                 # JSON Schemas for content and save validation
 │   ├── store/                   # Zustand store & persistence adapters
@@ -328,7 +339,8 @@ project-human-frontier/
 
 For in-depth design specifications, architecture blueprints, and execution plans, visit the [`docs/`](docs/README.md) hub:
 - 📑 [Scope Reconciliation](docs/product/SCOPE_RECONCILIATION.md): Definitive 3-campaign roadmap and release gates.
-- 🏗️ [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md): Headless engine, Zustand store, and data contracts.
+- 🏗️ [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md): Pyodide worker, TypeScript orchestrator, Zustand store, and data contracts.
+- 🧩 [Phase 1.1 State Contract](docs/plan/first-phase/PHASE_1_1_STATE_CONTRACT.md): Authoritative GameState fields, JSON worker protocol, save envelope, and invariants.
 - 🎮 [Game Design Document](docs/game-design/GAME_DESIGN_DOCUMENT.md): Complete balance formulas, resource economics, and rover systems.
 - 🎛️ [Cockpit V12 Specifications](docs/ui-ux/COCKPIT_V12_SPEC.md): 16:9 cockpit layout, 6 modules, 2 racks, and Observation Window.
 - 🎨 [Asset & Audio Pipeline](docs/asset-pipeline/ASSET_SPECIFICATION.md): WebP/SVG standards, Web Audio procedural SFX, and NASA attributions.

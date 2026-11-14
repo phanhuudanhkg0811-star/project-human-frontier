@@ -5,7 +5,8 @@
 ## 1. Điều kiện đầu vào
 
 - PHASE 1.1 đã đạt DoD: Sol 1 chạy được, save/load được, command contract ổn định.
-- `GameState`, `GameCommand`, `EngineResult`, selector và content loader đã có version.
+- `GameState`, `GameCommand`, async `DispatchResult`, JSON worker contract, selector và content loader đã có version.
+- Pyodide worker/Python resolver là nguồn simulation duy nhất; rover model mới phải mở rộng cùng contract, không tạo công thức TypeScript song song.
 - Crew assignment cơ bản đã enforce quy tắc một người–một việc–một Sol.
 
 ## 2. Kết quả cần đạt

@@ -7,7 +7,7 @@
 | Lane | Owner đề xuất | Sở hữu chính |
 | --- | --- | --- |
 | Product/Game Design | Nhóm trưởng | Scope, GDD, acceptance, event tree, balance approval |
-| Core/Simulation | Web Developer A | Types, engine, resolver, selectors, deterministic replay |
+| Core/Simulation | Web Developer A | Types, TS orchestrator, Pyodide worker, Python resolver, deterministic replay |
 | UI/Integration | Web Developer B | Zustand adapter, cockpit, feature panels, i18n, accessibility |
 | Visual/Audio | Artist/Visual Lead | V12 assets, illustration, animation spec, audio/Web Audio direction |
 | Content/STEM | Content/Game Designer | Event JSON, VI/EN copy, NASA source, dynamic brief mapping |
@@ -19,8 +19,8 @@ Nếu team ít người, một người có thể giữ nhiều lane nhưng owne
 
 | Khu vực | Owner | Reviewer bắt buộc |
 | --- | --- | --- |
-| `src/types`, `src/engine` | Core | Product + QA |
-| `src/data`, schema | Content | Core + QA |
+| `src/types`, `src/domain`, `src/simulation`, `public/python` | Core | Product + QA |
+| `src/data`, schema, simulation catalog | Content | Core + QA |
 | `src/store`, persistence | UI/Integration | Core + QA |
 | `src/components`, styles | UI/Integration | Visual + QA |
 | `public/assets` | Visual | UI |
@@ -47,10 +47,10 @@ Shared contract không sửa trực tiếp trong PR UI/content lớn. Tách thà
 ## 4. Giao việc PHASE 1.1
 
 - Product: khóa `moon-32`, milestone 12/15/29/32 và difficulty profiles.
-- Core: `GameState`, commands/results/errors, selectors, preview resolver.
+- Core: `GameState`, async commands/results/errors, worker client, Python resolver, selectors và preview qua cùng resolver.
 - UI: `GamePort`, Zustand facade, UI store và dev panel.
-- Content: balance/initial state/schema/content version.
-- QA: CI, invariant tests, save/reload/migration.
+- Content: balance/initial state/schema, content/model/catalog version và provenance.
+- QA: CI, invariant, JSON round-trip, worker crash/retry, save/reload/migration.
 - Visual: V12 asset inventory và production schedule.
 
 **Merge gate:** chơi hết một Sol, reload được, target/env lấy từ config.

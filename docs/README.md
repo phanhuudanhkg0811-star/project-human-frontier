@@ -17,6 +17,7 @@ docs/
 │   │   ├── PHASE_1_MOON_IMPLEMENTATION_PLAN.md   # Master implementation plan
 │   │   ├── PHASE_1_TEAM_EXECUTION_PLAN.md        # Phân công lane & ownership team
 │   │   ├── PHASE_1_1_STATE_FOUNDATION_PLAN.md    # Domain state, commands, save/load
+│   │   ├── PHASE_1_1_STATE_CONTRACT.md           # GameState + JSON contract Pyodide worker
 │   │   ├── PHASE_1_2_ROVER_CREW_PLAN.md          # Crew assignment, inventory, rover
 │   │   ├── PHASE_1_3_EVENTS_SOL7_PLAN.md         # Event tree, Sol 7 crisis
 │   │   ├── PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md    # Lunar Night, balance, ranking
@@ -24,7 +25,7 @@ docs/
 │   │   └── PHASE_1_6_RELEASE_PLAN.md             # E2E test, performance, release gate
 │   └── second-phase/                  # PHASE 2: Mars Survival (Độc lập, sau Phase 1)
 ├── architecture/                      # Kiến trúc kỹ thuật và hợp đồng dữ liệu
-│   └── SYSTEM_ARCHITECTURE.md         # Kiến trúc Headless Engine, State Machine, Zustand Store
+│   └── SYSTEM_ARCHITECTURE.md         # Pyodide Worker, State Machine, Zustand Store
 ├── game-design/                       # Tài liệu thiết kế trò chơi (GDD)
 │   └── GAME_DESIGN_DOCUMENT.md        # Cơ chế 6 tài nguyên, 4 hệ thống, 3 Rover, Sol 7
 ├── ui-ux/                             # Đặc tả giao diện người dùng
@@ -61,7 +62,7 @@ Dự án được phân tách thành các chiến dịch độc lập theo quy�
 - **Nếu bạn là Product Lead / Game Designer**:
   - Đọc [SCOPE_RECONCILIATION.md](product/SCOPE_RECONCILIATION.md) và [GAME_DESIGN_DOCUMENT.md](game-design/GAME_DESIGN_DOCUMENT.md).
 - **Nếu bạn là Core / Simulation Engine Developer**:
-  - Đọc [SYSTEM_ARCHITECTURE.md](architecture/SYSTEM_ARCHITECTURE.md) và các kế hoạch [PHASE_1_1](plan/first-phase/PHASE_1_1_STATE_FOUNDATION_PLAN.md), [PHASE_1_3](plan/first-phase/PHASE_1_3_EVENTS_SOL7_PLAN.md), [PHASE_1_4](plan/first-phase/PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md).
+  - Đọc [SYSTEM_ARCHITECTURE.md](architecture/SYSTEM_ARCHITECTURE.md), [PHASE 1.1 State Contract](plan/first-phase/PHASE_1_1_STATE_CONTRACT.md) và các kế hoạch [PHASE_1_1](plan/first-phase/PHASE_1_1_STATE_FOUNDATION_PLAN.md), [PHASE_1_3](plan/first-phase/PHASE_1_3_EVENTS_SOL7_PLAN.md), [PHASE_1_4](plan/first-phase/PHASE_1_4_CAMPAIGN_BALANCE_PLAN.md).
 - **Nếu bạn là Frontend / UI/UX Developer**:
   - Đọc [COCKPIT_V12_SPEC.md](ui-ux/COCKPIT_V12_SPEC.md), [PHASE_1_2](plan/first-phase/PHASE_1_2_ROVER_CREW_PLAN.md), [PHASE_1_5](plan/first-phase/PHASE_1_5_COCKPIT_POLISH_PLAN.md).
 - **Nếu bạn là QA / Release Engineer**:

@@ -3,6 +3,8 @@
 > **Mục tiêu phase con:** từ project trắng tạo được lõi state theo `campaignId` ổn định, deterministic, lưu/khôi phục được và chạy trọn một Sol bằng test — trước khi xây Moon Survival 32 Sol và cockpit hoàn chỉnh.
 >
 > **Đầu ra quan trọng nhất:** không phải UI đẹp, mà là một `GameState` duy nhất có quy tắc rõ ràng, được thay đổi qua command và không thể rơi vào trạng thái bất hợp lệ.
+>
+> **Runtime đã chốt:** Python resolver chạy trong Pyodide Web Worker; TypeScript quản lý phase, store, UI và persistence. Hai phía chỉ trao đổi JSON versioned. Chi tiết field và contract nằm tại [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md).
 
 ## 1. Cách quản lý “một mớ state”
 
@@ -10,35 +12,42 @@ Không đặt mọi thứ vào một object Zustand rồi cho component sửa tr
 
 | Nhóm | Ví dụ | Nơi quản lý | Có lưu save? |
 | --- | --- | --- | --- |
-| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | Pure TypeScript engine | Có |
+| Domain state | Sol, phase, tài nguyên, crew, hệ thống, rover, event | TypeScript snapshot + Python resolver | Có |
 | UI state | Modal đang mở, tab, hover, toast, animation | UI store/local component | Không |
 | Draft state | Khẩu phần đang kéo, payload tiếp tế chưa xác nhận | Form/local state | Không; chỉ commit khi xác nhận |
 | Content/config | Balance, event catalog, crew, brief | JSON đã validate | Lưu `contentVersion`, không copy cả catalog |
 | Derived state | Có sửa được không, dự báo cuối Sol, cảnh báo | Selector thuần | Không |
+| Runtime state | Worker loading/ready/error, request đang chạy | Worker adapter/store | Không |
 
 ### Quy tắc nguồn sự thật
 
 ```text
-JSON content ───────┐
-                    ▼
-Player command → Engine → GameState mới → Store → UI
-                    │          │
-                    │          └→ Save adapter
-                    └→ Domain result/effects → toast, sound, animation
+JSON content/catalog ───────────────┐
+                                    ▼
+Player command → TS orchestrator → GameState/plan → Store → UI
+                         │               │
+                         │               └→ Save adapter
+                         ▼
+                Pyodide Web Worker
+                Python resolver
+                         │
+                         └→ JSON result/effects/diagnostics
 ```
 
-- `GameState` trong engine là nguồn sự thật duy nhất của gameplay.
+- `GameState` trong store là snapshot gameplay có thẩm quyền duy nhất.
+- TypeScript xử lý phase/plan command; Python là nguồn tính toán duy nhất cho End-Sol và forecast.
 - Component không được tự trừ tài nguyên hoặc đổi phase.
 - Zustand không chứa công thức gameplay; chỉ giữ snapshot và gọi `dispatch`.
 - UI không lưu lại giá trị có thể tính từ `GameState`.
 - Save không lưu modal, toast, loading hay form đang nhập dở.
-- Thời gian gameplay dùng game clock/command; engine không gọi `Date.now()` hoặc `Math.random()`.
+- Thời gian gameplay dùng game clock/command; simulation không đọc `Date.now()`, `Math.random()` hoặc RNG global của Python.
+- Worker lỗi hoặc response stale thì giữ nguyên state; không có resolver TypeScript dự phòng.
 
 ## 2. Hình dạng state đề xuất
 
 Không cần tách thành hàng chục store. PHASE 1 dùng hai store:
 
-1. `gameStore`: domain snapshot, dispatch, save/load status.
+1. `gameStore`: domain snapshot, async dispatch, save/load status và worker runtime status không persist.
 2. `uiStore`: modal, selection và presentation state dùng chung.
 
 Form chỉ dùng state cục bộ trong component nếu không cần chia sẻ.
@@ -49,6 +58,9 @@ Form chỉ dùng state cục bộ trong component nếu không cần chia sẻ.
 interface GameState {
   readonly schemaVersion: 1;
   readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly revision: number;
   readonly campaign: {
     readonly id: 'moon-32';
     readonly status: 'not-started' | 'active' | 'victory' | 'defeat';
@@ -57,13 +69,13 @@ interface GameState {
   readonly clock: {
     readonly sol: number;
     readonly phase: GamePhase;
-    readonly seed: number;
-    readonly elapsedMissionMs: number;
+    readonly missionSeed: number;
+    readonly missionElapsedHours: number;
+    readonly resolutionIndex: number;
   };
   readonly resources: ResourceState;
   readonly systems: Readonly<Record<SystemId, StationSystem>>;
   readonly crew: Readonly<Record<CrewId, CrewMember>>;
-  readonly assignments: readonly Assignment[];
   readonly dailyPlan: DailyPlan;
   readonly rover: RoverState;
   readonly eventQueue: readonly ScheduledEvent[];
@@ -72,6 +84,8 @@ interface GameState {
   readonly history: MissionHistory;
 }
 ```
+
+Đây là overview; type chuẩn, mục đích từng field, state không được lưu và invariant nằm trong [`PHASE_1_1_STATE_CONTRACT.md`](PHASE_1_1_STATE_CONTRACT.md). `revision` là bắt buộc để response bất đồng bộ cũ không ghi đè snapshot mới.
 
 ### Vì sao dùng record thay vì array cho entity chính
 
@@ -121,7 +135,7 @@ type GameCommand =
 Engine trả về kết quả có cấu trúc thay vì im lặng:
 
 ```ts
-type EngineResult =
+type DispatchResult =
   | {
       ok: true;
       state: GameState;
@@ -135,6 +149,8 @@ type EngineResult =
 ```
 
 `DomainEffect` chỉ mô tả điều đã xảy ra (`resource-changed`, `system-repaired`, `phase-changed`). UI quyết định biến effect thành toast, âm thanh hay animation; engine không biết UI.
+
+`dispatch` trả `Promise<DispatchResult>` vì `sol/end`, forecast và validation qua worker là bất đồng bộ. Command phase/plan có thể hoàn tất ngay nhưng vẫn đi qua cùng async interface.
 
 ## 4. Derived state bằng selector
 
@@ -196,9 +212,9 @@ Viết `assertGameState()` cho development/test và chạy sau mỗi command tro
         ↓
 3. JSON schema + fixtures + config loader
         ↓
-4. Engine reducer + state machine
+4. Pyodide worker bootstrap + JSON contract
         ↓
-5. End-Sol resolver cho một Sol
+5. TS state machine + Python End-Sol resolver
         ↓
 6. Selectors + forecast
         ↓
@@ -219,9 +235,10 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 
 - Project foundation và CI.
 - Domain types, command, error, effect và invariant.
-- JSON loader/schema cho balance, crew, initial state.
+- JSON loader/schema cho balance, crew, initial state, worker request/response và simulation catalog.
+- Pyodide chạy trong persistent Web Worker, có boot/version/error lifecycle.
 - State machine đủ các phase.
-- Resource/ECLSS resolver cho một Sol.
+- Python Resource/ECLSS resolver cho một Sol.
 - Crew assignment cơ bản và sửa chữa một system.
 - Selector permission + resource forecast.
 - Predictor phải gọi cùng resolver ở chế độ preview; không viết công thức thứ hai trong UI.
@@ -230,6 +247,7 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 - Campaign definition (`targetSol`, victory requirements), Mission Seed và difficulty profile được load từ content/config.
 - Dev UI tối thiểu chạy hết Sol 1.
 - Test engine, store và persistence.
+- Benchmark cold boot, warm resolve và forecast theo budget trong state contract.
 
 ### Chưa làm trong phase con này
 
@@ -246,7 +264,7 @@ Không build cockpit hoàn chỉnh trước bước 8. UI sớm chỉ cần dev 
 Cả team làm chung một nhịp ngắn để khóa:
 
 - Tên domain entity và ID convention.
-- `GameState`, `GameCommand`, `EngineResult` bản v0.
+- `GameState`, `GameCommand`, `DispatchResult` và JSON worker contract bản v0.
 - Invariant và phase diagram.
 - Folder ownership.
 - Fixture Sol 1 và expected output.
@@ -272,29 +290,31 @@ flowchart LR
     D --> Join
 ```
 
-### Workstream A — Domain và engine
+### Workstream A — Domain, worker và simulation
 
-**Sở hữu file:** `src/types/`, `src/engine/`.
+**Sở hữu file:** `src/types/`, `src/domain/`, `src/simulation/`, `public/python/`.
 
-- Implement state machine và command dispatcher.
-- Implement invariant validation.
+- Implement TypeScript state machine, command dispatcher và invariant validation.
+- Implement worker client, persistent Web Worker và Pyodide boot lifecycle.
+- Implement JSON contract validation ở cả TypeScript và Python.
 - Implement crew assignment.
 - Implement repair system.
-- Implement power/ECLSS End-Sol resolver cho Sol 1.
+- Implement power/ECLSS End-Sol resolver cho Sol 1 bằng Python.
 - Phát `DomainEffect` và `DomainError`.
-- Viết unit test sát engine trong cùng PR/branch.
+- Viết unit test domain, Python resolver và determinism trong cùng PR/branch.
 
 **Không làm:** Zustand, component, JSON copy, save adapter.
 
-**Đầu ra:** từ fixture có thể chạy command script và nhận state Sol 2 đúng expected snapshot.
+**Đầu ra:** từ fixture có thể boot worker, gửi một JSON request và nhận state Sol 2 đúng expected snapshot; restart worker rồi replay vẫn cùng output.
 
 ### Workstream B — Data, schema và science contract
 
-**Sở hữu file:** `src/data/`, `src/schemas/`, `src/content/`.
+**Sở hữu file:** `src/data/`, `src/schemas/`, `src/content/`, calibration artifact/manifest.
 
 - Tạo `balance.json`, `crew.json`, `initial-state.json`.
-- Tạo schema và decoder/validator.
-- Định nghĩa content version.
+- Tạo schema và decoder/validator cho content, save và worker contract.
+- Tạo `simulation-catalog.json` nhỏ từ calibration artifact; không đóng gói raw NASA dataset.
+- Định nghĩa `contentVersion`, `modelVersion`, `catalogVersion` và provenance.
 - Chuẩn hóa unit/description/source metadata.
 - Tạo fixture valid/invalid cho validation.
 - Chuẩn bị event/brief mẫu Sol 1, chưa cần full catalog.
@@ -325,9 +345,10 @@ flowchart LR
 
 - Setup TypeScript strict, lint, format, unit/integration/E2E runner.
 - Setup CI và coverage/report.
-- Implement `gameStore` facade theo interface đã khóa.
+- Implement async `gameStore` facade theo interface đã khóa.
 - Implement save envelope, LocalStorage adapter và migration v1.
 - Tạo command replay harness và state snapshot viewer.
+- Test stale response, worker crash/retry và version mismatch giữ nguyên state.
 - Viết integration test store/save/reload.
 
 **Không làm:** gameplay formula hoặc UI component.
@@ -339,12 +360,12 @@ flowchart LR
 | Hạng mục | Phụ thuộc | Có thể làm song song? |
 | --- | --- | --- |
 | Types/commands v0 | Product lock | Không; làm đầu tiên |
-| Engine state machine | Types v0 | Có với schema/UI/tooling |
+| TS state machine + worker protocol | Types/contract v0 | Có với schema/UI/tooling |
 | JSON schema/content | Types v0 | Có |
 | UI shell/design system | Store interface v0 | Có, dùng mock |
 | Save envelope/adapter | GameState v0 | Có |
-| End-Sol resolver | Balance contract | A và B phối hợp qua fixture |
-| Store integration | Engine result + persistence | Chờ A/D hoàn thiện interface |
+| Python End-Sol resolver | Balance + JSON contract | A và B phối hợp qua fixture |
+| Store integration | Async dispatch + persistence | Chờ A/D hoàn thiện interface |
 | Playable Sol 1 | A + B + C + D | Integration gate cuối |
 
 ### Những việc tuyệt đối không chia song song
@@ -361,7 +382,8 @@ flowchart LR
 - Shared contracts chỉ thay đổi qua PR nhỏ, review bởi đại diện A–D.
 - Dùng `contracts-v0.md` hoặc TypeScript types làm giao diện chung.
 - UI dùng mock `GamePort`; không import fixture trực tiếp.
-- Engine nhận config qua tham số; không import JSON.
+- Python resolver nhận state/plan/catalog đã version hóa; không biết Zustand hay React.
+- TypeScript không chứa công thức End-Sol/forecast dự phòng.
 - Data loader trả đúng `ContentBundle`; không biết Zustand.
 - Persistence nhận/ghi `SaveEnvelope`; không biết component.
 - Merge contract → schema/data → engine → persistence/store → UI integration.
@@ -371,9 +393,11 @@ flowchart LR
 ```ts
 interface GamePort {
   getSnapshot(): GameState;
-  dispatch(command: GameCommand): EngineResult;
+  dispatch(command: GameCommand): Promise<DispatchResult>;
   subscribe(listener: () => void): () => void;
-  reset(): void;
+  getRuntimeState(): SimulationRuntimeState;
+  retryWorker(): Promise<void>;
+  reset(): Promise<void>;
 }
 ```
 
@@ -383,12 +407,18 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 
 ### Gate 1 — Contract freeze v0
 
-- Phase diagram, types, command, result, error, invariant đã review.
+- Phase diagram, state types, async command, JSON request/response, error và invariant đã review.
 - Fixture Sol 1 và expected Sol 2 đã chốt.
+
+### Gate 1.5 — Worker ready
+
+- Pyodide boot trong Web Worker, không block main thread.
+- Worker báo `modelVersion`/`catalogVersion` và validate được round-trip JSON.
+- Worker crash/retry không làm đổi `GameState`.
 
 ### Gate 2 — Headless Sol 1
 
-- CLI/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol.
+- Harness/test dispatch được: start → briefing → assignment/repair → comms → rationing → end Sol qua worker.
 - Nhận state Sol 2, log và delta đúng.
 - Không có resource âm hoặc duplicate assignment.
 
@@ -416,12 +446,12 @@ UI có thể dùng `MockGamePort`; integration thay bằng `ZustandGamePort` mà
 | ---: | --- | --- |
 | 1 | Project scaffold + CI tối thiểu | D |
 | 2 | Domain contract v0 + invariants | A, review chung |
-| 3 | Content schemas + fixtures Sol 1 | B |
-| 4 | State machine + command dispatcher | A |
+| 3 | Content/worker schemas + fixtures Sol 1 | B |
+| 4 | Pyodide worker bootstrap + async port | A |
 | 5 | Design tokens + primitives + mock port | C |
 | 6 | Save envelope + persistence adapter | D |
-| 7 | Resource/ECLSS resolver + forecast | A + fixture B |
-| 8 | Game store facade + selectors wiring | D + A review |
+| 7 | TS state machine + Python Resource/ECLSS resolver | A + fixture B |
+| 8 | Async game store + selectors/worker wiring | D + A review |
 | 9 | Sol 1 feature panels trên mock | C |
 | 10 | Store/UI integration | C + D |
 | 11 | Full Sol 1 integration/E2E | D, cả team fix |
@@ -432,10 +462,12 @@ PR 3–6 có thể chạy đồng thời sau PR 2. PR 5 và 9 không cần chờ
 ## 13. Definition of Done PHASE 1.1
 
 - [ ] Chỉ có một authoritative `GameState`.
-- [ ] Domain/UI/draft/content/derived state được phân tách đúng.
+- [ ] Domain/UI/draft/runtime/content/derived state được phân tách đúng.
 - [ ] Không component nào sửa domain state trực tiếp.
 - [ ] Tất cả domain mutation đi qua typed command.
-- [ ] Engine pure, deterministic và không phụ thuộc trình duyệt.
+- [ ] Python resolver stateless, deterministic; Pyodide chỉ chạy trong Web Worker.
+- [ ] TypeScript không có công thức End-Sol/forecast thứ hai.
+- [ ] Worker lỗi/stale response/version mismatch không mutate state.
 - [ ] Invariant được kiểm tra bằng test.
 - [ ] JSON được schema validation và có content version.
 - [ ] Selector trả permission kèm lý do.
@@ -444,6 +476,8 @@ PR 3–6 có thể chạy đồng thời sau PR 2. PR 5 và 9 không cần chờ
 - [ ] Reload được ở mọi phase trong Sol 1.
 - [ ] Sol 1 chạy headless và chạy bằng UI đến Sol 2.
 - [ ] Test cùng seed/commands cho cùng state/log.
+- [ ] Worker restart rồi replay vẫn cho cùng canonical response/hash.
+- [ ] Cold boot, warm resolve và forecast có benchmark theo budget.
 - [ ] Typecheck, lint, unit, integration, E2E smoke và build đều đạt CI.
 - [ ] Có tài liệu contract và sơ đồ ownership để phase sau không phá kiến trúc.
 
