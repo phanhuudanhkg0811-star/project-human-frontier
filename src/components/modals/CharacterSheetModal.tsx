@@ -3,6 +3,7 @@ import { HeartPulse, Coffee, ShieldAlert, Undo2 } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId } from '../../types/index.ts';
 import { getHailCrewVisual } from '../cabin/hailAssets.ts';
+import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 
 interface CharacterSheetModalProps {
@@ -60,14 +61,32 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
           </div>
         )}
 
-        <div className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/80 flex flex-wrap items-center gap-2 text-xs">
-          <HeartPulse className="w-4 h-4 text-rose-300" />
-          <strong>Medkit tức thời: {gameState.resources.medkits} liều</strong>
-          <select value={medTarget} onChange={(event) => setMedTarget(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1">
-            {(['cmd', 'eng', 'doc', 'geo'] as const).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
-          </select>
-          <button type="button" onClick={() => handleMedkit(false)} className="hail-btn">Tự dùng (+{gameState.resources.medkitLevel === 2 ? 50 : 30})</button>
-          <button type="button" onClick={() => handleMedkit(true)} className="hail-btn hail-btn--accent">Marcus tiêm (+20, chiếm task)</button>
+        <div className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/80 flex flex-col gap-2.5 text-xs">
+          <div className="flex items-center gap-2">
+            <HeartPulse className="w-4 h-4 text-rose-300 shrink-0" />
+            <strong>Medkit tức thời: {gameState.resources.medkits} liều</strong>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="min-w-[200px] flex-1">
+              <HailSelect
+                label="Người nhận Medkit"
+                size="sm"
+                value={medTarget}
+                onChange={(val) => setMedTarget(val as CrewId)}
+                options={(['cmd', 'eng', 'doc', 'geo'] as const).map((id) => ({
+                  value: id,
+                  label: gameState.crew[id].name,
+                  meta: gameState.crew[id].roleTag,
+                }))}
+              />
+            </div>
+            <button type="button" onClick={() => handleMedkit(false)} className="hail-btn">
+              Tự dùng (+{gameState.resources.medkitLevel === 2 ? 50 : 30})
+            </button>
+            <button type="button" onClick={() => handleMedkit(true)} className="hail-btn hail-btn--accent">
+              Marcus tiêm (+20, chiếm task)
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -141,17 +160,21 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                         </button>
                       )}
                       {crewId === 'doc' && (
-                        <div className="flex items-center gap-1">
-                          <select
-                            value={medTarget}
-                            onChange={(e) => setMedTarget(e.target.value as CrewId)}
-                            className="bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-[11px]"
-                          >
-                            {(['cmd', 'eng', 'doc', 'geo'] as const).map((id) => (
-                              <option key={id} value={id}>{gameState.crew[id].name.split(' ')[0]}</option>
-                            ))}
-                          </select>
-                          <button type="button" disabled={!canAssign || member.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'medical-care')} className="hail-btn hail-btn--accent flex items-center gap-1">
+                        <div className="flex items-end gap-1.5 flex-1 min-w-[200px]">
+                          <div className="flex-1 min-w-0">
+                            <HailSelect
+                              label="Đối tượng chăm sóc"
+                              size="sm"
+                              value={medTarget}
+                              onChange={(val) => setMedTarget(val as CrewId)}
+                              options={(['cmd', 'eng', 'doc', 'geo'] as const).map((id) => ({
+                                value: id,
+                                label: gameState.crew[id].name.split(' ')[0],
+                                meta: gameState.crew[id].roleTag,
+                              }))}
+                            />
+                          </div>
+                          <button type="button" disabled={!canAssign || member.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'medical-care')} className="hail-btn hail-btn--accent flex items-center gap-1 shrink-0">
                             <HeartPulse className="w-3 h-3" /> Chăm sóc
                           </button>
                         </div>

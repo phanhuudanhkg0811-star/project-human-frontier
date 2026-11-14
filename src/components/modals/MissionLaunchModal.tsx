@@ -3,6 +3,7 @@ import { Rocket } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { DifficultyId } from '../../types/index.ts';
 import { MissionProgressionPanel } from '../MissionProgressionPanel.tsx';
+import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 
 interface MissionLaunchModalProps {
@@ -69,26 +70,23 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="flex flex-col gap-1">
-              <span className="text-slate-400">Độ khó:</span>
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value as DifficultyId)}
-                className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100"
-              >
-                {Object.values(bundle.campaign.difficultyProfiles).map((d) => (
-                  <option key={d.id} value={d.id}>{d.label}</option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-slate-400">Mission Seed (Deterministic):</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <HailSelect
+              label="Độ khó"
+              value={difficulty}
+              onChange={(val) => setDifficulty(val as DifficultyId)}
+              options={Object.values(bundle.campaign.difficultyProfiles).map((d) => ({
+                value: d.id,
+                label: d.label,
+              }))}
+            />
+            <label className="hail-select-field">
+              <span className="hail-select-label">Mission Seed (Deterministic)</span>
               <input
                 type="number"
                 value={seed}
                 onChange={(e) => setSeed(Number(e.target.value) || 205001)}
-                className="bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100 font-mono"
+                className="hail-select-trigger font-mono"
               />
             </label>
           </div>

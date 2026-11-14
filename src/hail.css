@@ -1576,3 +1576,199 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   CUSTOM TELEMETRY SELECT (HailSelect)
+   ========================================================================== */
+.hail-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
+}
+
+.hail-select-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #929B9D;
+  line-height: 1.25;
+  user-select: none;
+}
+
+.hail-select-control {
+  position: relative;
+  width: 100%;
+}
+
+.hail-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(38, 55, 70, 0.88) 0%, rgba(22, 32, 41, 0.96) 100%);
+  border: 1px solid #59666D;
+  color: #E7E6DF;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(231, 230, 223, 0.07);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.hail-select-field.is-sm .hail-select-trigger {
+  padding: 6px 9px;
+  font-size: 11.5px;
+}
+
+.hail-select-trigger:hover:not(:disabled),
+.hail-select-trigger:focus-visible {
+  outline: none;
+  border-color: #75A9A5;
+  box-shadow: 0 0 0 2px rgba(117, 169, 165, 0.18), inset 0 1px 0 rgba(231, 230, 223, 0.1);
+}
+
+.hail-select-trigger.is-open {
+  border-color: #75A9A5;
+  background: linear-gradient(180deg, rgba(48, 59, 67, 0.95) 0%, rgba(24, 34, 44, 0.98) 100%);
+  box-shadow: 0 0 0 2px rgba(117, 169, 165, 0.24), inset 0 1px 0 rgba(231, 230, 223, 0.12);
+}
+
+.hail-select-trigger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hail-select-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hail-select-value-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #E7E6DF;
+}
+
+.hail-select-value-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #75A9A5;
+  background: rgba(117, 169, 165, 0.14);
+  border: 1px solid rgba(117, 169, 165, 0.32);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hail-select-chevron {
+  width: 15px;
+  height: 15px;
+  color: #929B9D;
+  flex-shrink: 0;
+  transition: transform 0.18s ease, color 0.15s ease;
+}
+
+.hail-select-chevron.is-open {
+  transform: rotate(180deg);
+  color: #75A9A5;
+}
+
+.hail-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 80;
+  min-width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border-radius: 8px;
+  background: #1a252f;
+  border: 1px solid rgba(117, 169, 165, 0.58);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(35, 43, 49, 0.8);
+}
+
+.hail-select-menu.is-bottom {
+  top: calc(100% + 5px);
+}
+
+.hail-select-menu.is-top {
+  bottom: calc(100% + 5px);
+}
+
+.hail-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #E7E6DF;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.hail-select-option.is-highlighted:not(.is-disabled) {
+  background: rgba(110, 145, 177, 0.2);
+}
+
+.hail-select-option.is-selected {
+  background: rgba(117, 169, 165, 0.22);
+  font-weight: 600;
+}
+
+.hail-select-option.is-disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.hail-select-option-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hail-select-option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hail-select-option-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #929B9D;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hail-select-option.is-selected .hail-select-option-meta {
+  color: #75A9A5;
+}
+
+.hail-select-option-check {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #75A9A5;
+  flex-shrink: 0;
+}

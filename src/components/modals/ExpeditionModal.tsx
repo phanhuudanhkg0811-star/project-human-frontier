@@ -13,6 +13,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import { useUiStore } from '../../store/uiStore.ts';
 import type { CrewId, EquipmentId, ExpeditionId } from '../../types/index.ts';
 import { HAIL_ENV, HAIL_ROVER } from '../cabin/hailAssets.ts';
+import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 
 interface ExpeditionModalProps {
@@ -186,12 +187,17 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
         </div>
 
         {!activeMission && (
-          <label className="text-xs text-slate-200 flex items-center gap-2">
-            Người trực phóng
-            <select value={launchOperator} onChange={(event) => setLaunchOperator(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1">
-              {(Object.keys(gameState.crew) as CrewId[]).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
-            </select>
-          </label>
+          <HailSelect
+            label="Người trực phóng"
+            value={launchOperator}
+            onChange={(val) => setLaunchOperator(val as CrewId)}
+            options={(Object.keys(gameState.crew) as CrewId[]).map((id) => ({
+              value: id,
+              label: gameState.crew[id].name,
+              meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ' · Bận' : ''}`,
+              disabled: gameState.crew[id].condition === 'evacuated',
+            }))}
+          />
         )}
 
         <button
@@ -212,11 +218,21 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <button type="button" onClick={handleRecoverSignal} className="hail-btn hail-btn--accent">Khôi phục tín hiệu</button>
         )}
         {(activeMission?.status === 'exploring' || activeMission?.status === 'recovery-pending') && activeMission.expectedReturnSol !== null && gameState.clock.sol >= activeMission.expectedReturnSol && (
-          <div className="flex items-center gap-2">
-            <select value={recoveryOperator} onChange={(event) => setRecoveryOperator(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs">
-              {(Object.keys(gameState.crew) as CrewId[]).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
-            </select>
-            <button type="button" onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent">Phân công thu hồi</button>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex-1 min-w-[200px]">
+              <HailSelect
+                label="Người trực thu hồi"
+                value={recoveryOperator}
+                onChange={(val) => setRecoveryOperator(val as CrewId)}
+                options={(Object.keys(gameState.crew) as CrewId[]).map((id) => ({
+                  value: id,
+                  label: gameState.crew[id].name,
+                  meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ' · Bận' : ''}`,
+                  disabled: gameState.crew[id].condition === 'evacuated',
+                }))}
+              />
+            </div>
+            <button type="button" onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent shrink-0">Phân công thu hồi</button>
           </div>
         )}
       </div>
