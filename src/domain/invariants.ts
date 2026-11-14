@@ -19,7 +19,7 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     recoverable: false,
   });
 
-  if (state.schemaVersion !== 2) return makeErr('Invalid schemaVersion');
+  if (state.schemaVersion !== 3) return makeErr('Invalid schemaVersion');
   if (!Number.isInteger(state.revision) || state.revision < 0) return makeErr('revision must be a non-negative integer');
   if (!Number.isInteger(state.clock.resolutionIndex) || state.clock.resolutionIndex < 0) {
     return makeErr('resolutionIndex must be a non-negative integer');
@@ -137,6 +137,30 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
   const scienceGranted = state.rover.missionHistory.reduce((sum, result) => sum + result.scienceGranted, 0);
   if (state.campaign.sciencePoints !== scienceGranted) {
     return makeErr('campaign.sciencePoints must equal settled mission science grants');
+  }
+
+  // EventState v3 invariants
+  const expectedActiveId = state.events.activeEvent?.eventId ?? null;
+  if (state.events.activeEventId !== expectedActiveId) {
+    return makeErr(`events.activeEventId (${String(state.events.activeEventId)}) must match activeEvent.eventId (${String(expectedActiveId)})`);
+  }
+  if (state.events.activeEvent) {
+    if (state.events.activeEvent.deadlineSol < state.events.activeEvent.triggeredAtSol) {
+      return makeErr('activeEvent.deadlineSol cannot be earlier than triggeredAtSol');
+    }
+  }
+  const resolvedFromHistory = [
+    ...new Set(
+      state.events.occurrenceHistory
+        .filter((occ) => occ.outcome === 'resolved')
+        .map((occ) => occ.eventId)
+    ),
+  ];
+  if (
+    state.events.resolvedEventIds.length !== resolvedFromHistory.length ||
+    state.events.resolvedEventIds.some((id, idx) => id !== resolvedFromHistory[idx])
+  ) {
+    return makeErr('events.resolvedEventIds must match unique resolved eventIds in occurrenceHistory');
   }
 
   // Unique radio message IDs & sample IDs

@@ -13,9 +13,9 @@ import type {
   SaveEnvelope,
 } from '../types/index.ts';
 
-// Keep the legacy key so Phase 1.1 saves are discovered and upgraded in place.
+// Keep the legacy key so Phase 1.1/1.2 saves are discovered and upgraded in place.
 export const SAVE_STORAGE_KEY = 'human-frontier:moon32:save-v1';
-export const APP_VERSION = '1.2.0';
+export const APP_VERSION = '1.3.0';
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -43,7 +43,17 @@ interface LegacyRoverState {
   readonly completedExpeditions?: readonly ExpeditionId[];
 }
 
-type LegacyGameState = Omit<GameState, 'schemaVersion' | 'campaign' | 'dailyPlan' | 'rover'> & {
+interface LegacyEventStateV2 {
+  readonly activeEventId?: string | null;
+  readonly resolvedEventIds?: readonly string[];
+}
+
+type LegacyGameStateV2 = Omit<GameState, 'schemaVersion' | 'events'> & {
+  readonly schemaVersion: 2;
+  readonly events: LegacyEventStateV2;
+};
+
+type LegacyGameState = Omit<LegacyGameStateV2, 'schemaVersion' | 'campaign' | 'dailyPlan' | 'rover'> & {
   readonly schemaVersion: 1;
   readonly campaign: Omit<GameState['campaign'], 'sciencePoints'>;
   readonly dailyPlan: GameState['dailyPlan'] & { readonly medkitTargets?: readonly CrewId[] };
@@ -79,7 +89,7 @@ export function computeEnvelopeChecksum(envelope: ChecksumEnvelope): string {
 
 export function buildSaveEnvelope(state: GameState, nowIso = new Date().toISOString()): SaveEnvelope {
   const unsigned: SaveEnvelopeUnsigned = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     savedAt: nowIso,
     appVersion: APP_VERSION,
     contentVersion: state.contentVersion,
@@ -158,7 +168,7 @@ export function migrateSaveV1ToV2(legacy: LegacyGameState, bundle: ContentBundle
   }
 
   const sciencePoints = missionHistory.reduce((sum, result) => sum + result.scienceGranted, 0);
-  const migrated: GameState = {
+  const migratedV2: LegacyGameStateV2 = {
     ...legacy,
     schemaVersion: 2,
     contentVersion: bundle.balance.contentVersion,
@@ -174,6 +184,63 @@ export function migrateSaveV1ToV2(legacy: LegacyGameState, bundle: ContentBundle
     },
     equipment,
     rover: { activeMission, missionHistory },
+  };
+  return migrateSaveV2ToV3(migratedV2, bundle);
+}
+
+export function migrateSaveV2ToV3(legacy: LegacyGameStateV2, bundle: ContentBundle): GameState {
+  const rawEvents = legacy.events ?? {};
+  const activeEventId = typeof rawEvents.activeEventId === 'string' && rawEvents.activeEventId.length > 0
+    ? rawEvents.activeEventId
+    : null;
+  const matchedEvent = activeEventId ? bundle.events.find((e) => e.id === activeEventId) : undefined;
+  const activeEvent = activeEventId
+    ? {
+        eventId: activeEventId,
+        triggeredAtSol: legacy.clock.sol,
+        deadlineSol: legacy.clock.sol + (matchedEvent?.deadlineOffsetSols ?? 0),
+        context: {},
+      }
+    : null;
+  const resolvedEventIds = [...new Set(rawEvents.resolvedEventIds ?? [])];
+  const occurrenceHistory = resolvedEventIds.map((eventId) => ({
+    eventId,
+    triggeredSol: 1,
+    settledSol: Math.max(1, legacy.clock.sol),
+    outcome: 'resolved' as const,
+    choiceId: null,
+  }));
+
+  const upgradeSummary = (summary: GameState['debrief']['lastSummary']) =>
+    summary
+      ? {
+          ...summary,
+          debriefContext: summary.debriefContext ?? null,
+        }
+      : null;
+
+  const migrated: GameState = {
+    ...legacy,
+    schemaVersion: 3,
+    contentVersion: bundle.balance.contentVersion,
+    modelVersion: bundle.balance.modelVersion,
+    catalogVersion: bundle.catalog.catalogVersion,
+    events: {
+      activeEventId,
+      activeEvent,
+      resolvedEventIds,
+      occurrenceHistory,
+      flags: {},
+      pendingFollowUps: [],
+    },
+    debrief: {
+      ...legacy.debrief,
+      lastSummary: upgradeSummary(legacy.debrief.lastSummary),
+    },
+    history: {
+      ...legacy.history,
+      summaries: legacy.history.summaries.map((s) => upgradeSummary(s)!),
+    },
   };
   return validateGameStateStructure(migrated);
 }
@@ -207,7 +274,9 @@ function readRawEnvelope(parsed: unknown): ChecksumEnvelope {
   for (const key of ['schemaVersion', 'savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'state', 'checksum']) {
     if (!(key in value)) throw new Error(`SaveEnvelope thiếu trường ${key}.`);
   }
-  if (value.schemaVersion !== 1 && value.schemaVersion !== 2) throw new Error('Unsupported save schemaVersion.');
+  if (value.schemaVersion !== 1 && value.schemaVersion !== 2 && value.schemaVersion !== 3) {
+    throw new Error('Unsupported save schemaVersion.');
+  }
   for (const key of ['savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'checksum']) {
     if (typeof value[key] !== 'string') throw new Error(`SaveEnvelope.${key} không hợp lệ.`);
   }
@@ -244,6 +313,9 @@ export function loadGameState(bundle: ContentBundle, storage: StorageLike | null
   try {
     if (rawEnvelope.schemaVersion === 1) {
       state = migrateSaveV1ToV2(rawEnvelope.state as LegacyGameState, bundle);
+      migrated = true;
+    } else if (rawEnvelope.schemaVersion === 2) {
+      state = migrateSaveV2ToV3(rawEnvelope.state as LegacyGameStateV2, bundle);
       migrated = true;
     } else {
       const envelope = validateSaveEnvelopeStructure(parsed);

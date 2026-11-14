@@ -1,4 +1,4 @@
-import type { SystemId } from '../../types/index.ts';
+import type { EventArtId, SystemId } from '../../types/index.ts';
 
 export const HAIL_ASSET_BASE = '/assets/hail';
 
@@ -176,18 +176,35 @@ export function getHailSystemSprite(id: SystemId, integrity: number): {
   };
 }
 
-export function getHailEventScene(eventId: string | null | undefined): string {
-  switch (eventId) {
+export const EVENT_ART_IDS: readonly EventArtId[] = [
+  'tech-fault',
+  'airlock-leak',
+  'solar-particle',
+  'robot-signal-loss',
+];
+
+export const HAIL_EVENT_ART: Readonly<Record<EventArtId, string>> = {
+  'tech-fault': hailUrl('events/PH_EVT_TECHNICAL_FAULT_BASE_V01.webp'),
+  'airlock-leak': hailUrl('events/PH_EVT_AIRLOCK_LEAK_BASE_V01.webp'),
+  'solar-particle': hailUrl('events/PH_EVT_SOLAR_PARTICLE_BASE_V01.webp'),
+  'robot-signal-loss': hailUrl('events/PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01.webp'),
+};
+
+export function getHailEventScene(artOrEventId: EventArtId | string | null | undefined): string {
+  if (artOrEventId && artOrEventId in HAIL_EVENT_ART) {
+    return HAIL_EVENT_ART[artOrEventId as EventArtId];
+  }
+  switch (artOrEventId) {
     case 'solar-particles':
     case 'sol15-lunar-nightfall':
-      return hailUrl('events/PH_EVT_SOLAR_PARTICLE_BASE_V01.webp');
+      return HAIL_EVENT_ART['solar-particle'];
     case 'airlock-leak':
     case 'sol3-airlock-seal-alert':
-      return hailUrl('events/PH_EVT_AIRLOCK_LEAK_BASE_V01.webp');
+      return HAIL_EVENT_ART['airlock-leak'];
     case 'regolith-filter':
     case 'sol1-arrival-check':
-      return hailUrl('events/PH_EVT_TECHNICAL_FAULT_BASE_V01.webp');
+      return HAIL_EVENT_ART['tech-fault'];
     default:
-      return hailUrl('events/PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01.webp');
+      return HAIL_EVENT_ART['robot-signal-loss'];
   }
 }

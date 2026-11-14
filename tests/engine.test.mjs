@@ -18,6 +18,7 @@ async function loadBundleModules() {
         export * from './src/domain/endSolResolver.ts';
         export * from './src/domain/orchestrator.ts';
         export * from './src/domain/selectors.ts';
+        export * from './src/domain/eventSelectors.ts';
         export * from './src/persistence/saveAdapter.ts';
         export * from './src/store/mockGamePort.ts';
       `,
@@ -196,7 +197,14 @@ test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (W
       wasteWaterL: 10,
       waterL: 35,
     },
-    events: { activeEventId: null, resolvedEventIds: [] },
+    events: {
+      activeEventId: null,
+      activeEvent: null,
+      resolvedEventIds: [],
+      occurrenceHistory: [],
+      flags: {},
+      pendingFollowUps: [],
+    },
   };
 
   // Branch A: Save Rover (-2 kWh) + WRS OFF
@@ -670,7 +678,7 @@ test('Phase 1.2 deadline failure, OR mitigation, immediate Medkit, and signal re
   assert.equal(cancelled.state.crew.geo.assignedTask, null);
 });
 
-test('SaveEnvelope v1 migrates to v2 without inventing historical operators and rewrites storage', () => {
+test('SaveEnvelope v1 migrates to v3 without inventing historical operators and rewrites storage', () => {
   const bundle = core.loadContentBundle();
   const storage = createMemoryStorage();
   const current = core.createInitialGameState(bundle, { seed: 5050 });
@@ -683,6 +691,10 @@ test('SaveEnvelope v1 migrates to v2 without inventing historical operators and 
     rover: {
       status: 'idle', expeditionId: null, solsRemaining: 0, equippedItems: [],
       samplesCollected: ['crater_core_sample'], completedExpeditions: ['lunar-crater'],
+    },
+    events: {
+      activeEventId: 'sol1-arrival-check',
+      resolvedEventIds: [],
     },
   };
   const unsigned = {
@@ -697,8 +709,68 @@ test('SaveEnvelope v1 migrates to v2 without inventing historical operators and 
   storage.setItem(core.SAVE_STORAGE_KEY, JSON.stringify({ ...unsigned, checksum: core.computeEnvelopeChecksum(unsigned) }));
   const loaded = core.loadGameState(bundle, storage);
   assert.equal(loaded.status, 'ok');
-  assert.equal(loaded.state.schemaVersion, 2);
+  assert.equal(loaded.state.schemaVersion, 3);
   assert.equal(loaded.state.campaign.sciencePoints, 20);
   assert.equal(loaded.state.rover.missionHistory[0].launchOperatorCrewId, null);
-  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 2);
+  assert.equal(loaded.state.events.activeEvent?.eventId, 'sol1-arrival-check');
+  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 3);
+});
+
+test('SaveEnvelope v2 migrates to v3 preserving resolved events and active event deadline', () => {
+  const bundle = core.loadContentBundle();
+  const storage = createMemoryStorage();
+  const current = core.createInitialGameState(bundle, { seed: 6060 });
+  const v2State = {
+    ...current,
+    schemaVersion: 2,
+    clock: { sol: 3, phase: 'comms', resolutionIndex: 2 },
+    dailyPlan: { ...current.dailyPlan, sol: 3 },
+    events: {
+      activeEventId: 'sol3-airlock-seal-alert',
+      resolvedEventIds: ['sol1-arrival-check'],
+    },
+  };
+  const unsigned = {
+    schemaVersion: 2,
+    savedAt: '2026-11-14T13:00:00Z',
+    appVersion: '1.2.0',
+    contentVersion: current.contentVersion,
+    modelVersion: current.modelVersion,
+    catalogVersion: current.catalogVersion,
+    state: v2State,
+  };
+  storage.setItem(core.SAVE_STORAGE_KEY, JSON.stringify({ ...unsigned, checksum: core.computeEnvelopeChecksum(unsigned) }));
+  const loaded = core.loadGameState(bundle, storage);
+  assert.equal(loaded.status, 'ok');
+  assert.equal(loaded.state.schemaVersion, 3);
+  assert.equal(loaded.state.events.activeEventId, 'sol3-airlock-seal-alert');
+  assert.equal(loaded.state.events.activeEvent?.deadlineSol, 3);
+  assert.deepEqual(loaded.state.events.resolvedEventIds, ['sol1-arrival-check']);
+  assert.equal(loaded.state.events.occurrenceHistory.length, 1);
+  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 3);
+});
+
+test('Phase 1.3 contract selectors and events catalog validation work end-to-end', () => {
+  const bundle = core.loadContentBundle();
+  const state = core.createInitialGameState(bundle, { seed: 7070 });
+  const activeView = core.selectActiveEventView(state, bundle);
+  assert.ok(activeView);
+  assert.equal(activeView.event.id, 'sol1-arrival-check');
+  assert.equal(activeView.event.art, 'tech-fault');
+  assert.equal(activeView.priority, 90);
+  assert.equal(activeView.mandatory, true);
+  const previews = core.selectEventChoicePreviews(state, 'sol1-arrival-check', bundle);
+  assert.equal(previews.length, 2);
+  assert.equal(previews[0].allowed, true);
+
+  assert.throws(
+    () =>
+      core.validateEventsCatalog([
+        {
+          ...bundle.events[0],
+          when: [{ sol: 1, solMin: 1 }],
+        },
+      ]),
+    /cannot combine sol with solMin\/solMax/
+  );
 });

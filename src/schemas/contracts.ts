@@ -25,7 +25,10 @@ import type {
   DonkiLevel,
   EquipmentCondition,
   EquipmentId,
+  EventArtId,
   EventNode,
+  EventRepeatPolicy,
+  EventResourceKey,
   ExpeditionId,
   FabricatorAction,
   GameCommand,
@@ -36,6 +39,7 @@ import type {
   PowerConsumerId,
   ProvenanceTag,
   RecipeCatalog,
+  RoverTimelineStage,
   SaveEnvelope,
   ScienceBrief,
   SimulationCatalog,
@@ -106,6 +110,32 @@ const ROVER_INCIDENT_KINDS = [
   'signal-timeout',
   'recovery-timeout',
 ] as const;
+const EVENT_ART_IDS: readonly EventArtId[] = [
+  'tech-fault',
+  'airlock-leak',
+  'solar-particle',
+  'robot-signal-loss',
+];
+const EVENT_REPEAT_POLICIES: readonly EventRepeatPolicy[] = ['once', 'cooldown', 'repeatable'];
+const EVENT_RESOURCE_KEYS: readonly EventResourceKey[] = [
+  'batteryKWh',
+  'oxygenKg',
+  'waterL',
+  'partsKg',
+  'mrePacks',
+  'medkits',
+];
+const ROVER_TIMELINE_STAGES: readonly RoverTimelineStage[] = [
+  'available',
+  'scheduled',
+  'launching',
+  'outbound',
+  'exploring',
+  'signal-lost',
+  'returning',
+  'completed',
+  'failed',
+];
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -539,64 +569,174 @@ export function validateDonkiCatalog(input: unknown): DonkiCatalog {
   return root as unknown as DonkiCatalog;
 }
 
+function validateEventEffect(rawEff: unknown, label: string): void {
+  const eff = assertRecord(rawEff, label);
+  const kind = assertString(eff.kind, `${label}.kind`);
+  switch (kind) {
+    case 'resource':
+      assertEnum(eff.resource, EVENT_RESOURCE_KEYS, `${label}.resource`);
+      assertFiniteNum(eff.delta, `${label}.delta`);
+      break;
+    case 'science':
+      assertInt(eff.delta, `${label}.delta`);
+      break;
+    case 'crew':
+      assertEnum(eff.target, ['cmd', 'eng', 'doc', 'geo', 'all'] as const, `${label}.target`);
+      if (eff.healthDelta !== undefined) assertFiniteNum(eff.healthDelta, `${label}.healthDelta`);
+      if (eff.moraleDelta !== undefined) assertFiniteNum(eff.moraleDelta, `${label}.moraleDelta`);
+      if (eff.satietyDelta !== undefined) assertFiniteNum(eff.satietyDelta, `${label}.satietyDelta`);
+      break;
+    case 'equipment-wear':
+      assertEnum(eff.equipmentId, EQUIPMENT_IDS, `${label}.equipmentId`);
+      assertFiniteNum(eff.wear, `${label}.wear`, 0, 100);
+      break;
+    case 'system-integrity':
+      assertEnum(eff.systemId, SYSTEM_IDS, `${label}.systemId`);
+      assertFiniteNum(eff.delta, `${label}.delta`, -1, 1);
+      break;
+    case 'plan-override':
+      if (eff.wrsEnabled !== undefined) assertBool(eff.wrsEnabled, `${label}.wrsEnabled`);
+      if (eff.extraPowerCostKWh !== undefined) assertFiniteNum(eff.extraPowerCostKWh, `${label}.extraPowerCostKWh`, 0);
+      break;
+    case 'set-flag':
+      assertString(eff.key, `${label}.key`);
+      if (typeof eff.value !== 'boolean' && typeof eff.value !== 'string' && (typeof eff.value !== 'number' || !Number.isFinite(eff.value))) {
+        throw new Error(`Invalid flag value at "${label}.value"`);
+      }
+      break;
+    case 'clear-flag':
+      assertString(eff.key, `${label}.key`);
+      break;
+    case 'assign-task':
+      assertEnum(eff.crewId, CREW_IDS, `${label}.crewId`);
+      assertEnum(eff.task, CREW_TASK_TYPES, `${label}.task`);
+      if (eff.targetSystemId !== undefined) assertEnum(eff.targetSystemId, SYSTEM_IDS, `${label}.targetSystemId`);
+      if (eff.targetCrewId !== undefined) assertEnum(eff.targetCrewId, CREW_IDS, `${label}.targetCrewId`);
+      break;
+    case 'rover-action':
+      assertEnum(eff.action, ['continue-expedition', 'fail-expedition', 'recover-signal', 'delay-1-sol'] as const, `${label}.action`);
+      if (eff.expeditionId !== undefined) assertEnum(eff.expeditionId, EXPEDITION_IDS, `${label}.expeditionId`);
+      break;
+    case 'schedule-follow-up':
+      assertString(eff.eventId, `${label}.eventId`);
+      assertInt(eff.delaySols, `${label}.delaySols`, 1, 31);
+      break;
+    default:
+      throw new Error(`Unsupported EventEffect.kind "${kind}" at "${label}"`);
+  }
+}
+
 export function validateEventsCatalog(input: unknown): readonly EventNode[] {
   const list = assertArray(input, 'events');
   if (list.length === 0) throw new Error('events.json must be non-empty');
+  const seenIds = new Set<string>();
   for (const [idx, rawEv] of list.entries()) {
     const ev = assertRecord(rawEv, `events[${idx}]`);
-    assertString(ev.id, `events[${idx}].id`);
+    const id = assertString(ev.id, `events[${idx}].id`);
+    if (seenIds.has(id)) throw new Error(`Duplicate event id "${id}"`);
+    seenIds.add(id);
     assertString(ev.title, `events[${idx}].title`);
+    if (ev.titleEn !== undefined) assertString(ev.titleEn, `events[${idx}].titleEn`);
     assertEnum(ev.category, ['ops', 'hazard', 'crisis', 'milestone'] as const, `events[${idx}].category`);
-    assertString(ev.art, `events[${idx}].art`);
+    assertEnum(ev.art, EVENT_ART_IDS, `events[${idx}].art`);
+    assertInt(ev.priority, `events[${idx}].priority`, 1, 100);
+    assertInt(ev.weight, `events[${idx}].weight`, 1, 1_000_000);
+    assertEnum(ev.repeatPolicy, EVENT_REPEAT_POLICIES, `events[${idx}].repeatPolicy`);
+    if (ev.cooldownSols !== undefined) assertInt(ev.cooldownSols, `events[${idx}].cooldownSols`, 1, 32);
+    if (ev.deadlineOffsetSols !== undefined) assertInt(ev.deadlineOffsetSols, `events[${idx}].deadlineOffsetSols`, 0, 31);
+    assertNullableString(ev.scienceBriefId, `events[${idx}].scienceBriefId`);
     assertBool(ev.mandatory, `events[${idx}].mandatory`);
     assertString(ev.prompt, `events[${idx}].prompt`);
+    if (ev.promptEn !== undefined) assertString(ev.promptEn, `events[${idx}].promptEn`);
 
     const when = assertArray(ev.when, `events[${idx}].when`);
     if (when.length === 0) throw new Error(`events[${idx}].when must not be empty`);
     for (const [wIdx, rawW] of when.entries()) {
       const w = assertRecord(rawW, `events[${idx}].when[${wIdx}]`);
+      if (Object.keys(w).length === 0) throw new Error(`events[${idx}].when[${wIdx}] must have at least one condition field`);
+      if (w.sol !== undefined && (w.solMin !== undefined || w.solMax !== undefined)) {
+        throw new Error(`events[${idx}].when[${wIdx}] cannot combine sol with solMin/solMax`);
+      }
       if (w.sol !== undefined) assertInt(w.sol, 'when.sol', 1, 32);
       if (w.solMin !== undefined) assertInt(w.solMin, 'when.solMin', 1, 32);
       if (w.solMax !== undefined) assertInt(w.solMax, 'when.solMax', 1, 32);
+      if (w.solMin !== undefined && w.solMax !== undefined && (w.solMin as number) > (w.solMax as number)) {
+        throw new Error(`events[${idx}].when[${wIdx}] solMin cannot exceed solMax`);
+      }
+      if (w.isLunarNight !== undefined) assertBool(w.isLunarNight, 'when.isLunarNight');
+      if (w.flagSet !== undefined) assertString(w.flagSet, 'when.flagSet');
+      if (w.flagNotSet !== undefined) assertString(w.flagNotSet, 'when.flagNotSet');
+      if (w.flagEquals !== undefined) {
+        const fe = assertRecord(w.flagEquals, 'when.flagEquals');
+        assertString(fe.key, 'when.flagEquals.key');
+        if (typeof fe.value !== 'boolean' && typeof fe.value !== 'string' && (typeof fe.value !== 'number' || !Number.isFinite(fe.value))) {
+          throw new Error('Invalid when.flagEquals.value');
+        }
+      }
+      if (w.choiceMade !== undefined) {
+        const cm = assertRecord(w.choiceMade, 'when.choiceMade');
+        assertString(cm.eventId, 'when.choiceMade.eventId');
+        assertString(cm.choiceId, 'when.choiceMade.choiceId');
+      }
+      if (w.eventSeen !== undefined) assertString(w.eventSeen, 'when.eventSeen');
+      if (w.eventNotSeen !== undefined) assertString(w.eventNotSeen, 'when.eventNotSeen');
+      if (w.roverExpeditionId !== undefined) assertEnum(w.roverExpeditionId, EXPEDITION_IDS, 'when.roverExpeditionId');
+      if (w.roverStatus !== undefined) assertEnum(w.roverStatus, ROVER_TIMELINE_STAGES, 'when.roverStatus');
+      if (w.systemIntegrityBelow !== undefined) {
+        const sib = assertRecord(w.systemIntegrityBelow, 'when.systemIntegrityBelow');
+        assertEnum(sib.id, SYSTEM_IDS, 'when.systemIntegrityBelow.id');
+        assertFiniteNum(sib.maxIntegrity, 'when.systemIntegrityBelow.maxIntegrity', 0, 1);
+      }
+      for (const boundKey of ['minResource', 'maxResource'] as const) {
+        if (w[boundKey] !== undefined) {
+          const bound = assertRecord(w[boundKey], `when.${boundKey}`);
+          if (Object.keys(bound).length === 0) throw new Error(`when.${boundKey} must not be empty`);
+          for (const [rk, rv] of Object.entries(bound)) {
+            assertEnum(rk, EVENT_RESOURCE_KEYS, `when.${boundKey}.${rk}`);
+            assertFiniteNum(rv, `when.${boundKey}.${rk}`, 0);
+          }
+        }
+      }
+      if (w.crewCondition !== undefined) {
+        const cc = assertRecord(w.crewCondition, 'when.crewCondition');
+        if (cc.crewId !== undefined) assertEnum(cc.crewId, CREW_IDS, 'when.crewCondition.crewId');
+        assertEnum(cc.condition, CREW_CONDITIONS, 'when.crewCondition.condition');
+      }
     }
 
     const choices = assertArray(ev.choices, `events[${idx}].choices`);
     if (choices.length === 0) throw new Error(`events[${idx}].choices must not be empty`);
+    const seenChoices = new Set<string>();
     for (const [cIdx, rawChoice] of choices.entries()) {
       const ch = assertRecord(rawChoice, `events[${idx}].choices[${cIdx}]`);
-      assertString(ch.id, 'choice.id');
+      const cid = assertString(ch.id, 'choice.id');
+      if (seenChoices.has(cid)) throw new Error(`Duplicate choice id "${cid}" in event "${id}"`);
+      seenChoices.add(cid);
       assertString(ch.label, 'choice.label');
+      if (ch.labelEn !== undefined) assertString(ch.labelEn, 'choice.labelEn');
       if (ch.requiresEquipment !== undefined) {
         assertEnum(ch.requiresEquipment, EQUIPMENT_IDS, 'choice.requiresEquipment');
       }
-      const eff = assertRecord(ch.effects, 'choice.effects');
-      if (eff.resources !== undefined) {
-        const res = assertRecord(eff.resources, 'choice.effects.resources');
-        for (const [rk, rv] of Object.entries(res)) {
-          assertEnum(rk, ['batteryKWh', 'oxygenKg', 'waterL', 'partsKg', 'mrePacks'] as const, `effects.resources.${rk}`);
-          assertFiniteNum(rv, `effects.resources.${rk}`);
-        }
+      if (ch.requiresFlag !== undefined) assertString(ch.requiresFlag, 'choice.requiresFlag');
+      if (ch.requiresCrew !== undefined) {
+        const rc = assertRecord(ch.requiresCrew, 'choice.requiresCrew');
+        assertEnum(rc.crewId, CREW_IDS, 'choice.requiresCrew.crewId');
+        if (rc.requireFree !== undefined) assertBool(rc.requireFree, 'choice.requiresCrew.requireFree');
+        if (rc.requireFit !== undefined) assertBool(rc.requireFit, 'choice.requiresCrew.requireFit');
       }
-      if (eff.crew !== undefined) {
-        const cr = assertRecord(eff.crew, 'choice.effects.crew');
-        if (cr.moraleDelta !== undefined) assertFiniteNum(cr.moraleDelta, 'crew.moraleDelta');
-        if (cr.healthDelta !== undefined) assertFiniteNum(cr.healthDelta, 'crew.healthDelta');
-      }
-      if (eff.equipmentDamage !== undefined) {
-        const ed = assertRecord(eff.equipmentDamage, 'choice.effects.equipmentDamage');
-        assertEnum(ed.id, EQUIPMENT_IDS, 'equipmentDamage.id');
-        assertFiniteNum(ed.wear, 'equipmentDamage.wear', 0, 100);
-      }
-      if (eff.systemIntegrity !== undefined) {
-        const si = assertRecord(eff.systemIntegrity, 'choice.effects.systemIntegrity');
-        assertEnum(si.id, SYSTEM_IDS, 'systemIntegrity.id');
-        assertFiniteNum(si.delta, 'systemIntegrity.delta', -1, 1);
-      }
-      if (eff.planOverride !== undefined) {
-        const po = assertRecord(eff.planOverride, 'choice.effects.planOverride');
-        if (po.wrsEnabled !== undefined) assertBool(po.wrsEnabled, 'planOverride.wrsEnabled');
-      }
+      const effects = assertArray(ch.effects, `events[${idx}].choices[${cIdx}].effects`);
+      effects.forEach((rawEff, eIdx) =>
+        validateEventEffect(rawEff, `events[${idx}].choices[${cIdx}].effects[${eIdx}]`)
+      );
       assertString(ch.log, 'choice.log');
+      if (ch.logEn !== undefined) assertString(ch.logEn, 'choice.logEn');
+    }
+
+    if (ev.onExpireEffects !== undefined) {
+      const expireEffs = assertArray(ev.onExpireEffects, `events[${idx}].onExpireEffects`);
+      expireEffs.forEach((rawEff, eIdx) =>
+        validateEventEffect(rawEff, `events[${idx}].onExpireEffects[${eIdx}]`)
+      );
     }
   }
   return list as unknown as readonly EventNode[];
@@ -676,7 +816,7 @@ export function validateCrewPhysiology(input: unknown): CrewPhysiologyDataset {
 
 export function validateGameStateStructure(input: unknown): GameState {
   const s = assertRecord(input, 'state');
-  if (s.schemaVersion !== 2) throw new Error('GameState schemaVersion must be 2');
+  if (s.schemaVersion !== 3) throw new Error('GameState schemaVersion must be 3');
   assertString(s.contentVersion, 'state.contentVersion');
   assertString(s.modelVersion, 'state.modelVersion');
   assertString(s.catalogVersion, 'state.catalogVersion');
@@ -817,7 +957,40 @@ export function validateGameStateStructure(input: unknown): GameState {
 
   const events = assertRecord(s.events, 'state.events');
   assertNullableString(events.activeEventId, 'events.activeEventId');
+  if (events.activeEvent !== null) {
+    const ae = assertRecord(events.activeEvent, 'events.activeEvent');
+    assertString(ae.eventId, 'activeEvent.eventId');
+    assertInt(ae.triggeredAtSol, 'activeEvent.triggeredAtSol', 1, 32);
+    assertInt(ae.deadlineSol, 'activeEvent.deadlineSol', 1, 64);
+    const ctx = assertRecord(ae.context, 'activeEvent.context');
+    for (const [ck, cv] of Object.entries(ctx)) {
+      if (typeof cv !== 'boolean' && typeof cv !== 'string' && (typeof cv !== 'number' || !Number.isFinite(cv))) {
+        throw new Error(`Invalid activeEvent.context.${ck}`);
+      }
+    }
+  }
   assertStringArray(events.resolvedEventIds, 'events.resolvedEventIds');
+  assertArray(events.occurrenceHistory, 'events.occurrenceHistory').forEach((rawOcc, idx) => {
+    const occ = assertRecord(rawOcc, `events.occurrenceHistory[${idx}]`);
+    assertString(occ.eventId, `occurrenceHistory[${idx}].eventId`);
+    assertInt(occ.triggeredSol, `occurrenceHistory[${idx}].triggeredSol`, 1, 32);
+    assertInt(occ.settledSol, `occurrenceHistory[${idx}].settledSol`, 1, 64);
+    assertEnum(occ.outcome, ['resolved', 'expired'] as const, `occurrenceHistory[${idx}].outcome`);
+    assertNullableString(occ.choiceId, `occurrenceHistory[${idx}].choiceId`);
+  });
+  const flags = assertRecord(events.flags, 'events.flags');
+  for (const [fk, fv] of Object.entries(flags)) {
+    if (typeof fv !== 'boolean' && typeof fv !== 'string' && (typeof fv !== 'number' || !Number.isFinite(fv))) {
+      throw new Error(`Invalid events.flags.${fk}`);
+    }
+  }
+  assertArray(events.pendingFollowUps, 'events.pendingFollowUps').forEach((rawFu, idx) => {
+    const fu = assertRecord(rawFu, `events.pendingFollowUps[${idx}]`);
+    assertString(fu.eventId, `pendingFollowUps[${idx}].eventId`);
+    assertInt(fu.triggerSol, `pendingFollowUps[${idx}].triggerSol`, 1, 64);
+    assertString(fu.sourceEventId, `pendingFollowUps[${idx}].sourceEventId`);
+    assertString(fu.sourceChoiceId, `pendingFollowUps[${idx}].sourceChoiceId`);
+  });
 
   const logi = assertRecord(s.logistics, 'state.logistics');
   if (logi.activeOrder !== null) {
@@ -855,7 +1028,7 @@ export function validateGameStateStructure(input: unknown): GameState {
 
 export function validateSaveEnvelopeStructure(input: unknown): SaveEnvelope {
   const env = assertRecord(input, 'saveEnvelope');
-  if (env.schemaVersion !== 2) throw new Error('Unsupported save schemaVersion');
+  if (env.schemaVersion !== 3) throw new Error('Unsupported save schemaVersion');
   assertString(env.savedAt, 'save.savedAt');
   assertString(env.appVersion, 'save.appVersion');
   assertString(env.contentVersion, 'save.contentVersion');

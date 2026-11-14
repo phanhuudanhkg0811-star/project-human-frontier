@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "contentVersion": "1.1.0-moon32",
   "modelVersion": "1.1.0-ts-donki",
   "catalogVersion": "1.1.0-moon32",
@@ -115,7 +115,16 @@
   },
   "events": {
     "activeEventId": "sol1-arrival-check",
-    "resolvedEventIds": []
+    "activeEvent": {
+      "eventId": "sol1-arrival-check",
+      "triggeredAtSol": 1,
+      "deadlineSol": 1,
+      "context": {}
+    },
+    "resolvedEventIds": [],
+    "occurrenceHistory": [],
+    "flags": {},
+    "pendingFollowUps": []
   },
   "logistics": {
     "activeOrder": null,
