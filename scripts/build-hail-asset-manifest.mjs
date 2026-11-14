@@ -71,10 +71,16 @@ function inferLayer(relativePath) {
   })[directory] ?? 'misc';
 }
 
+function readCanonicalAssetBytes(filePath, extension) {
+  const raw = fs.readFileSync(filePath);
+  // Keep SVG manifest sizes/hashes invariant across LF (Linux/CI) and CRLF (Windows) checkouts.
+  return extension === '.svg' ? Buffer.from(raw.toString('utf8').replace(/\r\n/g, '\n'), 'utf8') : raw;
+}
+
 const assets = listFiles(assetRoot).map((filePath) => {
-  const buffer = fs.readFileSync(filePath);
-  const relativePath = path.relative(assetRoot, filePath).replaceAll('\\', '/');
   const extension = path.extname(filePath).toLowerCase();
+  const buffer = readCanonicalAssetBytes(filePath, extension);
+  const relativePath = path.relative(assetRoot, filePath).replaceAll('\\', '/');
   const dimensions = extension === '.svg' ? svgDimensions(buffer) : extension === '.webp' ? webpDimensions(buffer) : null;
   const versionMatch = path.basename(filePath).match(/_V(\d+)/i);
   return {
