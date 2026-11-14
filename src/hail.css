@@ -103,7 +103,24 @@
   overflow: hidden;
   pointer-events: none;
   border-radius: 0.6cqi;
-  box-shadow: inset 0 0 0 1px rgba(199, 203, 200, 0.22);
+  box-shadow:
+    inset 0 0 1.4cqi rgba(6, 12, 18, 0.9),
+    inset 0 0 0 1px rgba(199, 203, 200, 0.28);
+}
+
+.hail-window-aperture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    125deg,
+    rgba(231, 230, 223, 0.1) 0%,
+    rgba(231, 230, 223, 0.02) 28%,
+    rgba(117, 169, 165, 0) 52%,
+    rgba(110, 145, 177, 0.06) 100%
+  );
+  pointer-events: none;
 }
 
 .hail-l00-space {
@@ -135,6 +152,44 @@
   object-fit: fill;
   z-index: 10;
   pointer-events: none;
+  filter: contrast(1.04) saturate(1.03);
+  transition: filter 0.4s ease;
+}
+
+.hail-camera-rig.is-lunar-night .hail-l02-shell {
+  filter: brightness(0.76) contrast(1.1) saturate(0.94);
+}
+
+/* L02.5 Atmospheric Depth, Vignette, Key Light & Contact Shading */
+.hail-cabin-lighting {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  background:
+    /* Overhead cabin key light cone */
+    radial-gradient(ellipse 46% 36% at 50% 8%, rgba(231, 230, 223, 0.12) 0%, rgba(231, 230, 223, 0) 72%),
+    /* Cool lunar window spill */
+    radial-gradient(ellipse 28% 28% at 50% 30%, rgba(110, 145, 177, 0.14) 0%, rgba(110, 145, 177, 0) 75%),
+    /* Console instrument bounce */
+    radial-gradient(ellipse 36% 24% at 50% 72%, rgba(117, 169, 165, 0.12) 0%, rgba(117, 169, 165, 0) 72%),
+    /* Floor depth shadow */
+    linear-gradient(180deg, rgba(12, 18, 25, 0.16) 0%, rgba(12, 18, 25, 0) 24%, rgba(12, 18, 25, 0.08) 72%, rgba(9, 14, 20, 0.56) 100%),
+    /* Perimeter vignette for 3D cockpit depth */
+    radial-gradient(ellipse 78% 72% at 50% 46%, rgba(12, 18, 25, 0) 48%, rgba(10, 16, 23, 0.46) 86%, rgba(7, 11, 17, 0.72) 100%);
+  transition: background 0.4s ease, opacity 0.4s ease;
+}
+
+.hail-camera-rig.is-lunar-night .hail-cabin-lighting {
+  background:
+    radial-gradient(ellipse 40% 32% at 50% 10%, rgba(110, 145, 177, 0.08) 0%, rgba(110, 145, 177, 0) 70%),
+    radial-gradient(ellipse 38% 26% at 50% 70%, rgba(117, 169, 165, 0.2) 0%, rgba(117, 169, 165, 0) 74%),
+    linear-gradient(180deg, rgba(8, 13, 22, 0.3) 0%, rgba(8, 13, 22, 0.06) 26%, rgba(8, 13, 22, 0.18) 72%, rgba(5, 9, 16, 0.68) 100%),
+    radial-gradient(ellipse 74% 68% at 50% 48%, rgba(8, 13, 22, 0) 42%, rgba(6, 10, 18, 0.62) 84%, rgba(4, 7, 13, 0.84) 100%);
+}
+
+.hail-camera-rig.is-storm .hail-cabin-lighting {
+  box-shadow: inset 0 0 6cqi rgba(197, 125, 89, 0.22);
 }
 
 /* Shared Sprite Helpers */
@@ -587,22 +642,23 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 
 .hail-crew-member.is-rear {
   z-index: 20;
-  filter: brightness(0.94);
+  filter: brightness(0.86) contrast(0.98) drop-shadow(0 0.5cqi 0.7cqi rgba(8, 13, 19, 0.55));
 }
 
 .hail-crew-member.is-foreground {
   z-index: 35;
+  filter: drop-shadow(0 0.7cqi 1.1cqi rgba(8, 13, 19, 0.62));
 }
 
 .hail-crew-member::after {
   content: '';
   position: absolute;
-  left: 16%;
-  right: 16%;
-  bottom: 0.2%;
-  height: 5%;
+  left: 12%;
+  right: 12%;
+  bottom: -0.5%;
+  height: 6.5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(10, 15, 20, 0.58) 0%, rgba(10, 15, 20, 0) 74%);
+  background: radial-gradient(ellipse at center, rgba(6, 10, 15, 0.72) 0%, rgba(6, 10, 15, 0) 76%);
   pointer-events: none;
   z-index: -1;
 }
@@ -669,12 +725,12 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-decision-console::after {
   content: '';
   position: absolute;
-  left: 6%;
-  right: 6%;
-  bottom: -1.5%;
-  height: 6%;
+  left: 4%;
+  right: 4%;
+  bottom: -2%;
+  height: 7.5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(10, 15, 20, 0.52) 0%, rgba(10, 15, 20, 0) 74%);
+  background: radial-gradient(ellipse at center, rgba(6, 10, 15, 0.74) 0%, rgba(6, 10, 15, 0) 76%);
   pointer-events: none;
   z-index: -1;
 }
@@ -685,6 +741,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   object-fit: contain;
   object-position: bottom center;
   pointer-events: none;
+  filter: drop-shadow(0 0.9cqi 1.4cqi rgba(6, 11, 16, 0.7));
 }
 
 /* Exact bezel-locked live micro-displays measured on PH_EQP_CONSOLE_DESK_BASE_V02 (1266x659) */

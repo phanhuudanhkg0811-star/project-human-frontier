@@ -125,7 +125,9 @@ export function HailGameViewport() {
       <div className="hail-stage">
         <TelemetryTopBar />
 
-        <div className={`hail-camera-rig ${focusClass}`}>
+        <div
+          className={`hail-camera-rig ${focusClass} ${progress.isLunarNight ? 'is-lunar-night' : ''} ${weather.level === 'storm' || weather.level === 'extreme' ? 'is-storm' : ''}`.trim()}
+        >
           {/* Observation Window Backdrop */}
           <div className="hail-window-aperture" aria-hidden="true">
             <img src={HAIL_ENV.spaceDeep} alt="" className="hail-l00-space" draggable={false} />
@@ -138,6 +140,7 @@ export function HailGameViewport() {
           </div>
 
           <img src={HAIL_ENV.cockpitShell} alt="Khoang chỉ huy trạm Artemis" className="hail-l02-shell" draggable={false} />
+          <div className="hail-cabin-lighting" aria-hidden="true" />
 
           {/* UL: Food & Aid Wall Rack */}
           <div className="hail-bay-rack hail-bay-rack--ul" aria-label="Tủ Thực phẩm MRE và Y tế">
