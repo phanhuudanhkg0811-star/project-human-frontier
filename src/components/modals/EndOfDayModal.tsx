@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
+import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
+import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
@@ -20,13 +22,15 @@ export function EndOfDayModal({
   onComms,
   onClose,
 }: {
-  onStarlog: () => void;
-  onComms: () => void;
+  onStarlog?: () => void;
+  onComms?: () => void;
   onClose: () => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
   const [leverPulled, setLeverPulled] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const inFlight = useRef(false);
 
   const sol = gameState.clock.sol;
   const ended = gameState.campaign.status !== 'active' || gameState.clock.phase === 'terminal';
@@ -35,15 +39,18 @@ export function EndOfDayModal({
     : null;
   const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
   const inRationing = gameState.clock.phase === 'rationing' && !ended;
-  const canPullLever = inRationing && !mustResolveEvent && !leverPulled;
+  const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
 
   useEffect(() => {
+    inFlight.current = false;
+    setIsSubmitting(false);
     setLeverPulled(false);
     setErrorMsg(null);
   }, [sol]);
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
+  const debriefView = selectDynamicDebrief(gameState, bundle);
 
   const prepareRations = async () => {
     playSfx('click', 0.45);
@@ -62,7 +69,7 @@ export function EndOfDayModal({
   };
 
   const promotePriority = async (idx: number) => {
-    if (!inRationing || idx <= 0) return;
+    if (!inRationing || isSubmitting || idx <= 0) return;
     playSfx('click', 0.4);
     const copy = [...gameState.dailyPlan.powerPriority];
     const tmp = copy[idx - 1];
@@ -73,14 +80,14 @@ export function EndOfDayModal({
   };
 
   const handleToggleMre = async (crewId: CrewId) => {
-    if (!inRationing) return;
+    if (!inRationing || isSubmitting) return;
     playSfx('click', 0.45);
     const res = await dispatch({ type: 'rationing/toggle-mre', crewId });
     if (!res.ok) setErrorMsg(res.error.message);
   };
 
   const handleToggleWrs = async () => {
-    if (!inRationing) return;
+    if (!inRationing || isSubmitting) return;
     playSfx('click', 0.45);
     const res = await dispatch({
       type: 'rationing/set-wrs',
@@ -90,10 +97,14 @@ export function EndOfDayModal({
   };
 
   const handlePullLever = async () => {
-    if (!canPullLever) return;
+    if (!canPullLever || inFlight.current) return;
+    inFlight.current = true;
+    setIsSubmitting(true);
     setLeverPulled(true);
+    setErrorMsg(null);
     playSfx('endSol', 0.7);
-    window.setTimeout(async () => {
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
       const res = await dispatch({ type: 'sol/end' });
       if (res.ok) {
         onClose();
@@ -101,7 +112,13 @@ export function EndOfDayModal({
         setLeverPulled(false);
         setErrorMsg(res.error.message);
       }
-    }, 240);
+    } catch {
+      setLeverPulled(false);
+      setErrorMsg('Chưa thể chốt Sol. Hãy thử lại.');
+    } finally {
+      inFlight.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -140,7 +157,7 @@ export function EndOfDayModal({
                   className="hail-term-inline-cmd is-warn"
                   onClick={() => {
                     playSfx('click', 0.45);
-                    onStarlog();
+                    onStarlog?.();
                   }}
                 >
                   [XỬ LÝ SỰ CỐ TRƯỚC]
@@ -153,7 +170,7 @@ export function EndOfDayModal({
                     className="hail-term-inline-cmd"
                     onClick={() => {
                       playSfx('radioOn', 0.45);
-                      onComms();
+                      onComms?.();
                     }}
                   >
                     [LIÊN LẠC]
@@ -212,7 +229,7 @@ export function EndOfDayModal({
                       aria-checked={giveMre}
                       aria-label={`Phát MRE cho ${member.name}`}
                       className="hail-alloc-check-btn"
-                      disabled={!inRationing || evacuated}
+                      disabled={!inRationing || evacuated || isSubmitting}
                       onClick={() => handleToggleMre(crewId)}
                     >
                       <img
@@ -248,7 +265,7 @@ export function EndOfDayModal({
                 role="checkbox"
                 aria-checked={gameState.dailyPlan.wrsEnabled}
                 className="hail-alloc-sys-check"
-                disabled={!inRationing}
+                disabled={!inRationing || isSubmitting}
                 onClick={handleToggleWrs}
               >
                 <img
@@ -269,7 +286,7 @@ export function EndOfDayModal({
                   <button
                     key={id}
                     type="button"
-                    disabled={!inRationing || idx === 0}
+                    disabled={!inRationing || idx === 0 || isSubmitting}
                     onClick={() => promotePriority(idx)}
                     title={idx === 0 ? `${SHORT_LOAD_LABEL[id]} ưu tiên #1` : `Đẩy ${SHORT_LOAD_LABEL[id]} lên mức #${idx}`}
                     className="hail-alloc-priority-pill"
@@ -283,7 +300,7 @@ export function EndOfDayModal({
 
             <div className="hail-alloc-predictor-row">
               <p className="hail-alloc-summary-line">
-                DỰ BÁO ĐÊM: PIN {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}
+                Dự báo Cuối Sol {sol}: PIN {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}
                 {preview.resourceDeltas.batteryKWh}kWh · O₂ {preview.resourceDeltas.oxygenKg}kg · NƯỚC{' '}
                 {preview.resourceDeltas.waterL}L
                 {preview.blackout ? ' · [CẢNH BÁO BLACKOUT!]' : ''}
@@ -296,6 +313,15 @@ export function EndOfDayModal({
                 ))}
               </div>
             </div>
+
+            <details className="hail-alloc-debrief-drawer">
+              <summary>
+                {debriefView.summary
+                  ? `NASA STEM · Báo cáo đã hoàn thành Sol ${debriefView.summary.sol} ▾`
+                  : 'NASA STEM · Nhật ký Sol gần nhất ▾'}
+              </summary>
+              <DynamicSTEMBrief view={debriefView} bundle={bundle} />
+            </details>
           </footer>
         </div>
 
@@ -316,7 +342,7 @@ export function EndOfDayModal({
             aria-label="Gạt cần kết thúc Sol"
             title={
               canPullLever
-                ? 'Gạt cần kết thúc Sol'
+                ? `Gạt cần Chốt Sol ${sol}`
                 : mustResolveEvent
                   ? 'Hãy xử lý sự cố trước khi gạt cần'
                   : 'Chốt pha chuẩn bị để kích hoạt cần gạt'
@@ -329,10 +355,10 @@ export function EndOfDayModal({
               draggable={false}
             />
             <span className="hail-lever-caption">
-              {leverPulled
+              {isSubmitting || leverPulled
                 ? 'ĐANG QUA ĐÊM...'
                 : canPullLever
-                  ? 'GẠT KẾT THÚC'
+                  ? `Chốt Sol ${sol}`
                   : 'KHÓA AN TOÀN'}
             </span>
           </button>

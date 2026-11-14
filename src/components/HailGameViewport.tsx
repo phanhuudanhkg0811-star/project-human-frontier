@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { playSfx, startMusic } from '../audio/sfx.ts';
+import { selectActiveEventView } from '../domain/eventSelectors.ts';
+import { EventPriorityBanner } from './EventPriorityBanner.tsx';
 import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import { useUiStore } from '../store/uiStore.ts';
@@ -64,6 +66,8 @@ export function HailGameViewport() {
   const progress = selectMissionProgress(gameState, bundle);
   const weather = selectWeatherOutlook(gameState, bundle);
   const advancePerm = selectCanAdvancePhase(gameState, bundle);
+  const activeEventView = selectActiveEventView(gameState, bundle);
+  const requiresBriefingChoice = gameState.clock.phase === 'briefing' && activeEventView?.mandatory === true;
 
   const fabSprite =
     gameState.systems.fabricator.status === 'offline'
@@ -91,7 +95,7 @@ export function HailGameViewport() {
 
   const handlePrimaryAction = async () => {
     startMusic(0.28);
-    if (gameState.clock.phase === 'briefing' && gameState.events.activeEventId) {
+    if (requiresBriefingChoice) {
       openPanel('starlog');
       return;
     }
@@ -430,7 +434,7 @@ export function HailGameViewport() {
             >
               <img src={HAIL_SVG.actExplore} alt="" />
               <span>
-                {gameState.clock.phase === 'briefing' && gameState.events.activeEventId
+                {requiresBriefingChoice
                   ? 'Xử lý Sự kiện'
                   : gameState.clock.phase === 'rationing'
                     ? 'End-Sol'
@@ -442,6 +446,13 @@ export function HailGameViewport() {
       </div>
 
       {/* Modals */}
+      {gameState.campaign.status === 'active' && (
+        <EventPriorityBanner
+          view={activeEventView}
+          currentSol={gameState.clock.sol}
+          onOpen={() => openPanel('starlog')}
+        />
+      )}
       {activeModal === 'journal' && (
         <JournalModal
           onClose={closeModal}

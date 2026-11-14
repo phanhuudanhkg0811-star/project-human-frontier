@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { playSfx } from '../../audio/sfx.ts';
 import { selectActiveEventView, selectEventChoicePreviews } from '../../domain/eventSelectors.ts';
 import { selectCanAdvancePhase, selectWeatherOutlook } from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
-import type { EquipmentId, EventChoice } from '../../types/index.ts';
-import { HAIL_INVENTORY, HAIL_SVG, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
+import type { EquipmentId, EventChoice, EventResourceKey } from '../../types/index.ts';
+import { EVENT_CATEGORY_LABELS, EVENT_RESOURCE_LABELS, eventDeadlineText, formatEventEffectSummary } from '../eventPresentation.ts';
+import { HAIL_INVENTORY, HAIL_SVG, HAIL_TACTILE_UI, getHailEventScene } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 
 interface ChoiceVisual {
@@ -79,11 +80,14 @@ export function StarlogModal({
   onOpenJournal,
 }: {
   onClose: () => void;
-  onOpenJournal: () => void;
+  onOpenJournal?: () => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [choiceError, setChoiceError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const inFlight = useRef(false);
 
   const activeView = selectActiveEventView(gameState, bundle);
   const weather = selectWeatherOutlook(gameState, bundle);
@@ -94,31 +98,49 @@ export function StarlogModal({
     ? selectEventChoicePreviews(gameState, event.id, bundle)
     : [];
 
+  const planningPhase = ['briefing', 'engineering', 'comms', 'rationing'].includes(gameState.clock.phase);
+  const canRespondNow =
+    planningPhase &&
+    gameState.campaign.status === 'active' &&
+    activeView !== null &&
+    gameState.clock.sol <= activeView.deadlineSol;
+
   const phaseAllowed = event
     ? event.mandatory
-      ? gameState.clock.phase === 'briefing'
-      : ['briefing', 'engineering', 'comms', 'rationing'].includes(gameState.clock.phase)
+      ? gameState.clock.phase === 'briefing' && canRespondNow
+      : canRespondNow
     : false;
 
   const triggerChoice = async (choiceId: string) => {
-    if (!event) return;
+    if (!event || inFlight.current || !phaseAllowed) return;
+    inFlight.current = true;
+    setIsSubmitting(true);
+    setChoiceError(null);
+    setFeedback(null);
     setPressedKey(choiceId);
     playSfx('click', 0.55);
-    window.setTimeout(async () => {
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 120));
       const res = await dispatch({
         type: 'event/resolve',
         eventId: event.id,
         choiceId,
       });
-      setPressedKey(null);
       if (res.ok) {
         playSfx('open', 0.45);
         setFeedback(res.effects[0]?.message ?? 'Đã ghi nhận quyết định.');
       } else {
         playSfx('alert', 0.45);
-        setFeedback(res.error.message);
+        setChoiceError(res.error.message);
       }
-    }, 130);
+    } catch {
+      playSfx('alert', 0.45);
+      setChoiceError('Chưa thể xử lý lựa chọn. Hãy thử lại.');
+    } finally {
+      inFlight.current = false;
+      setIsSubmitting(false);
+      setPressedKey(null);
+    }
   };
 
   const triggerContinue = async () => {
@@ -160,7 +182,7 @@ export function StarlogModal({
       tactileFrame
       onClose={onClose}
     >
-      <section className="hail-tactile-frame hail-tactile-frame--decision" aria-label="Terminal Quyết định Sự cố">
+      <section className="hail-tactile-frame hail-tactile-frame--decision" aria-label="Terminal Quyết định Sự cố" aria-busy={isSubmitting}>
         <img
           src={HAIL_TACTILE_UI.decisionFrame}
           alt=""
@@ -170,26 +192,56 @@ export function StarlogModal({
 
         {/* Main Left Neutral Screen */}
         <div className="hail-dec-main-screen">
-          {/* Upper Half: Strictly Pure Terminal Text Lines */}
+          {/* Upper Half: Strictly Pure Terminal Text Lines & Event Metadata */}
           <div className="hail-dec-text-pane">
             <div className="hail-term-topbar">
               <span className="hail-term-code">
-                {event
-                  ? `DECISION TERMINAL // ${event.mandatory ? 'SỰ CỐ BẮT BUỘC' : `HẠN SOL ${activeView?.deadlineSol ?? gameState.clock.sol}`}`
+                {event && activeView
+                  ? `${EVENT_CATEGORY_LABELS[event.category]} // ${activeView.mandatory ? 'Bắt buộc' : 'Tùy chọn'} · Ưu tiên ${activeView.priority}`
                   : 'DECISION TERMINAL // GIÁM SÁT TRẠM'}
               </span>
               <span className="hail-term-sol">
-                SOL {String(gameState.clock.sol).padStart(2, '0')} // {weather.level.toUpperCase()}
+                {activeView
+                  ? eventDeadlineText(activeView, gameState.clock.sol)
+                  : `SOL ${String(gameState.clock.sol).padStart(2, '0')} // ${weather.level.toUpperCase()}`}
               </span>
             </div>
 
+            {event && activeView && (
+              <div className={`hail-dec-event-head hail-event-detail--${event.category}`}>
+                <img
+                  src={getHailEventScene(event.art)}
+                  alt=""
+                  className="hail-dec-event-thumb"
+                  draggable={false}
+                />
+                <div className="hail-dec-event-meta">
+                  <strong className="hail-dec-event-title">{event.title}</strong>
+                  <span className="hail-dec-event-sub">
+                    {activeView.mandatory
+                      ? 'Bắt buộc · xử lý trước khi rời giao ban'
+                      : 'Tùy chọn · có thể xử lý trong các pha của ngày'}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {event && !canRespondNow && (
+              <p className="hail-event-error">Sự kiện không còn nhận lựa chọn ở thời điểm này.</p>
+            )}
+            {choiceError && (
+              <p role="alert" className="hail-event-error">{choiceError}</p>
+            )}
+
             <ol className="hail-term-lines hail-dec-lines">
-              <li>
-                <span className="hail-term-prompt">&gt;</span>
-                <span>
-                  SỰ KIỆN: <strong>{event?.title ?? 'Hệ thống Trạm ổn định'}</strong>
-                </span>
-              </li>
+              {!event && (
+                <li>
+                  <span className="hail-term-prompt">&gt;</span>
+                  <span>
+                    SỰ KIỆN: <strong>Hệ thống Trạm ổn định</strong>
+                  </span>
+                </li>
+              )}
               <li>
                 <span className="hail-term-prompt">&gt;</span>
                 <span>PHÂN TÍCH: {promptText}</span>
@@ -203,16 +255,54 @@ export function StarlogModal({
               {event && choicePreviews.length > 0 ? (
                 choicePreviews.map((pv, idx) => {
                   const vis = getChoiceVisual(pv.choice);
-                  const effLine = pv.effectsSummary.length > 0 ? ` (${pv.effectsSummary.slice(0, 3).join(', ')})` : '';
-                  const blockNote = !pv.allowed && pv.blockedReasons[0] ? ` [KHÓA: ${pv.blockedReasons[0]}]` : '';
+                  const reasonsId = `event-choice-${pv.choice.id}-reasons`;
+                  const deltaParts = [
+                    ...Object.entries(pv.resourceDeltas).map(
+                      ([res, delta]) =>
+                        `${EVENT_RESOURCE_LABELS[res as EventResourceKey]}: ${Number(delta) > 0 ? '+' : ''}${delta}`
+                    ),
+                    ...(pv.scienceDelta !== 0
+                      ? [`Khoa học: ${pv.scienceDelta > 0 ? '+' : ''}${pv.scienceDelta}`]
+                      : []),
+                  ];
+                  const effText = pv.effectsSummary.map(formatEventEffectSummary).join(', ');
+
                   return (
-                    <li key={pv.choice.id}>
+                    <li
+                      key={pv.choice.id}
+                      className={`hail-dec-choice-item ${!pv.allowed ? 'is-blocked' : ''}`}
+                    >
                       <span className="hail-term-prompt">&gt;</span>
-                      <span>
-                        [{vis.tone === 'red' ? 'X' : `0${idx + 1}`} · {vis.shortCode}]: {pv.choice.label}
-                        {effLine}
-                        {blockNote}
-                      </span>
+                      <div className="hail-dec-choice-body">
+                        <div className="hail-dec-choice-top">
+                          <span className="hail-dec-choice-tag">
+                            [{vis.tone === 'red' ? 'X' : `0${idx + 1}`} · {vis.shortCode}]
+                          </span>
+                          <button
+                            type="button"
+                            className="hail-btn hail-choice-card"
+                            disabled={!phaseAllowed || !pv.allowed || isSubmitting}
+                            aria-describedby={pv.blockedReasons.length > 0 ? reasonsId : undefined}
+                            onClick={() => triggerChoice(pv.choice.id)}
+                          >{isSubmitting ? 'Đang xử lý…' : `Chọn: ${pv.choice.label}`}</button>
+                        </div>
+                        {(deltaParts.length > 0 || effText) && (
+                          <span className="hail-dec-costs-line">
+                            {[deltaParts.join(' · '), effText].filter(Boolean).join(' — ')}
+                          </span>
+                        )}
+                        {pv.blockedReasons.length > 0 && (
+                          <ul
+                            id={reasonsId}
+                            className="hail-event-blocked hail-dec-inline-list"
+                            aria-label="Lý do chưa thể chọn"
+                          >
+                            {pv.blockedReasons.map((reason, index) => (
+                              <li key={index}>{formatEventEffectSummary(reason)}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </li>
                   );
                 })
@@ -246,7 +336,7 @@ export function StarlogModal({
             {event && choicePreviews.length > 0 ? (
               choicePreviews.map((pv) => {
                 const vis = getChoiceVisual(pv.choice);
-                const disabled = !phaseAllowed || !pv.allowed;
+                const disabled = !phaseAllowed || !pv.allowed || isSubmitting;
                 const isPressed = pressedKey === pv.choice.id;
                 const btnArt =
                   vis.tone === 'green'
@@ -358,7 +448,7 @@ export function StarlogModal({
             className="hail-term-text-link"
             onClick={() => {
               playSfx('click', 0.45);
-              onOpenJournal();
+              onOpenJournal?.();
             }}
           >
             [MỞ NHẬT KÝ 4-TAB &gt;&gt;]
