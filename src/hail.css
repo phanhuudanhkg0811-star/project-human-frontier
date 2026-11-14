@@ -1118,6 +1118,17 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   color: #E7E6DF;
 }
 
+.hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
+  padding: 20px 22px 22px;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 640px) {
+  .hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
+    padding: 16px;
+  }
+}
+
 /* Starlog Event Banner & Decision Cards */
 .hail-event-banner {
   position: relative;
