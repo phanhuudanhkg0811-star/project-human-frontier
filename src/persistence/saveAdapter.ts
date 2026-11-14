@@ -1,11 +1,21 @@
 import { canonicalStringify } from '../domain/canonicalJson.ts';
 import { validateStateInvariants } from '../domain/invariants.ts';
 import { sha256Hex } from '../domain/prng.ts';
-import { validateSaveEnvelopeStructure } from '../schemas/contracts.ts';
-import type { ContentBundle, DomainError, GameState, SaveEnvelope } from '../types/index.ts';
+import { validateGameStateStructure, validateSaveEnvelopeStructure } from '../schemas/contracts.ts';
+import type {
+  ContentBundle,
+  CrewId,
+  DomainError,
+  EquipmentId,
+  ExpeditionId,
+  GameState,
+  RoverMissionResult,
+  SaveEnvelope,
+} from '../types/index.ts';
 
+// Keep the legacy key so Phase 1.1 saves are discovered and upgraded in place.
 export const SAVE_STORAGE_KEY = 'human-frontier:moon32:save-v1';
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.2.0';
 
 export interface StorageLike {
   getItem(key: string): string | null;
@@ -13,11 +23,36 @@ export interface StorageLike {
   removeItem(key: string): void;
 }
 
+interface ChecksumEnvelope {
+  readonly schemaVersion: number;
+  readonly savedAt: string;
+  readonly appVersion: string;
+  readonly contentVersion: string;
+  readonly modelVersion: string;
+  readonly catalogVersion: string;
+  readonly state: unknown;
+  readonly checksum?: string;
+}
+
+interface LegacyRoverState {
+  readonly status?: 'idle' | 'outbound' | 'exploring' | 'returning' | 'broken';
+  readonly expeditionId?: ExpeditionId | null;
+  readonly solsRemaining?: number;
+  readonly equippedItems?: readonly EquipmentId[];
+  readonly samplesCollected?: readonly string[];
+  readonly completedExpeditions?: readonly ExpeditionId[];
+}
+
+type LegacyGameState = Omit<GameState, 'schemaVersion' | 'campaign' | 'dailyPlan' | 'rover'> & {
+  readonly schemaVersion: 1;
+  readonly campaign: Omit<GameState['campaign'], 'sciencePoints'>;
+  readonly dailyPlan: GameState['dailyPlan'] & { readonly medkitTargets?: readonly CrewId[] };
+  readonly rover: LegacyRoverState;
+};
+
 function getDefaultStorage(): StorageLike | null {
   try {
-    if (typeof globalThis !== 'undefined' && 'localStorage' in globalThis) {
-      return globalThis.localStorage;
-    }
+    if (typeof globalThis !== 'undefined' && 'localStorage' in globalThis) return globalThis.localStorage;
   } catch {
     return null;
   }
@@ -30,8 +65,8 @@ export function computeStateChecksum(state: GameState): string {
   return sha256Hex(canonicalStringify(state));
 }
 
-export function computeEnvelopeChecksum(envelope: SaveEnvelopeUnsigned | SaveEnvelope): string {
-  const payload: SaveEnvelopeUnsigned = {
+export function computeEnvelopeChecksum(envelope: ChecksumEnvelope): string {
+  return sha256Hex(canonicalStringify({
     schemaVersion: envelope.schemaVersion,
     savedAt: envelope.savedAt,
     appVersion: envelope.appVersion,
@@ -39,13 +74,12 @@ export function computeEnvelopeChecksum(envelope: SaveEnvelopeUnsigned | SaveEnv
     modelVersion: envelope.modelVersion,
     catalogVersion: envelope.catalogVersion,
     state: envelope.state,
-  };
-  return sha256Hex(canonicalStringify(payload));
+  }));
 }
 
 export function buildSaveEnvelope(state: GameState, nowIso = new Date().toISOString()): SaveEnvelope {
   const unsigned: SaveEnvelopeUnsigned = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     savedAt: nowIso,
     appVersion: APP_VERSION,
     contentVersion: state.contentVersion,
@@ -53,10 +87,95 @@ export function buildSaveEnvelope(state: GameState, nowIso = new Date().toISOStr
     catalogVersion: state.catalogVersion,
     state,
   };
-  return {
-    ...unsigned,
-    checksum: computeEnvelopeChecksum(unsigned),
+  return { ...unsigned, checksum: computeEnvelopeChecksum(unsigned) };
+}
+
+export function migrateSaveV1ToV2(legacy: LegacyGameState, bundle: ContentBundle): GameState {
+  const oldRover = legacy.rover;
+  const completed = oldRover.completedExpeditions ?? [];
+  const expeditionById = new Map(bundle.campaign.expeditions.map((entry) => [entry.id, entry]));
+  const missionHistory: RoverMissionResult[] = completed.map((id) => {
+    const expedition = expeditionById.get(id);
+    return {
+      expeditionId: id,
+      outcome: 'completed',
+      launchedSol: null,
+      settledSol: Math.max(1, legacy.clock.sol),
+      rewardSampleGranted: expedition?.rewardSample ?? null,
+      scienceGranted: expedition?.rewards.science ?? 0,
+      launchOperatorCrewId: null,
+      recoveryOperatorCrewId: null,
+      equippedItems: [],
+      incidents: [],
+    };
+  });
+
+  const equipment = { ...legacy.equipment };
+  let activeMission: GameState['rover']['activeMission'] = null;
+  const activeExpedition = oldRover.expeditionId ? expeditionById.get(oldRover.expeditionId) : undefined;
+  const oldStatus = oldRover.status ?? 'idle';
+  const activeItems = oldRover.equippedItems ?? [];
+
+  if (activeExpedition && !completed.includes(activeExpedition.id) && ['outbound', 'exploring', 'returning'].includes(oldStatus)) {
+    const assignedOperator = (Object.keys(legacy.crew) as CrewId[]).find(
+      (id) => legacy.crew[id].assignedTask?.type === 'rover-operate'
+    );
+    const launchOperatorCrewId: CrewId = assignedOperator ?? 'geo';
+    const travelTicksCompleted = oldStatus === 'returning' ? 2 : 1;
+    activeMission = {
+      expeditionId: activeExpedition.id,
+      status: oldStatus === 'outbound' ? 'outbound' : 'exploring',
+      scheduledSol: Math.max(1, legacy.clock.sol - travelTicksCompleted + 1),
+      launchedSol: Math.max(1, legacy.clock.sol - travelTicksCompleted + 1),
+      statusEnteredSol: legacy.clock.sol,
+      expectedReturnSol: legacy.clock.sol + (3 - travelTicksCompleted),
+      launchOperatorCrewId,
+      recoveryOperatorCrewId: null,
+      equippedItems: activeItems,
+      travelTicksCompleted,
+      signalLostSols: 0,
+      resumeStatus: null,
+      recoveryDelaySols: 0,
+      incidents: [],
+    };
+  } else if (activeExpedition && oldStatus === 'broken' && !completed.includes(activeExpedition.id)) {
+    missionHistory.push({
+      expeditionId: activeExpedition.id,
+      outcome: 'failed',
+      launchedSol: null,
+      settledSol: legacy.clock.sol,
+      rewardSampleGranted: null,
+      scienceGranted: 0,
+      launchOperatorCrewId: null,
+      recoveryOperatorCrewId: null,
+      equippedItems: activeItems,
+      incidents: [{ kind: 'signal-timeout', occurredSol: legacy.clock.sol, summary: 'Migrated from legacy broken Rover state.' }],
+    });
+  }
+
+  for (const id of Object.keys(equipment) as EquipmentId[]) {
+    equipment[id] = { ...equipment[id], reservedForRover: Boolean(activeMission?.equippedItems.includes(id)) };
+  }
+
+  const sciencePoints = missionHistory.reduce((sum, result) => sum + result.scienceGranted, 0);
+  const migrated: GameState = {
+    ...legacy,
+    schemaVersion: 2,
+    contentVersion: bundle.balance.contentVersion,
+    modelVersion: bundle.balance.modelVersion,
+    catalogVersion: bundle.catalog.catalogVersion,
+    campaign: { ...legacy.campaign, sciencePoints },
+    dailyPlan: {
+      sol: legacy.dailyPlan.sol,
+      status: legacy.dailyPlan.status,
+      wrsEnabled: legacy.dailyPlan.wrsEnabled,
+      powerPriority: legacy.dailyPlan.powerPriority,
+      mreTargets: legacy.dailyPlan.mreTargets,
+    },
+    equipment,
+    rover: { activeMission, missionHistory },
   };
+  return validateGameStateStructure(migrated);
 }
 
 export type SaveWriteResult =
@@ -68,43 +187,36 @@ export type LoadSaveResult =
   | { readonly status: 'ok'; readonly state: GameState; readonly envelope: SaveEnvelope }
   | { readonly status: 'error'; readonly error: DomainError };
 
-export function saveGameState(
-  state: GameState,
-  storage: StorageLike | null = getDefaultStorage(),
-  nowIso?: string
-): SaveWriteResult {
-  if (!storage) {
-    return {
-      ok: false,
-      error: {
-        code: 'E_SAVE_CORRUPTED',
-        message: 'Trình duyệt hiện không hỗ trợ bộ nhớ lưu cục bộ (localStorage).',
-        recoverable: true,
-      },
-    };
-  }
+export function saveGameState(state: GameState, storage: StorageLike | null = getDefaultStorage(), nowIso?: string): SaveWriteResult {
+  if (!storage) return { ok: false, error: { code: 'E_SAVE_CORRUPTED', message: 'Trình duyệt không hỗ trợ localStorage.', recoverable: true } };
   try {
-    const envelope = buildSaveEnvelope(state, nowIso);
-    storage.setItem(SAVE_STORAGE_KEY, JSON.stringify(envelope));
+    storage.setItem(SAVE_STORAGE_KEY, JSON.stringify(buildSaveEnvelope(state, nowIso)));
     return { ok: true };
-  } catch (err) {
-    return {
-      ok: false,
-      error: {
-        code: 'E_SAVE_CORRUPTED',
-        message: `Không thể ghi Save xuống bộ nhớ cục bộ: ${err instanceof Error ? err.message : String(err)}`,
-        recoverable: true,
-      },
-    };
+  } catch (error) {
+    return { ok: false, error: { code: 'E_SAVE_CORRUPTED', message: `Không thể ghi Save: ${error instanceof Error ? error.message : String(error)}`, recoverable: true } };
   }
 }
 
-export function loadGameState(
-  bundle: ContentBundle,
-  storage: StorageLike | null = getDefaultStorage()
-): LoadSaveResult {
+function loadError(code: DomainError['code'], message: string): LoadSaveResult {
+  return { status: 'error', error: { code, message, recoverable: true } };
+}
+
+function readRawEnvelope(parsed: unknown): ChecksumEnvelope {
+  if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('SaveEnvelope phải là object.');
+  const value = parsed as Record<string, unknown>;
+  for (const key of ['schemaVersion', 'savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'state', 'checksum']) {
+    if (!(key in value)) throw new Error(`SaveEnvelope thiếu trường ${key}.`);
+  }
+  if (value.schemaVersion !== 1 && value.schemaVersion !== 2) throw new Error('Unsupported save schemaVersion.');
+  for (const key of ['savedAt', 'appVersion', 'contentVersion', 'modelVersion', 'catalogVersion', 'checksum']) {
+    if (typeof value[key] !== 'string') throw new Error(`SaveEnvelope.${key} không hợp lệ.`);
+  }
+  return value as unknown as ChecksumEnvelope;
+}
+
+export function loadGameState(bundle: ContentBundle, storage: StorageLike | null = getDefaultStorage()): LoadSaveResult {
   if (!storage) return { status: 'empty' };
-  let raw: string | null = null;
+  let raw: string | null;
   try {
     raw = storage.getItem(SAVE_STORAGE_KEY);
   } catch {
@@ -116,107 +228,53 @@ export function loadGameState(
   try {
     parsed = JSON.parse(raw);
   } catch {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_SAVE_CORRUPTED',
-        message: 'File lưu (Save JSON) bị hỏng và không thể đọc.',
-        recoverable: true,
-      },
-    };
+    return loadError('E_SAVE_CORRUPTED', 'File Save JSON bị hỏng.');
   }
 
-  let envelope: SaveEnvelope;
+  let rawEnvelope: ChecksumEnvelope;
   try {
-    envelope = validateSaveEnvelopeStructure(parsed);
-  } catch (err) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_CONTRACT_MISMATCH',
-        message: err instanceof Error ? err.message : 'Cấu trúc file lưu không hợp lệ.',
-        recoverable: true,
-      },
-    };
+    rawEnvelope = readRawEnvelope(parsed);
+  } catch (error) {
+    return loadError('E_CONTRACT_MISMATCH', error instanceof Error ? error.message : 'SaveEnvelope không hợp lệ.');
+  }
+  if (rawEnvelope.checksum !== computeEnvelopeChecksum(rawEnvelope)) return loadError('E_SAVE_CORRUPTED', 'Checksum SaveEnvelope không khớp.');
+
+  let state: GameState;
+  let migrated = false;
+  try {
+    if (rawEnvelope.schemaVersion === 1) {
+      state = migrateSaveV1ToV2(rawEnvelope.state as LegacyGameState, bundle);
+      migrated = true;
+    } else {
+      const envelope = validateSaveEnvelopeStructure(parsed);
+      if (envelope.appVersion !== APP_VERSION) return loadError('E_CONTRACT_MISMATCH', `Phiên bản ứng dụng không khớp (Save: ${envelope.appVersion}, App: ${APP_VERSION}).`);
+      state = envelope.state;
+    }
+  } catch (error) {
+    return loadError('E_CONTRACT_MISMATCH', error instanceof Error ? error.message : 'Không thể migrate/validate Save.');
   }
 
-  const expectedChecksum = computeEnvelopeChecksum(envelope);
-  if (envelope.checksum !== expectedChecksum) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_SAVE_CORRUPTED',
-        message: 'Checksum file lưu (envelope + state) không khớp — dữ liệu có thể đã bị chỉnh sửa.',
-        recoverable: true,
-      },
-    };
-  }
+  if (state.contentVersion !== bundle.balance.contentVersion) return loadError('E_CONTRACT_MISMATCH', 'Phiên bản content không khớp.');
+  if (state.modelVersion !== bundle.balance.modelVersion) return loadError('E_MODEL_MISMATCH', 'Phiên bản simulation không khớp.');
+  if (state.catalogVersion !== bundle.catalog.catalogVersion) return loadError('E_CATALOG_MISMATCH', 'Phiên bản catalog không khớp.');
+  const invariantError = validateStateInvariants(state, bundle);
+  if (invariantError) return { status: 'error', error: { ...invariantError, recoverable: true } };
 
-  if (envelope.appVersion !== APP_VERSION) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_CONTRACT_MISMATCH',
-        message: `Phiên bản ứng dụng không khớp (Save: ${envelope.appVersion}, App: ${APP_VERSION}).`,
-        recoverable: true,
-      },
-    };
+  const envelope = buildSaveEnvelope(state, migrated ? new Date().toISOString() : rawEnvelope.savedAt);
+  if (migrated) {
+    try {
+      storage.setItem(SAVE_STORAGE_KEY, JSON.stringify(envelope));
+    } catch {
+      // The migrated state is usable for this session even if rewrite is denied.
+    }
   }
-
-  if (
-    envelope.contentVersion !== bundle.balance.contentVersion ||
-    envelope.state.contentVersion !== envelope.contentVersion
-  ) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_CONTRACT_MISMATCH',
-        message: `Phiên bản content không khớp (Save: ${envelope.contentVersion}, State: ${envelope.state.contentVersion}, App: ${bundle.balance.contentVersion}).`,
-        recoverable: true,
-      },
-    };
-  }
-
-  if (
-    envelope.modelVersion !== bundle.balance.modelVersion ||
-    envelope.state.modelVersion !== envelope.modelVersion
-  ) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_MODEL_MISMATCH',
-        message: `Phiên bản simulation không khớp (Save: ${envelope.modelVersion}, State: ${envelope.state.modelVersion}, App: ${bundle.balance.modelVersion}).`,
-        recoverable: true,
-      },
-    };
-  }
-
-  if (
-    envelope.catalogVersion !== bundle.catalog.catalogVersion ||
-    envelope.state.catalogVersion !== envelope.catalogVersion
-  ) {
-    return {
-      status: 'error',
-      error: {
-        code: 'E_CATALOG_MISMATCH',
-        message: `Phiên bản dữ liệu NASA không khớp (Save: ${envelope.catalogVersion}, State: ${envelope.state.catalogVersion}, App: ${bundle.catalog.catalogVersion}).`,
-        recoverable: true,
-      },
-    };
-  }
-
-  const invErr = validateStateInvariants(envelope.state, bundle);
-  if (invErr) {
-    return { status: 'error', error: { ...invErr, recoverable: true } };
-  }
-
-  return { status: 'ok', state: envelope.state, envelope };
+  return { status: 'ok', state, envelope };
 }
 
 export function clearSavedGame(storage: StorageLike | null = getDefaultStorage()): void {
   try {
     storage?.removeItem(SAVE_STORAGE_KEY);
   } catch {
-    // Ignore storage denial errors when clearing
+    // Ignore storage denial errors when clearing.
   }
 }

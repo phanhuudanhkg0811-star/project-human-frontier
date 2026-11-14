@@ -4,6 +4,8 @@ import crewRaw from '../data/crew.json';
 import donkiRaw from '../data/donki-space-weather.json';
 import eventsRaw from '../data/events.json';
 import initialStateRaw from '../data/initial-state.json';
+import lunarSitesRaw from '../data/lunar-sites.json';
+import crewPhysiologyRaw from '../data/crew-physiology.json';
 import briefsRaw from '../data/nasa-briefs.json';
 import recipesRaw from '../data/recipes.json';
 import catalogRaw from '../data/simulation-catalog.json';
@@ -14,6 +16,7 @@ import type {
   CargoPackId,
   ContentBundle,
   CrewCondition,
+  CrewPhysiologyDataset,
   CrewId,
   CrewProfileConfig,
   CrewTaskType,
@@ -29,6 +32,7 @@ import type {
   GameState,
   HungerState,
   ItemId,
+  LunarSiteConfig,
   PowerConsumerId,
   ProvenanceTag,
   RecipeCatalog,
@@ -85,7 +89,23 @@ const CREW_TASK_TYPES: readonly CrewTaskType[] = [
   'medical-care',
   'rest',
 ];
-const ROVER_STATUSES = ['idle', 'outbound', 'exploring', 'returning', 'broken'] as const;
+const ROVER_MISSION_STATUSES = [
+  'scheduled',
+  'outbound',
+  'exploring',
+  'signal-lost',
+  'recovery-pending',
+  'completed',
+  'failed',
+] as const;
+const ROVER_TRAVEL_STATUSES = ['outbound', 'exploring'] as const;
+const ROVER_INCIDENT_KINDS = [
+  'donki-storm',
+  'unmitigated-threat',
+  'power-delay',
+  'signal-timeout',
+  'recovery-timeout',
+] as const;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -385,12 +405,21 @@ export function validateCampaignConfig(input: unknown): CampaignConfig {
     assertInt(e.durationSols, `expeditions[${idx}].durationSols`, 1, 10);
     assertFiniteNum(e.launchPowerKWh, `expeditions[${idx}].launchPowerKWh`, 0);
     assertString(e.threat, `expeditions[${idx}].threat`);
-    assertArray(e.requiredEquipment, `expeditions[${idx}].requiredEquipment`).forEach((eqId, eqIdx) => {
-      assertEnum(eqId, EQUIPMENT_IDS, `expeditions[${idx}].requiredEquipment[${eqIdx}]`);
+    const options = assertArray(e.mitigationOptions, `expeditions[${idx}].mitigationOptions`);
+    if (options.length === 0) throw new Error(`expeditions[${idx}].mitigationOptions must not be empty`);
+    options.forEach((rawOption, optionIdx) => {
+      const option = assertRecord(rawOption, `expeditions[${idx}].mitigationOptions[${optionIdx}]`);
+      const allOf = assertArray(option.allOf, `expeditions[${idx}].mitigationOptions[${optionIdx}].allOf`);
+      if (allOf.length === 0) throw new Error('mitigation option allOf must not be empty');
+      allOf.forEach((eqId, eqIdx) => assertEnum(eqId, EQUIPMENT_IDS, `mitigationOptions[${optionIdx}].allOf[${eqIdx}]`));
+      if (option.requirements !== undefined) {
+        const req = assertRecord(option.requirements, `mitigationOptions[${optionIdx}].requirements`);
+        if (req.minBatteryKWh !== undefined) assertFiniteNum(req.minBatteryKWh, 'requirements.minBatteryKWh', 0);
+      }
     });
     assertString(e.rewardSample, `expeditions[${idx}].rewardSample`);
     const rew = assertRecord(e.rewards, `expeditions[${idx}].rewards`);
-    for (const rk of ['partsKg', 'batteryKWh', 'oxygenKg', 'waterL']) {
+    for (const rk of ['partsKg', 'batteryKWh', 'oxygenKg', 'waterL', 'science']) {
       assertFiniteNum(rew[rk], `expeditions[${idx}].rewards.${rk}`, 0);
     }
   }
@@ -589,9 +618,65 @@ export function validateScienceBriefs(input: unknown): readonly ScienceBrief[] {
   return list as unknown as readonly ScienceBrief[];
 }
 
+export function validateLunarSites(input: unknown): readonly LunarSiteConfig[] {
+  const sites = assertArray(input, 'lunarSites');
+  if (sites.length !== 3) throw new Error('lunar-sites.json must contain exactly 3 sites');
+  const seen = new Set<string>();
+  for (const [idx, rawSite] of sites.entries()) {
+    const site = assertRecord(rawSite, `lunarSites[${idx}]`);
+    const expeditionId = assertEnum(site.expeditionId, EXPEDITION_IDS, `lunarSites[${idx}].expeditionId`);
+    seen.add(expeditionId);
+    const location = assertRecord(site.representativeLocation, `lunarSites[${idx}].representativeLocation`);
+    assertString(location.name, 'representativeLocation.name');
+    assertFiniteNum(location.latitudeDeg, 'representativeLocation.latitudeDeg', -90, 90);
+    assertFiniteNum(location.longitudeDegEast, 'representativeLocation.longitudeDegEast', -180, 180);
+    const bbox = assertArray(location.bbox, 'representativeLocation.bbox');
+    if (bbox.length !== 4) throw new Error('representativeLocation.bbox must contain 4 numbers');
+    bbox.forEach((value, bboxIdx) => assertFiniteNum(value, `representativeLocation.bbox[${bboxIdx}]`, -180, 180));
+    assertEnum(location.provenance, PROVENANCE_TAGS, 'representativeLocation.provenance');
+    assertString(location.source, 'representativeLocation.source');
+    assertEnum(site.mappingProvenance, PROVENANCE_TAGS, 'site.mappingProvenance');
+    for (const key of ['terrain', 'thermal'] as const) {
+      const product = assertRecord(site[key], `lunarSites[${idx}].${key}`);
+      assertString(product.productId, `${key}.productId`);
+      if (key === 'terrain') assertString(product.datasetReleaseId, `${key}.datasetReleaseId`);
+      assertString(product.layerId, `${key}.layerId`);
+      assertString(product.unit, `${key}.unit`);
+      assertEnum(product.provenance, PROVENANCE_TAGS, `${key}.provenance`);
+      assertString(product.source, `${key}.source`);
+    }
+    assertString(site.gameplayNote, 'site.gameplayNote');
+  }
+  if (seen.size !== EXPEDITION_IDS.length) throw new Error('lunar-sites.json must cover every expedition');
+  return sites as unknown as readonly LunarSiteConfig[];
+}
+
+export function validateCrewPhysiology(input: unknown): CrewPhysiologyDataset {
+  const data = assertRecord(input, 'crewPhysiology');
+  assertString(data.datasetId, 'crewPhysiology.datasetId');
+  assertString(data.instrumentId, 'crewPhysiology.instrumentId');
+  assertString(data.trajectory, 'crewPhysiology.trajectory');
+  assertString(data.queryUrl, 'crewPhysiology.queryUrl');
+  const period = assertRecord(data.sampledPeriod, 'crewPhysiology.sampledPeriod');
+  assertString(period.startInclusive, 'sampledPeriod.startInclusive');
+  assertString(period.endExclusive, 'sampledPeriod.endExclusive');
+  assertInt(data.recordCount, 'crewPhysiology.recordCount', 1);
+  const dose = assertRecord(data.absorbedDoseRateUGyPerHour, 'crewPhysiology.absorbedDoseRateUGyPerHour');
+  assertFiniteNum(dose.mean, 'absorbedDoseRateUGyPerHour.mean', 0);
+  assertFiniteNum(dose.min, 'absorbedDoseRateUGyPerHour.min', 0);
+  assertFiniteNum(dose.max, 'absorbedDoseRateUGyPerHour.max', 0);
+  assertFiniteNum(data.convertedMeanMgyPerDay, 'crewPhysiology.convertedMeanMgyPerDay', 0);
+  assertString(data.conversionFormula, 'crewPhysiology.conversionFormula');
+  assertString(data.sha256, 'crewPhysiology.sha256');
+  assertEnum(data.provenance, PROVENANCE_TAGS, 'crewPhysiology.provenance');
+  assertString(data.caveat, 'crewPhysiology.caveat');
+  assertString(data.source, 'crewPhysiology.source');
+  return data as unknown as CrewPhysiologyDataset;
+}
+
 export function validateGameStateStructure(input: unknown): GameState {
   const s = assertRecord(input, 'state');
-  if (s.schemaVersion !== 1) throw new Error('GameState schemaVersion must be 1');
+  if (s.schemaVersion !== 2) throw new Error('GameState schemaVersion must be 2');
   assertString(s.contentVersion, 'state.contentVersion');
   assertString(s.modelVersion, 'state.modelVersion');
   assertString(s.catalogVersion, 'state.catalogVersion');
@@ -608,6 +693,7 @@ export function validateGameStateStructure(input: unknown): GameState {
     throw new Error('Invalid campaign.spaceWeatherOverride');
   }
   assertInt(camp.targetSol, 'campaign.targetSol', 1, 32);
+  assertInt(camp.sciencePoints, 'campaign.sciencePoints', 0);
   assertNullableString(camp.endReason, 'campaign.endReason');
 
   const clock = assertRecord(s.clock, 'state.clock');
@@ -688,17 +774,46 @@ export function validateGameStateStructure(input: unknown): GameState {
   prio.forEach((p, idx) => assertEnum(p, POWER_CONSUMER_IDS, `dailyPlan.powerPriority[${idx}]`));
   if (new Set(prio).size !== 4) throw new Error('dailyPlan.powerPriority must contain unique consumers');
   assertArray(dp.mreTargets, 'dailyPlan.mreTargets').forEach((id, idx) => assertEnum(id, CREW_IDS, `mreTargets[${idx}]`));
-  assertArray(dp.medkitTargets, 'dailyPlan.medkitTargets').forEach((id, idx) => assertEnum(id, CREW_IDS, `medkitTargets[${idx}]`));
 
   const rover = assertRecord(s.rover, 'state.rover');
-  assertEnum(rover.status, ROVER_STATUSES, 'rover.status');
-  if (rover.expeditionId !== null) assertEnum(rover.expeditionId, EXPEDITION_IDS, 'rover.expeditionId');
-  assertInt(rover.solsRemaining, 'rover.solsRemaining', 0, 10);
-  assertArray(rover.equippedItems, 'rover.equippedItems').forEach((id, idx) => assertEnum(id, EQUIPMENT_IDS, `rover.equippedItems[${idx}]`));
-  assertStringArray(rover.samplesCollected, 'rover.samplesCollected');
-  assertArray(rover.completedExpeditions, 'rover.completedExpeditions').forEach((id, idx) =>
-    assertEnum(id, EXPEDITION_IDS, `rover.completedExpeditions[${idx}]`)
-  );
+  const validateIncidents = (value: unknown, label: string) => {
+    assertArray(value, label).forEach((rawIncident, idx) => {
+      const incident = assertRecord(rawIncident, `${label}[${idx}]`);
+      assertEnum(incident.kind, ROVER_INCIDENT_KINDS, `${label}[${idx}].kind`);
+      assertInt(incident.occurredSol, `${label}[${idx}].occurredSol`, 1, 32);
+      assertString(incident.summary, `${label}[${idx}].summary`);
+    });
+  };
+  if (rover.activeMission !== null) {
+    const mission = assertRecord(rover.activeMission, 'rover.activeMission');
+    assertEnum(mission.expeditionId, EXPEDITION_IDS, 'activeMission.expeditionId');
+    assertEnum(mission.status, ROVER_MISSION_STATUSES, 'activeMission.status');
+    assertInt(mission.scheduledSol, 'activeMission.scheduledSol', 1, 32);
+    if (mission.launchedSol !== null) assertInt(mission.launchedSol, 'activeMission.launchedSol', 1, 32);
+    assertInt(mission.statusEnteredSol, 'activeMission.statusEnteredSol', 1, 32);
+    if (mission.expectedReturnSol !== null) assertInt(mission.expectedReturnSol, 'activeMission.expectedReturnSol', 1, 40);
+    assertEnum(mission.launchOperatorCrewId, CREW_IDS, 'activeMission.launchOperatorCrewId');
+    if (mission.recoveryOperatorCrewId !== null) assertEnum(mission.recoveryOperatorCrewId, CREW_IDS, 'activeMission.recoveryOperatorCrewId');
+    assertArray(mission.equippedItems, 'activeMission.equippedItems').forEach((id, idx) => assertEnum(id, EQUIPMENT_IDS, `activeMission.equippedItems[${idx}]`));
+    assertInt(mission.travelTicksCompleted, 'activeMission.travelTicksCompleted', 0, 3);
+    assertInt(mission.signalLostSols, 'activeMission.signalLostSols', 0, 3);
+    if (mission.resumeStatus !== null) assertEnum(mission.resumeStatus, ROVER_TRAVEL_STATUSES, 'activeMission.resumeStatus');
+    assertInt(mission.recoveryDelaySols, 'activeMission.recoveryDelaySols', 0, 1);
+    validateIncidents(mission.incidents, 'activeMission.incidents');
+  }
+  assertArray(rover.missionHistory, 'rover.missionHistory').forEach((rawResult, idx) => {
+    const result = assertRecord(rawResult, `rover.missionHistory[${idx}]`);
+    assertEnum(result.expeditionId, EXPEDITION_IDS, `missionHistory[${idx}].expeditionId`);
+    assertEnum(result.outcome, ['completed', 'failed'] as const, `missionHistory[${idx}].outcome`);
+    if (result.launchedSol !== null) assertInt(result.launchedSol, `missionHistory[${idx}].launchedSol`, 1, 32);
+    assertInt(result.settledSol, `missionHistory[${idx}].settledSol`, 1, 40);
+    assertNullableString(result.rewardSampleGranted, `missionHistory[${idx}].rewardSampleGranted`);
+    assertInt(result.scienceGranted, `missionHistory[${idx}].scienceGranted`, 0);
+    if (result.launchOperatorCrewId !== null) assertEnum(result.launchOperatorCrewId, CREW_IDS, `missionHistory[${idx}].launchOperatorCrewId`);
+    if (result.recoveryOperatorCrewId !== null) assertEnum(result.recoveryOperatorCrewId, CREW_IDS, `missionHistory[${idx}].recoveryOperatorCrewId`);
+    assertArray(result.equippedItems, `missionHistory[${idx}].equippedItems`).forEach((id, eqIdx) => assertEnum(id, EQUIPMENT_IDS, `missionHistory[${idx}].equippedItems[${eqIdx}]`));
+    validateIncidents(result.incidents, `missionHistory[${idx}].incidents`);
+  });
 
   const events = assertRecord(s.events, 'state.events');
   assertNullableString(events.activeEventId, 'events.activeEventId');
@@ -740,7 +855,7 @@ export function validateGameStateStructure(input: unknown): GameState {
 
 export function validateSaveEnvelopeStructure(input: unknown): SaveEnvelope {
   const env = assertRecord(input, 'saveEnvelope');
-  if (env.schemaVersion !== 1) throw new Error('Unsupported save schemaVersion');
+  if (env.schemaVersion !== 2) throw new Error('Unsupported save schemaVersion');
   assertString(env.savedAt, 'save.savedAt');
   assertString(env.appVersion, 'save.appVersion');
   assertString(env.contentVersion, 'save.contentVersion');
@@ -767,6 +882,8 @@ export function validateGameCommand(input: unknown): GameCommand {
 
     case 'phase/advance':
     case 'fabricator/cancel':
+    case 'rover/cancel-schedule':
+    case 'rover/recover-signal':
     case 'sol/end':
     case 'debrief/dismiss':
       return cmd as unknown as GameCommand;
@@ -811,13 +928,23 @@ export function validateGameCommand(input: unknown): GameCommand {
       return cmd as unknown as GameCommand;
     }
 
-    case 'rover/launch': {
+    case 'rover/schedule': {
       assertEnum(cmd.expeditionId, EXPEDITION_IDS, 'command.expeditionId');
+      assertEnum(cmd.launchOperatorCrewId, CREW_IDS, 'command.launchOperatorCrewId');
       const eqs = assertArray(cmd.equipmentIds, 'command.equipmentIds');
       eqs.forEach((id, idx) => assertEnum(id, EQUIPMENT_IDS, `command.equipmentIds[${idx}]`));
-      if (new Set(eqs).size !== eqs.length) throw new Error('Duplicate equipmentIds in rover/launch');
+      if (new Set(eqs).size !== eqs.length) throw new Error('Duplicate equipmentIds in rover/schedule');
       return cmd as unknown as GameCommand;
     }
+
+    case 'rover/set-recovery-operator':
+      assertEnum(cmd.crewId, CREW_IDS, 'command.crewId');
+      return cmd as unknown as GameCommand;
+
+    case 'crew/use-medkit':
+      assertEnum(cmd.targetCrewId, CREW_IDS, 'command.targetCrewId');
+      if (cmd.administeredByCrewId !== undefined) assertEnum(cmd.administeredByCrewId, CREW_IDS, 'command.administeredByCrewId');
+      return cmd as unknown as GameCommand;
 
     case 'rationing/set-wrs':
       assertBool(cmd.enabled, 'command.enabled');
@@ -832,7 +959,6 @@ export function validateGameCommand(input: unknown): GameCommand {
     }
 
     case 'rationing/toggle-mre':
-    case 'rationing/toggle-medkit':
       assertEnum(cmd.crewId, CREW_IDS, 'command.crewId');
       if (cmd.enabled !== undefined) assertBool(cmd.enabled, 'command.enabled');
       return cmd as unknown as GameCommand;
@@ -868,6 +994,8 @@ export function loadContentBundle(): ContentBundle {
     donki: validateDonkiCatalog(donkiRaw),
     events: validateEventsCatalog(eventsRaw),
     briefs: validateScienceBriefs(briefsRaw),
+    lunarSites: validateLunarSites(lunarSitesRaw),
+    crewPhysiology: validateCrewPhysiology(crewPhysiologyRaw),
   };
   return cachedBundle;
 }
