@@ -1,3 +1,4 @@
+import type { Locale } from '../../i18n/types.ts';
 import type { CrewMemberState, EventArtId, SystemId } from '../../types/index.ts';
 
 export const HAIL_ASSET_BASE = '/assets/hail';
@@ -126,7 +127,9 @@ export interface HailCrewStateSprites {
 
 export interface HailCrewVisual {
   role: string;
+  roleEn: string;
   specialty: string;
+  specialtyEn: string;
   state: HailCrewState;
   stateLabel: string;
   portrait: string;
@@ -156,25 +159,33 @@ function buildCrewStates(charIndex: 1 | 2 | 3 | 4): Record<HailCrewState, HailCr
 export const HAIL_CREW_VISUALS: Record<string, Omit<HailCrewVisual, 'state' | 'stateLabel'>> = {
   cmd: {
     role: 'Chỉ huy Trạm (Commander)',
+    roleEn: 'Station Commander',
     specialty: 'Điều phối nhiệm vụ & Quản lý ECLSS',
+    specialtyEn: 'Mission coordination & ECLSS oversight',
     ...buildCrewStates(1).normal,
     states: buildCrewStates(1),
   },
   eng: {
     role: 'Kỹ sư Hệ thống (Systems Engineer)',
+    roleEn: 'Systems Engineer',
     specialty: 'Bảo trì pin Mặt Trời, WRS & Rover',
+    specialtyEn: 'Solar array, WRS & Rover maintenance',
     ...buildCrewStates(2).normal,
     states: buildCrewStates(2),
   },
   doc: {
     role: 'Bác sĩ Hàng không (Flight Surgeon)',
+    roleEn: 'Flight Surgeon',
     specialty: 'Y tế phi hành đoàn & Kiểm soát tâm lý',
+    specialtyEn: 'Crew medicine & psychological care',
     ...buildCrewStates(3).normal,
     states: buildCrewStates(3),
   },
   geo: {
     role: 'Nhà Địa chất Mặt Trăng (Lunar Geologist)',
+    roleEn: 'Lunar Geologist',
     specialty: 'Khảo sát hố thiên thạch & Phân tích regolith',
+    specialtyEn: 'Crater survey & regolith analysis',
     ...buildCrewStates(4).normal,
     states: buildCrewStates(4),
   },
@@ -204,24 +215,34 @@ export function getHailCrewState(
   return 'normal';
 }
 
-const CREW_STATE_LABELS: Record<HailCrewState, string> = {
-  normal: 'Ổn định',
-  hungry: 'Đói',
-  sick: 'Bệnh',
+const CREW_STATE_LABELS: Record<Locale, Record<HailCrewState, string>> = {
+  vi: {
+    normal: 'Ổn định',
+    hungry: 'Đói',
+    sick: 'Bệnh',
+  },
+  en: {
+    normal: 'Stable',
+    hungry: 'Hungry',
+    sick: 'Sick',
+  },
 };
 
 export function getHailCrewVisual(
   id: string,
   member?: Partial<CrewMemberState> | null,
-  hungryOverride = false
+  hungryOverride = false,
+  locale: Locale = 'vi'
 ): HailCrewVisual {
   const base = HAIL_CREW_VISUALS[id] ?? HAIL_CREW_VISUALS.cmd;
   const state = getHailCrewState(member, hungryOverride);
   const stateSprites = base.states[state];
   return {
     ...base,
+    role: locale === 'en' ? base.roleEn : base.role,
+    specialty: locale === 'en' ? base.specialtyEn : base.specialty,
     state,
-    stateLabel: CREW_STATE_LABELS[state],
+    stateLabel: CREW_STATE_LABELS[locale][state],
     portrait: stateSprites.portrait,
     seated: stateSprites.seated,
   };

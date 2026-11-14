@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
@@ -29,7 +29,7 @@ export function EndOfDayModal({
   onClose: () => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [leverPulled, setLeverPulled] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,6 +43,13 @@ export function EndOfDayModal({
   const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
   const inRationing = gameState.clock.phase === 'rationing' && !ended;
   const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
+
+  useEffect(() => {
+    inFlight.current = false;
+    setIsSubmitting(false);
+    setLeverPulled(false);
+    setErrorMsg(null);
+  }, [sol]);
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
@@ -100,6 +107,7 @@ export function EndOfDayModal({
     setErrorMsg(null);
     playSfx('endSol', 0.7);
     try {
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
       const res = await dispatch({ type: 'sol/end' });
       if (res.ok) {
         onClose();
@@ -126,7 +134,7 @@ export function EndOfDayModal({
     >
       <section
         className="hail-tactile-frame hail-tactile-frame--allocation"
-        aria-label="Phân bổ Tài nguyên và Kết thúc Sol"
+        aria-label={t('endDay.tactileAria')}
       >
         <img
           src={HAIL_TACTILE_UI.allocationFrame}
@@ -140,9 +148,9 @@ export function EndOfDayModal({
           <header className="hail-term-topbar">
             <div className="hail-term-title-group">
               <span className="hail-term-code">
-                PHÂN BỔ KHẨU PHẦN · MRE KHO: {gameState.resources.mrePacks} GÓI
+                {t('endDay.allocCode', { count: gameState.resources.mrePacks })}
               </span>
-              <h2 className="hail-term-title">ĐỊNH MỨC SINH TỒN 4 PHI HÀNH GIA</h2>
+              <h2 className="hail-term-title">{t('endDay.allocTitle')}</h2>
             </div>
 
             <div className="hail-alloc-phase-cmds">
@@ -155,7 +163,7 @@ export function EndOfDayModal({
                     onStarlog?.();
                   }}
                 >
-                  [XỬ LÝ SỰ CỐ TRƯỚC]
+                  {t('endDay.resolveIncidentCmd')}
                 </button>
               )}
               {!mustResolveEvent && !inRationing && !ended && (
@@ -168,14 +176,14 @@ export function EndOfDayModal({
                       onComms?.();
                     }}
                   >
-                    [LIÊN LẠC]
+                    {t('endDay.commsCmd')}
                   </button>
                   <button
                     type="button"
                     className="hail-term-inline-cmd is-primary"
                     onClick={prepareRations}
                   >
-                    [CHỐT PHA → CHIA KHẨU PHẦN]
+                    {t('endDay.advanceToRationingCmd')}
                   </button>
                 </>
               )}
@@ -183,7 +191,7 @@ export function EndOfDayModal({
           </header>
 
           {errorMsg && (
-            <p className="hail-term-plain-line is-warn">&gt; LỖI: {errorMsg}</p>
+            <p className="hail-term-plain-line is-warn">{t('endDay.errorPrefix', { message: errorMsg })}</p>
           )}
 
           {/* 4-Crew Columns with Dynamic 3-State Portraits + Square Checkboxes */}
@@ -193,12 +201,12 @@ export function EndOfDayModal({
               const evacuated = member.condition === 'evacuated';
               const giveMre = !evacuated && gameState.dailyPlan.mreTargets.includes(crewId);
               const isRationCut = inRationing && !giveMre;
-              const vis = getHailCrewVisual(crewId, member, isRationCut);
+              const vis = getHailCrewVisual(crewId, member, isRationCut, locale);
 
               return (
                 <div
                   key={crewId}
-                  className={`hail-alloc-crew-col hail-ration-crew-pill ${evacuated ? 'is-evacuated' : ''}`}
+                  className={`hail-alloc-crew-col ${evacuated ? 'is-evacuated' : ''}`}
                 >
                   <div className="hail-alloc-crew-head">
                     <img
@@ -211,8 +219,8 @@ export function EndOfDayModal({
                       <strong>{member.name.split(' ')[0]}</strong>
                       <span>
                         {evacuated
-                          ? 'ĐÃ SƠ TÁN'
-                          : `HP ${member.health}% · ${vis.stateLabel}`}
+                          ? t('endDay.evacuated')
+                          : t('endDay.crewMeta', { health: member.health, state: vis.stateLabel })}
                       </span>
                     </div>
                   </div>
@@ -222,7 +230,7 @@ export function EndOfDayModal({
                       type="button"
                       role="checkbox"
                       aria-checked={giveMre}
-                      aria-label={`Phát MRE cho ${member.name}`}
+                      aria-label={t('endDay.issueMreAria', { name: member.name })}
                       className="hail-alloc-check-btn"
                       disabled={!inRationing || evacuated || isSubmitting}
                       onClick={() => handleToggleMre(crewId)}
@@ -237,11 +245,11 @@ export function EndOfDayModal({
                         className="hail-alloc-checkbox-img"
                         draggable={false}
                       />
-                      <span>{giveMre ? 'Phát MRE ✓' : 'Cắt MRE'}</span>
+                      <span>{giveMre ? t('endDay.issueMreCheck') : t('endDay.cutMreCheck')}</span>
                     </button>
 
                     <div className="hail-alloc-crew-statline">
-                      <span>No: {member.satiety}%</span>
+                      <span>{t('endDay.satietyLabel', { satiety: member.satiety })}</span>
                       <span className={member.hungerState === 'starving' ? 'is-crit' : ''}>
                         {member.hungerState.toUpperCase()}
                       </span>
@@ -272,18 +280,22 @@ export function EndOfDayModal({
                   alt=""
                   draggable={false}
                 />
-                <span>WRS: {gameState.dailyPlan.wrsEnabled ? '90% ON' : 'OFF'}</span>
+                <span>{gameState.dailyPlan.wrsEnabled ? 'WRS 90% ON' : 'WRS OFF'}</span>
               </button>
 
-              <div className="hail-alloc-priority-row" aria-label="Thứ tự ưu tiên điện">
-                <span className="hail-alloc-priority-lbl">ƯU TIÊN ĐIỆN:</span>
+              <div className="hail-alloc-priority-row" aria-label={t('endDay.priorityAria')}>
+                <span className="hail-alloc-priority-lbl">{t('endDay.priorityLbl')}</span>
                 {gameState.dailyPlan.powerPriority.map((id, idx) => (
                   <button
                     key={id}
                     type="button"
                     disabled={!inRationing || idx === 0 || isSubmitting}
                     onClick={() => promotePriority(idx)}
-                    title={idx === 0 ? `${SHORT_LOAD_LABEL[id]} ưu tiên #1` : `Đẩy ${SHORT_LOAD_LABEL[id]} lên mức #${idx}`}
+                    title={
+                      idx === 0
+                        ? t('endDay.priorityFirstTitle', { name: SHORT_LOAD_LABEL[id] })
+                        : t('endDay.priorityPromoteTitle', { name: SHORT_LOAD_LABEL[id], rank: idx })
+                    }
                     className="hail-alloc-priority-pill"
                   >
                     {idx + 1}.{SHORT_LOAD_LABEL[id]}
@@ -295,10 +307,13 @@ export function EndOfDayModal({
 
             <div className="hail-alloc-predictor-row">
               <p className="hail-alloc-summary-line">
-                Dự báo Cuối Sol {sol}: PIN {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}
-                {preview.resourceDeltas.batteryKWh}kWh · O₂ {preview.resourceDeltas.oxygenKg}kg · NƯỚC{' '}
-                {preview.resourceDeltas.waterL}L
-                {preview.blackout ? ' · [CẢNH BÁO BLACKOUT!]' : ''}
+                {t('endDay.forecastLine', {
+                  sol,
+                  battery: `${preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}${preview.resourceDeltas.batteryKWh}`,
+                  oxygen: preview.resourceDeltas.oxygenKg,
+                  water: preview.resourceDeltas.waterL,
+                })}
+                {preview.blackout ? t('endDay.blackoutTag') : ''}
               </p>
               <div className="hail-alloc-trend-chips">
                 {fiveSolTrend.slice(0, 4).map((pt) => (
@@ -312,8 +327,8 @@ export function EndOfDayModal({
             <details className="hail-alloc-debrief-drawer">
               <summary>
                 {debriefView.summary
-                  ? `NASA STEM · Báo cáo đã hoàn thành Sol ${debriefView.summary.sol} ▾`
-                  : 'NASA STEM · Nhật ký Sol gần nhất ▾'}
+                  ? t('endDay.debriefSummaryDone', { sol: debriefView.summary.sol })
+                  : t('endDay.debriefSummaryLatest')}
               </summary>
               <div className="flex flex-col gap-2 mt-2">
                 <NightReadinessChecklist state={gameState} bundle={bundle} />
@@ -325,9 +340,9 @@ export function EndOfDayModal({
 
         {/* Right Top Sol Counter Display */}
         <div className="hail-alloc-sol-box">
-          <span className="hail-mini-label">CHU KỲ SOL</span>
+          <span className="hail-mini-label">{t('endDay.solCycleLabel')}</span>
           <strong className="hail-alloc-sol-num">
-            {ended ? 'HOÀN TẤT' : `${String(sol).padStart(2, '0')} → ${String(sol + 1).padStart(2, '0')}`}
+            {ended ? t('endDay.solCycleDone') : `${String(sol).padStart(2, '0')} → ${String(sol + 1).padStart(2, '0')}`}
           </strong>
         </div>
 
@@ -337,27 +352,27 @@ export function EndOfDayModal({
             type="button"
             className={`hail-lever-btn ${leverPulled ? 'is-pulled' : ''}`}
             disabled={!canPullLever}
-            aria-label="Gạt cần kết thúc Sol"
+            aria-label={t('endDay.leverAria')}
             title={
               canPullLever
-                ? `Gạt cần Chốt Sol ${sol}`
+                ? t('endDay.leverTitleReady', { sol })
                 : mustResolveEvent
-                  ? 'Hãy xử lý sự cố trước khi gạt cần'
-                  : 'Chốt pha chuẩn bị để kích hoạt cần gạt'
+                  ? t('endDay.leverTitleResolve')
+                  : t('endDay.leverTitleLocked')
             }
             onClick={handlePullLever}
           >
             <img
               src={leverPulled ? HAIL_TACTILE_UI.leverDown : HAIL_TACTILE_UI.leverUp}
-              alt={leverPulled ? 'Cần gạt đang đóng Sol' : 'Cần gạt Kết thúc Sol'}
+              alt={leverPulled ? t('endDay.leverAltDown') : t('endDay.leverAltUp')}
               draggable={false}
             />
             <span className="hail-lever-caption">
               {isSubmitting || leverPulled
-                ? 'ĐANG QUA ĐÊM...'
+                ? t('endDay.leverSubmitting')
                 : canPullLever
-                  ? t('endDay.endSolBtn', { sol })
-                  : 'KHÓA AN TOÀN'}
+                  ? t('endDay.leverAction', { sol })
+                  : t('endDay.leverLocked')}
             </span>
           </button>
         </div>
@@ -366,7 +381,7 @@ export function EndOfDayModal({
         <button
           type="button"
           className="hail-tactile-corner-close"
-          aria-label={t('common.closeDialog')}
+          aria-label={t('endDay.closeAria')}
           onClick={() => {
             playSfx('click', 0.4);
             onClose();

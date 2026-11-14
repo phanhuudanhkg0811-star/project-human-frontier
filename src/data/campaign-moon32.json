@@ -25,9 +25,9 @@
     "waterZeroConsecutiveSols": 2
   },
   "difficultyProfiles": {
-    "cadet": { "id": "cadet", "label": "Cadet (Chuẩn STEM)", "weatherRiskMultiplier": 0.75, "eventSeverityMultiplier": 0.85 },
-    "standard": { "id": "standard", "label": "Commander (Cân bằng 32 Sol)", "weatherRiskMultiplier": 1.0, "eventSeverityMultiplier": 1.0 },
-    "hardcore": { "id": "hardcore", "label": "Artemis Veteran", "weatherRiskMultiplier": 1.25, "eventSeverityMultiplier": 1.15 }
+    "cadet": { "id": "cadet", "label": "Cadet (Chuẩn STEM)", "labelEn": "Cadet (STEM Standard)", "weatherRiskMultiplier": 0.75, "eventSeverityMultiplier": 0.85 },
+    "standard": { "id": "standard", "label": "Commander (Cân bằng 32 Sol)", "labelEn": "Commander (Balanced 32 Sol)", "weatherRiskMultiplier": 1.0, "eventSeverityMultiplier": 1.0 },
+    "hardcore": { "id": "hardcore", "label": "Artemis Veteran", "labelEn": "Artemis Veteran", "weatherRiskMultiplier": 1.25, "eventSeverityMultiplier": 1.15 }
   },
   "expeditions": [
     {

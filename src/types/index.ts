@@ -494,8 +494,10 @@ export interface BalanceConfig {
     readonly packs: ReadonlyArray<{
       readonly id: CargoPackId;
       readonly name: string;
+      readonly nameEn?: string;
       readonly weightKg: number;
       readonly summary: string;
+      readonly summaryEn?: string;
       readonly grant: Readonly<Partial<Record<'oxygenKg' | 'waterL' | 'mrePacks' | 'medkits' | 'batteryKWh' | 'partsKg', number>>>;
     }>;
   };
@@ -523,6 +525,7 @@ export interface CrewProfileConfig {
   readonly roleTag: string;
   readonly perkId: string;
   readonly perkDescription: string;
+  readonly perkDescriptionEn?: string;
   readonly initialHealth: number;
   readonly initialMorale: number;
   readonly initialSatiety: number;
@@ -550,6 +553,7 @@ export interface RecipeItemConfig {
     readonly durationSols: number;
   } | null;
   readonly effectSummary: string;
+  readonly effectSummaryEn?: string;
   readonly blockThreat: string | null;
 }
 
@@ -609,7 +613,7 @@ export interface CampaignConfig {
   readonly victory: { readonly reachSol: number; readonly minActiveCrew: number; readonly requirePositiveOxygen: boolean; readonly requirePositiveWater: boolean };
   readonly defeat: { readonly minActiveCrew: number; readonly o2ZeroConsecutiveSols: number; readonly waterZeroConsecutiveSols: number };
   readonly difficultyProfiles: Readonly<
-    Record<DifficultyId, { readonly id: DifficultyId; readonly label: string; readonly weatherRiskMultiplier: number; readonly eventSeverityMultiplier: number }>
+    Record<DifficultyId, { readonly id: DifficultyId; readonly label: string; readonly labelEn?: string; readonly weatherRiskMultiplier: number; readonly eventSeverityMultiplier: number }>
   >;
   readonly expeditions: readonly ExpeditionConfig[];
 }

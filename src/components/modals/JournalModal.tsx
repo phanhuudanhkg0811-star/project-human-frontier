@@ -7,7 +7,7 @@ import {
   selectWeatherOutlook,
 } from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
-import type { CrewId, SolPhase, SystemId } from '../../types/index.ts';
+import type { CrewId, SystemId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_SVG, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
@@ -17,36 +17,18 @@ export type JournalTabId = 'log' | 'crew' | 'systems' | 'cargo';
 const JOURNAL_TABS: ReadonlyArray<{
   id: JournalTabId;
   code: string;
-  title: string;
+  titleKey: string;
   icon: string;
   top: string;
 }> = [
-  { id: 'log', code: 'TAB 01 // LOG', title: 'NHẬT KÝ VẬN HÀNH TRẠM', icon: HAIL_SVG.sysComms, top: '18.95%' },
-  { id: 'crew', code: 'TAB 02 // CREW', title: 'HỒ SƠ Y TẾ PHI HÀNH ĐOÀN', icon: HAIL_SVG.sysMed, top: '34.76%' },
-  { id: 'systems', code: 'TAB 03 // ECLSS', title: 'GIÁM SÁT HỆ THỐNG KỸ THUẬT', icon: HAIL_SVG.sysPower, top: '50.65%' },
-  { id: 'cargo', code: 'TAB 04 // CARGO', title: 'KHO TÀI NGUYÊN & ROVER', icon: HAIL_SVG.sysRobot, top: '66.53%' },
+  { id: 'log', code: 'TAB 01 // LOG', titleKey: 'journal.tab.log.title', icon: HAIL_SVG.sysComms, top: '18.95%' },
+  { id: 'crew', code: 'TAB 02 // CREW', titleKey: 'journal.tab.crew.title', icon: HAIL_SVG.sysMed, top: '34.76%' },
+  { id: 'systems', code: 'TAB 03 // ECLSS', titleKey: 'journal.tab.systems.title', icon: HAIL_SVG.sysPower, top: '50.65%' },
+  { id: 'cargo', code: 'TAB 04 // CARGO', titleKey: 'journal.tab.cargo.title', icon: HAIL_SVG.sysRobot, top: '66.53%' },
 ];
 
 const CREW_IDS: readonly CrewId[] = ['cmd', 'eng', 'doc', 'geo'];
 const SYSTEM_IDS: readonly SystemId[] = ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'];
-
-const SYSTEM_NAMES: Record<SystemId, string> = {
-  solar: 'Mảng Pin Mặt Trời (Solar)',
-  recycler: 'Hệ thống Tái chế Nước (WRS)',
-  scrubber: 'Máy lọc CO₂ & Bức xạ (Scrubber)',
-  airlock: 'Khóa khí & Cửa EVA (Airlock)',
-  fabricator: 'Xưởng in 3D Fabricator',
-};
-
-const PHASE_LABELS: Record<SolPhase, string> = {
-  briefing: 'Pha 1 · Giao ban & Sự kiện',
-  engineering: 'Pha 2 · Kỹ thuật & Xưởng 3D',
-  comms: 'Pha 3 · Liên lạc CAPCOM & Rover',
-  rationing: 'Pha 4 · Khẩu phần & Điện',
-  resolving: 'Đang tính toán End-Sol',
-  debrief: 'Pha 5 · Báo cáo Đêm',
-  terminal: 'Kết thúc Chiến dịch',
-};
 
 export function JournalModal({
   initialTab = 'log',
@@ -60,7 +42,7 @@ export function JournalModal({
   onOpenPanel: (panel: 'comms' | 'expedition' | 'launch') => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t } = useI18n();
+  const { t, locale, pickText } = useI18n();
   const [tab, setTab] = useState<JournalTabId>(initialTab);
   const [logPage, setLogPage] = useState(0);
   const [crewIdx, setCrewIdx] = useState(0);
@@ -78,14 +60,14 @@ export function JournalModal({
   const safePage = Math.min(logPage, totalLogPages - 1);
   const pageLogs = logs.slice(safePage * logsPerPage, (safePage + 1) * logsPerPage);
 
-  const activeTabMeta = JOURNAL_TABS.find((t) => t.id === tab) ?? JOURNAL_TABS[0];
+  const activeTabMeta = JOURNAL_TABS.find((item) => item.id === tab) ?? JOURNAL_TABS[0];
   const selectedCrewId = CREW_IDS[crewIdx] ?? 'cmd';
   const selectedCrew = gameState.crew[selectedCrewId];
   const rationCut =
     gameState.clock.phase === 'rationing' &&
     !gameState.dailyPlan.mreTargets.includes(selectedCrewId);
   const selectedCrewVisual = selectedCrew
-    ? getHailCrewVisual(selectedCrewId, selectedCrew, rationCut)
+    ? getHailCrewVisual(selectedCrewId, selectedCrew, rationCut, locale)
     : null;
 
   const selectedSysId = SYSTEM_IDS[sysIdx] ?? 'solar';
@@ -105,7 +87,7 @@ export function JournalModal({
   const handleSystemTask = async (task: 'repair-system' | 'upgrade-system') => {
     const worker = findFitWorker();
     if (!worker) {
-      setStatusNote('Không có phi hành gia Fit rảnh (1 người/1 việc/Sol).');
+      setStatusNote(t('journal.noFitWorker'));
       return;
     }
     const res = await dispatch({
@@ -116,7 +98,7 @@ export function JournalModal({
     });
     if (res.ok) {
       playSfx(task === 'upgrade-system' ? 'upgrade' : 'repair', 0.55);
-      setStatusNote(res.effects[0]?.message ?? 'Đã phân công.');
+      setStatusNote(res.effects[0]?.message ?? t('journal.assignedOk'));
     } else {
       setStatusNote(res.error.message);
     }
@@ -126,7 +108,7 @@ export function JournalModal({
     const res = await dispatch({ type: 'phase/advance' });
     if (res.ok) {
       playSfx('click', 0.45);
-      setStatusNote(res.effects[0]?.message ?? 'Đã chuyển pha.');
+      setStatusNote(res.effects[0]?.message ?? t('journal.advancedOk'));
     } else {
       setStatusNote(res.error.message);
     }
@@ -158,15 +140,17 @@ export function JournalModal({
     (m) => m.status === 'transmitting'
   ).length;
 
+  const phaseLabel = t(`phase.${gameState.clock.phase}`);
+
   return (
     <MissionDialog
-      title="Nhật ký Vận hành Trạm Artemis"
+      title={t('journal.title')}
       eyebrow="STATION JOURNAL"
       panelType="journal"
       tactileFrame
       onClose={onClose}
     >
-      <section className="hail-tactile-frame hail-tactile-frame--journal" aria-label="Nhật ký Trạm">
+      <section className="hail-tactile-frame hail-tactile-frame--journal" aria-label={t('journal.aria')}>
         <img
           src={HAIL_TACTILE_UI.journalFrame}
           alt=""
@@ -177,6 +161,7 @@ export function JournalModal({
         {/* Left Bezel 4 Square Lit Tab Buttons */}
         {JOURNAL_TABS.map((item) => {
           const active = item.id === tab;
+          const tabTitle = t(item.titleKey);
           return (
             <button
               key={item.id}
@@ -184,8 +169,8 @@ export function JournalModal({
               className={`hail-jnl-tab-btn ${active ? 'is-active' : ''}`}
               style={{ top: item.top }}
               aria-pressed={active}
-              aria-label={item.title}
-              title={item.title}
+              aria-label={tabTitle}
+              title={tabTitle}
               onClick={() => {
                 playSfx('click', 0.4);
                 setTab(item.id);
@@ -208,36 +193,39 @@ export function JournalModal({
           <header className="hail-term-topbar">
             <div className="hail-term-title-group">
               <span className="hail-term-code">{activeTabMeta.code}</span>
-              <h2 className="hail-term-title">{activeTabMeta.title}</h2>
+              <h2 className="hail-term-title">{t(activeTabMeta.titleKey)}</h2>
             </div>
 
             <span className="hail-term-sol">
               SOL {String(gameState.clock.sol).padStart(2, '0')}/{gameState.campaign.targetSol} //{' '}
               {tab === 'log'
-                ? `TRANG ${safePage + 1}/${totalLogPages}`
+                ? t('journal.pageCounter', { current: safePage + 1, total: totalLogPages })
                 : tab === 'crew'
-                  ? `CREW 0${crewIdx + 1}/0${CREW_IDS.length}`
+                  ? t('journal.crewCounter', { current: crewIdx + 1, total: CREW_IDS.length })
                   : tab === 'systems'
-                    ? `HỆ THỐNG 0${sysIdx + 1}/0${SYSTEM_IDS.length}`
-                    : `DONKI ${weather.level.toUpperCase()}`}
+                    ? t('journal.sysCounter', { current: sysIdx + 1, total: SYSTEM_IDS.length })
+                    : `DONKI ${t(`donki.${weather.level}`)}`}
             </span>
           </header>
 
           <div className="hail-term-body">
             {statusNote && (
-              <p className="hail-term-plain-line is-ok">&gt; [HỆ THỐNG]: {statusNote}</p>
+              <p className="hail-term-plain-line is-ok">{t('journal.systemPrefix', { note: statusNote })}</p>
             )}
 
             {tab === 'log' && (
               <div className="hail-term-text-flow">
                 <p className="hail-term-plain-line">
-                  &gt; {PHASE_LABELS[gameState.clock.phase]} // DONKI: {weather.level.toUpperCase()} (Sửa{' '}
-                  {Math.round(weather.repairSuccessProb * 100)}%)
+                  {t('journal.logStatusLine', {
+                    phase: phaseLabel,
+                    level: t(`donki.${weather.level}`),
+                    pct: Math.round(weather.repairSuccessProb * 100),
+                  })}
                 </p>
 
                 {pendingEvent && (
                   <p className="hail-term-plain-line is-warn">
-                    &gt; [SỰ CỐ]: {pendingEvent.title} —{' '}
+                    {t('journal.incidentPrefix', { title: pickText(pendingEvent.title, pendingEvent.titleEn) })}{' '}
                     <button
                       type="button"
                       className="hail-term-text-link"
@@ -246,7 +234,7 @@ export function JournalModal({
                         onOpenDecision();
                       }}
                     >
-                      [MỞ DECISION TERMINAL &gt;&gt;]
+                      {t('journal.openDecisionCmd')}
                     </button>
                   </p>
                 )}
@@ -255,7 +243,7 @@ export function JournalModal({
                   {pageLogs.length === 0 ? (
                     <li>
                       <span className="hail-term-prompt">&gt;</span>
-                      <span>Chưa có nhật ký ghi nhận trong ngày.</span>
+                      <span>{t('journal.emptyLogs')}</span>
                     </li>
                   ) : (
                     pageLogs.map((entry, idx) => (
@@ -284,9 +272,14 @@ export function JournalModal({
                       >
                         <span className="hail-term-prompt">{idx === crewIdx ? '>>' : '>'}</span>
                         <span>
-                          0{idx + 1} · {member.name} — HP {member.health}% · Đói:{' '}
-                          {member.hungerState.toUpperCase()} ({member.satiety}%) ·{' '}
-                          {member.condition.toUpperCase()}
+                          {t('journal.crewLine', {
+                            num: `0${idx + 1}`,
+                            name: member.name,
+                            health: member.health,
+                            hunger: member.hungerState.toUpperCase(),
+                            satiety: member.satiety,
+                            condition: member.condition.toUpperCase(),
+                          })}
                         </span>
                       </li>
                     );
@@ -295,13 +288,21 @@ export function JournalModal({
 
                 <div className="hail-term-detail-lines">
                   <p>
-                    &gt; HỒ SƠ: <strong>{selectedCrew.name}</strong> ({selectedCrewVisual?.role ?? selectedCrew.roleTag})
+                    &gt; {t('journal.crewProfile')} <strong>{selectedCrew.name}</strong> ({selectedCrewVisual?.role ?? selectedCrew.roleTag})
                   </p>
-                  <p>&gt; CHUYÊN MÔN: {selectedCrewVisual?.specialty ?? 'Vận hành trạm'}</p>
                   <p>
-                    &gt; SINH HIỆU: HP {selectedCrew.health}/100 | Tinh thần {selectedCrew.morale}/100 | No{' '}
-                    {selectedCrew.satiety}% | Bức xạ {selectedCrew.radiationMgy.toFixed(1)} mGy | Việc:{' '}
-                    {selectedCrew.assignedTask ? selectedCrew.assignedTask.type : 'Rảnh'}
+                    {t('journal.crewSpecialty', {
+                      specialty: selectedCrewVisual?.specialty ?? t('journal.defaultSpecialty'),
+                    })}
+                  </p>
+                  <p>
+                    {t('journal.crewVitals', {
+                      health: selectedCrew.health,
+                      morale: selectedCrew.morale,
+                      satiety: selectedCrew.satiety,
+                      rad: selectedCrew.radiationMgy.toFixed(1),
+                      task: selectedCrew.assignedTask ? selectedCrew.assignedTask.type : t('journal.taskIdle'),
+                    })}
                   </p>
                 </div>
               </div>
@@ -310,13 +311,15 @@ export function JournalModal({
             {tab === 'systems' && (
               <div className="hail-term-text-flow">
                 <p className="hail-term-plain-line">
-                  &gt; PHỤ TÙNG: {gameState.resources.partsKg.toFixed(1)} kg //{' '}
-                  {PHASE_LABELS[gameState.clock.phase]}
+                  {t('journal.partsLine', {
+                    parts: gameState.resources.partsKg.toFixed(1),
+                    phase: phaseLabel,
+                  })}
                   {gameState.clock.phase === 'briefing' && advancePerm.allowed && (
                     <>
                       {' — '}
                       <button type="button" className="hail-term-text-link" onClick={handleAdvancePhase}>
-                        [CHUYỂN PHA KỸ THUẬT &gt;&gt;]
+                        {t('journal.advanceEngCmd')}
                       </button>
                     </>
                   )}
@@ -333,7 +336,11 @@ export function JournalModal({
                       >
                         <span className="hail-term-prompt">{idx === sysIdx ? '>>' : '>'}</span>
                         <span>
-                          {SYSTEM_NAMES[sysId]} — CẤP {sys.level} · ĐỘ BỀN {Math.round(sys.integrity * 100)}%
+                          {t('journal.sysLine', {
+                            name: t(`system.${sysId}`),
+                            level: sys.level,
+                            pct: Math.round(sys.integrity * 100),
+                          })}
                           {sys.status === 'offline' ? ' [OFFLINE]' : ''}
                         </span>
                       </li>
@@ -342,7 +349,7 @@ export function JournalModal({
                 </ol>
 
                 <p className="hail-term-plain-line">
-                  &gt; LỆNH ({SYSTEM_NAMES[selectedSysId]}):{' '}
+                  {t('journal.cmdLine', { name: t(`system.${selectedSysId}`) })}{' '}
                   <button
                     type="button"
                     className="hail-term-text-link"
@@ -353,7 +360,7 @@ export function JournalModal({
                     }
                     onClick={() => handleSystemTask('repair-system')}
                   >
-                    [SỬA -{repairCost}kg]
+                    {t('journal.repairCmd', { cost: repairCost })}
                   </button>
                   {targetLvl && (
                     <>
@@ -367,7 +374,7 @@ export function JournalModal({
                         }
                         onClick={() => handleSystemTask('upgrade-system')}
                       >
-                        [NÂNG CẤP {targetLvl} (-{baseUpCost}kg)]
+                        {t('journal.upgradeCmd', { level: targetLvl, cost: baseUpCost })}
                       </button>
                     </>
                   )}
@@ -381,58 +388,68 @@ export function JournalModal({
                   <li>
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
-                      DƯỠNG KHÍ O₂: {gameState.resources.oxygenKg.toFixed(1)} kg // NƯỚC SẠCH:{' '}
-                      {gameState.resources.waterL.toFixed(1)} L (XÁM: {gameState.resources.wasteWaterL.toFixed(1)} L)
+                      {t('journal.cargoO2Water', {
+                        oxygen: gameState.resources.oxygenKg.toFixed(1),
+                        water: gameState.resources.waterL.toFixed(1),
+                        grey: gameState.resources.wasteWaterL.toFixed(1),
+                      })}
                     </span>
                   </li>
                   <li>
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
-                      MRE: {gameState.resources.mrePacks} gói · MEDKIT: {gameState.resources.medkits} liều · PHỤ TÙNG:{' '}
-                      {gameState.resources.partsKg.toFixed(1)} kg · PIN: {gameState.resources.batteryKWh.toFixed(1)} kWh
+                      {t('journal.cargoStock', {
+                        mre: gameState.resources.mrePacks,
+                        medkit: gameState.resources.medkits,
+                        parts: gameState.resources.partsKg.toFixed(1),
+                        battery: gameState.resources.batteryKWh.toFixed(1),
+                      })}
                     </span>
                   </li>
                   <li>
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
-                      ROVER: {roverStatus.toUpperCase()} · ĐỘ TRỄ CAPCOM: 1.3s/chiều · RADIO CHỜ: {waitingRadioCount}
+                      {t('journal.cargoRover', {
+                        status: roverStatus.toUpperCase(),
+                        radio: waitingRadioCount,
+                      })}
                     </span>
                   </li>
                   <li>
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
-                      TÀU TIẾP TẾ:{' '}
+                      {t('journal.cargoSupplyLabel')}{' '}
                       {gameState.logistics.activeOrder
-                        ? `Đang bay (Hạ cánh Sol ${gameState.logistics.activeOrder.arrivalSol})`
+                        ? t('journal.cargoInFlight', { sol: gameState.logistics.activeOrder.arrivalSol })
                         : gameState.logistics.padCooldownSols > 0
-                          ? `Hồi bãi đáp (${gameState.logistics.padCooldownSols} Sol)`
-                          : 'Bãi đáp 80 kg sẵn sàng'}
+                          ? t('journal.cargoCooldown', { sols: gameState.logistics.padCooldownSols })
+                          : t('journal.cargoReady')}
                     </span>
                   </li>
                   <li>
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
-                      ĐIỀU HƯỚNG:{' '}
+                      {t('journal.cargoNavLabel')}{' '}
                       <button
                         type="button"
                         className="hail-term-text-link"
                         onClick={() => onOpenPanel('comms')}
                       >
-                        [LIÊN LẠC CAPCOM &gt;&gt;]
+                        {t('journal.navCommsCmd')}
                       </button>{' '}
                       <button
                         type="button"
                         className="hail-term-text-link"
                         onClick={() => onOpenPanel('expedition')}
                       >
-                        [BẢN ĐỒ ROVER &gt;&gt;]
+                        {t('journal.navRoverCmd')}
                       </button>{' '}
                       <button
                         type="button"
                         className="hail-term-text-link"
                         onClick={() => onOpenPanel('launch')}
                       >
-                        [DONKI / CHIẾN DỊCH &gt;&gt;]
+                        {t('journal.navLaunchCmd')}
                       </button>
                     </span>
                   </li>
@@ -443,14 +460,12 @@ export function JournalModal({
 
           {(tab === 'log' || tab === 'crew' || tab === 'systems') && (
             <footer className="hail-jnl-bottombar">
-              <span className="hail-term-meta-line">
-                DÙNG PHÍM MŨI TÊN ĐỂ CHUYỂN MỤC / TRANG
-              </span>
+              <span className="hail-term-meta-line">{t('journal.arrowHint')}</span>
               <div className="hail-keycap-pair">
                 <button
                   type="button"
                   className="hail-keycap-btn"
-                  aria-label="Mục trước"
+                  aria-label={t('journal.prevAria')}
                   onClick={handlePrevArrow}
                 >
                   <img
@@ -463,7 +478,7 @@ export function JournalModal({
                 <button
                   type="button"
                   className="hail-keycap-btn"
-                  aria-label="Mục tiếp theo"
+                  aria-label={t('journal.nextAria')}
                   onClick={handleNextArrow}
                 >
                   <img src={HAIL_TACTILE_UI.keycapArrow} alt=">" draggable={false} />

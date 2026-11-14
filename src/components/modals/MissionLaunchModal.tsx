@@ -18,7 +18,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
   const [selectedProfile, setSelectedProfile] = useState(gameState.campaign.donkiProfileId);
   const [difficulty, setDifficulty] = useState<DifficultyId>(gameState.campaign.difficulty);
   const [seed, setSeed] = useState(gameState.campaign.seed);
-  const { t } = useI18n();
+  const { t, pickText } = useI18n();
 
   const handleStartNew = async () => {
     playSfx('launch', 0.6);
@@ -84,7 +84,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
               onChange={(val) => setDifficulty(val as DifficultyId)}
               options={Object.values(bundle.campaign.difficultyProfiles).map((d) => ({
                 value: d.id,
-                label: d.label,
+                label: pickText(d.label, d.labelEn),
               }))}
             />
             <label className="hail-select-field">

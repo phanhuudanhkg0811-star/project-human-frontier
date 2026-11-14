@@ -474,7 +474,7 @@ export function HailGameViewport() {
 
         {/* Bottom Action Bar */}
         <footer className="hail-action-band">
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="hail-action-band-left">
             <button type="button" onClick={() => openPanel('journal')}>
               <img src={HAIL_SVG.frameCorner} alt="" />
               <span>{t('hud.journal')}</span>
@@ -514,14 +514,25 @@ export function HailGameViewport() {
               title={t('about.title')}
             >
               <img src={HAIL_SVG.badgeNasaStem} alt="" aria-hidden="true" />
-              <span>{locale === 'en' ? 'Credits' : 'Thông tin'}</span>
+              <span>{t('hud.credits')}</span>
             </button>
           </div>
 
           <div className="hail-action-band-right">
-            <span className="hail-phase-hint">
-              {advancePerm.allowed ? t('hud.readyAdvance') : advancePerm.message}
-            </span>
+            {(() => {
+              const phaseHint = advancePerm.allowed
+                ? t('hud.readyAdvance')
+                : gameState.campaign.status !== 'active'
+                  ? t('hud.hint.campaignEnded')
+                  : advancePerm.code === 'E_EVENT_PENDING'
+                    ? t('hud.hint.briefingPending')
+                    : t('hud.hint.useEndSol');
+              return (
+                <span className="hail-phase-hint" title={phaseHint}>
+                  {phaseHint}
+                </span>
+              );
+            })()}
             <button
               type="button"
               onClick={handlePrimaryAction}

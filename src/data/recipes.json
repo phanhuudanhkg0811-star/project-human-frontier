@@ -17,6 +17,7 @@
       "craftCost": { "partsKg": 2, "waterL": 2, "batteryKWh": 4, "durationSols": 1 },
       "upgradeCost": null,
       "effectSummary": "+75 Satiety (về trạng thái Ok) cho 1 phi hành gia.",
+      "effectSummaryEn": "Restores +75 Satiety (back to Ok state) for 1 astronaut.",
       "blockThreat": null
     },
     {
@@ -28,6 +29,7 @@
       "craftCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 4, "durationSols": 2 },
       "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "effectSummary": "Xóa trạng thái Injured, +30 Health (Lv2: +50 Health).",
+      "effectSummaryEn": "Clears Injured status and restores +30 Health (Lv2: +50 Health).",
       "blockThreat": null
     },
     {
@@ -39,6 +41,7 @@
       "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "effectSummary": "Chặn hiểm họa địa hình dốc tại Lunar Crater và thu mẫu lõi; Lv2 giảm 50% hao mòn.",
+      "effectSummaryEn": "Mitigates steep terrain hazards at Lunar Crater and collects core samples; Lv2 halves durability wear.",
       "blockThreat": "steep-terrain-crater"
     },
     {
@@ -50,6 +53,7 @@
       "craftCost": { "partsKg": 2, "waterL": 0, "batteryKWh": 2, "durationSols": 1 },
       "upgradeCost": { "partsKg": 2, "waterL": 0, "batteryKWh": 2, "durationSols": 1 },
       "effectSummary": "Bịt rò Airlock / sửa khẩn trong Event không tốn Parts; Lv2 dùng 2 lần.",
+      "effectSummaryEn": "Seals Airlock leaks / emergency event repairs without spending Parts; Lv2 allows 2 uses.",
       "blockThreat": "airlock-leak"
     },
     {
@@ -61,6 +65,7 @@
       "craftCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 3, "durationSols": 1 },
       "upgradeCost": { "partsKg": 3, "waterL": 0, "batteryKWh": 3, "durationSols": 1 },
       "effectSummary": "Chiếu sáng vùng tối vĩnh viễn (PSR) & chống tụt Morale Đêm Trăng; Lv2 +10 Morale Đêm Trăng.",
+      "effectSummaryEn": "Illuminates Permanently Shadowed Regions (PSR) & prevents Lunar Night Morale loss; Lv2 grants +10 Morale during Lunar Night.",
       "blockThreat": "darkness-psr"
     },
     {
@@ -72,6 +77,7 @@
       "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "effectSummary": "Chặn bụi tĩnh điện Regolith Field & bão hạt; Lv2 miễn hao mòn.",
+      "effectSummaryEn": "Blocks electrostatic regolith dust at Regolith Field & particle storms; Lv2 prevents durability wear.",
       "blockThreat": "electrostatic-dust"
     },
     {
@@ -83,6 +89,7 @@
       "craftCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 6, "durationSols": 1 },
       "upgradeCost": { "partsKg": 4, "waterL": 0, "batteryKWh": 4, "durationSols": 1 },
       "effectSummary": "Giữ tín hiệu Rover vùng khuất (Regolith / Sol 7) & hỗ trợ CAPCOM; Lv2 giảm 50% chi phí cứu Sol 7.",
+      "effectSummaryEn": "Maintains Rover signal in occluded zones (Regolith / Sol 7) & boosts CAPCOM; Lv2 halves Sol 7 rescue cost.",
       "blockThreat": "signal-blackout"
     },
     {
@@ -94,6 +101,7 @@
       "craftCost": { "partsKg": 6, "waterL": 0, "batteryKWh": 6, "durationSols": 1 },
       "upgradeCost": { "partsKg": 5, "waterL": 0, "batteryKWh": 5, "durationSols": 1 },
       "effectSummary": "Chặn lạnh cực đoan -173°C tại PSR & bảo vệ Đêm Trăng; Lv2 miễn tụt Pin phụ trong PSR.",
+      "effectSummaryEn": "Protects against -173°C cryogenic cold in PSR & Lunar Night; Lv2 waives extra battery drain in PSR.",
       "blockThreat": "cryo-extreme"
     }
   ]

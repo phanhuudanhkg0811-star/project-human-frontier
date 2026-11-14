@@ -20,7 +20,7 @@ const HUNGER_BADGE = {
 } as const;
 
 export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
-  const { t } = useI18n();
+  const { t, locale, pickText } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const { selectedCrewId } = useUiStore();
   const [note, setNote] = useState<string | null>(null);
@@ -101,7 +101,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
           {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId) => {
             const member = gameState.crew[crewId];
             const profile = bundle.crewCatalog.find((p) => p.id === crewId);
-            const visual = getHailCrewVisual(crewId, member);
+            const visual = getHailCrewVisual(crewId, member, false, locale);
             const isSelected = selectedCrewId === crewId;
             const isTired = member.morale < bundle.balance.crew.tiredBelowMorale;
 
@@ -125,7 +125,9 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                         {member.roleTag} · {visual.stateLabel}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{profile?.perkDescription}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {profile ? pickText(profile.perkDescription, profile.perkDescriptionEn) : ''}
+                    </p>
                     <div className="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-mono">
                       <span className={`px-1.5 py-0.5 rounded border ${HUNGER_BADGE[member.hungerState]}`}>
                         {t('character.satiety', { state: member.hungerState.toUpperCase(), pct: member.satiety })}

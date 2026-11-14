@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle2, Compass, Lock } from 'lucide-react';
-import { selectMissionProgress } from '../domain/selectors.ts';
+import { selectMissionProgress, selectRoverSamples } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import { NightReadinessChecklist } from './NightReadinessChecklist.tsx';
 import { useI18n } from '../i18n/useI18n.ts';
@@ -12,6 +12,38 @@ export const MissionProgressionPanel: React.FC = () => {
   const totalCount = evaluation.checks.length;
   const progressPct = Math.round((metCount / totalCount) * 100);
   const { t } = useI18n();
+
+  const localizeCheck = (check: (typeof evaluation.checks)[number]) => {
+    const labelKey = `progress.check.${check.id}`;
+    const label = t(labelKey) !== labelKey ? t(labelKey) : check.label;
+    if (check.id === 'sol-28-night') {
+      return {
+        label,
+        currentText: t('progress.current.battery', { amount: gameState.resources.batteryKWh }),
+        targetText: t('progress.target.afterSol', { sol: bundle.campaign.milestones.lunarNight.endSol }),
+      };
+    }
+    if (check.id === 'crew-alive') {
+      return {
+        label,
+        currentText: t('progress.current.crew', { count: evaluation.livingCrew }),
+        targetText: t('progress.target.minCrew', { min: bundle.campaign.victory.minActiveCrew }),
+      };
+    }
+    if (check.id === 'samples-collected') {
+      const sampleCount = selectRoverSamples(gameState).length;
+      return {
+        label,
+        currentText: t('progress.current.samples', { count: sampleCount }),
+        targetText: t('progress.target.minSamples', { min: 1 }),
+      };
+    }
+    return {
+      label,
+      currentText: check.currentText,
+      targetText: check.targetText,
+    };
+  };
 
   return (
     <div className="hud-panel-glow rounded-xl p-4 flex flex-col gap-3">
@@ -33,33 +65,36 @@ export const MissionProgressionPanel: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[11px] font-mono">
-        {evaluation.checks.map((check) => (
-          <div
-            key={check.id}
-            className={`p-2 rounded-lg border flex flex-col justify-between gap-1 ${
-              check.met
-                ? 'bg-emerald-950/25 border-emerald-600/50 text-emerald-200'
-                : 'bg-slate-950/80 border-slate-800 text-slate-400'
-            }`}
-          >
-            <div className="flex items-start justify-between gap-1">
-              <span className="text-[10px] leading-tight font-sans font-semibold text-slate-200">
-                {check.label}
-              </span>
-              {check.met ? (
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              ) : (
-                <Lock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              )}
+        {evaluation.checks.map((check) => {
+          const localized = localizeCheck(check);
+          return (
+            <div
+              key={check.id}
+              className={`p-2 rounded-lg border flex flex-col justify-between gap-1 ${
+                check.met
+                  ? 'bg-emerald-950/25 border-emerald-600/50 text-emerald-200'
+                  : 'bg-slate-950/80 border-slate-800 text-slate-400'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-1">
+                <span className="text-[10px] leading-tight font-sans font-semibold text-slate-200">
+                  {localized.label}
+                </span>
+                {check.met ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                ) : (
+                  <Lock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                )}
+              </div>
+              <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-800/70">
+                <span className={check.met ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
+                  {localized.currentText}
+                </span>
+                <span className="text-slate-500">{t('progress.goal', { target: localized.targetText })}</span>
+              </div>
             </div>
-            <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-800/70">
-              <span className={check.met ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
-                {check.currentText}
-              </span>
-              <span className="text-slate-500">{t('progress.goal', { target: check.targetText })}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <NightReadinessChecklist state={gameState} bundle={bundle} />
     </div>
