@@ -103,7 +103,24 @@
   overflow: hidden;
   pointer-events: none;
   border-radius: 0.6cqi;
-  box-shadow: inset 0 0 0 1px rgba(199, 203, 200, 0.22);
+  box-shadow:
+    inset 0 0 1.4cqi rgba(6, 12, 18, 0.9),
+    inset 0 0 0 1px rgba(199, 203, 200, 0.28);
+}
+
+.hail-window-aperture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    125deg,
+    rgba(231, 230, 223, 0.1) 0%,
+    rgba(231, 230, 223, 0.02) 28%,
+    rgba(117, 169, 165, 0) 52%,
+    rgba(110, 145, 177, 0.06) 100%
+  );
+  pointer-events: none;
 }
 
 .hail-l00-space {
@@ -135,6 +152,44 @@
   object-fit: fill;
   z-index: 10;
   pointer-events: none;
+  filter: contrast(1.04) saturate(1.03);
+  transition: filter 0.4s ease;
+}
+
+.hail-camera-rig.is-lunar-night .hail-l02-shell {
+  filter: brightness(0.76) contrast(1.1) saturate(0.94);
+}
+
+/* L02.5 Atmospheric Depth, Vignette, Key Light & Contact Shading */
+.hail-cabin-lighting {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+  background:
+    /* Overhead cabin key light cone */
+    radial-gradient(ellipse 46% 36% at 50% 8%, rgba(231, 230, 223, 0.12) 0%, rgba(231, 230, 223, 0) 72%),
+    /* Cool lunar window spill */
+    radial-gradient(ellipse 28% 28% at 50% 30%, rgba(110, 145, 177, 0.14) 0%, rgba(110, 145, 177, 0) 75%),
+    /* Console instrument bounce */
+    radial-gradient(ellipse 36% 24% at 50% 72%, rgba(117, 169, 165, 0.12) 0%, rgba(117, 169, 165, 0) 72%),
+    /* Floor depth shadow */
+    linear-gradient(180deg, rgba(12, 18, 25, 0.16) 0%, rgba(12, 18, 25, 0) 24%, rgba(12, 18, 25, 0.08) 72%, rgba(9, 14, 20, 0.56) 100%),
+    /* Perimeter vignette for 3D cockpit depth */
+    radial-gradient(ellipse 78% 72% at 50% 46%, rgba(12, 18, 25, 0) 48%, rgba(10, 16, 23, 0.46) 86%, rgba(7, 11, 17, 0.72) 100%);
+  transition: background 0.4s ease, opacity 0.4s ease;
+}
+
+.hail-camera-rig.is-lunar-night .hail-cabin-lighting {
+  background:
+    radial-gradient(ellipse 40% 32% at 50% 10%, rgba(110, 145, 177, 0.08) 0%, rgba(110, 145, 177, 0) 70%),
+    radial-gradient(ellipse 38% 26% at 50% 70%, rgba(117, 169, 165, 0.2) 0%, rgba(117, 169, 165, 0) 74%),
+    linear-gradient(180deg, rgba(8, 13, 22, 0.3) 0%, rgba(8, 13, 22, 0.06) 26%, rgba(8, 13, 22, 0.18) 72%, rgba(5, 9, 16, 0.68) 100%),
+    radial-gradient(ellipse 74% 68% at 50% 48%, rgba(8, 13, 22, 0) 42%, rgba(6, 10, 18, 0.62) 84%, rgba(4, 7, 13, 0.84) 100%);
+}
+
+.hail-camera-rig.is-storm .hail-cabin-lighting {
+  box-shadow: inset 0 0 6cqi rgba(197, 125, 89, 0.22);
 }
 
 /* Shared Sprite Helpers */
@@ -587,22 +642,23 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 
 .hail-crew-member.is-rear {
   z-index: 20;
-  filter: brightness(0.94);
+  filter: brightness(0.86) contrast(0.98) drop-shadow(0 0.5cqi 0.7cqi rgba(8, 13, 19, 0.55));
 }
 
 .hail-crew-member.is-foreground {
   z-index: 35;
+  filter: drop-shadow(0 0.7cqi 1.1cqi rgba(8, 13, 19, 0.62));
 }
 
 .hail-crew-member::after {
   content: '';
   position: absolute;
-  left: 16%;
-  right: 16%;
-  bottom: 0.2%;
-  height: 5%;
+  left: 12%;
+  right: 12%;
+  bottom: -0.5%;
+  height: 6.5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(10, 15, 20, 0.58) 0%, rgba(10, 15, 20, 0) 74%);
+  background: radial-gradient(ellipse at center, rgba(6, 10, 15, 0.72) 0%, rgba(6, 10, 15, 0) 76%);
   pointer-events: none;
   z-index: -1;
 }
@@ -669,12 +725,12 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-decision-console::after {
   content: '';
   position: absolute;
-  left: 6%;
-  right: 6%;
-  bottom: -1.5%;
-  height: 6%;
+  left: 4%;
+  right: 4%;
+  bottom: -2%;
+  height: 7.5%;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(10, 15, 20, 0.52) 0%, rgba(10, 15, 20, 0) 74%);
+  background: radial-gradient(ellipse at center, rgba(6, 10, 15, 0.74) 0%, rgba(6, 10, 15, 0) 76%);
   pointer-events: none;
   z-index: -1;
 }
@@ -685,6 +741,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   object-fit: contain;
   object-position: bottom center;
   pointer-events: none;
+  filter: drop-shadow(0 0.9cqi 1.4cqi rgba(6, 11, 16, 0.7));
 }
 
 /* Exact bezel-locked live micro-displays measured on PH_EQP_CONSOLE_DESK_BASE_V02 (1266x659) */
@@ -1046,6 +1103,17 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 /* ==========================================================================
    HUMAN FRONTIER 2050+ DRAWER THEME (Griductive-style side dossier)
    ========================================================================== */
+.hail-dialog {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  width: min(94vw, 820px);
+  max-width: 94vw;
+  max-height: 90dvh;
+  overflow: visible;
+}
+
 .hail-dialog::backdrop {
   background: rgba(14, 21, 27, 0.38);
   backdrop-filter: blur(2px);
@@ -1054,12 +1122,14 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 @media (min-width: 960px) {
   .hail-dialog.hail-dialog--dock-right {
     margin: auto 16px auto auto;
+    width: min(500px, 38vw);
     max-width: min(500px, 38vw);
     max-height: calc(100dvh - 24px);
   }
 
   .hail-dialog.hail-dialog--dock-left {
     margin: auto auto auto 16px;
+    width: min(500px, 38vw);
     max-width: min(500px, 38vw);
     max-height: calc(100dvh - 24px);
   }
@@ -1074,38 +1144,85 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-dialog .hail-dialog-frame {
   background: #303B43;
   border: 1px solid #59666D;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(117, 169, 165, 0.25);
   color: #E7E6DF;
   font-family: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  max-height: 90dvh;
+  width: 100%;
 }
 
 .hail-dialog .hail-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   background: #263746;
   border-bottom: 1px solid #59666D;
   padding: 12px 18px;
+  flex-shrink: 0;
 }
 
 .hail-dialog .hail-dialog-art-wrap {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #303B43;
   border: 1px solid #75A9A5;
   border-radius: 8px;
   padding: 6px;
+  box-sizing: border-box;
+}
+
+.hail-dialog .mission-dialog-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-dialog .mission-dialog-titles {
+  flex: 1;
+  min-width: 0;
 }
 
 .hail-dialog .mission-dialog-eyebrow {
+  margin: 0;
+  font-size: 11px;
   color: #75A9A5;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .hail-dialog .mission-dialog-title {
+  margin: 2px 0 0;
+  font-size: 16px;
+  font-weight: 700;
   color: #E7E6DF;
 }
 
 .hail-dialog .hail-close-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: #303B43;
   border: 1px solid #59666D;
   border-radius: 6px;
   padding: 6px;
+  cursor: pointer;
+}
+
+.hail-dialog .hail-close-btn img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }
 
 .hail-dialog .hail-close-btn:hover {
@@ -1116,6 +1233,20 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-dialog .mission-dialog-body {
   background: #28333b;
   color: #E7E6DF;
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
+  padding: 20px 22px 22px;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 640px) {
+  .hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
+    padding: 16px;
+  }
 }
 
 /* Starlog Event Banner & Decision Cards */
@@ -1523,9 +1654,123 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 /* Night Cutscene Backdrop */
 .hail-night-cutscene {
   position: relative;
+  margin: auto;
+  max-width: min(92vw, 680px);
+  width: 100%;
+  padding: 24px 28px;
+  border-radius: 12px;
   overflow: hidden;
   background: #263746;
+  border: 1.5px solid #75A9A5;
+  color: #E7E6DF;
+  font-family: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+
+.hail-night-cutscene::backdrop {
+  background: rgba(10, 16, 22, 0.78);
+  backdrop-filter: blur(4px);
+}
+
+.hail-night-cutscene .mission-kicker {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #75A9A5;
+  letter-spacing: 0.05em;
+}
+
+.hail-night-cutscene h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #E7E6DF;
+  margin: 6px 0 12px;
+}
+
+.hail-night-cutscene h2 span {
+  margin-left: 8px;
+  font-size: 15px;
+  color: #929B9D;
+  font-weight: 500;
+}
+
+.hail-night-cutscene .night-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 10px;
+}
+
+.hail-night-cutscene .night-stats div {
+  background: rgba(20, 31, 41, 0.72);
+  border: 1px solid #59666D;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.hail-night-cutscene .night-stats dt {
+  font-size: 11px;
+  color: #929B9D;
+}
+
+.hail-night-cutscene .night-stats dd {
+  margin: 2px 0 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #D7B66C;
+}
+
+.hail-night-cutscene .night-brief {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(20, 31, 41, 0.78);
+  border: 1px solid rgba(117, 169, 165, 0.45);
+}
+
+.hail-night-cutscene .night-brief h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #75A9A5;
+  margin: 4px 0 6px;
+}
+
+.hail-night-cutscene .night-typewriter {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #E7E6DF;
+  margin: 0 0 8px;
+}
+
+.hail-night-cutscene .night-brief small {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #929B9D;
+}
+
+.hail-night-cutscene .night-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.hail-night-cutscene .night-skip,
+.hail-night-cutscene .mission-button {
+  padding: 8px 16px;
+  border-radius: 6px;
   border: 1px solid #75A9A5;
+  background: rgba(117, 169, 165, 0.2);
+  color: #E7E6DF;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.hail-night-cutscene .mission-button {
+  background: #75A9A5;
+  color: #1A242B;
 }
 
 .hail-night-backdrop {
@@ -1563,5 +1808,1244 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   .hail-site-detail-card,
   .hail-site-tabs {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   CUSTOM TELEMETRY SELECT (HailSelect)
+   ========================================================================== */
+.hail-select-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
+}
+
+.hail-select-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #929B9D;
+  line-height: 1.25;
+  user-select: none;
+}
+
+.hail-select-control {
+  position: relative;
+  width: 100%;
+}
+
+.hail-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(38, 55, 70, 0.88) 0%, rgba(22, 32, 41, 0.96) 100%);
+  border: 1px solid #59666D;
+  color: #E7E6DF;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(231, 230, 223, 0.07);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.hail-select-field.is-sm .hail-select-trigger {
+  padding: 6px 9px;
+  font-size: 11.5px;
+}
+
+.hail-select-trigger:hover:not(:disabled),
+.hail-select-trigger:focus-visible {
+  outline: none;
+  border-color: #75A9A5;
+  box-shadow: 0 0 0 2px rgba(117, 169, 165, 0.18), inset 0 1px 0 rgba(231, 230, 223, 0.1);
+}
+
+.hail-select-trigger.is-open {
+  border-color: #75A9A5;
+  background: linear-gradient(180deg, rgba(48, 59, 67, 0.95) 0%, rgba(24, 34, 44, 0.98) 100%);
+  box-shadow: 0 0 0 2px rgba(117, 169, 165, 0.24), inset 0 1px 0 rgba(231, 230, 223, 0.12);
+}
+
+.hail-select-trigger:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hail-select-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hail-select-value-main {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #E7E6DF;
+}
+
+.hail-select-value-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #75A9A5;
+  background: rgba(117, 169, 165, 0.14);
+  border: 1px solid rgba(117, 169, 165, 0.32);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hail-select-chevron {
+  width: 15px;
+  height: 15px;
+  color: #929B9D;
+  flex-shrink: 0;
+  transition: transform 0.18s ease, color 0.15s ease;
+}
+
+.hail-select-chevron.is-open {
+  transform: rotate(180deg);
+  color: #75A9A5;
+}
+
+.hail-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 80;
+  min-width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border-radius: 8px;
+  background: #1a252f;
+  border: 1px solid rgba(117, 169, 165, 0.58);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(35, 43, 49, 0.8);
+}
+
+.hail-select-menu.is-bottom {
+  top: calc(100% + 5px);
+}
+
+.hail-select-menu.is-top {
+  bottom: calc(100% + 5px);
+}
+
+.hail-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #E7E6DF;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.hail-select-option.is-highlighted:not(.is-disabled) {
+  background: rgba(110, 145, 177, 0.2);
+}
+
+.hail-select-option.is-selected {
+  background: rgba(117, 169, 165, 0.22);
+  font-weight: 600;
+}
+
+.hail-select-option.is-disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.hail-select-option-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hail-select-option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hail-select-option-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #929B9D;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hail-select-option.is-selected .hail-select-option-meta {
+  color: #75A9A5;
+}
+
+.hail-select-option-check {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #75A9A5;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   3 MAIN TACTILE HARDWARE SCREENS (Journal / Decision / Allocation & Lever)
+   ========================================================================== */
+.hail-dialog.hail-dialog--tactile {
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  max-width: 96vw;
+  max-height: 92dvh;
+  width: fit-content;
+  overflow: visible;
+}
+
+.hail-dialog.hail-dialog--tactile::backdrop {
+  background: rgba(11, 18, 24, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.hail-tactile-dialog-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.hail-tactile-frame {
+  position: relative;
+  container-type: inline-size;
+  user-select: none;
+  color: #E7E6DF;
+  font-family: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.78));
+}
+
+.hail-tactile-frame--journal {
+  aspect-ratio: 1920 / 1240;
+  width: min(94vw, calc(86dvh * 1920 / 1240), 980px);
+}
+
+.hail-tactile-frame--decision {
+  aspect-ratio: 1904 / 1424;
+  width: min(94vw, calc(86dvh * 1904 / 1424), 920px);
+}
+
+.hail-tactile-frame--allocation {
+  aspect-ratio: 1920 / 992;
+  width: min(94vw, calc(86dvh * 1920 / 992), 1040px);
+}
+
+.hail-tactile-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+/* Shared Tactile Buttons & Close */
+.hail-tactile-close-btn,
+.hail-tactile-corner-close {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.hail-tactile-close-btn {
+  width: 2.7cqi;
+  height: 2.7cqi;
+  min-width: 22px;
+  min-height: 22px;
+  flex-shrink: 0;
+}
+
+.hail-tactile-corner-close {
+  position: absolute;
+  top: 5.8%;
+  right: 2.8%;
+  width: 3.3cqi;
+  height: 3.3cqi;
+  min-width: 26px;
+  min-height: 26px;
+  z-index: 5;
+}
+
+.hail-tactile-frame--allocation .hail-tactile-corner-close {
+  top: 5.2%;
+  right: 1.7%;
+}
+
+.hail-tactile-frame--journal .hail-tactile-corner-close {
+  top: 5.0%;
+  right: 2.2%;
+}
+
+.hail-jnl-tab-btn,
+.hail-sq-push-btn,
+.hail-tactile-close-btn,
+.hail-tactile-corner-close,
+.hail-term-inline-cmd,
+.hail-lever-btn,
+.hail-alloc-check-btn,
+.hail-alloc-sys-check,
+.hail-keycap-btn,
+.hail-mini-action-btn,
+.hail-term-row-btn {
+  outline: none;
+}
+
+.hail-jnl-tab-btn:focus-visible,
+.hail-sq-push-btn:focus-visible,
+.hail-tactile-close-btn:focus-visible,
+.hail-tactile-corner-close:focus-visible,
+.hail-term-inline-cmd:focus-visible,
+.hail-lever-btn:focus-visible,
+.hail-alloc-check-btn:focus-visible,
+.hail-alloc-sys-check:focus-visible,
+.hail-keycap-btn:focus-visible,
+.hail-mini-action-btn:focus-visible,
+.hail-term-row-btn:focus-visible {
+  outline: 2px solid #75A9A5;
+  outline-offset: 2px;
+}
+
+.hail-tactile-close-btn img,
+.hail-tactile-corner-close img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-tactile-close-btn:hover,
+.hail-tactile-corner-close:hover {
+  transform: scale(1.06);
+  filter: brightness(1.08);
+}
+
+.hail-keycap-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45cqi;
+}
+
+.hail-keycap-btn {
+  width: 2.7cqi;
+  height: 2.7cqi;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.hail-keycap-btn:active {
+  transform: scale(0.92);
+}
+
+.hail-keycap-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-keycap-btn img.is-flipped {
+  transform: scaleX(-1);
+}
+
+/* Shared Terminal Text Header & Typography */
+.hail-term-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1cqi;
+  padding-bottom: 0.7cqi;
+  border-bottom: 1px solid rgba(117, 169, 165, 0.35);
+  flex-shrink: 0;
+}
+
+.hail-term-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cqi;
+  min-width: 0;
+}
+
+.hail-term-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.05cqi, 12px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #75A9A5;
+}
+
+.hail-term-title {
+  margin: 0;
+  font-size: clamp(12px, 1.55cqi, 18px);
+  font-weight: 700;
+  color: #E7E6DF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hail-term-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8cqi;
+  flex-shrink: 0;
+}
+
+.hail-term-sol {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.05cqi, 12px);
+  font-weight: 600;
+  color: #D7B66C;
+}
+
+.hail-term-body {
+  flex: 1;
+  min-height: 0;
+  padding-top: 1cqi;
+  overflow-y: auto;
+}
+
+.hail-term-text-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85cqi;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 1.18cqi, 13.5px);
+  line-height: 1.5;
+  color: #E7E6DF;
+}
+
+.hail-term-meta-line {
+  margin: 0;
+  color: #C7CBC8;
+  font-size: clamp(9px, 1.08cqi, 12px);
+}
+
+.hail-term-plain-line {
+  margin: 0;
+  color: #E7E6DF;
+  font-size: clamp(10px, 1.15cqi, 13px);
+}
+
+.hail-term-plain-line.is-warn {
+  color: #D7B66C;
+}
+
+.hail-term-plain-line.is-ok {
+  color: #91A978;
+}
+
+.hail-term-text-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #75A9A5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  outline: none;
+}
+
+.hail-term-text-link:hover:not(:disabled) {
+  color: #D7B66C;
+}
+
+.hail-term-text-link:disabled {
+  opacity: 0.4;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+.hail-term-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5cqi;
+}
+
+.hail-term-lines li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6cqi;
+  padding-bottom: 0.4cqi;
+  border-bottom: 1px dashed rgba(146, 155, 157, 0.22);
+}
+
+.hail-term-lines li.is-active-line {
+  color: #D7B66C;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hail-term-prompt {
+  color: #75A9A5;
+  font-weight: 700;
+}
+
+.hail-jnl-bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1cqi;
+  padding-top: 0.6cqi;
+  border-top: 1px solid rgba(117, 169, 165, 0.3);
+  flex-shrink: 0;
+}
+
+.hail-term-list-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4cqi;
+}
+
+.hail-term-row-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.55cqi 0.9cqi;
+  border: 1px solid rgba(146, 155, 157, 0.28);
+  border-radius: 4px;
+  background: rgba(20, 31, 41, 0.45);
+  color: #C7CBC8;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hail-term-row-btn.is-selected {
+  border-color: #75A9A5;
+  color: #E7E6DF;
+  background: rgba(117, 169, 165, 0.16);
+}
+
+.hail-term-detail-lines p {
+  margin: 0.25cqi 0;
+  color: #C7CBC8;
+}
+
+.hail-term-detail-lines strong {
+  color: #E7E6DF;
+}
+
+.hail-term-sys-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55cqi;
+}
+
+.hail-term-sys-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6cqi;
+  padding: 0.55cqi 0.8cqi;
+  border-bottom: 1px dashed rgba(146, 155, 157, 0.25);
+}
+
+.hail-term-sys-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hail-term-sys-info span:last-child {
+  font-size: clamp(9px, 1.02cqi, 11.5px);
+  color: #75A9A5;
+}
+
+.hail-term-sys-cmds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55cqi;
+}
+
+.hail-term-inline-cmd {
+  padding: 0.28cqi 0.65cqi;
+  border: 1px solid #75A9A5;
+  border-radius: 4px;
+  background: rgba(117, 169, 165, 0.14);
+  color: #E7E6DF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.02cqi, 11.5px);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hail-term-inline-cmd:hover:not(:disabled) {
+  background: rgba(117, 169, 165, 0.28);
+}
+
+.hail-term-inline-cmd.is-warn {
+  border-color: #D7B66C;
+  background: rgba(215, 182, 108, 0.18);
+  color: #D7B66C;
+}
+
+.hail-term-inline-cmd.is-primary {
+  border-color: #91A978;
+  background: rgba(145, 169, 120, 0.22);
+  color: #E7E6DF;
+}
+
+.hail-term-inline-cmd:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* SCREEN 1: Journal 4-Tab Hardware Calibration (PH_UI_JOURNAL_FRAME_V01) */
+.hail-jnl-tab-btn {
+  position: absolute;
+  left: 2.81%;
+  width: 8.23%;
+  height: 13.23%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.hail-jnl-tab-plate {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-jnl-tab-icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44%;
+  height: 44%;
+  transform: translate(-50%, -50%);
+  opacity: 0.72;
+  pointer-events: none;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.hail-jnl-tab-btn.is-active .hail-jnl-tab-icon,
+.hail-jnl-tab-btn:hover .hail-jnl-tab-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 0.45cqi rgba(117, 169, 165, 0.75));
+}
+
+.hail-jnl-screen {
+  position: absolute;
+  left: 18.07%;
+  top: 18.55%;
+  width: 72.03%;
+  height: 63.45%;
+  padding: 2.3cqi 3.1cqi;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* SCREEN 2: Decision Terminal Calibration (PH_UI_DECISION_FRAME_V01) */
+.hail-dec-main-screen {
+  position: absolute;
+  left: 8.04%;
+  top: 23.31%;
+  width: 59.45%;
+  height: 58.57%;
+  padding: 2.2cqi 2.7cqi;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.1cqi;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.hail-dec-text-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65cqi;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9.5px, 1.12cqi, 13px);
+  line-height: 1.45;
+  color: #E7E6DF;
+}
+
+.hail-dec-lines {
+  gap: 0.42cqi;
+}
+
+.hail-dec-actions-grid {
+  display: grid;
+  gap: 1.8cqi;
+  align-items: end;
+  justify-items: center;
+  padding-top: 0.4cqi;
+  flex-shrink: 0;
+}
+
+.hail-dec-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75cqi;
+  min-width: 0;
+}
+
+.hail-dec-icon-card {
+  width: 7.4cqi;
+  height: 7.4cqi;
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0.85cqi;
+  border-radius: 8px;
+  border: 1.5px solid #59666D;
+  background: rgba(20, 31, 41, 0.62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.hail-dec-icon-card.is-green {
+  border-color: rgba(145, 169, 120, 0.78);
+}
+
+.hail-dec-icon-card.is-red {
+  border-color: rgba(197, 125, 89, 0.78);
+}
+
+.hail-dec-card-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-sq-push-btn {
+  width: 5.8cqi;
+  height: 5.8cqi;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.hail-sq-push-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hail-sq-push-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+.hail-sq-push-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.hail-dec-right-box {
+  position: absolute;
+  left: 73.53%;
+  width: 18.96%;
+  height: 12.92%;
+  padding: 0.9cqi 1.15cqi;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.35cqi;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.04cqi, 12px);
+  z-index: 2;
+}
+
+.hail-dec-aux-line {
+  margin: 0;
+  color: #C7CBC8;
+  line-height: 1.35;
+}
+
+.hail-dec-aux-line.is-warn {
+  color: #D7B66C;
+  font-weight: 700;
+}
+
+.hail-dec-aux-line.is-ok {
+  color: #91A978;
+  font-weight: 700;
+}
+
+/* SCREEN 3: Allocation & End-Sol Lever Calibration (PH_UI_ALLOCATION_FRAME_V01) */
+.hail-alloc-main-screen {
+  position: absolute;
+  left: 5.83%;
+  top: 12.60%;
+  width: 66.67%;
+  height: 68.15%;
+  padding: 1.75cqi 2.6cqi;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.65cqi;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.hail-alloc-phase-cmds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5cqi;
+}
+
+.hail-alloc-crew-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9cqi;
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.hail-alloc-crew-col {
+  background: rgba(20, 31, 41, 0.48);
+  border: 1px solid rgba(146, 155, 157, 0.34);
+  border-radius: 6px;
+  padding: 0.75cqi;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.7cqi;
+}
+
+.hail-alloc-checks {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55cqi;
+}
+
+.hail-alloc-crew-col.is-evacuated {
+  opacity: 0.45;
+}
+
+.hail-alloc-crew-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55cqi;
+  padding-bottom: 0.45cqi;
+  border-bottom: 1px solid rgba(146, 155, 157, 0.25);
+}
+
+.hail-alloc-avatar {
+  width: 2.7cqi;
+  height: 2.7cqi;
+  min-width: 24px;
+  min-height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #303B43;
+}
+
+.hail-alloc-crew-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hail-alloc-crew-meta strong {
+  font-size: clamp(10px, 1.18cqi, 13.5px);
+  color: #E7E6DF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hail-alloc-crew-meta span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8.5px, 0.95cqi, 11px);
+  color: #91A978;
+}
+
+.hail-alloc-check-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.55cqi;
+  padding: 0.32cqi 0.45cqi;
+  border: 1px solid rgba(146, 155, 157, 0.22);
+  border-radius: 4px;
+  background: rgba(38, 55, 70, 0.55);
+  color: #E7E6DF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.05cqi, 12px);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hail-alloc-check-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.hail-alloc-checkbox-img {
+  width: 1.9cqi;
+  height: 1.9cqi;
+  min-width: 16px;
+  min-height: 16px;
+  object-fit: contain;
+}
+
+.hail-alloc-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42cqi;
+  padding-top: 0.5cqi;
+  border-top: 1px solid rgba(117, 169, 165, 0.3);
+  flex-shrink: 0;
+}
+
+.hail-alloc-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6cqi;
+}
+
+.hail-alloc-crew-statline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4cqi;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8.5px, 0.92cqi, 11px);
+  color: #C7CBC8;
+  padding-top: 0.2cqi;
+}
+
+.hail-alloc-crew-statline .is-crit {
+  color: #D7B66C;
+  font-weight: 700;
+}
+
+.hail-alloc-priority-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35cqi;
+}
+
+.hail-alloc-priority-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8px, 0.88cqi, 10.5px);
+  color: #929B9D;
+}
+
+.hail-alloc-priority-pill {
+  padding: 0.16cqi 0.42cqi;
+  border: 1px solid rgba(110, 145, 177, 0.55);
+  border-radius: 3px;
+  background: rgba(20, 31, 41, 0.72);
+  color: #E7E6DF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8px, 0.88cqi, 10.5px);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hail-alloc-priority-pill:hover:not(:disabled) {
+  border-color: #75A9A5;
+  color: #75A9A5;
+}
+
+.hail-alloc-priority-pill:disabled {
+  opacity: 0.68;
+  cursor: default;
+}
+
+.hail-alloc-predictor-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5cqi;
+}
+
+.hail-alloc-trend-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3cqi;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8px, 0.85cqi, 10px);
+  color: #929B9D;
+}
+
+.hail-alloc-trend-chips span {
+  padding: 0.1cqi 0.35cqi;
+  border-radius: 3px;
+  background: rgba(20, 31, 41, 0.65);
+  border: 1px solid rgba(146, 155, 157, 0.28);
+}
+
+.hail-alloc-sys-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45cqi;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #E7E6DF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.02cqi, 11.5px);
+  cursor: pointer;
+}
+
+.hail-alloc-sys-check img {
+  width: 1.85cqi;
+  height: 1.85cqi;
+  min-width: 16px;
+  min-height: 16px;
+  object-fit: contain;
+}
+
+.hail-alloc-sys-check:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.hail-alloc-summary-line {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.02cqi, 11.5px);
+  color: #C7CBC8;
+}
+
+.hail-alloc-sol-box {
+  position: absolute;
+  left: 78.28%;
+  top: 13.00%;
+  width: 16.67%;
+  height: 10.99%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.hail-alloc-sol-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(11px, 1.55cqi, 18px);
+  font-weight: 700;
+  color: #D7B66C;
+}
+
+.hail-alloc-lever-bay {
+  position: absolute;
+  left: 78.65%;
+  top: 26.41%;
+  width: 16.09%;
+  height: 57.26%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.hail-lever-btn {
+  width: 92%;
+  height: 92%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3cqi;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.hail-lever-btn img {
+  width: 100%;
+  height: 84%;
+  object-fit: contain;
+}
+
+.hail-lever-btn:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: scale(1.02);
+}
+
+.hail-lever-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.hail-lever-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(8px, 0.9cqi, 10.5px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #E7E6DF;
+  background: rgba(38, 55, 70, 0.9);
+  padding: 0.15cqi 0.45cqi;
+  border-radius: 3px;
+}
+
+/* Mobile Portrait Fallback for Tactile Hardware Screens */
+@media (max-width: 720px) and (orientation: portrait) {
+  .hail-dialog.hail-dialog--tactile {
+    outline: none;
+  }
+
+  .hail-tactile-frame--journal,
+  .hail-tactile-frame--decision,
+  .hail-tactile-frame--allocation {
+    aspect-ratio: auto;
+    width: 95vw;
+    max-height: 88dvh;
+    overflow-y: auto;
+    background: #303B43;
+    border: 2px solid #59666D;
+    border-radius: 12px;
+    padding: 44px 12px 14px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hail-tactile-bg {
+    display: none;
+  }
+
+  .hail-tactile-corner-close,
+  .hail-tactile-frame--allocation .hail-tactile-corner-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    z-index: 10;
+  }
+
+  .hail-tactile-frame--journal {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 44px 12px 12px;
+  }
+
+  .hail-jnl-tab-btn {
+    position: relative;
+    top: auto !important;
+    left: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-width: 64px;
+    justify-self: center;
+  }
+
+  .hail-jnl-screen {
+    grid-column: 1 / -1;
+  }
+
+  .hail-jnl-screen,
+  .hail-dec-main-screen,
+  .hail-dec-right-box,
+  .hail-alloc-main-screen,
+  .hail-alloc-sol-box,
+  .hail-alloc-lever-bay {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hail-jnl-screen,
+  .hail-dec-main-screen,
+  .hail-alloc-main-screen {
+    background: #263746;
+    border: 1px solid #59666D;
+    border-radius: 8px;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .hail-alloc-crew-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex: none;
+    gap: 10px;
+  }
+
+  .hail-alloc-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hail-lever-btn {
+    width: auto;
+    height: auto;
+  }
+
+  .hail-lever-btn img {
+    height: 110px;
+    width: auto;
   }
 }

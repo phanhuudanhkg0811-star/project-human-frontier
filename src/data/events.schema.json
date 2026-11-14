@@ -1,400 +1,317 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Mission incident catalog",
+  "title": "Phase 1.3 Moon Event Catalog Schema (v3)",
   "type": "array",
-  "items": {
-    "$ref": "#/$defs/event"
-  },
   "minItems": 1,
+  "items": {
+    "$ref": "#/$defs/eventNode"
+  },
   "$defs": {
-    "event": {
+    "resourceKey": {
+      "type": "string",
+      "enum": ["batteryKWh", "oxygenKg", "waterL", "partsKg", "mrePacks", "medkits"]
+    },
+    "crewId": {
+      "type": "string",
+      "enum": ["cmd", "eng", "doc", "geo"]
+    },
+    "systemId": {
+      "type": "string",
+      "enum": ["solar", "recycler", "scrubber", "airlock", "fabricator"]
+    },
+    "equipmentId": {
+      "type": "string",
+      "enum": ["core_drill", "sealant_tape", "solar_lantern", "dust_shield", "radio_repeater", "cryo_thermal_rig"]
+    },
+    "expeditionId": {
+      "type": "string",
+      "enum": ["lunar-crater", "regolith-field", "polar-psr"]
+    },
+    "triggerCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "sol": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "solMin": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "solMax": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "isLunarNight": { "type": "boolean" },
+        "flagSet": { "type": "string", "minLength": 1 },
+        "flagNotSet": { "type": "string", "minLength": 1 },
+        "flagEquals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["key", "value"],
+          "properties": {
+            "key": { "type": "string", "minLength": 1 },
+            "value": { "type": ["boolean", "string", "number"] }
+          }
+        },
+        "choiceMade": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["eventId", "choiceId"],
+          "properties": {
+            "eventId": { "type": "string", "minLength": 1 },
+            "choiceId": { "type": "string", "minLength": 1 }
+          }
+        },
+        "eventSeen": { "type": "string", "minLength": 1 },
+        "eventNotSeen": { "type": "string", "minLength": 1 },
+        "roverExpeditionId": { "$ref": "#/$defs/expeditionId" },
+        "roverStatus": {
+          "type": "string",
+          "enum": ["available", "scheduled", "launching", "outbound", "exploring", "signal-lost", "returning", "completed", "failed"]
+        },
+        "systemIntegrityBelow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "maxIntegrity"],
+          "properties": {
+            "id": { "$ref": "#/$defs/systemId" },
+            "maxIntegrity": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "minResource": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "batteryKWh": { "type": "number", "minimum": 0 },
+            "oxygenKg": { "type": "number", "minimum": 0 },
+            "waterL": { "type": "number", "minimum": 0 },
+            "partsKg": { "type": "number", "minimum": 0 },
+            "mrePacks": { "type": "integer", "minimum": 0 },
+            "medkits": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "maxResource": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "batteryKWh": { "type": "number", "minimum": 0 },
+            "oxygenKg": { "type": "number", "minimum": 0 },
+            "waterL": { "type": "number", "minimum": 0 },
+            "partsKg": { "type": "number", "minimum": 0 },
+            "mrePacks": { "type": "integer", "minimum": 0 },
+            "medkits": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "crewCondition": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["condition"],
+          "properties": {
+            "crewId": { "$ref": "#/$defs/crewId" },
+            "condition": { "type": "string", "enum": ["fit", "injured", "evacuated"] }
+          }
+        }
+      },
+      "not": {
+        "anyOf": [
+          { "required": ["sol", "solMin"] },
+          { "required": ["sol", "solMax"] }
+        ]
+      }
+    },
+    "eventEffect": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "resource", "delta"],
+          "properties": {
+            "kind": { "const": "resource" },
+            "resource": { "$ref": "#/$defs/resourceKey" },
+            "delta": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "delta"],
+          "properties": {
+            "kind": { "const": "science" },
+            "delta": { "type": "integer" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "target"],
+          "properties": {
+            "kind": { "const": "crew" },
+            "target": { "type": "string", "enum": ["cmd", "eng", "doc", "geo", "all"] },
+            "healthDelta": { "type": "number" },
+            "moraleDelta": { "type": "number" },
+            "satietyDelta": { "type": "number" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "equipmentId", "wear"],
+          "properties": {
+            "kind": { "const": "equipment-wear" },
+            "equipmentId": { "$ref": "#/$defs/equipmentId" },
+            "wear": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "systemId", "delta"],
+          "properties": {
+            "kind": { "const": "system-integrity" },
+            "systemId": { "$ref": "#/$defs/systemId" },
+            "delta": { "type": "number", "minimum": -1, "maximum": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": { "const": "plan-override" },
+            "wrsEnabled": { "type": "boolean" },
+            "extraPowerCostKWh": { "type": "number", "minimum": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "key", "value"],
+          "properties": {
+            "kind": { "const": "set-flag" },
+            "key": { "type": "string", "minLength": 1 },
+            "value": { "type": ["boolean", "string", "number"] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "key"],
+          "properties": {
+            "kind": { "const": "clear-flag" },
+            "key": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "crewId", "task"],
+          "properties": {
+            "kind": { "const": "assign-task" },
+            "crewId": { "$ref": "#/$defs/crewId" },
+            "task": {
+              "type": "string",
+              "enum": ["repair-system", "upgrade-system", "rover-operate", "emergency-response", "medical-care", "rest"]
+            },
+            "targetSystemId": { "$ref": "#/$defs/systemId" },
+            "targetCrewId": { "$ref": "#/$defs/crewId" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "action"],
+          "properties": {
+            "kind": { "const": "rover-action" },
+            "action": {
+              "type": "string",
+              "enum": ["continue-expedition", "fail-expedition", "recover-signal", "delay-1-sol"]
+            },
+            "expeditionId": { "$ref": "#/$defs/expeditionId" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "eventId", "delaySols"],
+          "properties": {
+            "kind": { "const": "schedule-follow-up" },
+            "eventId": { "type": "string", "minLength": 1 },
+            "delaySols": { "type": "integer", "minimum": 1, "maximum": 31 }
+          }
+        }
+      ]
+    },
+    "eventChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "effects", "log"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "labelEn": { "type": "string", "minLength": 1 },
+        "requiresEquipment": { "$ref": "#/$defs/equipmentId" },
+        "requiresFlag": { "type": "string", "minLength": 1 },
+        "requiresCrew": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["crewId"],
+          "properties": {
+            "crewId": { "$ref": "#/$defs/crewId" },
+            "requireFree": { "type": "boolean" },
+            "requireFit": { "type": "boolean" }
+          }
+        },
+        "effects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/eventEffect" }
+        },
+        "log": { "type": "string", "minLength": 1 },
+        "logEn": { "type": "string", "minLength": 1 }
+      }
+    },
+    "eventNode": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "id",
         "title",
-        "prompt",
+        "category",
+        "art",
+        "priority",
         "weight",
+        "repeatPolicy",
+        "scienceBriefId",
         "when",
+        "mandatory",
+        "prompt",
         "choices"
       ],
       "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "title": {
-          "type": "string",
-          "minLength": 1
-        },
-        "prompt": {
-          "type": "string",
-          "minLength": 1
-        },
-        "weight": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1000000
-        },
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "titleEn": { "type": "string", "minLength": 1 },
+        "category": { "type": "string", "enum": ["ops", "hazard", "crisis", "milestone"] },
+        "art": { "type": "string", "enum": ["tech-fault", "airlock-leak", "solar-particle", "robot-signal-loss"] },
+        "priority": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "weight": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+        "repeatPolicy": { "type": "string", "enum": ["once", "cooldown", "repeatable"] },
+        "cooldownSols": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "deadlineOffsetSols": { "type": "integer", "minimum": 0, "maximum": 31 },
+        "scienceBriefId": { "type": ["string", "null"] },
         "when": {
           "type": "array",
-          "items": {
-            "$ref": "#/$defs/condition"
-          },
-          "minItems": 0
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/triggerCondition" }
         },
+        "mandatory": { "type": "boolean" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "promptEn": { "type": "string", "minLength": 1 },
         "choices": {
           "type": "array",
-          "items": {
-            "$ref": "#/$defs/choice"
-          },
-          "minItems": 1
-        }
-      }
-    },
-    "condition": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "value"
-          ],
-          "properties": {
-            "kind": {
-              "const": "planet"
-            },
-            "value": {
-              "enum": [
-                "moon",
-                "mars"
-              ]
-            }
-          }
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/eventChoice" }
         },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "value"
-          ],
-          "properties": {
-            "kind": {
-              "const": "min-sol"
-            },
-            "value": {
-              "type": "integer",
-              "minimum": 1
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "system",
-            "value"
-          ],
-          "properties": {
-            "kind": {
-              "const": "integrity-below"
-            },
-            "system": {
-              "enum": [
-                "scrubber",
-                "recycler",
-                "solar",
-                "airlock"
-              ]
-            },
-            "value": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            }
-          }
-        }
-      ]
-    },
-    "effect": {
-      "oneOf": [
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "system",
-            "amount"
-          ],
-          "properties": {
-            "kind": {
-              "const": "damage"
-            },
-            "system": {
-              "enum": [
-                "scrubber",
-                "recycler",
-                "solar",
-                "airlock"
-              ]
-            },
-            "amount": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "amount"
-          ],
-          "properties": {
-            "kind": {
-              "const": "oxygen-loss"
-            },
-            "amount": {
-              "type": "number",
-              "minimum": 0
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "kind",
-            "amount"
-          ],
-          "properties": {
-            "kind": {
-              "const": "stress"
-            },
-            "amount": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 100
-            }
-          }
-        }
-      ]
-    },
-    "outcome": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "weight",
-        "summary",
-        "effects"
-      ],
-      "properties": {
-        "weight": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 1000000
-        },
-        "summary": {
-          "type": "string",
-          "minLength": 1
-        },
-        "effects": {
+        "onExpireEffects": {
           "type": "array",
-          "items": {
-            "$ref": "#/$defs/effect"
-          },
-          "minItems": 0
-        }
-      }
-    },
-    "choice": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "label",
-        "partsKg",
-        "outcomes"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "label": {
-          "type": "string",
-          "minLength": 1
-        },
-        "partsKg": {
-          "type": "number",
-          "minimum": 0
-        },
-        "outcomes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/outcome"
-          },
-          "minItems": 1
+          "items": { "$ref": "#/$defs/eventEffect" }
         }
       }
     }
-  },
-  "examples": [
-    [
-      {
-        "id": "solar-particles",
-        "title": "Bão hạt Mặt Trời",
-        "prompt": "CAPCOM cảnh báo bức xạ. Quyết định ngay trước ca EVA.",
-        "weight": 1,
-        "when": [
-          {
-            "kind": "min-sol",
-            "value": 2
-          }
-        ],
-        "choices": [
-          {
-            "id": "shelter",
-            "label": "Dừng EVA và vào khu trú ẩn",
-            "partsKg": 0,
-            "outcomes": [
-              {
-                "weight": 1,
-                "summary": "Phi hành đoàn đã vào khu trú ẩn.",
-                "effects": []
-              }
-            ]
-          },
-          {
-            "id": "finish-eva",
-            "label": "Hoàn thành công việc ngoài trạm",
-            "partsKg": 0,
-            "outcomes": [
-              {
-                "weight": 3,
-                "summary": "Đội EVA về trước đỉnh sự kiện.",
-                "effects": [
-                  {
-                    "kind": "stress",
-                    "amount": 8
-                  }
-                ]
-              },
-              {
-                "weight": 1,
-                "summary": "Cảnh báo liều kế buộc đội EVA quay về.",
-                "effects": [
-                  {
-                    "kind": "stress",
-                    "amount": 25
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "airlock-leak",
-        "title": "Rò rỉ oxy tại gioăng khóa khí",
-        "prompt": "Cảm biến phát hiện tốc độ thất thoát tăng sau lần mở khóa khí.",
-        "weight": 1,
-        "when": [
-          {
-            "kind": "min-sol",
-            "value": 3
-          }
-        ],
-        "choices": [
-          {
-            "id": "isolate",
-            "label": "Cô lập khóa khí",
-            "partsKg": 0,
-            "outcomes": [
-              {
-                "weight": 1,
-                "summary": "Đã cô lập khóa khí, một phần oxy đã thoát.",
-                "effects": [
-                  {
-                    "kind": "oxygen-loss",
-                    "amount": 1
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "id": "temporary-seal",
-            "label": "Lắp gioăng dự phòng",
-            "partsKg": 1,
-            "outcomes": [
-              {
-                "weight": 1,
-                "summary": "Gioăng giữ áp suất; thất thoát nhỏ khi thay.",
-                "effects": [
-                  {
-                    "kind": "oxygen-loss",
-                    "amount": 0.2
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "id": "regolith-filter",
-        "title": "Bụi regolith làm suy giảm bộ lọc",
-        "prompt": "Chênh áp tăng qua cụm lọc sau nhiều lượt EVA.",
-        "weight": 1,
-        "when": [
-          {
-            "kind": "min-sol",
-            "value": 4
-          },
-          {
-            "kind": "planet",
-            "value": "moon"
-          }
-        ],
-        "choices": [
-          {
-            "id": "replace",
-            "label": "Thay lõi lọc",
-            "partsKg": 1,
-            "outcomes": [
-              {
-                "weight": 1,
-                "summary": "Lõi mới giữ lưu lượng danh định.",
-                "effects": []
-              }
-            ]
-          },
-          {
-            "id": "defer",
-            "label": "Giảm EVA và hoãn thay lõi",
-            "partsKg": 0,
-            "outcomes": [
-              {
-                "weight": 1,
-                "summary": "Bộ lọc giảm lưu lượng trong lúc chờ bảo trì.",
-                "effects": [
-                  {
-                    "kind": "damage",
-                    "amount": 0.2,
-                    "system": "scrubber"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  ]
+  }
 }

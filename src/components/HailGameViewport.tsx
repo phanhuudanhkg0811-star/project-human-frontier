@@ -1,244 +1,166 @@
-import { useCallback, useEffect, useState } from 'react';
-import '../hail.css';
-import { useGameStore } from '../store/gameStore.ts';
+import { useEffect } from 'react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { playSfx, startMusic } from '../audio/sfx.ts';
-import type { SystemId } from '../types/index.ts';
+import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
+import { useGameStore } from '../store/gameStore.ts';
+import { useUiStore } from '../store/uiStore.ts';
+import type { ActiveModalType, CrewId, EquipmentId } from '../types/index.ts';
+import { SystemControls } from './SystemControls.tsx';
 import {
   HAIL_ENV,
   HAIL_EQUIPMENT,
   HAIL_INVENTORY,
   HAIL_SVG,
   getHailCrewVisual,
-  getHailSystemSprite,
 } from './cabin/hailAssets.ts';
 import { TelemetryTopBar } from './hud/TelemetryTopBar.tsx';
-import { MissionDialog, type MissionDialogType } from './modals/MissionDialog.tsx';
-import { StarlogModal } from './modals/StarlogModal.tsx';
 import { CharacterSheetModal } from './modals/CharacterSheetModal.tsx';
-import { CraftingModal } from './modals/CraftingModal.tsx';
-import { ExpeditionModal } from './modals/ExpeditionModal.tsx';
-import { EndOfDayModal } from './modals/EndOfDayModal.tsx';
 import { CommsLogisticsModal } from './modals/CommsLogisticsModal.tsx';
+import { CraftingModal } from './modals/CraftingModal.tsx';
+import { EndOfDayModal } from './modals/EndOfDayModal.tsx';
+import { ExpeditionModal } from './modals/ExpeditionModal.tsx';
+import { JournalModal } from './modals/JournalModal.tsx';
+import { MissionDialog } from './modals/MissionDialog.tsx';
 import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
 import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
+import { StarlogModal } from './modals/StarlogModal.tsx';
 
-type Panel = Exclude<MissionDialogType, 'generic'>;
-type FocusRegion =
-  | 'room'
-  | 'console'
-  | 'left-wall'
-  | 'left-floor'
-  | 'right-wall'
-  | 'right-floor'
-  | 'crew-left'
-  | 'crew-right';
+const EQUIPMENT_RACK_META: ReadonlyArray<{
+  id: EquipmentId;
+  label: string;
+  img: string;
+}> = [
+  { id: 'core_drill', label: 'Core Drill', img: HAIL_INVENTORY.sampleDrill },
+  { id: 'sealant_tape', label: 'Sealant Tape', img: HAIL_INVENTORY.sealantTape },
+  { id: 'solar_lantern', label: 'Solar Lantern', img: HAIL_INVENTORY.solarLantern },
+  { id: 'dust_shield', label: 'Dust Shield', img: HAIL_INVENTORY.dustShield },
+  { id: 'radio_repeater', label: 'Radio Repeater', img: HAIL_INVENTORY.radioRepeater },
+  { id: 'cryo_thermal_rig', label: 'Cryo Thermal Rig', img: HAIL_INVENTORY.cryoThermalRig },
+];
 
-const PANELS: Record<Panel, { title: string; art: string }> = {
-  starlog: { title: 'Starlog · Nhật ký & Sự cố Trạm', art: HAIL_SVG.sysComms },
-  character: { title: 'Hồ sơ Phi hành đoàn & Y tế', art: HAIL_SVG.sysMed },
-  crafting: { title: 'Kỹ thuật · ECLSS & Năng lượng', art: HAIL_SVG.sysPower },
-  expedition: { title: 'Điều khiển Survey Rover & Bản đồ Mặt Trăng', art: HAIL_SVG.sysRobot },
-  end: { title: 'Điều độ Khẩu phần & Kết thúc Sol', art: HAIL_SVG.actEndDay },
-  comms: { title: 'Liên lạc CAPCOM & Tiếp tế Cargo', art: HAIL_SVG.sysComms },
-  launch: { title: 'Tiến trình Nhiệm vụ & Phóng Sao Hỏa', art: HAIL_SVG.badgeNasaStem },
-  menu: { title: 'Trung tâm Điều khiển Nhiệm vụ', art: HAIL_SVG.badgeNasaStem },
-};
-
-/**
- * Section 4.4 Human-Centered Composition Contract — Crew Slots (% of 16:9 viewport)
- * Order maps crew[0..3]:
- *  - [0] cmd (Sarah): Tiền cảnh trái (20 / 36 / 16 / 57)
- *  - [1] eng (Alex):  Phía sau trái   (36 / 42 / 12 / 38)
- *  - [2] doc (Marcus): Phía sau phải  (52 / 42 / 12 / 38)
- *  - [3] geo (Elena): Tiền cảnh phải  (64 / 36 / 16 / 57)
- */
 const CREW_SLOTS: ReadonlyArray<{
+  crewId: CrewId;
   depth: 'foreground' | 'rear';
-  side: 'left' | 'right';
   style: { left: string; top: string; width: string; height: string };
 }> = [
-  { depth: 'foreground', side: 'left', style: { left: '14%', top: '38%', width: '16%', height: '55%' } },
-  { depth: 'rear', side: 'left', style: { left: '36%', top: '42%', width: '12%', height: '38%' } },
-  { depth: 'rear', side: 'right', style: { left: '52%', top: '42%', width: '12%', height: '38%' } },
-  { depth: 'foreground', side: 'right', style: { left: '70%', top: '38%', width: '16%', height: '55%' } },
+  { crewId: 'cmd', depth: 'foreground', style: { left: '13.5%', top: '39%', width: '21.5%', height: '53%' } },
+  { crewId: 'eng', depth: 'rear', style: { left: '34.5%', top: '35.5%', width: '13%', height: '42.5%' } },
+  { crewId: 'doc', depth: 'rear', style: { left: '52.5%', top: '34.5%', width: '12.5%', height: '43.5%' } },
+  { crewId: 'geo', depth: 'foreground', style: { left: '67.5%', top: '39%', width: '18.5%', height: '53%' } },
 ];
-
-/**
- * Section 4.4 — Tối đa 4 Station chính trong cockpit cùng lúc (2 tường + 2 sàn)
- */
-const MAIN_STATIONS: ReadonlyArray<{
-  id: SystemId;
-  slotKey: Exclude<FocusRegion, 'room' | 'console' | 'crew-left' | 'crew-right'>;
-  mount: 'wall' | 'floor';
-  label: string;
-  panel: Panel;
-  style: { left: string; top: string; width: string; height: string };
-}> = [
-  {
-    id: 'airlock',
-    slotKey: 'right-wall',
-    mount: 'wall',
-    label: 'CAPCOM & Rover',
-    panel: 'comms',
-    style: { left: '81.1005%', top: '14.9841%', width: '15.9091%', height: '31.4559%' },
-  },
-];
-
-const BLUEPRINT_ZONES: ReadonlyArray<{
-  label: string;
-  coords: string;
-  tone: 'hud' | 'crew' | 'window' | 'console' | 'station' | 'action';
-  style: { left: string; top: string; width: string; height: string };
-}> = [
-  { label: 'HUD Top', coords: '0/0/100/8', tone: 'hud', style: { left: '0%', top: '0%', width: '100%', height: '8%' } },
-  { label: 'Crew Focal Zone', coords: '18/30/64/63', tone: 'crew', style: { left: '18%', top: '30%', width: '64%', height: '63%' } },
-  { label: 'Window (<=8%)', coords: '41/15/18/30', tone: 'window', style: { left: '41%', top: '15%', width: '18%', height: '30%' } },
-  { label: 'FG Left', coords: '14/38/16/55', tone: 'crew', style: { left: '14%', top: '38%', width: '16%', height: '55%' } },
-  { label: 'Rear Left', coords: '36/42/12/38', tone: 'crew', style: { left: '36%', top: '42%', width: '12%', height: '38%' } },
-  { label: 'Rear Right', coords: '52/42/12/38', tone: 'crew', style: { left: '52%', top: '42%', width: '12%', height: '38%' } },
-  { label: 'FG Right', coords: '70/38/16/55', tone: 'crew', style: { left: '70%', top: '38%', width: '16%', height: '55%' } },
-  { label: 'Decision Console', coords: '27.5/55.6/45/37.1', tone: 'console', style: { left: '27.5%', top: '55.6%', width: '45%', height: '37.1%' } },
-  { label: 'UL: Food & Aid (CSS 2x2)', coords: '3.05/14.98/15.91/31.46', tone: 'station', style: { left: '3.0502%', top: '14.9841%', width: '15.9091%', height: '31.4559%' } },
-  { label: 'LL: 3D Fabricator', coords: '2.87/53.56/16.21/31.14', tone: 'station', style: { left: '2.8708%', top: '53.56%', width: '16.2081%', height: '31.1371%' } },
-  { label: 'UR: CAPCOM & Rover', coords: '81.10/14.98/15.91/31.46', tone: 'station', style: { left: '81.1005%', top: '14.9841%', width: '15.9091%', height: '31.4559%' } },
-  { label: 'LR: Inventory & Sample (CSS 3x3)', coords: '80.98/53.56/16.21/31.14', tone: 'station', style: { left: '80.9809%', top: '53.56%', width: '16.2081%', height: '31.1371%' } },
-  { label: 'Action Band', coords: '0/93/100/7', tone: 'action', style: { left: '0%', top: '93%', width: '100%', height: '7%' } },
-];
-
-function StatusBadge({ state }: { state: 'ok' | 'degraded' | 'broken' }) {
-  const icon =
-    state === 'broken'
-      ? HAIL_SVG.stateCritical
-      : state === 'degraded'
-        ? HAIL_SVG.stateWarn
-        : HAIL_SVG.stateOk;
-  return (
-    <img
-      src={icon}
-      alt={state}
-      className={`hail-state-badge is-${state}`}
-      draggable={false}
-    />
-  );
-}
-
-function getPrimaryStationId(
-  phase: string,
-  systems: Record<SystemId, { integrity: number }>
-): SystemId | null {
-  let lowestId: SystemId | null = null;
-  let lowestScore = 0.85;
-  for (const st of MAIN_STATIONS) {
-    const val = systems[st.id]?.integrity ?? 1;
-    if (val < lowestScore) {
-      lowestScore = val;
-      lowestId = st.id;
-    }
-  }
-  if (lowestId) return lowestId;
-  if (phase === 'engineering') return 'scrubber';
-  if (phase === 'comms') return 'airlock';
-  return null;
-}
 
 export function HailGameViewport() {
-  const { gameState, isNightTransition, resetGame } = useGameStore();
-  const [panel, setPanel] = useState<Panel | null>(null);
-  const [focusRegion, setFocusRegion] = useState<FocusRegion>('room');
-  const [crewId, setCrewId] = useState<string>(gameState.crew[0]?.id ?? 'cmd');
-  const [showBlueprint, setShowBlueprint] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
-  const [notice, setNotice] = useState('');
+  const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError } = useGameStore();
+  const roverSamples = selectRoverSamples(gameState);
+  const { activeModal, openModal, closeModal, selectCrew } = useUiStore();
+  const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
 
   useEffect(() => {
-    if (!notice) return;
-    const timer = setTimeout(() => setNotice(''), 6500);
-    return () => clearTimeout(timer);
-  }, [notice]);
-
-  useEffect(() => {
-    window.addEventListener('pointerdown', () => startMusic(), { once: true });
+    const bootMusic = () => startMusic(0.28);
+    window.addEventListener('pointerdown', bootMusic, { once: true });
+    return () => window.removeEventListener('pointerdown', bootMusic);
   }, []);
 
-  const closeFocus = useCallback(() => {
-    playSfx('click', 0.4);
-    setPanel(null);
-    setFocusRegion('room');
-    setConfirmReset(false);
-  }, []);
+  const progress = selectMissionProgress(gameState, bundle);
+  const weather = selectWeatherOutlook(gameState, bundle);
+  const advancePerm = selectCanAdvancePhase(gameState, bundle);
 
-  const open = useCallback((next: Panel, region: FocusRegion = 'console') => {
-    playSfx('open');
-    setPanel(next);
-    setFocusRegion(region);
-    setConfirmReset(false);
-  }, []);
+  const fabSprite =
+    gameState.systems.fabricator.status === 'offline'
+      ? HAIL_EQUIPMENT.fabricatorDamaged
+      : gameState.fabricator.activeJob
+        ? HAIL_EQUIPMENT.fabricatorWorking
+        : HAIL_EQUIPMENT.fabricatorIdle;
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && (panel || focusRegion !== 'room')) {
-        closeFocus();
-      }
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [panel, focusRegion, closeFocus]);
+  const focusClass =
+    activeModal === 'crafting'
+      ? 'is-focus-left-floor'
+      : activeModal === 'comms' || activeModal === 'expedition'
+        ? 'is-focus-right-wall'
+        : activeModal === 'journal' || activeModal === 'starlog' || activeModal === 'end'
+          ? 'is-focus-console'
+          : '';
 
-  const pendingEvent = Boolean(gameState.activeEvent && gameState.phase === 'briefing');
-  const isNightExterior = gameState.phase === 'rationing' || gameState.sol >= 10;
-  const primaryStationId = getPrimaryStationId(gameState.phase, gameState.systems);
+  const openPanel = (m: ActiveModalType) => {
+    startMusic(0.28);
+    if (m) {
+      playSfx(m === 'comms' ? 'radioOn' : 'open', 0.55);
+    }
+    openModal(m);
+  };
 
-  const dockSide: 'left' | 'right' =
-    focusRegion === 'right-wall' || focusRegion === 'right-floor' || focusRegion === 'crew-right'
-      ? 'left'
-      : 'right';
-
-  const phaseHint = pendingEvent
-    ? 'Sự cố mới trên Console Starlog'
-    : gameState.phase === 'briefing'
-      ? 'Bước 1 · Mở Starlog trên Console'
-      : gameState.phase === 'engineering'
-        ? 'Bước 2 · Kiểm tra 4 trạm ECLSS & Rover'
-        : gameState.phase === 'comms'
-          ? 'Bước 3 · Liên lạc CAPCOM bên phải'
-          : 'Bước 4 · Chia khẩu phần & Kết thúc Sol';
+  const handlePrimaryAction = async () => {
+    startMusic(0.28);
+    if (gameState.clock.phase === 'briefing' && gameState.events.activeEventId) {
+      openPanel('starlog');
+      return;
+    }
+    if (gameState.clock.phase === 'rationing') {
+      openPanel('end');
+      return;
+    }
+    if (advancePerm.allowed) {
+      playSfx('click', 0.45);
+      await dispatch({ type: 'phase/advance' });
+    }
+  };
 
   return (
     <main className="hail-viewport">
-      <div
-        className={`hail-stage ${showBlueprint ? 'is-blueprint' : ''}`}
-        key={`${gameState.planet}-${isNightTransition}`}
-        aria-label="Buồng điều khiển trạm Mặt Trăng Project Hail"
-      >
-        {/* Griductive-style 16:9 Camera Rig (Zooms smoothly to focused console/station/crew) */}
-        <div className={`hail-camera-rig is-focus-${focusRegion}`}>
-          {/* L00 + L01: Exterior Viewport Aperture locked strictly to 41 / 15 / 18 / 30 (5.4% area <= 8%) */}
+      {/* Fail-Closed Save Recovery Banner */}
+      {saveRecoveryError && (
+        <div
+          role="alert"
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-xl w-[92%] p-3 rounded-xl bg-rose-950/95 border border-rose-500 text-rose-100 shadow-2xl flex items-center justify-between gap-3 text-xs"
+        >
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" />
+            <div>
+              <strong>Lỗi Khôi phục Save [{saveRecoveryError.code}]:</strong> {saveRecoveryError.message}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => resetCampaign()}
+            className="hail-btn hail-btn--warn shrink-0 flex items-center gap-1"
+          >
+            <RefreshCw className="w-3.5 h-3.5" /> Tạo Chiến dịch Mới
+          </button>
+        </div>
+      )}
+
+      {lastError && !saveRecoveryError && (
+        <div
+          role="status"
+          onClick={dismissError}
+          className="fixed top-20 right-4 z-50 max-w-sm p-2.5 rounded-lg bg-amber-950/95 border border-amber-400/60 text-amber-100 text-xs cursor-pointer shadow-lg"
+        >
+          <strong>[{lastError.code}]</strong> {lastError.message} (Chạm để đóng)
+        </div>
+      )}
+
+      <div className="hail-stage">
+        <TelemetryTopBar />
+
+        <div
+          className={`hail-camera-rig ${focusClass} ${progress.isLunarNight ? 'is-lunar-night' : ''} ${weather.level === 'storm' || weather.level === 'extreme' ? 'is-storm' : ''}`.trim()}
+        >
+          {/* Observation Window Backdrop */}
           <div className="hail-window-aperture" aria-hidden="true">
+            <img src={HAIL_ENV.spaceDeep} alt="" className="hail-l00-space" draggable={false} />
             <img
-              src={HAIL_ENV.spaceDeep}
-              alt=""
-              className="hail-l00-space"
-              draggable={false}
-            />
-            <img
-              src={isNightExterior ? HAIL_ENV.lunarNight : HAIL_ENV.lunarDay}
+              src={progress.isLunarNight ? HAIL_ENV.lunarNight : HAIL_ENV.lunarDay}
               alt=""
               className="hail-l01-lunar"
               draggable={false}
             />
           </div>
 
-          {/* L02: Camera-locked cockpit shell with a single compact alpha window */}
-          <img
-            src={HAIL_ENV.cockpitShell}
-            alt="Khoang chỉ huy trạm Project Hail"
-            className="hail-l02-shell"
-            draggable={false}
-          />
+          <img src={HAIL_ENV.cockpitShell} alt="Khoang chỉ huy trạm Artemis" className="hail-l02-shell" draggable={false} />
+          <div className="hail-cabin-lighting" aria-hidden="true" />
 
-          {/* L03: Wall-Rack Consolidation (4 Corner Bays · Center Wall Kept Clear) */}
-          {/* UL Bay: Food & Aid Rack (CSS 2x2) */}
-          <div className="hail-bay-rack hail-bay-rack--ul" aria-label="Tủ lương thực và sơ cứu (UL)">
+          {/* UL: Food & Aid Wall Rack */}
+          <div className="hail-bay-rack hail-bay-rack--ul" aria-label="Tủ Thực phẩm MRE và Y tế">
             <div className="hail-bay-rack-shell">
               <div className="hail-rack-header" aria-hidden="true">
                 <span className="hail-rack-header-stripe" />
@@ -248,498 +170,312 @@ export function HailGameViewport() {
                 <button
                   type="button"
                   className="hail-rack-cell"
-                  aria-label={`Khẩu phần MRE (${Math.round(gameState.resources.foodKg)} kg)`}
-                  onClick={() => open('end', 'left-wall')}
+                  onClick={() => openPanel('end')}
+                  aria-label={`MRE (${gameState.resources.mrePacks} gói)`}
                 >
                   <img
                     src={HAIL_INVENTORY.mrePack}
-                    alt="Gói khẩu phần MRE"
-                    className={`hail-rack-item ${gameState.resources.foodKg <= 0 ? 'is-empty-slot' : ''}`}
+                    alt="MRE"
+                    className={`hail-rack-item ${gameState.resources.mrePacks <= 0 ? 'is-empty-slot' : ''}`}
                     draggable={false}
                   />
-                  <span className="hail-rack-cell-tag">MRE</span>
+                  <span className="hail-rack-cell-tag">MRE ×{gameState.resources.mrePacks}</span>
                 </button>
-
                 <button
                   type="button"
                   className="hail-rack-cell"
-                  aria-label={`Khẩu phần MRE (${Math.round(gameState.resources.foodKg)} kg)`}
-                  onClick={() => open('end', 'left-wall')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.mrePack}
-                    alt="Gói khẩu phần MRE"
-                    className={`hail-rack-item ${gameState.resources.foodKg < 15 ? 'is-empty-slot' : ''}`}
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">MRE</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label={`Khẩu phần MRE (${Math.round(gameState.resources.foodKg)} kg)`}
-                  onClick={() => open('end', 'left-wall')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.mrePack}
-                    alt="Gói khẩu phần MRE"
-                    className={`hail-rack-item ${gameState.resources.foodKg < 30 ? 'is-empty-slot' : ''}`}
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">MRE</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Mở bộ sơ cứu y tế"
-                  onClick={() => open('character', 'left-wall')}
+                  onClick={() => openPanel('character')}
+                  aria-label={`Medkit (${gameState.resources.medkits} bộ)`}
                 >
                   <img
                     src={HAIL_INVENTORY.medicalKit}
-                    alt="Bộ sơ cứu y tế"
-                    className="hail-rack-item"
+                    alt="Medkit"
+                    className={`hail-rack-item ${gameState.resources.medkits <= 0 ? 'is-empty-slot' : ''}`}
                     draggable={false}
                   />
-                  <span className="hail-rack-cell-tag">Y tế</span>
+                  <span className="hail-rack-cell-tag">MED ×{gameState.resources.medkits}</span>
+                </button>
+                <button
+                  type="button"
+                  className="hail-rack-cell"
+                  onClick={() => openPanel('end')}
+                  aria-label={`Nước (${gameState.resources.waterL.toFixed(0)}L)`}
+                >
+                  <img
+                    src={HAIL_INVENTORY.waterPack}
+                    alt="Water"
+                    className={`hail-rack-item ${gameState.resources.waterL <= 0 ? 'is-empty-slot' : ''}`}
+                    draggable={false}
+                  />
+                  <span className="hail-rack-cell-tag">{gameState.resources.waterL.toFixed(0)}L</span>
+                </button>
+                <button
+                  type="button"
+                  className="hail-rack-cell"
+                  onClick={() => setSysModalOpen()}
+                  aria-label={`O2 (${gameState.resources.oxygenKg.toFixed(0)}kg)`}
+                >
+                  <img
+                    src={HAIL_INVENTORY.oxygenCell}
+                    alt="O2"
+                    className={`hail-rack-item ${gameState.resources.oxygenKg <= 0 ? 'is-empty-slot' : ''}`}
+                    draggable={false}
+                  />
+                  <span className="hail-rack-cell-tag">{gameState.resources.oxygenKg.toFixed(0)}kg</span>
                 </button>
               </div>
             </div>
           </div>
 
-          {/* LL Bay: 3D Fabricator (HUMAN FRONTIER 2050+ 8-vertex cavity-locked sprite) */}
+          {/* LL: 3D Fabricator Bay */}
           <button
             type="button"
             data-slot="left-floor"
             className="hail-station hail-station--floor is-primary-focus"
             style={{ left: '2.8708%', top: '53.56%', width: '16.2081%', height: '31.1371%' }}
-            aria-label={`3D Fabricator — Chế tạo & sửa chữa (${Math.round(gameState.resources.partsKg)} kg phụ tùng)`}
-            onClick={() => open('crafting', 'left-floor')}
+            onClick={() => openPanel('crafting')}
+            aria-label="Mở Xưởng in 3D Fabricator"
           >
-            <img
-              src={
-                panel === 'crafting'
-                  ? HAIL_EQUIPMENT.fabricatorWorking
-                  : HAIL_EQUIPMENT.fabricatorIdle
-              }
-              alt="3D Fabricator"
-              className="hail-sprite-contain"
-              draggable={false}
-            />
-            <span className="hail-station-tag">3D Fabricator</span>
+            <img src={fabSprite} alt="3D Fabricator" className="hail-sprite-contain" draggable={false} />
+            <span className="hail-station-tag">
+              3D FAB Lv{gameState.systems.fabricator.level}{' '}
+              {gameState.fabricator.activeJob ? '· ĐANG IN' : '· SẴN SÀNG'}
+            </span>
           </button>
 
-          {/* UR Bay: CAPCOM & Rover Comms */}
-          {MAIN_STATIONS.map(st => {
-            const sys = gameState.systems[st.id];
-            const vis = getHailSystemSprite(st.id, sys.integrity);
-            const isPrimary = primaryStationId === st.id || vis.state !== 'ok';
-            return (
-              <button
-                key={st.id}
-                type="button"
-                data-slot={st.slotKey}
-                className={`hail-station hail-station--${st.mount} ${isPrimary ? 'is-primary-focus' : 'is-deemphasized'}`}
-                style={st.style}
-                aria-label={`${st.label} (${Math.round(sys.integrity * 100)}%)`}
-                onClick={() => open(st.panel, st.slotKey)}
-              >
-                <img
-                  src={vis.sprite}
-                  alt={st.label}
-                  className="hail-sprite-contain"
-                  draggable={false}
-                />
-                {vis.overlay && (
-                  <img src={vis.overlay} alt="" className="hail-fx-overlay" draggable={false} />
-                )}
-                <StatusBadge state={vis.state} />
-                <span className="hail-station-tag">{st.label}</span>
-              </button>
-            );
-          })}
+          {/* UR: CAPCOM & Rover Comms */}
+          <button
+            type="button"
+            data-slot="right-wall"
+            className="hail-station hail-station--wall"
+            style={{ left: '81.1005%', top: '14.9841%', width: '15.9091%', height: '31.4559%' }}
+            onClick={() => openPanel('comms')}
+            aria-label="Mở Trạm liên lạc CAPCOM & Tàu hàng"
+          >
+            <img src={HAIL_EQUIPMENT.comms} alt="CAPCOM" className="hail-sprite-contain" draggable={false} />
+            <span className="hail-station-tag">
+              CAPCOM · {gameState.logistics.activeOrder ? `CARGO S${gameState.logistics.activeOrder.arrivalSol}` : '80KG READY'}
+            </span>
+          </button>
 
-          {/* LR Bay: Inventory & Sample Rack (CSS 3x3: 6 Equipment + 3 Lunar Samples) */}
-          <div className="hail-bay-rack hail-bay-rack--lr" aria-label="Tủ dụng cụ và mẫu vật (LR)">
+          {/* LR: Inventory (6 Equipment) & 3 Samples */}
+          <div className="hail-bay-rack hail-bay-rack--lr" aria-label="Kho 6 Thiết bị & 3 Mẫu thám hiểm Rover">
             <div className="hail-bay-rack-shell">
               <div className="hail-rack-header" aria-hidden="true">
                 <span className="hail-rack-header-stripe" />
                 <span className="hail-rack-header-rivet" />
               </div>
               <div className="hail-rack-grid hail-rack-grid--3x3">
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Mở khoan lõi regolith"
-                  onClick={() => open('expedition', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.sampleDrill}
-                    alt="Khoan lõi regolith"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Khoan lõi</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Phin lọc & vòng đệm"
-                  onClick={() => open('crafting', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.filterSeal}
-                    alt="Phin lọc & vòng đệm"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Phin lọc</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Phụ tùng sửa chữa"
-                  onClick={() => open('crafting', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.spareParts}
-                    alt="Phụ tùng sửa chữa"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Phụ tùng</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Băng bịt rò hợp chất"
-                  onClick={() => open('crafting', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.sealantTape}
-                    alt="Băng bịt rò hợp chất"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Băng bịt rò</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Tấm chắn bụi tĩnh điện"
-                  onClick={() => open('expedition', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.dustShield}
-                    alt="Tấm chắn bụi tĩnh điện"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Khiên bụi</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell"
-                  aria-label="Bộ tiếp sóng vô tuyến"
-                  onClick={() => open('comms', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.radioRepeater}
-                    alt="Bộ tiếp sóng vô tuyến"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Tiếp sóng</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell is-sample-slot"
-                  aria-label="Mẫu vật địa chất 1"
-                  onClick={() => open('expedition', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.lunarSample}
-                    alt="Mẫu vật địa chất 1"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Mẫu vật 1</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell is-sample-slot"
-                  aria-label="Mẫu vật địa chất 2"
-                  onClick={() => open('expedition', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.lunarSample}
-                    alt="Mẫu vật địa chất 2"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Mẫu vật 2</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-rack-cell is-sample-slot"
-                  aria-label="Mẫu vật địa chất 3"
-                  onClick={() => open('expedition', 'right-floor')}
-                >
-                  <img
-                    src={HAIL_INVENTORY.lunarSample}
-                    alt="Mẫu vật địa chất 3"
-                    className="hail-rack-item"
-                    draggable={false}
-                  />
-                  <span className="hail-rack-cell-tag">Mẫu vật 3</span>
-                </button>
+                {EQUIPMENT_RACK_META.map((item) => {
+                  const eq = gameState.equipment[item.id];
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="hail-rack-cell"
+                      onClick={() => openPanel('expedition')}
+                      title={`${item.label}: ${eq.owned ? `${eq.state} (${eq.durability}%)` : 'Chưa chế tạo'}`}
+                    >
+                      <img
+                        src={item.img}
+                        alt={item.label}
+                        className={`hail-rack-item ${!eq.owned ? 'is-empty-slot' : ''}`}
+                        draggable={false}
+                      />
+                      <span className="hail-rack-cell-tag">
+                        {eq.owned ? `${eq.durability}%` : 'LOCK'}
+                      </span>
+                    </button>
+                  );
+                })}
+                {[0, 1, 2].map((slotIdx) => {
+                  const sampleName = roverSamples[slotIdx];
+                  return (
+                    <button
+                      key={`sample-${slotIdx}`}
+                      type="button"
+                      className="hail-rack-cell is-sample-slot"
+                      onClick={() => openPanel('expedition')}
+                      title={sampleName ?? `Khoang mẫu ${slotIdx + 1}`}
+                    >
+                      <img
+                        src={HAIL_INVENTORY.lunarSample}
+                        alt="Sample"
+                        className={`hail-rack-item ${!sampleName ? 'is-empty-slot' : ''}`}
+                        draggable={false}
+                      />
+                      <span className="hail-rack-cell-tag">{sampleName ? 'MẪU ✓' : `S${slotIdx + 1}`}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          {/* L04-L06: Human-Centered Crew Focal Zone (18 / 30 / 64 / 63%) + Central Console (36 / 60 / 28 / 37%) */}
+          {/* Center Crew Seats */}
           <div className="hail-crew-stage">
-            {gameState.crew.slice(0, 4).map((member, index) => {
-              const slot = CREW_SLOTS[index];
-              const vis = getHailCrewVisual(member.id);
-              const isWarning = member.health < 55 || member.status !== 'fit';
-              const isRear = slot.depth === 'rear';
+            {CREW_SLOTS.map((slot) => {
+              const member = gameState.crew[slot.crewId];
+              const visual = getHailCrewVisual(slot.crewId, member);
+              const impaired = visual.state === 'sick' || member.condition === 'evacuated';
               return (
                 <button
-                  key={member.id}
+                  key={slot.crewId}
                   type="button"
-                  className={`hail-crew-member is-${slot.depth} is-${slot.side} ${isWarning ? 'is-impaired' : ''}`}
-                  style={slot.style}
-                  aria-label={`Xem hồ sơ ${member.name} (${Math.round(member.health)}% HP)`}
                   onClick={() => {
-                    setCrewId(member.id);
-                    open('character', slot.side === 'left' ? 'crew-left' : 'crew-right');
+                    selectCrew(slot.crewId);
+                    openPanel('character');
                   }}
+                  className={`hail-crew-member ${slot.depth === 'rear' ? 'is-rear' : 'is-foreground'} ${impaired ? 'is-impaired' : ''}`}
+                  style={slot.style}
+                  aria-label={`Phi hành gia ${member.name} (${visual.stateLabel})`}
                 >
-                  {member.status !== 'evacuated' && (
-                    <img
-                      src={vis.seated}
-                      alt={member.name}
-                      className="hail-crew-figure"
-                      draggable={false}
-                    />
-                  )}
-                  <span className={`hail-crew-pill ${isRear ? 'is-rear-pill' : ''}`}>
-                    {member.name.split(' ')[0]} · {Math.round(member.health)}%
+                  <img
+                    src={visual.seated}
+                    alt={`${member.name} · ${visual.stateLabel}`}
+                    className="hail-crew-figure"
+                    draggable={false}
+                  />
+                  <span className={`hail-crew-pill ${slot.depth === 'rear' ? 'is-rear-pill' : ''}`}>
+                    {member.name.split(' ')[0]} · ♥{member.health} · {visual.stateLabel.toUpperCase()}
                   </span>
                 </button>
               );
             })}
-
-            {/* Central Decision Console (27.5 / 55.6 / 45 / 37.1%) — large foreground centerpiece flanked by crew */}
-            <div className="hail-decision-console" style={{ left: '27.5%', top: '55.6%', width: '45%', height: '37.1%' }}>
-              <img
-                src={HAIL_EQUIPMENT.consoleDesk}
-                alt="Bàn điều khiển trung tâm"
-                className="hail-console-art"
-                draggable={false}
-              />
-
-              {/* Griductive-style perspective CSS Live Micro-Displays baked into console surface */}
-              <div className="hail-console-screens">
-                <button
-                  type="button"
-                  className={`hail-console-screen ${pendingEvent ? 'is-alert' : ''}`}
-                  onClick={() => open('starlog', 'console')}
-                  aria-label="Mở Starlog & Sự cố"
-                >
-                  <span className="hail-screen-code">LOG</span>
-                  <strong>{pendingEvent ? 'ALERT' : `SOL ${gameState.sol}`}</strong>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-console-screen"
-                  onClick={() => open('expedition', 'console')}
-                  aria-label="Điều khiển Survey Rover & Bản đồ Mặt Trăng"
-                >
-                  <span className="hail-screen-code">ROVER</span>
-                  <strong>SURVEY</strong>
-                </button>
-
-                <button
-                  type="button"
-                  className="hail-console-screen"
-                  onClick={() => open('launch', 'console')}
-                  aria-label="Tiến trình Sao Hỏa & Y tế"
-                >
-                  <span className="hail-screen-code">MARS</span>
-                  <strong>{Math.min(100, Math.round((gameState.sol / 12) * 100))}%</strong>
-                </button>
-              </div>
-            </div>
           </div>
 
-          {/* Optional Section 4.4 Blueprint Verification Overlay */}
-          {showBlueprint && (
-            <div className="hail-blueprint-overlay" aria-hidden="true">
-              {BLUEPRINT_ZONES.map(zone => (
-                <div
-                  key={zone.label}
-                  className={`hail-bp-box is-${zone.tone}`}
-                  style={zone.style}
-                >
-                  <span>
-                    {zone.label} ({zone.coords})
-                  </span>
-                </div>
-              ))}
+          {/* Center Telemetry Console */}
+          <div
+            className="hail-decision-console"
+            style={{ left: '27.5%', top: '55.6%', width: '45%', height: '37.1%' }}
+          >
+            <img src={HAIL_EQUIPMENT.consoleDesk} alt="Bàn điều khiển trung tâm" className="hail-console-art" draggable={false} />
+            <div className="hail-console-screens">
+              <button
+                type="button"
+                className="hail-console-screen"
+                onClick={() => openPanel('journal')}
+                aria-label="Mở Nhật ký Trạm 4-Tab"
+              >
+                <span className="hail-screen-code">NHẬT KÝ</span>
+                <strong>S{String(gameState.clock.sol).padStart(2, '0')}/{gameState.campaign.targetSol}</strong>
+              </button>
+              <button
+                type="button"
+                className={`hail-console-screen ${gameState.events.activeEventId || weather.level === 'storm' || weather.level === 'extreme' ? 'is-alert' : ''}`}
+                onClick={() => openPanel('starlog')}
+                aria-label="Mở Terminal Quyết định & Sự kiện"
+              >
+                <span className="hail-screen-code">DECISION</span>
+                <strong>{gameState.events.activeEventId ? 'SỰ CỐ!' : weather.level.toUpperCase()}</strong>
+              </button>
+              <button
+                type="button"
+                className={`hail-console-screen ${gameState.clock.phase === 'rationing' ? 'is-alert' : ''}`}
+                onClick={() => openPanel('end')}
+                aria-label="Mở Bảng Khẩu phần & Cần gạt End-Sol"
+              >
+                <span className="hail-screen-code">KHẨU PHẦN</span>
+                <strong>{gameState.clock.phase === 'rationing' ? 'CHIA MRE' : 'KẾT SOL'}</strong>
+              </button>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* L07 Top Safe HUD Band (0 / 0 / 100 / 8%) */}
-        <TelemetryTopBar />
-
-        {/* Subtle Blueprint Verification Toggle tucked just below top 8% HUD on left margin */}
-        <button
-          type="button"
-          className={`hail-bp-toggle ${showBlueprint ? 'is-active' : ''}`}
-          onClick={() => setShowBlueprint(v => !v)}
-          aria-pressed={showBlueprint}
-          title="Hiển thị khung tỷ lệ Section 4.4"
-        >
-          {showBlueprint ? 'Ẩn Grid 4.4' : 'Grid 4.4'}
-        </button>
-
-        {/* L08 Bottom Action Band (0 / 93 / 100 / 7% — max 3 high-level actions) */}
-        <footer className="hail-action-band" aria-label="Thanh hành động chính">
-          <button type="button" onClick={() => open('starlog', 'console')}>
-            <img src={HAIL_SVG.sysComms} alt="" />
-            <span>Starlog</span>
-          </button>
-
-          <p className="hail-phase-hint">{phaseHint}</p>
+        {/* Bottom Action Bar */}
+        <footer className="hail-action-band">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onClick={() => openPanel('journal')}>
+              <img src={HAIL_SVG.frameCorner} alt="" />
+              <span>Nhật ký</span>
+            </button>
+            <button type="button" onClick={() => openPanel('starlog')}>
+              <img src={HAIL_SVG.sysComms} alt="" />
+              <span>Giao ban{gameState.events.activeEventId ? ' (!)' : ''}</span>
+            </button>
+            <button type="button" onClick={() => setSysModalOpen()}>
+              <img src={HAIL_SVG.sysPower} alt="" />
+              <span>Hệ thống</span>
+            </button>
+            <button type="button" onClick={() => openPanel('crafting')}>
+              <img src={HAIL_SVG.resParts} alt="" />
+              <span>3D Fab</span>
+            </button>
+            <button type="button" onClick={() => openPanel('character')}>
+              <img src={HAIL_SVG.sysMed} alt="" />
+              <span>Crew</span>
+            </button>
+            <button type="button" onClick={() => openPanel('comms')}>
+              <img src={HAIL_SVG.sysComms} alt="" />
+              <span>CAPCOM</span>
+            </button>
+            <button type="button" onClick={() => openPanel('expedition')}>
+              <img src={HAIL_SVG.sysRobot} alt="" />
+              <span>Rover</span>
+            </button>
+            <button type="button" onClick={() => openPanel('launch')}>
+              <img src={HAIL_SVG.badgeNasaStem} alt="" />
+              <span>Chiến dịch</span>
+            </button>
+          </div>
 
           <div className="hail-action-band-right">
-            <button type="button" onClick={() => open('menu', 'room')}>
-              <img src={HAIL_SVG.badgeNasaStem} alt="" />
-              <span>Nhiệm vụ</span>
-            </button>
-            <button type="button" className="is-primary" onClick={() => open('end', 'console')}>
-              <img src={HAIL_SVG.actEndDay} alt="" />
-              <span>Kết thúc Sol</span>
+            <span className="hail-phase-hint">
+              {advancePerm.allowed ? 'Sẵn sàng sang pha tiếp theo' : advancePerm.message}
+            </span>
+            <button
+              type="button"
+              onClick={handlePrimaryAction}
+              className="is-primary"
+            >
+              <img src={HAIL_SVG.actExplore} alt="" />
+              <span>
+                {gameState.clock.phase === 'briefing' && gameState.events.activeEventId
+                  ? 'Xử lý Sự kiện'
+                  : gameState.clock.phase === 'rationing'
+                    ? 'End-Sol'
+                    : 'Pha tiếp →'}
+              </span>
             </button>
           </div>
         </footer>
       </div>
 
-      {notice && (
-        <div className="mission-toast hail-toast" role="status">
-          <span>{notice}</span>
-          <button type="button" aria-label="Ẩn thông báo" onClick={() => setNotice('')}>
-            <img src={HAIL_SVG.navClose} alt="×" className="w-4 h-4" />
-          </button>
-        </div>
+      {/* Modals */}
+      {activeModal === 'journal' && (
+        <JournalModal
+          onClose={closeModal}
+          onOpenDecision={() => openPanel('starlog')}
+          onOpenPanel={(panel) => openPanel(panel)}
+        />
       )}
-
-      {!isNightTransition && panel && (
+      {activeModal === 'starlog' && (
+        <StarlogModal onClose={closeModal} onOpenJournal={() => openPanel('journal')} />
+      )}
+      {activeModal === 'character' && <CharacterSheetModal onClose={closeModal} />}
+      {activeModal === 'crafting' && <CraftingModal onClose={closeModal} />}
+      {activeModal === 'expedition' && <ExpeditionModal onClose={closeModal} />}
+      {activeModal === 'comms' && <CommsLogisticsModal onClose={closeModal} />}
+      {activeModal === 'end' && (
+        <EndOfDayModal
+          onClose={closeModal}
+          onStarlog={() => openPanel('starlog')}
+          onComms={() => openPanel('comms')}
+        />
+      )}
+      {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
+      {sysModalOpen && (
         <MissionDialog
-          key={panel}
-          panelType={panel}
-          dockSide={dockSide}
-          title={PANELS[panel].title}
-          art={PANELS[panel].art}
-          eyebrow={`PROJECT HAIL · SOL ${String(gameState.sol).padStart(2, '0')} / 12`}
-          onClose={closeFocus}
+          title="Telemetry Console · 5 Hệ thống Trạm & WRS"
+          eyebrow="PHA 2 · ENGINEERING & LIFE SUPPORT"
+          art={HAIL_EQUIPMENT.consoleDesk}
+          panelType="menu"
+          dockSide="left"
+          onClose={closeModal}
         >
-          {panel === 'starlog' && (
-            <StarlogModal
-              onResolved={text => {
-                closeFocus();
-                setNotice(text);
-              }}
-            />
-          )}
-          {panel === 'character' && (
-            <CharacterSheetModal
-              crewId={crewId}
-              onSelect={setCrewId}
-            />
-          )}
-          {panel === 'crafting' && <CraftingModal />}
-          {panel === 'expedition' && <ExpeditionModal />}
-          {panel === 'end' && (
-            <EndOfDayModal
-              onStarlog={() => open('starlog', 'console')}
-              onComms={() => open('comms', 'right-wall')}
-            />
-          )}
-          {panel === 'comms' && <CommsLogisticsModal />}
-          {panel === 'launch' && <MissionLaunchModal />}
-          {panel === 'menu' && (
-            <nav className="mission-menu hail-menu" aria-label="Menu nhiệm vụ">
-              <p className="mission-note">
-                Project Hail · Trạm Mặt Trăng 2050+: Duy trì O₂, Nước (WRS), Pin Mặt Trời và sức khỏe 4 phi hành gia qua 12 ngày nhiệm vụ.
-              </p>
-              <button type="button" onClick={() => open('starlog', 'console')}>
-                <span>Nhật ký & Sự cố Trạm</span> <span>01</span>
-              </button>
-              <button type="button" onClick={() => open('crafting', 'left-wall')}>
-                <span>Kỹ thuật & Sửa chữa ECLSS</span> <span>02</span>
-              </button>
-              <button type="button" onClick={() => open('character', 'crew-left')}>
-                <span>Trạm Y tế & Hồ sơ Phi hành đoàn</span> <span>03</span>
-              </button>
-              <button type="button" onClick={() => open('expedition', 'console')}>
-                <span>Bản đồ Mặt Trăng & Survey Rover</span> <span>04</span>
-              </button>
-              <button type="button" onClick={() => open('comms', 'right-wall')}>
-                <span>Liên lạc CAPCOM & Tiếp tế</span> <span>05</span>
-              </button>
-              <button type="button" onClick={() => open('launch', 'console')}>
-                <span>Tiến trình & Hành trình Sao Hỏa</span> <span>06</span>
-              </button>
-              <button type="button" onClick={() => open('end', 'console')}>
-                <span>Chia khẩu phần & Kết thúc Sol</span> <span>→</span>
-              </button>
-              {!confirmReset ? (
-                <button type="button" onClick={() => setConfirmReset(true)}>
-                  <span>Khởi động lại chiến dịch</span> <span>↺</span>
-                </button>
-              ) : (
-                <div className="mission-warning">
-                  <p>Đặt lại toàn bộ chiến dịch về Sol 1?</p>
-                  <div className="mission-actions">
-                    <button
-                      type="button"
-                      className="mission-button"
-                      onClick={() => {
-                        resetGame();
-                        open('starlog', 'console');
-                      }}
-                    >
-                      Xác nhận đặt lại Sol 1
-                    </button>
-                    <button
-                      type="button"
-                      className="mission-button"
-                      onClick={() => setConfirmReset(false)}
-                    >
-                      Giữ tiến trình
-                    </button>
-                  </div>
-                </div>
-              )}
-            </nav>
-          )}
+          <SystemControls />
         </MissionDialog>
       )}
-
       <NightCutsceneModal />
     </main>
   );

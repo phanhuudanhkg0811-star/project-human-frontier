@@ -1,0 +1,57 @@
+{
+  "contentVersion": "1.1.0-moon32",
+  "crew": [
+    {
+      "id": "cmd",
+      "name": "Sarah Chen",
+      "roleTag": "Commander",
+      "perkId": "crisis-poise",
+      "perkDescription": "Miễn nhiễm tụt Morale khi nhận nhiệm vụ xử lý khủng hoảng hoặc CAPCOM.",
+      "initialHealth": 80,
+      "initialMorale": 80,
+      "initialSatiety": 100,
+      "initialCondition": "fit",
+      "initialHungerState": "ok",
+      "initialRadiationMgy": 0
+    },
+    {
+      "id": "eng",
+      "name": "Alex Rivera",
+      "roleTag": "Engineer",
+      "perkId": "upgrade-parts-discount",
+      "perkDescription": "Sửa hệ thống về 100%; giảm 1 kg Parts khi nâng cấp hệ thống Console (tối thiểu 1 kg).",
+      "initialHealth": 80,
+      "initialMorale": 80,
+      "initialSatiety": 100,
+      "initialCondition": "fit",
+      "initialHungerState": "ok",
+      "initialRadiationMgy": 0
+    },
+    {
+      "id": "doc",
+      "name": "Marcus Vance",
+      "roleTag": "Medic",
+      "perkId": "medic-boost",
+      "perkDescription": "Dùng Medkit hồi thêm +20 Health; thực hiện medical-care hồi +15 Morale cho đồng đội.",
+      "initialHealth": 80,
+      "initialMorale": 80,
+      "initialSatiety": 100,
+      "initialCondition": "fit",
+      "initialHungerState": "ok",
+      "initialRadiationMgy": 0
+    },
+    {
+      "id": "geo",
+      "name": "Elena Rostova",
+      "roleTag": "Geologist",
+      "perkId": "rover-wear-halved",
+      "perkDescription": "Trực phóng/thu hồi Rover giúp giảm 50% hao mòn độ bền cho thiết bị mang theo.",
+      "initialHealth": 80,
+      "initialMorale": 80,
+      "initialSatiety": 100,
+      "initialCondition": "fit",
+      "initialHungerState": "ok",
+      "initialRadiationMgy": 0
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 3,
+  "contentVersion": "1.1.0-moon32",
+  "modelVersion": "1.1.0-ts-donki",
+  "catalogVersion": "1.1.0-moon32",
+  "revision": 24,
+  "campaign": {
+    "id": "moon-32",
+    "runId": "run-moon32-sol7-golden",
+    "planet": "moon",
+    "status": "active",
+    "difficulty": "standard",
+    "seed": 205007,
+    "donkiProfileId": "oct-2024-x9storm",
+    "targetSol": 32,
+    "sciencePoints": 20,
+    "endReason": null
+  },
+  "clock": {
+    "sol": 7,
+    "phase": "briefing",
+    "resolutionIndex": 6
+  },
+  "resources": {
+    "batteryKWh": 8,
+    "oxygenKg": 55,
+    "waterL": 35,
+    "partsKg": 14,
+    "wasteWaterL": 10,
+    "mrePacks": 16,
+    "medkits": 2,
+    "medkitLevel": 1,
+    "waterZeroStreak": 0,
+    "oxygenZeroStreak": 0
+  },
+  "systems": {
+    "solar": { "id": "solar", "level": 1, "integrity": 0, "status": "offline" },
+    "recycler": { "id": "recycler", "level": 1, "integrity": 1.0, "status": "nominal" },
+    "scrubber": { "id": "scrubber", "level": 1, "integrity": 1.0, "status": "nominal" },
+    "airlock": { "id": "airlock", "level": 1, "integrity": 1.0, "status": "nominal" },
+    "fabricator": { "id": "fabricator", "level": 1, "integrity": 1.0, "status": "nominal" }
+  },
+  "crew": {
+    "cmd": {
+      "id": "cmd",
+      "name": "Sarah Chen",
+      "roleTag": "Commander",
+      "health": 85,
+      "morale": 80,
+      "satiety": 75,
+      "condition": "fit",
+      "hungerState": "ok",
+      "radiationMgy": 0.4,
+      "assignedTask": { "type": "rest" }
+    },
+    "eng": {
+      "id": "eng",
+      "name": "Alex Rivera",
+      "roleTag": "Engineer",
+      "health": 85,
+      "morale": 80,
+      "satiety": 75,
+      "condition": "fit",
+      "hungerState": "ok",
+      "radiationMgy": 0.4,
+      "assignedTask": { "type": "rest" }
+    },
+    "doc": {
+      "id": "doc",
+      "name": "Marcus Vance",
+      "roleTag": "Medic",
+      "health": 85,
+      "morale": 80,
+      "satiety": 75,
+      "condition": "fit",
+      "hungerState": "ok",
+      "radiationMgy": 0.4,
+      "assignedTask": { "type": "rest" }
+    },
+    "geo": {
+      "id": "geo",
+      "name": "Elena Rostova",
+      "roleTag": "Geologist",
+      "health": 85,
+      "morale": 80,
+      "satiety": 75,
+      "condition": "fit",
+      "hungerState": "ok",
+      "radiationMgy": 0.4,
+      "assignedTask": null
+    }
+  },
+  "equipment": {
+    "core_drill": { "id": "core_drill", "owned": true, "level": 1, "durability": 75, "state": "good", "reservedForRover": false },
+    "sealant_tape": { "id": "sealant_tape", "owned": true, "level": 1, "durability": 50, "state": "worn", "reservedForRover": false },
+    "solar_lantern": { "id": "solar_lantern", "owned": false, "level": 1, "durability": 0, "state": "damaged", "reservedForRover": false },
+    "dust_shield": { "id": "dust_shield", "owned": true, "level": 1, "durability": 100, "state": "good", "reservedForRover": true },
+    "radio_repeater": { "id": "radio_repeater", "owned": false, "level": 1, "durability": 0, "state": "damaged", "reservedForRover": false },
+    "cryo_thermal_rig": { "id": "cryo_thermal_rig", "owned": false, "level": 1, "durability": 0, "state": "damaged", "reservedForRover": false }
+  },
+  "fabricator": {
+    "usedThisSol": false,
+    "activeJob": null
+  },
+  "dailyPlan": {
+    "sol": 7,
+    "status": "draft",
+    "wrsEnabled": false,
+    "powerPriority": ["eclss", "wrs", "fabricator", "rover"],
+    "mreTargets": []
+  },
+  "rover": {
+    "activeMission": {
+      "expeditionId": "regolith-field",
+      "status": "outbound",
+      "scheduledSol": 6,
+      "launchedSol": 6,
+      "statusEnteredSol": 6,
+      "expectedReturnSol": 8,
+      "launchOperatorCrewId": "geo",
+      "recoveryOperatorCrewId": null,
+      "equippedItems": ["dust_shield"],
+      "travelTicksCompleted": 1,
+      "signalLostSols": 0,
+      "resumeStatus": null,
+      "recoveryDelaySols": 0,
+      "incidents": []
+    },
+    "missionHistory": [
+      {
+        "expeditionId": "lunar-crater",
+        "outcome": "completed",
+        "launchedSol": 2,
+        "settledSol": 4,
+        "rewardSampleGranted": "crater_core_sample",
+        "scienceGranted": 20,
+        "launchOperatorCrewId": "geo",
+        "recoveryOperatorCrewId": "geo",
+        "equippedItems": ["core_drill"],
+        "incidents": []
+      }
+    ]
+  },
+  "events": {
+    "activeEventId": "sol7-golden-comms-crisis",
+    "activeEvent": {
+      "eventId": "sol7-golden-comms-crisis",
+      "triggeredAtSol": 7,
+      "deadlineSol": 7,
+      "context": {}
+    },
+    "resolvedEventIds": ["sol1-arrival-check", "sol3-airlock-seal-alert"],
+    "occurrenceHistory": [
+      {
+        "eventId": "sol1-arrival-check",
+        "triggeredSol": 1,
+        "settledSol": 1,
+        "outcome": "resolved",
+        "choiceId": "calibrate-now"
+      },
+      {
+        "eventId": "sol3-airlock-seal-alert",
+        "triggeredSol": 3,
+        "settledSol": 3,
+        "outcome": "resolved",
+        "choiceId": "use-sealant-tape"
+      }
+    ],
+    "flags": {
+      "sensors_calibrated": true,
+      "airlock_sealed": true
+    },
+    "pendingFollowUps": []
+  },
+  "logistics": {
+    "activeOrder": null,
+    "padCooldownSols": 0,
+    "radioMessages": []
+  },
+  "debrief": {
+    "pendingDismiss": false,
+    "lastSummary": null
+  },
+  "history": {
+    "summaries": [],
+    "logs": [
+      {
+        "sol": 7,
+        "phase": "briefing",
+        "code": "SOL7_CRISIS_TRIGGERED",
+        "message": "Cảnh báo Sol 7: Sụt áp lưới điện và mất tín hiệu Rover tại bãi đá Regolith."
+      }
+    ]
+  }
+}

@@ -1,14 +1,15 @@
 {
-  "name": "junior-astronaut-mission-trainer",
+  "name": "project-human-frontier",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/engine.test.mjs",
+    "test": "node --test",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "oxlint"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -18,16 +19,14 @@
     "tailwind-merge": "^2.3.0",
     "zustand": "^4.5.2"
   },
-  "optionalDependencies": {
-    "@esbuild/linux-x64": "^0.28.2",
-    "@rollup/rollup-linux-x64-gnu": "^4.68.2"
-  },
   "devDependencies": {
     "@types/node": "^20.12.7",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "ajv": "^8.20.0",
     "autoprefixer": "^10.4.19",
+    "oxlint": "^1.93.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",

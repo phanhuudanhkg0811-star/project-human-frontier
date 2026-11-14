@@ -7,29 +7,29 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Target Audience](https://img.shields.io/badge/Ages-7--12%20STEM-brightgreen)](#)
 
-> **A 2D turn-based survival strategy & STEM educational web game empowering junior astronauts (ages 7–12) to command a Lunar Outpost through real engineering trade-offs and authentic NASA space weather data.**
+> **A 2D turn-based survival strategy & STEM educational web game empowering junior astronauts (ages 7–12) to command a Lunar Outpost through real engineering trade-offs, authentic NASA space weather data, and the grueling 14-Sol Lunar Night.**
 
 ---
 
 ## 📖 Table of Contents
 
 - [Overview & Vision](#-overview--vision)
+- [Campaign Architecture](#-campaign-architecture)
 - [Key Features](#-key-features)
-- [Core Gameplay Loop](#-core-gameplay-loop)
-- [Science & NASA Data Pipeline](#-science--nasa-data-pipeline)
+- [5-Phase Daily Gameplay Loop](#-5-phase-daily-gameplay-loop)
 - [Game Systems](#-game-systems)
-  - [Resources & Life Support](#1-resources--life-support)
-  - [Crew Roster](#2-crew-roster)
-  - [Station Modules](#3-station-modules)
-  - [Remote Rover Expeditions](#4-remote-rover-expeditions)
-  - [Three-Tier Event System](#5-three-tier-event-system)
+  - [6 Resource Vaults](#1-6-resource-vaults)
+  - [4 Core ECLSS Systems](#2-4-core-eclss-systems)
+  - [Crew Roster: One Person, One Job, One Sol](#3-crew-roster)
+  - [3 Remote Rover Expeditions & Sol 7 Golden Crisis](#4-remote-rover-expeditions--sol-7-golden-crisis)
+  - [The 14-Sol Lunar Night Survival (Sol 15–28)](#5-the-14-sol-lunar-night-survival-sol-1528)
+- [Cockpit V12 Dashboard & UI Spec](#-cockpit-v12-dashboard--ui-spec)
 - [Technical Architecture](#-technical-architecture)
-  - [React 19 Modern Architecture](#react-19-modern-architecture)
-  - [Engine & UI Decoupling](#engine--ui-decoupling)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
-- [MVP Scope & Roadmap](#-mvp-scope--roadmap)
+- [MVP Scope & Phased Roadmap](#-mvp-scope--phased-roadmap)
 - [Pedagogical Impact & STEM Goals](#-pedagogical-impact--stem-goals)
+- [Documentation Hub](#-documentation-hub)
 - [Contributing](#-contributing)
 - [Attribution & References](#-attribution--references)
 
@@ -37,181 +37,218 @@
 
 ## 🌌 Overview & Vision
 
-Developed for the **NASA Space Apps Challenge**, **Project Hail** places young players in the commander's seat of an advanced Lunar Outpost for a grueling **12 Mission Days** campaign.
+Developed for the **NASA Space Apps Challenge** under the *Project Human Frontier* initiative, **Project Hail** places young players in the commander's seat of an advanced Lunar Outpost at the Moon's South Pole.
 
 Instead of testing passive knowledge through multiple-choice quizzes, Project Hail teaches **authentic engineering trade-offs**:
 - *Do we risk power reserves to keep the water recycler active, or preserve battery life to maintain communication with our exploration rover during an impending solar energetic particle event?*
+- *How do we budget our fission generator and battery banks when the sun sets for 14 continuous days during the extreme cryogenic Lunar Night?*
 
-Every choice incurs immediate costs and delayed consequences across multiple turns. Science is never arbitrary: real historical space weather records from **NASA DONKI** directly govern the lunar radiation and environmental conditions.
+Every choice incurs immediate costs and delayed consequences across multiple turns. Science is never arbitrary: real historical space weather records from **NASA DONKI** directly govern radiation, solar flux, and station telemetry.
+
+---
+
+## 🗺️ Campaign Architecture
+
+Project Hail is designed with three clean, independent campaigns (as reconciled in [SCOPE_RECONCILIATION.md](docs/product/SCOPE_RECONCILIATION.md)):
+
+```text
+PHASE 1 (Current Focus)                 PHASE 2 (Post-Phase 1)
+┌───────────────────────────┐           ┌───────────────────────────┐
+│       Moon Survival       │           │       Mars Survival       │
+│          32 Sol           │           │        Independent        │
+│   Dedicated Save/State    │           │    Dedicated Save/State   │
+└───────────────────────────┘           └───────────────────────────┘
+              ▲                                       ▲
+              │                                       │
+              └───────────────┬───────────────────────┘
+                              │
+                    ADVANCED TWO-ARC MODE
+                   Moon 32 Sol → Hohmann → Mars
+                     (High-difficulty unlock)
+```
+
+1. **Phase 1: Moon Survival (32 Sol)**: Self-contained lunar campaign from Sol 1 to Sol 32. Players do not need to launch to Mars to win. Core focus: Rover training, the Sol 7 crisis, surviving the 14-Sol Lunar Night, and post-dawn recovery.
+2. **Phase 2: Mars Survival**: Independent campaign with separate saves, featuring MOXIE oxygen generation, global dust storms, and 14-minute radio latency.
+3. **Advanced Two-Arc Mode**: Two-stage challenge combining both campaigns via orbital transfer.
 
 ---
 
 ## ✨ Key Features
 
-- 🎮 **Turn-Based 2D Cockpit Experience**: Intuitive 16:9 point-and-click retro cartoon interface tailored for desktop with responsive touch support.
-- ☀️ **Real NASA Open Data**: Integrates curated 12-day windows from NASA's Space Weather Database of Notifications, Knowledge, and Information (**DONKI**).
-- 🧑‍🚀 **4-Astronaut Crew Management**: Assign tasks, monitor health indicators, and mitigate hazards without micromanagement bloat.
-- 🤖 **Remote Rover Exploration**: Plan and deploy uncrewed rover expeditions across 3 treacherous lunar zones (Crater, Regolith Field, Shadowed Region).
-- 📊 **Dynamic Daily Science Brief**: Clear, age-appropriate STEM explanations contrasting *observed space weather data*, *simulated station impacts*, and *real-world scientific countermeasures*.
-- 🔁 **Deterministic & Replay-Friendly**: Seeded random generator paired with historical NASA timeframes enables repeatable scenario sharing and fair testing.
+- 🎛️ **Cockpit V12 Dashboard**: 16:9 retro cartoon sci-fi cockpit featuring 6 functional modules, 2 interactive storage racks, and a dynamic 2D Canvas Observation Window.
+- ☀️ **Authentic NASA Open Data**: Grounded in curated solar timelines from NASA's Space Weather Database of Notifications, Knowledge, and Information (**DONKI**).
+- 🌙 **The 14-Sol Lunar Night Challenge**: Face the authentic lunar day/night cycle where solar power drops to 0 kWh for 14 straight sols (Sol 15–28), requiring strict fission power rationing and battery stewardship.
+- 🧑‍🚀 **4-Astronaut Crew Roster**: Distinct roles with health, stress, fatigue, and injury tracking under the *"one person, one job, one sol"* assignment rule.
+- 🤖 **3 Remote Rover Expeditions**: Explore the *Lunar Crater*, *Regolith Field*, and *Permanently Shadowed Region (PSR)* for water-ice deposits.
+- ⚖️ **Sol 7 Golden Crisis**: A signature branching decision: sacrifice rover telemetry to guarantee habitat life support, or spend vital power to save groundbreaking scientific data.
+- 📊 **Dynamic Daily STEM Debrief & 5-Sol Trend Predictor**: Plain-language science explanations linking observed data, inferred context, and simulated station impacts.
+- 🔁 **100% Deterministic & Replay-Friendly**: A SHA-256 subsystem-seeded Pure TypeScript resolver (`endSolResolver.ts` + `spaceWeather.ts`) produces versioned, canonical JSON results for scenario sharing and automated testing.
+- 🌐 **Bilingual (VI / EN)**: Full bilingual Vietnamese and English support across all UI text, briefs, and dialogues.
 
 ---
 
-## 🔄 Core Gameplay Loop
+## 🔄 5-Phase Daily Gameplay Loop
+
+Each Sol unfolds across a strictly defined 5-phase state machine:
 
 ```mermaid
 flowchart LR
-    A[1. Dawn: Read NASA Weather & Station State] --> B[2. Assess: Power, O2, H2O & Crew Health]
-    B --> C[3. Plan: Assign 4 Crew & Station Systems]
-    C --> D[4. Command: Deploy/Manage Rover Missions]
-    D --> E[5. End Day: Deterministic Resolver Computes Night Outcome]
-    E --> F[6. Debrief: Review Mission Log & NASA Science Brief]
-    F -->|Next Mission Day| A
+    A[1. Morning Briefing<br/>Weather & Events] --> B[2. Engineering & Crew<br/>Systems & Assignments]
+    B --> C[3. Comms & Logistics<br/>Earth Radio & Cargo]
+    C --> D[4. Rationing Plan<br/>MRE, Water & Power]
+    D --> E[5. End-Sol Debrief<br/>Resolver & STEM Brief]
+    E -->|Next Sol| A
 ```
 
-### Win / Loss Conditions
-* **Victory**: Complete the 12th Mission Day with all **4 astronauts alive** AND gather scientific data from **at least 2 out of 3** rover exploration expeditions.
-* **Defeat**: Complete life-support failure, crew casualty, or failure to secure required scientific research milestones by Day 12.
-
----
-
-## 🛰️ Science & NASA Data Pipeline
-
-Project Hail strictly preserves scientific integrity by distinguishing **Observed Data**, **Inferred Context**, and **Simulated Gameplay**:
-
-```text
-       NASA Archive / DONKI API (FLR, CME, SEP events)
-                             │
-                             ▼
-            Curated 12-Day Historical Windows (UTC)
-                             │
-                             ▼
-                 [ NASA Data Mapper Service ]
-         (Maps solar events to Lunar radiation & flux context)
-                             │
-                             ▼
-               Mission Environment Timeline
-           + Conditional Random Events (weighted)
-           + Story & Training Objectives
-                             │
-                             ▼
-    [ Game Engine ] ──> [ End-Day Deterministic Resolver ]
-                             │
-                             ▼
-               Updated State + Science Brief
-```
-
-> [!NOTE]
-> **No Dust Storms on the Moon!** Unlike Mars, the Moon possesses an ultra-thin exosphere with no wind-driven sandstorms. Environmental events on the Moon focus on solar flares, coronal mass ejections, cosmic rays, and electrostatic regolith dust adhesion.
+1. **Morning Briefing & Starlog**: Review NASA space weather telemetry, evaluate active anomalies, and choose initial event responses.
+2. **Engineering & Crew Assignment**: Inspect station module integrity, schedule repairs/upgrades, and assign each of the 4 crew members (*one person, one job, one sol*).
+3. **Comms & Logistics**: Communicate with Earth (1.3s transmission delay), schedule or monitor rover expeditions, and request cargo resupply missions (4-sol transit time).
+4. **Rationing & Power Plan**: Set food (MRE) and water rations, toggle the Water Recovery System (WRS), and prioritize power delivery.
+5. **End-Sol Resolving & Debrief**: The deterministic resolver computes daily consumption and outcomes; review the NASA Science Brief and inspect the 5-Sol Trend Predictor.
 
 ---
 
 ## ⚙️ Game Systems
 
-### 1. Resources & Life Support
-- ⚡ **Power (kWh)**: Generated by solar arrays, stored in battery banks. Drives all life-support, heaters, communications, and rover charging.
-- 🫧 **Oxygen (kg)**: Replenished by the Oxygen Generator via electrolysis; depleted daily by crew respiration.
-- 💧 **Water (L)**: Purified through the Water Recycler with power cost; critical for hydration and health recovery.
-- 📦 **Spare Materials**: Auxiliary consumable required for maintaining degraded components.
+### 1. 6 Resource Vaults
 
-### 2. Crew Roster
-- **4 Astronauts** with equal baseline qualifications for all core modules.
-- **Attributes**: `Health (0–100%)`, `Status` (`Available`, `Busy`, `Injured`, `Incapacitated`).
-- **Rule**: Exactly **1 primary assignment per crew member per Mission Day**.
+| Resource | Unit | Starting Level | Max Capacity | Daily Baseline Consumption | Impact |
+|---|---|---:|---:|---:|---|
+| **Oxygen (`oxygenKg`)** | kg | 80 kg | 100 kg | 0.84 kg / person | Essential for respiration; failure causes critical medical emergency |
+| **Clean Water (`waterL`)** | L | 100 L | 120 L | 2.5 L / person | Hydration and health recovery; supplemented by WRS recycler |
+| **Waste Water (`wasteWaterL`)** | L | 10 L | 100 L | Generated daily | Recycled into clean water via WRS (90%–95% efficiency) |
+| **Food / MRE (`foodKg`)** | kg | 60 kg | 100 kg | 0.62 kg / person | Daily caloric intake; rationing reduces morale and increases fatigue |
+| **Spare Parts (`partsKg`)** | kg | 15 kg | 50 kg | 2 kg / repair | Consumed when repairing broken systems or performing upgrades (4–8 kg) |
+| **Battery Bank (`batteryKWh`)** | kWh | 45 kWh | 60 kWh | Buffer storage | Critical energy reservoir during peak demand and the 14-Sol Lunar Night |
 
-### 3. Station Modules
-| Module | Core Functionality | Degradation Risks |
-|---|---|---|
-| **Solar Power Grid** | Primary energy generation and storage | Reduced efficiency during lunar shadow / dust accumulation |
-| **Oxygen Generator** | Converts reserves/power to breathable O2 | Critical hazard if broken: rapid crew health depletion |
-| **Water Recycler** | Recovers wastewater with electrical overhead | Contamination / water leakage upon system failure |
-| **Communication Array** | Relays telemetry to Earth & rover links | Signal dropouts during solar particle storms |
-| **Medical Bay** | Treats crew injuries and restores Health | Requires power and assigned personnel |
-| **Rover Terminal** | Plots routes, configures instruments, and monitors rover | Inoperable if power is severed |
+### 2. 4 Core ECLSS Systems
 
-### 4. Remote Rover Expeditions
-Astronauts do not perform EVAs outside the habitat in the MVP. All surface science is conducted via the robotic rover:
-1. **Lunar Crater**: High rock density; hazard of wheel entrapment.
-2. **Regolith Field**: High electrostatic dust adhesion; tests sensor durability.
-3. **Permanently Shadowed Region (PSR)**: Sub-zero cryogenic extremes; targets volatile water-ice deposits.
+1. **CO2 Scrubber**: Removes toxic exhaled carbon dioxide; system degradation causes rapid crew fatigue and incapacitation.
+2. **Water Recycler (WRS)**: Purifies greywater into potable water; Lv1 recovers 90% at 4 kWh, while Lv2/Lv3 recover 95% (Lv3 uses 3 kWh).
+3. **Power Grid (Fission + Solar)**:
+   - **Mini Fission Generator**: Delivers continuous baseline power (**8 kWh/Sol**) regardless of day or night.
+   - **Solar Array**: Generates **25 kWh/Sol** during daytime; drops to **0 kWh/Sol** during Lunar Night.
+   - **Base Station Load**: Consumes **12 kWh/Sol** minimum essential load.
+4. **Airlock Module**: Pressure seal maintaining atmospheric integrity; worn seals lead to continuous cabin gas depressurization.
 
-### 5. Three-Tier Event System
-1. **NASA Environmental Events**: Grounded in genuine historical DONKI logs (FLR, CME, SEP).
-2. **Conditional Random Events**: Triggered only when contextual criteria are met (e.g., rover stuck only while actively traversing; recycler malfunction only when active or degraded).
-3. **Story & Objective Milestones**: Structured narrative checkpoints without forcing fixed calamities on pre-determined days.
+### 3. Crew Roster
+
+- **4 Astronauts**: *Alex Rivera* (Commander), *Elena Chen* (ECLSS Engineer), *Marcus Adebayo* (Geologist), *Aoi Tanaka* (Systems Specialist).
+- **Attributes**: `Health (0–100%)`, `Stress`, `Fatigue`, `Hunger`, `Thirst`, `Condition` (`Available`, `Busy`, `Tired`, `Injured`, `Incapacitated`).
+- **Core Rule**: Exactly **1 primary assignment per crew member per Sol**.
+
+### 4. 3 Remote Rover Expeditions & Sol 7 Golden Crisis
+
+Surface exploration is conducted via uncrewed robotic rovers:
+1. **Expedition 1 (Sol 1–4) — Lunar Crater**: Impact geology and rock sampling; hazard of rough terrain and wheel slippage.
+2. **Expedition 2 (Sol 5–8) — Regolith Field**: Electrostatic dust adhesion and abrasive wear; tests comms antennas and dust mitigation.
+3. **Expedition 3 (Sol 9–12) — Permanently Shadowed Region (PSR)**: Sub-zero cryogenic extremes (-240°C); targets volatile water-ice deposits.
+
+#### ⚖️ The Sol 7 Golden Crisis
+At Sol 7, a simultaneous cabin leak, solar degradation, and rover telemetry failure strike. Elena Chen is the only available astronaut remaining:
+- **Option A (Save Rover)**: Spend 2 kWh and postpone the WRS recycler to rescue rover data; Expedition 2 succeeds, leaving the station with 25.0 L water and 2 kWh battery.
+- **Option B (Protect Habitat)**: Run the WRS recycler to safeguard water reserves; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 34.0 L water and 0 kWh battery.
+
+### 5. The 14-Sol Lunar Night Survival (Sol 15–28)
+
+The Moon's 28-day diurnal cycle produces **14 Earth days of continuous darkness**:
+- Solar power generation drops to **0 kWh**.
+- Total generation is capped at the Fission unit's **8 kWh/Sol** against a **12 kWh/Sol** baseline load.
+- Players must survive on pre-charged battery reserves, emergency cargo deliveries, non-essential load shedding, and tightened rations until sunrise at Sol 29.
+
+---
+
+## 🎛️ Cockpit V12 Dashboard & UI Spec
+
+The Cockpit V12 layout provides an intuitive retro cartoon sci-fi interface:
+- **Observation Window (2D Canvas)**: Renders the dynamic lunar horizon across day, sunset, 14-Sol night (starfield & Earth view), sunrise, and solar storms.
+- **Left Rack**: ECLSS Scrubber & WRS Recycler controls, Power Grid meters, and Storage Tanks.
+- **Right Rack**: Earth Comms array, Rover Telemetry station, and Science Tools (reflecting live counts of MRE boxes, First Aid kits, Sample Canisters, and Core Drill).
+- **Bottom Deck**: 4 Astronaut vitals, status badges, and the 5-Phase Action Controller.
+- **5-Sol Resource Predictor**: Visual projection graph calculating whether current settings will deplete resources over the next 5 sols.
 
 ---
 
 ## 🏗️ Technical Architecture
 
-Project Hail is built with a modern, decoupled web architecture using **React 19** and a **headless TypeScript game engine**.
-
 ```mermaid
-graph TD
+flowchart TD
+    subgraph Data ["Data, Catalog & Schema Layer"]
+        Balance["balance.json"]
+        Catalog["simulation-catalog.json + provenance"]
+        Events["events.json (18-24 Branching Events)"]
+        Expeditions["expeditions.json"]
+        Science["science-briefs.json (Observed / Inferred / Simulated)"]
+    end
+
+    subgraph Domain ["Pure TypeScript Domain Engine"]
+        Actions["Typed Command Orchestrator"]
+        Resolver["End-Sol & Forecast Resolver"]
+        PRNG["SHA-256 Seeded PRNG"]
+        Selectors["Pure State Selectors"]
+    end
+
+    subgraph Store ["State Facade & Persistence (Zustand)"]
+        ZustandStore["Game Store (GamePort Adapter)"]
+        LocalStorage["Versioned LocalStorage Save (schemaVersion)"]
+    end
+
     subgraph UI ["Presentation Layer (React 19)"]
-        Cockpit["Cockpit View (2D Canvas / SVG / DOM)"]
-        CrewPanel["Crew & Roster Panel"]
-        DevicesPanel["Station Modules Panel"]
-        RoverMap["Exploration Map"]
-        BriefModal["Science Brief & Mission Log"]
+        Cockpit["Cockpit V12 Dashboard"]
+        Panels["Briefing / Crew / Comms / Rover / Rationing Panels"]
+        Modals["Debrief & NASA Cadet Report Card"]
     end
 
-    subgraph Actions ["React 19 Action & Transition Layer"]
-        useActionState["useActionState / useOptimistic"]
-        ActionHandlers["Player Command Dispatcher"]
-    end
-
-    subgraph Core ["Deterministic Game Core (Pure TypeScript)"]
-        Engine["Game Engine State Manager"]
-        Resolver["End-Day Resolver"]
-        EventScheduler["Event Scheduler & Graph"]
-        NASAMapper["NASA DONKI Data Normalizer"]
-        PRNG["Seeded PRNG (Replay & Verification)"]
-    end
-
-    UI --> Actions
-    Actions --> Core
-    Core --> UI
+    Data --> Domain
+    Domain --> Store
+    Store <--> LocalStorage
+    Store --> UI
+    UI --"Dispatch Commands"--> Store
+    Store --"Async Dispatch"--> Domain
 ```
 
-### React 19 Modern Architecture
-- **React 19 Server & Client Paradigms**: Exploits the newest React 19 hooks including `useActionState`, `useOptimistic`, and `useTransition` for lag-free, responsive game actions.
-- **Optimistic State Updates**: Allocation of power and crew assignments visualizes instant feedback while the engine guarantees state validation.
-- **Zero-Coupling Engine**: The entire game logic, resolver, resource balance equations, and event conditions run in pure TypeScript with **zero dependency on DOM or React**, facilitating 100% automated test coverage with Vitest.
+### Engineering Principles
+- **Pure TypeScript Runtime**: End-Sol, forecast, state transitions, and DONKI probability models run locally without Python, Pyodide, or a sidecar service.
+- **Single Simulation Authority**: The TypeScript domain resolver is the only source of End-Sol and forecast calculations.
+- **Strict Determinism**: Replaying the same `(state with committed plan, seed, modelVersion, catalogVersion)` yields the same canonical response/hash.
+- **Fail Closed**: Validation, persistence, or version failures leave `GameState` unchanged and expose a recoverable error.
+- **Versioned LocalStorage**: Saves include schema, content, model, and catalog versions with migration/compatibility checks.
 
 ---
 
 ## 📁 Project Structure
 
 ```text
-nsac-hallelujah/
+project-human-frontier/
+├── .github/
+│   ├── workflows/ci.yml         # CI: Lint, Typecheck, Unit Tests, Build
+│   └── pull_request_template.md # PR guidelines and review checklist
+├── docs/                        # Complete Documentation Hub
+│   ├── README.md                # Documentation index & map
+│   ├── product/                 # Scope reconciliation & product vision
+│   ├── architecture/            # Pure TS engine, state machine, data contracts
+│   ├── game-design/             # GDD, balance formulas, event tree, rover specs
+│   ├── ui-ux/                   # Cockpit V12 specs, wireframes, accessibility
+│   ├── asset-pipeline/          # WebP/SVG specifications, Web Audio guidelines
+│   └── plan/
+│       ├── first-phase/         # Phase 1.1 - 1.6 plans, master plan, team execution
+│       └── second-phase/        # Phase 2 Mars campaign placeholder
 ├── public/
-│   ├── assets/
-│   │   ├── cockpit/             # 2D 16:9 cockpit backgrounds
-│   │   ├── crew/                # Astronaut character portraits (WebP)
-│   │   ├── rover/               # Rover models and expedition maps
-│   │   └── audio/               # Atmospheric SFX and ambient loops
-│   └── data/
-│       └── nasa-windows/        # Curated 12-day historical DONKI JSON archives
+│   └── assets/hail/             # Cockpit backgrounds, crew portraits, UI assets
 ├── src/
-│   ├── core/                    # Headless Game Engine (Pure TypeScript)
-│   │   ├── constants/           # Resource balance tables, thresholds
-│   │   ├── engine/              # State machine, action validators
-│   │   ├── events/              # Event catalog, graph & conditional scheduler
-│   │   ├── nasa/                # DONKI mapper, solar weather transformers
-│   │   ├── resolver/            # End-Day deterministic resolver
-│   │   └── types/               # Strict TypeScript definitions
-│   ├── components/              # React 19 UI Components
-│   │   ├── cockpit/             # Interactive 2D Outpost Hotspots
-│   │   ├── panels/              # Crew, Systems, Rover & Inventory Panels
-│   │   ├── dialogs/             # Mission Log, Science Brief & Event Modals
-│   │   └── common/              # Buttons, gauges, progress indicators
-│   ├── hooks/                   # React 19 Game Hooks (useGameState, useActions)
-│   ├── state/                   # Store providers and action dispatchers
-│   ├── utils/                   # Seeded PRNG, formatters, audio helpers
-│   ├── App.tsx                  # Primary game container
+│   ├── app/                     # Bootstrap, providers, error boundaries
+│   ├── components/              # Shared UI primitives (gauges, buttons, cards)
+│   ├── features/                # UI feature modules (briefing, crew, comms, rover, etc.)
+│   ├── domain/                  # Commands, resolver, PRNG, invariants, selectors
+│   ├── data/                    # Static balance, campaign, NASA DONKI/Diviner catalogs
+│   ├── persistence/             # Versioned SaveEnvelope and recovery adapter
+│   ├── schemas/                 # Runtime validation for content, commands, and saves
+│   ├── store/                   # Zustand GamePort and non-persisted UI store
+│   ├── types/                   # Strict domain TypeScript definitions
+│   ├── utils/                   # Math, formatters, audio synthesis helpers
+│   ├── App.tsx                  # Root component
 │   └── main.tsx                 # Entrypoint
-├── tests/                       # Automated engine & balance test suite
+├── tests/                       # Unit, golden scenarios (Sol 7), and E2E simulation
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
@@ -225,12 +262,12 @@ nsac-hallelujah/
 - **Node.js**: `v20.x` or higher
 - **npm** or **pnpm**
 
-### Installation
+### Installation & Development
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/nsac-hallelujah.git
-   cd nsac-hallelujah
+   git clone https://github.com/your-username/project-human-frontier.git
+   cd project-human-frontier
    ```
 
 2. **Install dependencies**:
@@ -242,54 +279,63 @@ nsac-hallelujah/
    ```bash
    npm run dev
    ```
-   Open your browser and navigate to `http://localhost:5173`.
+   Open your browser at `http://localhost:5173`.
 
-4. **Run game engine unit tests**:
+4. **Code verification scripts**:
    ```bash
-   npm test
-   ```
-
-5. **Build for production**:
-   ```bash
-   npm run build
+   npm run lint        # Code linting via Oxlint / ESLint
+   npm run typecheck   # Strict TypeScript typechecking
+   npm test            # Automated engine & resolver unit tests
+   npm run build       # Production bundle build
    ```
 
 ---
 
-## 🗺️ MVP Scope & Roadmap
+## 🗺️ MVP Scope & Phased Roadmap
 
-### Phase 1: MVP Core (Current Target)
-- [x] Complete Game Design Document v2.0 & balance baseline.
-- [ ] Decoupled deterministic engine with unit-tested End-Day Resolver.
-- [ ] 12 Mission Days game cycle with seedable PRNG.
-- [ ] 3 Core Resources (Power, Oxygen, Water) and 4 crew members.
-- [ ] Remote Rover with 3 distinct exploration territories.
-- [ ] Three-tier event architecture with curated 12-day NASA DONKI dataset.
-- [ ] Interactive 16:9 React 19 Cockpit UI with Science Brief report.
+### Phase 1: Moon Survival 32 Sol (Current Scope)
+- [x] Official Product Scope Reconciliation & 3-Campaign Architecture.
+- [x] Technical foundation: Vite + React 19 + TypeScript + CI workflow.
+- [ ] Phase 1.1: Domain state, command handlers, and versioned save system.
+- [ ] Phase 1.2: Crew management, inventory, and 3-expedition rover lifecycle.
+- [ ] Phase 1.3: 18–24 branching event catalog and Sol 7 Golden Crisis.
+- [ ] Phase 1.4: 14-Sol Lunar Night balance, load shedding, and NASA Cadet Report Card.
+- [ ] Phase 1.5: Cockpit V12 layout integration, 2D Canvas window, and bilingual VI/EN copy.
+- [ ] Phase 1.6: Automated 32-Sol simulation bots, E2E test suite, and release gate.
 
-### Phase 2: Enhanced Learning & Accessibility
-- [ ] Interactive cadet tutorial designed for kids aged 7–12.
-- [ ] Historical Date Selector with cached NASA solar timeline lookups.
-- [ ] "What If?" Replay Mode: Rewind to a prior critical decision with identical seed to test alternative engineering strategies.
-- [ ] Multilingual support (English & Tiếng Việt).
+### Phase 2: Mars Survival Campaign (Independent)
+- [ ] Standalone 36+ Sol Mars expedition.
+- [ ] Atmospheric dust storms, MOXIE systems, and 14-minute radio communication latency.
 
-### Phase 3: Future Expansions
-- [ ] Mars 36-Sol Expedition Campaign (featuring atmospheric dust storms, MOXIE systems, and Earth-Mars radio latency).
-- [ ] Daily live NASA space weather challenges.
+### Phase 3: Advanced Two-Arc Mode
+- [ ] Integrated campaign connecting Moon Survival to Mars via Hohmann transfer orbital trajectory.
 
 ---
 
 ## 🎓 Pedagogical Impact & STEM Goals
 
-1. **Systems Thinking**: Children observe how interdependent variables (energy, biology, hardware) react under extreme planetary constraints.
-2. **Scientific Traceability**: Dispel misconceptions regarding space; every space weather anomaly cites authentic NASA DONKI observation tags.
-3. **Resilience & Critical Reasoning**: Emphasizes strategic planning and calculated risk management over reflex twitching or chance.
+1. **Systems Thinking**: Children observe firsthand how biological, mechanical, and electrical subsystems interact under extreme planetary limitations.
+2. **Scientific Integrity**: Distinguishes between **Observed Data** (direct NASA DONKI records), **Inferred Context** (scientific deductions), and **Simulated Gameplay** (game mechanics).
+3. **Resilience & Calculated Risk**: Teaches players to weigh competing trade-offs calmly rather than relying on twitch reflexes or blind chance.
+
+---
+
+## 📚 Documentation Hub
+
+For in-depth design specifications, architecture blueprints, and execution plans, visit the [`docs/`](docs/README.md) hub:
+- 📑 [Scope Reconciliation](docs/product/SCOPE_RECONCILIATION.md): Definitive 3-campaign roadmap and release gates.
+- 🏗️ [System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md): Pure TypeScript engine, static NASA catalogs, Zustand store, and data contracts.
+- 🧩 [Phase 1.1 State Contract](docs/plan/first-phase/PHASE_1_1_STATE_CONTRACT.md): Authoritative GameState fields, resolver contract, save envelope, and invariants.
+- 🎮 [Game Design Document](docs/game-design/GAME_DESIGN_DOCUMENT.md): Complete balance formulas, resource economics, and rover systems.
+- 🎛️ [Cockpit V12 Specifications](docs/ui-ux/COCKPIT_V12_SPEC.md): 16:9 cockpit layout, 6 modules, 2 racks, and Observation Window.
+- 🎨 [Asset & Audio Pipeline](docs/asset-pipeline/ASSET_SPECIFICATION.md): WebP/SVG standards, Web Audio procedural SFX, and NASA attributions.
+- 🗓️ [Phase 1 Implementation Plans](docs/plan/first-phase/): Detailed step-by-step technical plans from Phase 1.1 to Phase 1.6.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please check out our [Contributing Guidelines](file:///d:/nsac-hallelujah/CONTRIBUTING.md) for branch naming strategies, commit conventions (Conventional Commits), PR templates, and React 19 / TypeScript coding standards.
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for branch conventions, Conventional Commits formatting, PR checklist, and code standards.
 
 ---
 
@@ -302,4 +348,3 @@ Contributions are welcome! Please check out our [Contributing Guidelines](file:/
 ---
 
 *Project Hail is developed with passion for the junior astronauts and space explorers of tomorrow.* 🛰️🌕
-

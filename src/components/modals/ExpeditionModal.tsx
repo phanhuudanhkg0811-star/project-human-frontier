@@ -1,132 +1,246 @@
 import { useState } from 'react';
-import { useGameStore } from '../../store/gameStore.ts';
+import { CheckCircle2, Rocket, ShieldAlert } from 'lucide-react';
+import { playSfx } from '../../audio/sfx.ts';
 import {
-  HAIL_ENV,
-  HAIL_INVENTORY,
-  HAIL_ROVER,
-  HAIL_SVG,
-} from '../cabin/hailAssets.ts';
+  selectCanScheduleExpedition,
+  selectCompletedExpeditions,
+  selectMitigationSatisfied,
+  selectRoverRemainingSols,
+  selectRoverSamples,
+  selectRoverStatus,
+  selectWeatherOutlook,
+} from '../../domain/selectors.ts';
+import { useGameStore } from '../../store/gameStore.ts';
+import { useUiStore } from '../../store/uiStore.ts';
+import type { CrewId, EquipmentId, ExpeditionId } from '../../types/index.ts';
+import { HAIL_ENV, HAIL_ROVER } from '../cabin/hailAssets.ts';
+import { HailSelect } from '../HailSelect.tsx';
+import { MissionDialog } from './MissionDialog.tsx';
 
-const LUNAR_SITES = [
-  {
-    id: 'crater',
-    name: 'Hố Thiên Thạch Nam Cực (Lunar Crater)',
-    image: HAIL_ENV.lunarCrater,
-    distance: '1.8 km Đông Nam',
-    risk: 'Thấp · Độ dốc 14°',
-    science:
-      'Vành hố đá bazan cổ đại lưu giữ lớp địa chất Mặt Trăng giúp nghiên cứu lịch sử va chạm Hệ Mặt Trời.',
-  },
-  {
-    id: 'regolith',
-    name: 'Cánh Đồng Bụi Regolith (Regolith Field)',
-    image: HAIL_ENV.regolithField,
-    distance: '0.9 km Phía Tây',
-    risk: 'Trung bình · Bụi tĩnh điện',
-    science:
-      'Đất mịn regolith giàu oxy liên kết oxit (~40% khối lượng) và khoáng sản ilmenite để trích xuất nguyên liệu tại chỗ (ISRU).',
-  },
-  {
-    id: 'psr',
-    name: 'Vùng Bóng Tối Vĩnh Cửu (PSR)',
-    image: HAIL_ENV.lunarPsr,
-    distance: '3.4 km Cực Nam',
-    risk: 'Cao · -230°C & Mất ánh sáng Mặt Trời',
-    science:
-      'Đáy hố không bao giờ đón ánh nắng chứa băng nước (H₂O ice) quý giá để sản xuất nước uống và nhiên liệu hydro.',
-  },
-] as const;
+interface ExpeditionModalProps {
+  onClose: () => void;
+}
 
-export function ExpeditionModal() {
-  const { gameState } = useGameStore();
-  const [selectedSiteId, setSelectedSiteId] = useState<(typeof LUNAR_SITES)[number]['id']>('crater');
+const SITE_ART: Record<ExpeditionId, string> = {
+  'lunar-crater': HAIL_ENV.lunarCrater,
+  'regolith-field': HAIL_ENV.regolithField,
+  'polar-psr': HAIL_ENV.lunarPsr,
+};
 
-  const activeSite = LUNAR_SITES.find(s => s.id === selectedSiteId) ?? LUNAR_SITES[0];
-  const airlockIntegrity = gameState.systems.airlock.integrity;
-  const roverImg =
-    airlockIntegrity < 0.45
-      ? HAIL_ROVER.broken
-      : gameState.phase === 'engineering' || gameState.phase === 'comms'
-        ? HAIL_ROVER.active
-        : HAIL_ROVER.base;
-  const roverLabel =
-    airlockIntegrity < 0.45
-      ? 'CẦN BẢO TRÌ KHÓA KHÍ / ROVER'
-      : gameState.phase === 'engineering'
-        ? 'ĐANG HOẠT ĐỘNG KHẢO SÁT'
-        : 'CHẾ ĐỘ CHỜ SẴN SÀNG';
+export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
+  const { gameState, bundle, dispatch } = useGameStore();
+  const { selectedEquipmentIds, toggleRoverEquipment, clearRoverEquipment } = useUiStore();
+  const [selectedSite, setSelectedSite] = useState<ExpeditionId>('lunar-crater');
+  const [launchOperator, setLaunchOperator] = useState<CrewId>('geo');
+  const [recoveryOperator, setRecoveryOperator] = useState<CrewId>('geo');
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const inComms = gameState.clock.phase === 'comms';
+  const weather = selectWeatherOutlook(gameState, bundle, 'geo');
+  const expedition = bundle.campaign.expeditions.find((e) => e.id === selectedSite) ?? bundle.campaign.expeditions[0];
+  const siteData = bundle.lunarSites.find((site) => site.expeditionId === expedition.id);
+  const threatBlocked = selectMitigationSatisfied(gameState, bundle, expedition.id, selectedEquipmentIds);
+  const roverStatus = selectRoverStatus(gameState);
+  const samples = selectRoverSamples(gameState);
+  const completed = selectCompletedExpeditions(gameState);
+  const schedulePermission = selectCanScheduleExpedition(gameState, bundle, selectedSite);
+  const activeMission = gameState.rover.activeMission;
+  const ownedReadyEquipment = Object.values(gameState.equipment).filter(
+    (eq) => eq.owned && eq.state !== 'damaged' && !eq.reservedForRover
+  );
+
+  const handleSchedule = async () => {
+    const res = await dispatch({
+      type: 'rover/schedule',
+      expeditionId: selectedSite,
+      equipmentIds: selectedEquipmentIds,
+      launchOperatorCrewId: launchOperator,
+    });
+    if (res.ok) {
+      playSfx('launch', 0.6);
+      clearRoverEquipment();
+      setFeedback(res.effects[0]?.message ?? 'Đã phóng Rover!');
+    } else {
+      setFeedback(res.error.message);
+    }
+  };
+
+  const handleCancel = async () => {
+    const res = await dispatch({ type: 'rover/cancel-schedule' });
+    if (res.ok) playSfx('click', 0.45);
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã hủy lịch.' : res.error.message);
+  };
+
+  const handleRecoverSignal = async () => {
+    const res = await dispatch({ type: 'rover/recover-signal' });
+    if (res.ok) playSfx('radio', 0.55);
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã khôi phục tín hiệu.' : res.error.message);
+  };
+
+  const handleRecoveryOperator = async () => {
+    const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperator });
+    if (res.ok) playSfx('click', 0.45);
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã phân công thu hồi.' : res.error.message);
+  };
 
   return (
-    <div className="hail-expedition-panel">
-      <div className="hail-lunar-map-banner">
-        <img
-          src={HAIL_ENV.lunarMap}
-          alt="Bản đồ khảo sát Cực Nam Mặt Trăng"
-          className="hail-lunar-map-img"
-          draggable={false}
-        />
-        <div className="hail-lunar-map-overlay">
-          <div>
-            <span className="hail-tag-pill">ARTEMIS SOUTH POLE · SECTOR 04</span>
-            <h3>Bản đồ Thám hiểm & Điều khiển Survey Rover</h3>
-          </div>
-          <div className="hail-rover-status-card">
-            <img src={roverImg} alt="Survey Rover" className="w-20 h-16 object-contain" draggable={false} />
-            <div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#E7E6DF]">
-                <img
-                  src={airlockIntegrity < 0.45 ? HAIL_SVG.stateCritical : HAIL_SVG.stateOk}
-                  alt=""
-                  className="w-4 h-4"
-                />
-                <span>{roverLabel}</span>
-              </div>
-              <p className="text-[11px] text-[#C7CBC8] mt-1">
-                Độ bền cửa xuất kích: {Math.round(airlockIntegrity * 100)}%
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="hail-site-tabs" role="tablist" aria-label="Điểm khảo sát Mặt Trăng">
-        {LUNAR_SITES.map(site => (
-          <button
-            key={site.id}
-            type="button"
-            role="tab"
-            aria-selected={site.id === activeSite.id}
-            className={`hail-site-tab ${site.id === activeSite.id ? 'is-active' : ''}`}
-            onClick={() => setSelectedSiteId(site.id)}
-          >
-            <img src={HAIL_SVG.actExplore} alt="" className="w-4 h-4" />
-            <span>{site.name.split('(')[0].trim()}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="hail-site-detail-card">
-        <img
-          src={activeSite.image}
-          alt={activeSite.name}
-          className="hail-site-preview-img"
-          draggable={false}
-        />
-        <div className="hail-site-meta">
-          <h4>{activeSite.name}</h4>
-          <div className="hail-site-badges">
-            <span>Khoảng cách: {activeSite.distance}</span>
-            <span>Môi trường: {activeSite.risk}</span>
-          </div>
-          <p>{activeSite.science}</p>
-          <div className="hail-site-tool-row">
-            <img src={HAIL_INVENTORY.sampleDrill} alt="Máy khoan mẫu" className="w-12 h-9 object-contain" draggable={false} />
-            <span>
-              Thiết bị mang theo: <strong>Mũi khoan lấy mẫu địa chất</strong> &amp; cảm biến quang phổ (thông số đồng bộ theo pha Kỹ thuật).
+    <MissionDialog
+      title="Thám hiểm Rover Mặt Trăng (3 Sites · BlockThreat)"
+      eyebrow="PHA 3 · MAX 3 THIẾT BỊ TỪ LR RACK"
+      art={roverStatus === 'available' ? HAIL_ROVER.base : HAIL_ROVER.active}
+      panelType="expedition"
+      dockSide="right"
+      onClose={onClose}
+    >
+      <div className="hail-expedition-panel">
+        <div className="hail-lunar-map-banner">
+          <img src={HAIL_ENV.lunarMap} alt="Lunar Reconnaissance Map" className="hail-lunar-map-img" />
+          <div className="hail-lunar-map-overlay">
+            <span className="hail-tag-pill">Mẫu thu thập: {samples.length} / 3</span>
+            <span className="hail-tag-pill">
+              Rủi ro bão DONKI hôm nay: {Math.round(weather.roverIncidentProb * 100)}%
             </span>
           </div>
         </div>
+
+        <div className="hail-rover-status-card">
+          <div>
+            <strong>Trạng thái Rover: {roverStatus.toUpperCase()}</strong>
+            <p className="text-xs text-slate-300 mt-0.5">
+              {activeMission
+                ? `Nhiệm vụ ${activeMission.expeditionId} (còn khoảng ${selectRoverRemainingSols(gameState)} Sol)`
+                : 'Sẵn sàng phóng từ bãi đáp Artemis (-4 kWh, cần 1 phi hành gia Fit & không Starving).'}
+            </p>
+          </div>
+        </div>
+
+        {feedback && (
+          <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
+            {feedback}
+          </div>
+        )}
+
+        <div className="hail-site-tabs">
+          {bundle.campaign.expeditions.map((exp) => {
+            const done = completed.includes(exp.id);
+            return (
+              <button
+                key={exp.id}
+                type="button"
+                onClick={() => setSelectedSite(exp.id)}
+                className={`hail-site-tab ${selectedSite === exp.id ? 'is-active' : ''}`}
+              >
+                {exp.name} {done ? '✓' : ''}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="hail-site-detail-card">
+          <img src={SITE_ART[expedition.id]} alt={expedition.name} className="hail-site-preview-img" />
+          <div className="hail-site-meta">
+            <div className="hail-site-badges">
+              <span className="hail-tag-pill">Cửa sổ: Sol {expedition.windowStartSol}–{expedition.windowEndSol}</span>
+              <span className="hail-tag-pill">Hiểm họa: {expedition.threat}</span>
+            </div>
+            <p className="text-xs text-slate-300">
+              Trang bị khắc chế (OR): <strong>{expedition.mitigationOptions.map((option) => `${option.allOf.join(' + ')}${option.requirements?.minBatteryKWh ? ` + Pin ≥ ${option.requirements.minBatteryKWh} kWh` : ''}`).join(' HOẶC ')}</strong> →{' '}
+              {threatBlocked ? (
+                <span className="text-emerald-300 font-semibold inline-flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Đã chặn 100% hiểm họa địa hình
+                </span>
+              ) : (
+                <span className="text-amber-300 inline-flex items-center gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5" /> Chưa đủ đồ khắc chế
+                </span>
+              )}
+            </p>
+            <p className="text-xs text-cyan-200">
+              Thưởng: Mẫu <code>{expedition.rewardSample}</code> + {expedition.rewards.science} Science · {expedition.rewards.partsKg}P · {expedition.rewards.waterL}L Nước
+            </p>
+            {siteData && (
+              <p className="text-[11px] text-slate-400">
+                Điểm tham chiếu: {siteData.representativeLocation.name} ({siteData.representativeLocation.latitudeDeg}°, {siteData.representativeLocation.longitudeDegEast}°E) · Địa hình LOLA · Nhiệt Diviner. Mapping gameplay: {siteData.mappingProvenance}.
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Loadout 3 equipment */}
+        <div className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70">
+          <div className="text-xs font-semibold text-slate-200 mb-2">
+            Chọn tối đa 3 Thiết bị mang theo ({selectedEquipmentIds.length}/3):
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {ownedReadyEquipment.map((eq) => {
+              const selected = selectedEquipmentIds.includes(eq.id);
+              return (
+                <button
+                  key={eq.id}
+                  type="button"
+                  onClick={() => toggleRoverEquipment(eq.id as EquipmentId)}
+                  className={`hail-btn text-xs ${selected ? 'hail-btn--accent' : ''}`}
+                >
+                  {selected ? '✓ ' : ''}{eq.id} ({eq.durability}%)
+                </button>
+              );
+            })}
+            {ownedReadyEquipment.length === 0 && (
+              <span className="text-xs text-slate-400">Chưa có thiết bị khả dụng trên LR Rack.</span>
+            )}
+          </div>
+        </div>
+
+        {!activeMission && (
+          <HailSelect
+            label="Người trực phóng"
+            value={launchOperator}
+            onChange={(val) => setLaunchOperator(val as CrewId)}
+            options={(Object.keys(gameState.crew) as CrewId[]).map((id) => ({
+              value: id,
+              label: gameState.crew[id].name,
+              meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ' · Bận' : ''}`,
+              disabled: gameState.crew[id].condition === 'evacuated',
+            }))}
+          />
+        )}
+
+        <button
+          type="button"
+          disabled={!schedulePermission.allowed}
+          onClick={handleSchedule}
+          className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
+        >
+          <Rocket className="w-4 h-4" />
+          {inComms ? `Lập lịch Rover tới ${expedition.name} (4 kWh tại End-Sol)` : 'Cần ở Pha 3 (Liên lạc) để lập lịch Rover'}
+        </button>
+        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{schedulePermission.message}</p>}
+
+        {activeMission?.status === 'scheduled' && (
+          <button type="button" onClick={handleCancel} className="hail-btn">Hủy lịch Rover</button>
+        )}
+        {activeMission?.status === 'signal-lost' && (
+          <button type="button" onClick={handleRecoverSignal} className="hail-btn hail-btn--accent">Khôi phục tín hiệu</button>
+        )}
+        {(activeMission?.status === 'exploring' || activeMission?.status === 'recovery-pending') && activeMission.expectedReturnSol !== null && gameState.clock.sol >= activeMission.expectedReturnSol && (
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="flex-1 min-w-[200px]">
+              <HailSelect
+                label="Người trực thu hồi"
+                value={recoveryOperator}
+                onChange={(val) => setRecoveryOperator(val as CrewId)}
+                options={(Object.keys(gameState.crew) as CrewId[]).map((id) => ({
+                  value: id,
+                  label: gameState.crew[id].name,
+                  meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ' · Bận' : ''}`,
+                  disabled: gameState.crew[id].condition === 'evacuated',
+                }))}
+              />
+            </div>
+            <button type="button" onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent shrink-0">Phân công thu hồi</button>
+          </div>
+        )}
       </div>
-    </div>
+    </MissionDialog>
   );
 }

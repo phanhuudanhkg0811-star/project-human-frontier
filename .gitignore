@@ -1,42 +1,40 @@
-# Dependencies & Build Output
-node_modules/
-dist/
-dist-ssr/
-*.local
-
-# Local Staging, Sandbox, QA Captures & Archives (not pushed to GitHub)
-assets_staging/
-qa/
-sandbox/
-NASA Data/
-*.zip
-*.rar
-
-# Legacy 60 Parsecs / Pipeline Archive (excluded from git repo)
-archive/legacy-public-assets/
-archive/legacy-src/
-archive/pipeline/
-archive/reference-game/
-
-# Local AI / Tooling Cache
-.agent/
-.agents/
-.aws/
-.codex/
-
-# Logs, OS & Editor Temp Files
-logs/
+# Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
 pnpm-debug.log*
-.DS_Store
-Thumbs.db
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea/
-*.swp
-*.swo
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+/local-docs
+
+# Unrelated Local Staging, Sandboxes, Archives & AI Tooling
+/sandbox
+/assets_staging
+/qa
+/archive
+/NASA Data
+*.zip
+*.rar
+.agent/
+.agents/
+.codex/
 .env
 .env.*
 !.env.example

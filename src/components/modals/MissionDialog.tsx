@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 
 export type MissionDialogType =
+  | 'journal'
   | 'starlog'
   | 'character'
   | 'crafting'
@@ -18,6 +19,7 @@ interface MissionDialogProps {
   art?: string;
   panelType?: MissionDialogType;
   dockSide?: 'left' | 'right' | 'center';
+  tactileFrame?: boolean;
   onClose: () => void;
   children: ReactNode;
 }
@@ -28,6 +30,7 @@ export function MissionDialog({
   art,
   panelType = 'generic',
   dockSide = 'right',
+  tactileFrame = false,
   onClose,
   children,
 }: MissionDialogProps) {
@@ -42,6 +45,27 @@ export function MissionDialog({
       previous?.focus();
     };
   }, []);
+
+  if (tactileFrame) {
+    return (
+      <dialog
+        ref={ref}
+        className={`mission-dialog hail-dialog hail-dialog--tactile mission-dialog--${panelType}`}
+        aria-label={title}
+        onClick={(e) => {
+          if (e.target === ref.current) {
+            onClose();
+          }
+        }}
+        onCancel={(e) => {
+          e.preventDefault();
+          onClose();
+        }}
+      >
+        <div className="hail-tactile-dialog-shell">{children}</div>
+      </dialog>
+    );
+  }
 
   return (
     <dialog
