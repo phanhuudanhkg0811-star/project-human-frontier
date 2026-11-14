@@ -1,4 +1,5 @@
 import { selectCampaignReport, selectTrainingReport } from '../domain/campaignSelectors.ts';
+import { useI18n } from '../i18n/useI18n.ts';
 import { buildSaveEnvelope } from '../persistence/saveAdapter.ts';
 import { downloadArtifact } from '../persistence/downloadArtifact.ts';
 import { useGameStore } from '../store/gameStore.ts';
@@ -6,52 +7,215 @@ import type { ContentBundle, GameState } from '../types/index.ts';
 
 export function ArtifactExportButtons() {
   const { gameState, replayTrace } = useGameStore();
-  return <div className="campaign-export-actions">
-    <button type="button" className="hail-btn" onClick={() => downloadArtifact(`moon32-save-${gameState.campaign.seed}-sol${gameState.clock.sol}.json`, buildSaveEnvelope(gameState))}>Export Save Snapshot</button>
-    <button type="button" className="hail-btn" onClick={() => downloadArtifact(`moon32-replay-${gameState.campaign.seed}.json`, replayTrace)}>Export Replay Trace</button>
-    <p>Snapshot lưu trạng thái hiện tại. Replay {replayTrace?.coverage === 'full-campaign' ? 'ghi từ đầu campaign' : 'ghi từ snapshot khởi đầu phiên ghi'} kèm command; dùng CLI replay để kiểm tra.</p>
-  </div>;
+  const { t } = useI18n();
+  return (
+    <div className="campaign-export-actions">
+      <button
+        type="button"
+        className="hail-btn"
+        onClick={() =>
+          downloadArtifact(
+            `moon32-save-${gameState.campaign.seed}-sol${gameState.clock.sol}.json`,
+            buildSaveEnvelope(gameState)
+          )
+        }
+      >
+        {t('report.exportSave')}
+      </button>
+      <button
+        type="button"
+        className="hail-btn"
+        onClick={() => downloadArtifact(`moon32-replay-${gameState.campaign.seed}.json`, replayTrace)}
+      >
+        {t('report.exportReplay')}
+      </button>
+      <p>
+        {replayTrace?.coverage === 'full-campaign'
+          ? t('report.exportNoteFull')
+          : t('report.exportNotePartial')}
+      </p>
+    </div>
+  );
 }
 
 export function TrainingReport({ state, bundle }: { state: GameState; bundle: ContentBundle }) {
+  const { locale, t } = useI18n();
   const report = selectTrainingReport(state, bundle);
   if (!report) return null;
-  return <section className="campaign-report" aria-label="Training Report">
-    <h3>Training Report · End-Sol {report.sol}</h3>
-    <p>Sơ kết học tập; tiếp tục campaign đến Sol {bundle.campaign.targetSol}.</p>
-    <ul>{report.checks.map((check) => <li key={check.label}>{check.met === null ? 'Chưa có dữ liệu' : check.met ? 'Đạt' : 'Chưa đạt'} · {check.label}</li>)}</ul>
-  </section>;
+
+  const localizedChecks =
+    locale === 'en'
+      ? [
+          {
+            label: t('report.trainingCheckCrew', { min: bundle.campaign.training.minActiveCrew }),
+            met: report.checks[0]?.met ?? null,
+          },
+          {
+            label: t('report.trainingCheckExpedition', { min: bundle.campaign.training.minExpeditions }),
+            met: report.checks[1]?.met ?? null,
+          },
+        ]
+      : report.checks;
+
+  return (
+    <section className="campaign-report" aria-label="Training Report">
+      <h3>{t('report.trainingTitle', { sol: report.sol })}</h3>
+      <p>{t('report.trainingSubtitle', { targetSol: bundle.campaign.targetSol })}</p>
+      <ul>
+        {localizedChecks.map((check) => (
+          <li key={check.label}>
+            {check.met === null ? t('common.noData') : check.met ? t('common.met') : t('common.unmet')} ·{' '}
+            {check.label}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 export function CampaignReportCard({ state, bundle }: { state: GameState; bundle: ContentBundle }) {
+  const { locale, t, pickText } = useI18n();
   const report = selectCampaignReport(state, bundle);
   const outcome = report.outcome;
-  const requirementLabels: Record<string, string> = { 'end-sol': 'End-Sol mục tiêu', 'active-crew': 'Crew hoạt động', 'positive-oxygen': 'O₂ > 0 kg', 'positive-water': 'Nước > 0 L' };
-  return <section className="campaign-report" aria-label="NASA Cadet Report Card">
-    <h3>NASA Cadet Report Card · {state.campaign.status === 'victory' ? 'Victory' : 'Defeat'}</h3>
-    <p className="campaign-rank">{outcome?.rank ? `Rank ${outcome.rank}` : 'Không xếp hạng'}</p>
-    {outcome?.reasonCode === 'legacy-outcome' && <p>Giữ kết quả của phiên bản cũ; không áp ngược rubric mới cho ván đã kết thúc.</p>}
-    <p>Seed {report.seed} · {report.difficulty} · {report.profile}</p>
-    <ul>{outcome?.requirements.map((requirement) => <li key={requirement.id}>{requirement.met ? 'Đạt' : 'Chưa đạt'} · {requirementLabels[requirement.id] ?? requirement.id}: {requirement.actual}{requirement.id === 'end-sol' || requirement.id === 'active-crew' ? ` / ${requirement.target}` : ''}</li>)}</ul>
-    <p>Expedition: {report.expeditions.filter((mission) => mission.outcome === 'completed').length}/{bundle.campaign.expeditions.length} · Science: {report.sciencePoints} · Blackout: {report.blackouts} Sol.</p>
-    <ul>{report.crew.map((crew) => <li key={crew.id}>{crew.name}: {crew.condition} · Health {crew.health} · Morale {crew.morale} · Satiety {crew.satiety}</li>)}</ul>
-    <p>Cuối campaign: Pin {report.resources.batteryKWh} kWh · O₂ {report.resources.oxygenKg} kg · Nước {report.resources.waterL} L · Parts {report.resources.partsKg} kg · MRE {report.resources.mrePacks}.</p>
-    <details><summary>Hệ thống cuối campaign</summary><ul>{report.systems.map((system) => <li key={system.id}>{system.id}: Lv{system.level} · Integrity {(system.integrity * 100).toFixed(0)}% · {system.status}</li>)}</ul></details>
-    <p>WRS: {report.wrs.efficiency === null ? 'Chưa có dữ liệu hiệu suất' : `${(report.wrs.efficiency * 100).toFixed(1)}% = ${report.wrs.recoveredL.toFixed(2)} L thu hồi / ${report.wrs.processedL.toFixed(2)} L greywater xử lý`}. Đo được {report.wrs.measuredSols}/{report.wrs.totalSols} Sol.</p>
-    <details><summary>Rubric rank · {report.rubric.version}</summary>
-      <p>S: ≥{report.rubric.S.minFitCrew} crew Fit và ≥{report.rubric.S.minExpeditions} expedition. A: ≥{report.rubric.A.minActiveCrew} crew hoạt động và ≥{report.rubric.A.minExpeditions} expedition. B: các victory còn lại. Defeat không có rank.</p>
-      <p>WRS, system và tài nguyên được báo cáo để học tập; rubric hiện tại xếp rank theo crew và expedition.</p>
-    </details>
-    <TrainingReport state={state} bundle={bundle} />
-    <details><summary>Timeline quyết định và sự cố</summary>
-      <ol>{report.timeline.map((entry) => <li key={entry.sol}>Sol {entry.sol}: {entry.highlights.join(' ')}</li>)}</ol>
-      <ul>{report.choices.map((choice, index) => {
-        const event = bundle.events.find((entry) => entry.id === choice.eventId);
-        const selected = event?.choices.find((entry) => entry.id === choice.choiceId);
-        return <li key={`${choice.eventId}-${index}`}>Sol {choice.settledSol}: {event?.title ?? 'Sự kiện từ phiên bản cũ'} · {selected?.label ?? (choice.outcome === 'expired' ? 'Đã quá hạn' : 'Không có dữ liệu lựa chọn')}</li>;
-      })}</ul>
-    </details>
-    <p>Bài học: {report.lesson}</p>
-    <ArtifactExportButtons />
-  </section>;
+
+  const requirementLabels: Record<string, string> = {
+    'end-sol': t('report.req.endSol'),
+    'active-crew': t('report.req.activeCrew'),
+    'positive-oxygen': t('report.req.positiveOxygen'),
+    'positive-water': t('report.req.positiveWater'),
+  };
+
+  const localizedLesson =
+    locale === 'en'
+      ? outcome?.reasonCode === 'oxygen-depleted'
+        ? t('report.lesson.oxygenDepleted')
+        : outcome?.reasonCode === 'water-depleted'
+          ? t('report.lesson.waterDepleted')
+          : outcome?.reasonCode === 'crew-collapse'
+            ? t('report.lesson.crewCollapse')
+            : outcome?.reasonCode === 'final-requirements-unmet'
+              ? t('report.lesson.finalRequirements')
+              : t('report.lesson.default')
+      : report.lesson;
+
+  const statusText = state.campaign.status === 'victory' ? t('report.victory') : t('report.defeat');
+  const wrsDetail =
+    report.wrs.efficiency === null
+      ? t('report.wrsNoData')
+      : t('report.wrsStats', {
+          pct: (report.wrs.efficiency * 100).toFixed(1),
+          recovered: report.wrs.recoveredL.toFixed(2),
+          processed: report.wrs.processedL.toFixed(2),
+        });
+
+  return (
+    <section className="campaign-report" aria-label="NASA Cadet Report Card">
+      <h3>{t('report.cardTitle', { status: statusText })}</h3>
+      <p className="campaign-rank">
+        {outcome?.rank ? t('report.rankValue', { rank: outcome.rank }) : t('report.unranked')}
+      </p>
+      {outcome?.reasonCode === 'legacy-outcome' && <p>{t('report.legacyOutcome')}</p>}
+      <p>
+        {t('common.seed')} {report.seed} · {report.difficulty} · {report.profile}
+      </p>
+      <ul>
+        {outcome?.requirements.map((requirement) => (
+          <li key={requirement.id}>
+            {requirement.met ? t('common.met') : t('common.unmet')} ·{' '}
+            {requirementLabels[requirement.id] ?? requirement.id}: {requirement.actual}
+            {requirement.id === 'end-sol' || requirement.id === 'active-crew'
+              ? ` / ${requirement.target}`
+              : ''}
+          </li>
+        ))}
+      </ul>
+      <p>
+        {t('report.expeditionLine', {
+          completed: report.expeditions.filter((mission) => mission.outcome === 'completed').length,
+          total: bundle.campaign.expeditions.length,
+          science: report.sciencePoints,
+          blackouts: report.blackouts,
+        })}
+      </p>
+      <ul>
+        {report.crew.map((crew) => (
+          <li key={crew.id}>
+            {crew.name}: {crew.condition} · Health {crew.health} · Morale {crew.morale} · Satiety{' '}
+            {crew.satiety}
+          </li>
+        ))}
+      </ul>
+      <p>
+        {t('report.finalResources', {
+          battery: report.resources.batteryKWh,
+          oxygen: report.resources.oxygenKg,
+          water: report.resources.waterL,
+          parts: report.resources.partsKg,
+          mre: report.resources.mrePacks,
+        })}
+      </p>
+      <details>
+        <summary>{t('report.systemsSummary')}</summary>
+        <ul>
+          {report.systems.map((system) => (
+            <li key={system.id}>
+              {system.id}: Lv{system.level} · Integrity {(system.integrity * 100).toFixed(0)}% ·{' '}
+              {system.status}
+            </li>
+          ))}
+        </ul>
+      </details>
+      <p>
+        {t('report.wrsLine', {
+          detail: wrsDetail,
+          measured: report.wrs.measuredSols,
+          total: report.wrs.totalSols,
+        })}
+      </p>
+      <details>
+        <summary>{t('report.rubricSummary', { version: report.rubric.version })}</summary>
+        <p>
+          {t('report.rubricDetail', {
+            sCrew: report.rubric.S.minFitCrew,
+            sExp: report.rubric.S.minExpeditions,
+            aCrew: report.rubric.A.minActiveCrew,
+            aExp: report.rubric.A.minExpeditions,
+          })}
+        </p>
+        <p>{t('report.rubricNote')}</p>
+      </details>
+      <TrainingReport state={state} bundle={bundle} />
+      <details>
+        <summary>{t('report.timelineSummary')}</summary>
+        <ol>
+          {report.timeline.map((entry) => (
+            <li key={entry.sol}>
+              Sol {entry.sol}: {entry.highlights.join(' ')}
+            </li>
+          ))}
+        </ol>
+        <ul>
+          {report.choices.map((choice, index) => {
+            const event = bundle.events.find((entry) => entry.id === choice.eventId);
+            const selected = event?.choices.find((entry) => entry.id === choice.choiceId);
+            const eventTitle = event
+              ? pickText(event.title, event.titleEn)
+              : t('report.legacyEventTitle');
+            const choiceLabel = selected
+              ? pickText(selected.label, selected.labelEn)
+              : choice.outcome === 'expired'
+                ? t('report.choiceExpired')
+                : t('report.choiceNoData');
+            return (
+              <li key={`${choice.eventId}-${index}`}>
+                Sol {choice.settledSol}: {eventTitle} · {choiceLabel}
+              </li>
+            );
+          })}
+        </ul>
+      </details>
+      <p>{t('report.lessonPrefix', { lesson: localizedLesson })}</p>
+      <ArtifactExportButtons />
+    </section>
+  );
 }

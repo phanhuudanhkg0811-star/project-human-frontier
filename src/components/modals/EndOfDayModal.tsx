@@ -2,9 +2,10 @@ import { useRef, useState } from 'react';
 import { ArrowDownUp, BatteryCharging, Droplets, Power, Utensils } from 'lucide-react';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
+import { useI18n } from '../../i18n/useI18n.ts';
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
-import type { CrewId, PowerConsumerId } from '../../types/index.ts';
+import type { CrewId } from '../../types/index.ts';
 import { HAIL_EQUIPMENT, HAIL_SVG } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 import { NightReadinessChecklist } from '../NightReadinessChecklist.tsx';
@@ -13,15 +14,9 @@ interface EndOfDayModalProps {
   onClose: () => void;
 }
 
-const LOAD_LABELS: Record<PowerConsumerId, string> = {
-  eclss: 'Hệ thống Sống (O₂/Nhiệt 12 kWh)',
-  wrs: 'Máy lọc nước WRS (4/3 kWh)',
-  fabricator: 'Xưởng in 3D Fabricator',
-  rover: 'Trạm sạc Rover',
-};
-
 export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
+  const { t } = useI18n();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inFlight = useRef(false);
@@ -51,7 +46,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
       if (res.ok) onClose();
       else setErrorMsg(res.error.message);
     } catch {
-      setErrorMsg('Chưa thể chốt Sol. Hãy thử lại.');
+      setErrorMsg(t('endDay.submitError'));
     } finally {
       inFlight.current = false;
       setIsSubmitting(false);
@@ -60,8 +55,8 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
 
   return (
     <MissionDialog
-      title={`Phân phối Khẩu phần & Chốt Sol ${gameState.clock.sol}`}
-      eyebrow="PHA 4 · RATIONING & RESOURCE PREDICTOR"
+      title={t('endDay.title', { sol: gameState.clock.sol })}
+      eyebrow={t('endDay.eyebrow')}
       art={HAIL_EQUIPMENT.endDayConsole}
       panelType="end"
       dockSide="center"
@@ -70,7 +65,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
       <div className="flex flex-col gap-3 text-slate-200">
         {!inRationing && (
           <div className="text-xs px-3 py-2 rounded bg-amber-950/60 border border-amber-500/40 text-amber-200">
-            Hãy chuyển qua Pha 1 → 2 → 3 → Pha 4 (Phân phối) để chỉnh khẩu phần và gạt cần End-Sol.
+            {t('endDay.notInRationing')}
           </div>
         )}
         {errorMsg && (
@@ -84,9 +79,9 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
           <div className="flex items-center justify-between text-xs mb-2">
             <strong className="text-amber-300 flex items-center gap-1.5">
               <Utensils className="w-3.5 h-3.5" />
-              Phát MRE ({gameState.resources.mrePacks} gói)
+              {t('endDay.mreTitle', { count: gameState.resources.mrePacks })}
             </strong>
-            <span className="text-slate-400">Tự động -25% Satiety/Sol · 1 MRE hồi +75%</span>
+            <span className="text-slate-400">{t('endDay.mreRule')}</span>
           </div>
 
           <div className="hail-crew-ration-strip">
@@ -97,7 +92,9 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
                 <div key={crewId} className="hail-ration-crew-pill flex flex-col gap-1.5 p-2">
                   <div className="flex items-center justify-between text-xs">
                     <strong className="text-white">{c.name.split(' ')[0]}</strong>
-                    <span className="font-mono text-[10px] text-amber-300">No: {c.satiety}%</span>
+                    <span className="font-mono text-[10px] text-amber-300">
+                      {t('endDay.satietyLabel', { satiety: c.satiety })}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-[11px]">
                     <button
@@ -106,7 +103,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
                       onClick={() => dispatch({ type: 'rationing/toggle-mre', crewId })}
                       className={`hail-btn flex-1 ${giveMre ? 'hail-btn--accent' : ''}`}
                     >
-                      {giveMre ? '✓ Phát MRE' : '+ MRE'}
+                      {giveMre ? t('endDay.mreSelected') : t('endDay.mreAdd')}
                     </button>
                   </div>
                 </div>
@@ -121,7 +118,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
             <div className="flex items-center justify-between text-xs">
               <strong className="text-cyan-300 flex items-center gap-1.5">
                 <ArrowDownUp className="w-3.5 h-3.5" />
-                Thứ tự Cắt tải Điện (Load Shedding)
+                {t('endDay.loadTitle')}
               </strong>
               <button
                 type="button"
@@ -130,17 +127,34 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
                 className={`hail-btn text-[11px] flex items-center gap-1 ${gameState.dailyPlan.wrsEnabled ? 'hail-btn--accent' : ''}`}
               >
                 <Droplets className="w-3 h-3" />
-                {gameState.dailyPlan.wrsEnabled ? 'WRS: ON' : 'WRS: OFF'}
+                {gameState.dailyPlan.wrsEnabled ? t('endDay.wrsOn') : t('endDay.wrsOff')}
               </button>
             </div>
             {gameState.dailyPlan.powerPriority.map((id, idx) => (
-              <div key={id} className="flex items-center justify-between gap-2 text-xs px-2 py-1 rounded bg-slate-950/80 border border-slate-800">
+              <div
+                key={id}
+                className="flex items-center justify-between gap-2 text-xs px-2 py-1 rounded bg-slate-950/80 border border-slate-800"
+              >
                 <span>
-                  {idx + 1}. {LOAD_LABELS[id]}
+                  {idx + 1}. {t(`endDay.load.${id}`)}
                 </span>
                 <div className="flex gap-1">
-                  <button type="button" disabled={!inRationing || idx === 0} onClick={() => movePriority(idx, -1)} className="hail-btn px-1.5 py-0.5 text-[10px]">↑</button>
-                  <button type="button" disabled={!inRationing || idx === 3} onClick={() => movePriority(idx, 1)} className="hail-btn px-1.5 py-0.5 text-[10px]">↓</button>
+                  <button
+                    type="button"
+                    disabled={!inRationing || idx === 0}
+                    onClick={() => movePriority(idx, -1)}
+                    className="hail-btn px-1.5 py-0.5 text-[10px]"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!inRationing || idx === 3}
+                    onClick={() => movePriority(idx, 1)}
+                    className="hail-btn px-1.5 py-0.5 text-[10px]"
+                  >
+                    ↓
+                  </button>
                 </div>
               </div>
             ))}
@@ -150,26 +164,27 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
           <section className="p-3 rounded-lg bg-slate-900/75 border border-cyan-500/30 flex flex-col gap-2">
             <strong className="text-xs text-cyan-300 flex items-center gap-1.5">
               <BatteryCharging className="w-3.5 h-3.5" />
-              Dự báo Cuối Sol (Pure TS Resolver Preview)
+              {t('endDay.forecastTitle')}
             </strong>
             <div className="grid grid-cols-3 gap-2 text-xs font-mono bg-slate-950/80 p-2 rounded">
               <div>
-                <div className="text-slate-400">Pin ròng</div>
+                <div className="text-slate-400">{t('endDay.netBattery')}</div>
                 <strong className={preview.resourceDeltas.batteryKWh < 0 ? 'text-amber-300' : 'text-emerald-300'}>
-                  {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}{preview.resourceDeltas.batteryKWh} kWh
+                  {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}
+                  {preview.resourceDeltas.batteryKWh} kWh
                 </strong>
               </div>
               <div>
-                <div className="text-slate-400">O₂ ròng</div>
+                <div className="text-slate-400">{t('endDay.netOxygen')}</div>
                 <strong className="text-sky-300">{preview.resourceDeltas.oxygenKg} kg</strong>
               </div>
               <div>
-                <div className="text-slate-400">Nước ròng</div>
+                <div className="text-slate-400">{t('endDay.netWater')}</div>
                 <strong className="text-cyan-300">{preview.resourceDeltas.waterL} L</strong>
               </div>
             </div>
             <div className="text-[11px] font-mono text-slate-300">
-              Xu hướng 5 Sol tới:
+              {t('endDay.trendTitle')}
               <div className="flex gap-1.5 mt-1 flex-wrap">
                 {fiveSolTrend.map((pt) => (
                   <span key={pt.sol} className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800">
@@ -179,9 +194,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
               </div>
             </div>
             {preview.blackout && (
-              <p className="text-xs text-rose-300 font-semibold">
-                CẢNH BÁO: Dự báo thiếu điện thiết yếu (Blackout) vào đêm nay!
-              </p>
+              <p className="text-xs text-rose-300 font-semibold">{t('endDay.blackoutWarn')}</p>
             )}
           </section>
         </div>
@@ -197,7 +210,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
         >
           <Power className="w-4 h-4" />
           <img src={HAIL_SVG.actEndDay} alt="" className="w-4 h-4" />
-          {isSubmitting ? 'Đang chốt Sol…' : `Gạt cần Chốt Sol ${gameState.clock.sol} (End-Sol)`}
+          {isSubmitting ? t('endDay.submitting') : t('endDay.endSolBtn', { sol: gameState.clock.sol })}
         </button>
       </div>
     </MissionDialog>

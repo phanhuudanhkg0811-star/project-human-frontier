@@ -2,8 +2,14 @@ import { useRef, useState } from 'react';
 import { CheckCircle2, ScrollText } from 'lucide-react';
 import { selectActiveEventView, selectEventChoicePreviews } from '../../domain/eventSelectors.ts';
 import { selectWeatherOutlook } from '../../domain/selectors.ts';
+import { useI18n } from '../../i18n/useI18n.ts';
 import { useGameStore } from '../../store/gameStore.ts';
-import { EVENT_CATEGORY_LABELS, EVENT_RESOURCE_LABELS, eventDeadlineText, formatEventEffectSummary } from '../eventPresentation.ts';
+import {
+  eventDeadlineText,
+  formatEventEffectSummary,
+  getEventCategoryLabel,
+  getEventResourceLabel,
+} from '../eventPresentation.ts';
 import type { EventResourceKey } from '../../types/index.ts';
 import { getHailEventScene } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
@@ -14,6 +20,7 @@ interface StarlogModalProps {
 
 export function StarlogModal({ onClose }: StarlogModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
+  const { locale, t, pickText } = useI18n();
   const [feedback, setFeedback] = useState<string | null>(null);
   const [choiceError, setChoiceError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,8 +29,11 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
   const activeEvent = activeView?.event ?? null;
   const previews = activeEvent ? selectEventChoicePreviews(gameState, activeEvent.id, bundle) : [];
   const planningPhase = ['briefing', 'engineering', 'comms', 'rationing'].includes(gameState.clock.phase);
-  const canRespondNow = planningPhase && gameState.campaign.status === 'active'
-    && activeView !== null && gameState.clock.sol <= activeView.deadlineSol;
+  const canRespondNow =
+    planningPhase &&
+    gameState.campaign.status === 'active' &&
+    activeView !== null &&
+    gameState.clock.sol <= activeView.deadlineSol;
   const weather = selectWeatherOutlook(gameState, bundle);
 
   const handleChoice = async (choiceId: string) => {
@@ -34,10 +44,10 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
     setFeedback(null);
     try {
       const res = await dispatch({ type: 'event/resolve', eventId: activeEvent.id, choiceId });
-      if (res.ok) setFeedback(res.effects[0]?.message ?? 'Đã xử lý.');
+      if (res.ok) setFeedback(res.effects[0]?.message ?? t('starlog.resolvedOk'));
       else setChoiceError(res.error.message);
     } catch {
-      setChoiceError('Chưa thể xử lý lựa chọn. Hãy thử lại.');
+      setChoiceError(t('starlog.resolveFail'));
     } finally {
       inFlight.current = false;
       setIsSubmitting(false);
@@ -46,8 +56,8 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
 
   return (
     <MissionDialog
-      title={`Starlog & Sự kiện Sol ${gameState.clock.sol}`}
-      eyebrow="PHA 1 · MORNING BRIEFING & DONKI WEATHER"
+      title={t('starlog.title', { sol: gameState.clock.sol })}
+      eyebrow={t('starlog.eyebrow')}
       art={getHailEventScene(activeEvent?.art)}
       panelType="starlog"
       dockSide="center"
@@ -58,67 +68,132 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
         <section className="p-3 rounded-lg bg-slate-900/75 border border-cyan-500/35 text-xs">
           <div className="flex items-center justify-between gap-2 mb-1">
             <strong className="text-cyan-300">
-              NASA DONKI Space Weather ({weather.date}) — Mức: {weather.level.toUpperCase()}
+              {t('starlog.donkiTitle', {
+                date: weather.date,
+                level: t(`donki.${weather.level}`),
+              })}
             </strong>
             <span className="font-mono text-[11px] text-slate-400">
-              Mẫu: {gameState.campaign.donkiProfileId}
+              {t('starlog.donkiSample', { profile: gameState.campaign.donkiProfileId })}
             </span>
           </div>
           {weather.headline && <p className="text-amber-200 italic mb-1.5">"{weather.headline}"</p>}
           <div className="grid grid-cols-3 gap-2 font-mono text-[11px] bg-slate-950/75 p-2 rounded">
-            <div>Tỉ lệ sửa: <strong className="text-emerald-300">{Math.round(weather.repairSuccessProb * 100)}%</strong></div>
-            <div>Rủi ro Rover: <strong className="text-amber-300">{Math.round(weather.roverIncidentProb * 100)}%</strong></div>
-            <div>Bức xạ nền: <strong className="text-sky-300">+{weather.crewWeatherRisk.radiationDoseMgy} mGy</strong></div>
+            <div>
+              {t('starlog.repairProb')}{' '}
+              <strong className="text-emerald-300">{Math.round(weather.repairSuccessProb * 100)}%</strong>
+            </div>
+            <div>
+              {t('starlog.roverRisk')}{' '}
+              <strong className="text-amber-300">{Math.round(weather.roverIncidentProb * 100)}%</strong>
+            </div>
+            <div>
+              {t('starlog.radiation')}{' '}
+              <strong className="text-sky-300">+{weather.crewWeatherRisk.radiationDoseMgy} mGy</strong>
+            </div>
           </div>
         </section>
 
         {feedback && (
-          <div role="status" className="text-xs px-3 py-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 flex items-center gap-2">
+          <div
+            role="status"
+            className="text-xs px-3 py-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 flex items-center gap-2"
+          >
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             {feedback}
           </div>
         )}
-        {choiceError && <p role="alert" className="hail-event-error">{choiceError}</p>}
+        {choiceError && (
+          <p role="alert" className="hail-event-error">
+            {choiceError}
+          </p>
+        )}
 
-        {/* Active Mandatory Event */}
+        {/* Active Event */}
         {activeEvent && activeView ? (
-          <section className={`hail-event-banner hail-event-detail--${activeEvent.category}`} aria-busy={isSubmitting}>
+          <section
+            className={`hail-event-banner hail-event-detail--${activeEvent.category}`}
+            aria-busy={isSubmitting}
+          >
             <img src={getHailEventScene(activeEvent.art)} alt="" className="hail-event-banner-img" />
             <div className="p-3 flex flex-col gap-2">
-              <span className="hail-event-banner-badge">{EVENT_CATEGORY_LABELS[activeEvent.category]}</span>
-              <h3 className="text-base font-bold text-white">{activeEvent.title}</h3>
+              <span className="hail-event-banner-badge">
+                {getEventCategoryLabel(activeEvent.category, locale)}
+              </span>
+              <h3 className="text-base font-bold text-white">
+                {pickText(activeEvent.title, activeEvent.titleEn)}
+              </h3>
               <div className="hail-event-metadata">
-                <span>{activeView.mandatory ? 'Bắt buộc · xử lý trước khi rời giao ban' : 'Tùy chọn · có thể xử lý trong các pha của ngày'}</span>
-                <span>Ưu tiên {activeView.priority}</span>
-                <strong className="hail-event-deadline">{eventDeadlineText(activeView, gameState.clock.sol)}</strong>
+                <span>
+                  {activeView.mandatory ? t('starlog.mandatoryDetail') : t('starlog.optionalDetail')}
+                </span>
+                <span>{t('events.priorityLabel', { priority: activeView.priority })}</span>
+                <strong className="hail-event-deadline">
+                  {eventDeadlineText(activeView, gameState.clock.sol, locale)}
+                </strong>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">{activeEvent.prompt}</p>
-              {!canRespondNow && <p className="hail-event-error">Sự kiện không còn nhận lựa chọn ở thời điểm này.</p>}
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {pickText(activeEvent.prompt, activeEvent.promptEn)}
+              </p>
+              {!canRespondNow && <p className="hail-event-error">{t('starlog.cannotRespond')}</p>}
               <div className="flex flex-col gap-2 mt-2">
                 {previews.map((preview) => {
                   const ch = preview.choice;
+                  const choiceLabel = pickText(ch.label, ch.labelEn);
                   const reasonsId = `event-choice-${ch.id}-reasons`;
                   return (
-                    <article key={ch.id} className={`hail-event-choice ${!preview.allowed ? 'is-blocked' : ''}`}>
-                      <h4>{ch.label}</h4>
-                      <div className="hail-event-costs" aria-label="Thay đổi tài nguyên dự kiến">
-                        {Object.entries(preview.resourceDeltas).map(([resource, delta]) => {
-                          return <span key={resource}>{EVENT_RESOURCE_LABELS[resource as EventResourceKey]}: <strong>{Number(delta) > 0 ? '+' : ''}{delta}</strong></span>;
-                        })}
-                        {preview.scienceDelta !== 0 && <span>Khoa học: <strong>{preview.scienceDelta > 0 ? '+' : ''}{preview.scienceDelta}</strong></span>}
-                        {Object.keys(preview.resourceDeltas).length === 0 && preview.scienceDelta === 0 && <span>Không thay đổi trực tiếp vật tư/khoa học.</span>}
+                    <article
+                      key={ch.id}
+                      className={`hail-event-choice ${!preview.allowed ? 'is-blocked' : ''}`}
+                    >
+                      <h4>{choiceLabel}</h4>
+                      <div className="hail-event-costs" aria-label={t('starlog.costsAria')}>
+                        {Object.entries(preview.resourceDeltas).map(([resource, delta]) => (
+                          <span key={resource}>
+                            {getEventResourceLabel(resource as EventResourceKey, locale)}:{' '}
+                            <strong>
+                              {Number(delta) > 0 ? '+' : ''}
+                              {delta}
+                            </strong>
+                          </span>
+                        ))}
+                        {preview.scienceDelta !== 0 && (
+                          <span>
+                            {t('starlog.scienceLabel')}{' '}
+                            <strong>
+                              {preview.scienceDelta > 0 ? '+' : ''}
+                              {preview.scienceDelta}
+                            </strong>
+                          </span>
+                        )}
+                        {Object.keys(preview.resourceDeltas).length === 0 && preview.scienceDelta === 0 && (
+                          <span>{t('starlog.noDirectResource')}</span>
+                        )}
                       </div>
-                      {preview.effectsSummary.length > 0 && <ul className="hail-event-effects" aria-label="Hệ quả dự kiến">
-                        {preview.effectsSummary.map((effect, index) => <li key={index}>{formatEventEffectSummary(effect)}</li>)}
-                      </ul>}
-                      {preview.blockedReasons.length > 0 && <ul id={reasonsId} className="hail-event-blocked" aria-label="Lý do chưa thể chọn">
-                        {preview.blockedReasons.map((reason, index) => <li key={index}>{formatEventEffectSummary(reason)}</li>)}
-                      </ul>}
-                      <button type="button" className="hail-btn hail-choice-card"
+                      {preview.effectsSummary.length > 0 && (
+                        <ul className="hail-event-effects" aria-label={t('starlog.effectsAria')}>
+                          {preview.effectsSummary.map((effect, index) => (
+                            <li key={index}>{formatEventEffectSummary(effect, locale)}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {preview.blockedReasons.length > 0 && (
+                        <ul id={reasonsId} className="hail-event-blocked" aria-label={t('starlog.blockedAria')}>
+                          {preview.blockedReasons.map((reason, index) => (
+                            <li key={index}>{formatEventEffectSummary(reason, locale)}</li>
+                          ))}
+                        </ul>
+                      )}
+                      <button
+                        type="button"
+                        className="hail-btn hail-choice-card"
                         disabled={!preview.allowed || !canRespondNow || isSubmitting}
                         aria-describedby={preview.blockedReasons.length > 0 ? reasonsId : undefined}
-                        onClick={() => handleChoice(ch.id)}>
-                        {isSubmitting ? 'Đang xử lý…' : `Chọn: ${ch.label}`}
+                        onClick={() => handleChoice(ch.id)}
+                      >
+                        {isSubmitting
+                          ? t('starlog.submitting')
+                          : t('starlog.choosePrefix', { label: choiceLabel })}
                       </button>
                     </article>
                   );
@@ -128,7 +203,7 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
           </section>
         ) : (
           <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
-            Không có sự kiện nào đang chờ xử lý.
+            {t('starlog.emptyEvents')}
           </div>
         )}
 
@@ -136,12 +211,15 @@ export function StarlogModal({ onClose }: StarlogModalProps) {
         <section className="crt-terminal-screen p-3 rounded-lg">
           <div className="text-xs font-bold text-cyan-300 mb-2 flex items-center gap-1.5">
             <ScrollText className="w-3.5 h-3.5" />
-            Nhật ký Vận hành Trạm Artemis
+            {t('starlog.logsTitle')}
           </div>
           <div className="max-h-36 overflow-y-auto flex flex-col gap-1 text-[11px] font-mono">
             {gameState.history.logs.slice(-8).reverse().map((log, i) => (
               <div key={i} className="text-slate-300">
-                <span className="text-cyan-400">[Sol {log.sol} · {log.phase}]</span> {log.message}
+                <span className="text-cyan-400">
+                  [Sol {log.sol} · {log.phase}]
+                </span>{' '}
+                {log.message}
               </div>
             ))}
           </div>
