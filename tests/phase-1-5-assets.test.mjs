@@ -19,7 +19,10 @@ test('Phase 1.5 HAIL manifest covers every shipped image/audio asset with proven
   for (const asset of manifest.assets) {
     assert.match(asset.path, /^\/assets\/hail\//);
     const filePath = path.join(simulationRoot, 'public', asset.path.replace(/^\//, ''));
-    const bytes = fs.readFileSync(filePath);
+    const rawBytes = fs.readFileSync(filePath);
+    const bytes = asset.mediaType === 'image/svg+xml'
+      ? Buffer.from(rawBytes.toString('utf8').replace(/\r\n/g, '\n'), 'utf8')
+      : rawBytes;
     assert.equal(asset.bytes, bytes.length, `${asset.path} byte size drift`);
     assert.equal(asset.sha256, crypto.createHash('sha256').update(bytes).digest('hex'), `${asset.path} hash drift`);
     assert.ok(asset.source.length > 0 && asset.license.length > 0, `${asset.path} missing provenance`);
