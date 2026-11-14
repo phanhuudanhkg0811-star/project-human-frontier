@@ -10,6 +10,7 @@ export type MissionDialogType =
   | 'comms'
   | 'launch'
   | 'menu'
+  | 'tutorial'
   | 'generic';
 
 interface MissionDialogProps {

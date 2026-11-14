@@ -745,7 +745,9 @@ export interface ScienceBrief {
   readonly id: string;
   readonly tags: readonly string[];
   readonly title: string;
+  readonly titleEn?: string;
   readonly content: string;
+  readonly contentEn?: string;
   readonly source: string;
   readonly provenance: ProvenanceTag;
 }
@@ -941,7 +943,8 @@ export type ActiveModalType =
   | 'end'
   | 'comms'
   | 'launch'
-  | 'menu';
+  | 'menu'
+  | 'tutorial';
 
 export interface UiState {
   readonly activeModal: ActiveModalType;
@@ -951,5 +954,8 @@ export interface UiState {
   readonly devPanelOpen: boolean;
   readonly locale: 'vi' | 'en';
   readonly reducedMotion: boolean;
+  readonly audioMuted: boolean;
+  readonly tutorialCompleted: boolean;
+  readonly tutorialStep: number;
   readonly toasts: readonly ToastMessage[];
 }

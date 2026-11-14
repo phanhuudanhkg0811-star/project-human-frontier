@@ -25,6 +25,7 @@ import { MissionDialog } from './modals/MissionDialog.tsx';
 import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
 import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
 import { StarlogModal } from './modals/StarlogModal.tsx';
+import { TutorialModal } from './modals/TutorialModal.tsx';
 
 const EQUIPMENT_RACK_META: ReadonlyArray<{
   id: EquipmentId;
@@ -438,6 +439,7 @@ export function HailGameViewport() {
       {activeModal === 'comms' && <CommsLogisticsModal onClose={closeModal} />}
       {activeModal === 'end' && <EndOfDayModal onClose={closeModal} />}
       {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
+      {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
       {sysModalOpen && (
         <MissionDialog
           title="Telemetry Console · 5 Hệ thống Trạm & WRS"
