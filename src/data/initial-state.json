@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
   "contentVersion": "1.4.0-moon32",
-  "modelVersion": "1.4.1-ts-mechanics",
-  "catalogVersion": "1.1.0-moon32",
+  "modelVersion": "1.4.2-ts-polar",
+  "catalogVersion": "1.2.0-moon32-polar",
   "revision": 0,
   "campaign": {
     "id": "moon-32",

@@ -5,7 +5,12 @@
       "name": "Apollo 15 / Hadley reference area",
       "latitudeDeg": 26.13239,
       "longitudeDegEast": 3.6333,
-      "bbox": [3.3833, 25.88239, 3.8833, 26.38239],
+      "bbox": [
+        3.3833,
+        25.88239,
+        3.8833,
+        26.38239
+      ],
       "provenance": "observed",
       "source": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
     },
@@ -33,7 +38,12 @@
       "name": "Apollo 11 / Mare Tranquillitatis reference area",
       "latitudeDeg": 0.67416,
       "longitudeDegEast": 23.47314,
-      "bbox": [23.22314, 0.42416, 23.72314, 0.92416],
+      "bbox": [
+        23.22314,
+        0.42416,
+        23.72314,
+        0.92416
+      ],
       "provenance": "observed",
       "source": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
     },
@@ -61,7 +71,12 @@
       "name": "Shackleton crater south-polar reference area",
       "latitudeDeg": -89.66,
       "longitudeDegEast": 129.2,
-      "bbox": [128.7, -89.9, 129.7, -89.4],
+      "bbox": [
+        128.7,
+        -89.9,
+        129.7,
+        -89.4
+      ],
       "provenance": "observed",
       "source": "https://moon.nasa.gov/resources/162/on-the-rim/"
     },
@@ -82,5 +97,50 @@
       "source": "https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=LRO-L-DLRE-5-GDR-V1.0"
     },
     "gameplayNote": "The coordinate is a Shackleton rim reference; PSR conditions are inferred for gameplay and are not asserted for the exact rim point."
+  },
+  {
+    "expeditionId": "artemis-base-camp",
+    "representativeLocation": {
+      "name": "Connecting Ridge, Shackleton-adjacent (Artemis III candidate region)",
+      "latitudeDeg": -89.45,
+      "longitudeDegEast": 222.7,
+      "bbox": [
+        222.5,
+        -89.5,
+        223.0,
+        -89.0
+      ],
+      "provenance": "observed",
+      "source": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+    },
+    "mappingProvenance": "assumption",
+    "terrain": {
+      "productId": "LRO-L-LOLA-4-GDR-V1.0",
+      "datasetReleaseId": "0030",
+      "layerId": "LRO_LOLA_ClrShade_SPole875_5mp_v04_EQ",
+      "unit": "m in source DEM; WMTS layer is rendered color hillshade",
+      "provenance": "observed",
+      "source": "https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=LRO-L-LOLA-4-GDR-V1.0&releaseid=0030"
+    },
+    "thermal": {
+      "productId": "LRO-L-DLRE-5-GDR-V1.0",
+      "layerId": "global_cumul_avg_cyl_90s80s_002",
+      "unit": "K in source table; converted to \u00b0C for catalog",
+      "provenance": "observed",
+      "cell": {
+        "latitudeDeg": -89.25,
+        "longitudeDegEast": 222.75
+      },
+      "fit": {
+        "k": 0.79,
+        "r2": 0.9268,
+        "window_ltim": [
+          6.12,
+          18.12
+        ]
+      },
+      "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab"
+    },
+    "gameplayNote": "South-pole site. Daytime highs stay below 0 C; the 14-Sol campaign night uses the observed cycle minimum (-185.6 C). The Diviner GCP cell is the nearest 0.5 deg sample to the named ridge; no unsampled point temperature is claimed."
   }
 ]

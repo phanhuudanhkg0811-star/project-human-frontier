@@ -66,6 +66,7 @@ const CHRONIC_DOSE_FIRST_PENALTY = 0.5; // health per Sol
 const CHRONIC_DOSE_SECOND_PENALTY = 1.0;
 const ROVER_OPERATOR_HEALTH_WEIGHT = 0.25; // risk multiplier per missing health point
 const LUNAR_CYCLE_SOLS = 28; // 14 Sol day + 14 Sol night in the Moon-32 campaign
+const POLAR_SIN_EXPONENT_DEFAULT = 0.25; // equatorial day shape when no polar fit is present
 
 function isLunarNightSol(sol: number, campaign: CampaignConfig): boolean {
   return sol >= campaign.milestones.lunarNight.startSol && sol <= campaign.milestones.lunarNight.endSol;
@@ -73,14 +74,21 @@ function isLunarNightSol(sol: number, campaign: CampaignConfig): boolean {
 
 /**
  * Representative surface temperature for the Sol, from the Diviner-calibrated
- * airless-surface form T = night + (day - night) * max(0, sin el)^0.25.
+ * airless-surface form T = night + (day - night) * max(0, sin el)^k.
+ * k comes from the polar-cell fit (environment_profile_moon_polar.json) and
+ * defaults to the equatorial 0.25 when the catalog does not carry one.
  * The campaign window is a 28-Sol lunar cycle starting at sunrise.
  */
 function computeSurfaceTempC(sol: number, bundle: ContentBundle): number {
   const thermal = bundle.catalog.environment.temperatureC;
   const phase = ((((sol - 1) % LUNAR_CYCLE_SOLS) + LUNAR_CYCLE_SOLS) % LUNAR_CYCLE_SOLS) / LUNAR_CYCLE_SOLS;
   const sunElevation = phase < 0.5 ? Math.sin(Math.PI * (phase / 0.5)) : 0;
-  const surface = thermal.nightMinC + (thermal.dayMaxC - thermal.nightMinC) * Math.pow(sunElevation, 0.25);
+  const dayShape = clamp(
+    thermal.shapeExponentK ?? POLAR_SIN_EXPONENT_DEFAULT,
+    0.05,
+    3.0
+  );
+  const surface = thermal.nightMinC + (thermal.dayMaxC - thermal.nightMinC) * Math.pow(sunElevation, dayShape);
   return round2(surface);
 }
 

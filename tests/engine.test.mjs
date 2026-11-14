@@ -857,10 +857,11 @@ test('Battery applies round-trip efficiency, caps at max, and self-discharges on
     bundle,
     'preview'
   );
-  // 10 + 8 fission + 35.8 derated solar - 12 essential = 41.8 kWh available.
-  // Net charge 31.8 * 0.96 = 30.528, then 0.2% self-discharge.
-  assert.equal(day.summary.resourceDeltas.batteryKWh, 30.45);
-  assert.ok(day.summary.resourceDeltas.batteryKWh < 31.8, 'round-trip efficiency must lose energy on net charge');
+  // Polar days are cold (-130 C at Sol 2), so solar derating clamps at +2%
+  // instead of losing to heat; net charge is higher than equatorial data.
+  // Round-trip efficiency + self-discharge still apply to the net charge.
+  assert.equal(day.summary.resourceDeltas.batteryKWh, 31.22);
+  assert.ok(day.summary.resourceDeltas.batteryKWh < 32.0, 'round-trip efficiency must lose energy on net charge');
 
   // Battery never exceeds its storage cap.
   const capped = core.resolveSol(
