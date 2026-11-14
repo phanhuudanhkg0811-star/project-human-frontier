@@ -1829,3 +1829,144 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   color: #75A9A5;
   flex-shrink: 0;
 }
+
+/* Phase 1.3 event guidance: stays outside the camera transform and native dialogs. */
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) {
+  width: min(940px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .hail-dialog-frame {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 24px);
+  min-height: 0;
+}
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .hail-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .hail-dialog-art-wrap {
+  width: 68px;
+  height: 54px;
+  flex-shrink: 0;
+}
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-art {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 3px;
+}
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-titles { flex: 1; min-width: 0; }
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-eyebrow { font-size: 10px; }
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-title { font-size: 18px; }
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-body {
+  overflow-y: auto;
+  min-height: 0;
+  padding: 16px;
+  scrollbar-gutter: stable;
+}
+.mission-dialog--starlog .hail-event-banner { max-height: none; }
+.mission-dialog--starlog .hail-event-banner-img { height: 140px; }
+.hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .hail-close-btn:focus-visible {
+  outline: 3px solid #ffe2a6; outline-offset: 3px;
+}
+.hail-event-priority {
+  --event-accent: var(--ph-oxygen);
+  --event-stage-height: min(56.25vw, 100dvh, 922.5px);
+  position: fixed;
+  top: calc((100dvh - var(--event-stage-height)) / 2 + var(--event-stage-height) * 0.085);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(52vw, 830px);
+  z-index: 47;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--event-accent);
+  border-left-width: 4px;
+  border-radius: 7px;
+  background: rgba(27, 38, 48, 0.97);
+  box-shadow: 0 3px 16px #0007;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.hail-event-priority--hazard { --event-accent: var(--ph-energy); }
+.hail-event-priority--crisis { --event-accent: #f3a18a; }
+.hail-event-priority--milestone { --event-accent: #a8c49d; }
+.hail-event-priority.is-high-priority { border-left-width: 6px; }
+.hail-event-priority-copy { display: grid; gap: 1px; flex: 1; min-width: 0; }
+.hail-event-priority-copy > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+.hail-event-priority-meta { color: var(--event-accent); font-size: 10px; }
+.hail-event-priority .hail-btn { flex-shrink: 0; min-height: 32px; }
+.hail-event-deadline { color: #f3dba0; }
+.hail-event-metadata { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: #e0e7ec; }
+.hail-event-choice { border: 1px solid #62849088; border-radius: 8px; padding: 12px; background: #17252ce8; }
+.hail-event-choice h4 { color: #eef7fb; font-size: 14px; margin: 0 0 8px; }
+.hail-event-choice.is-blocked { border-style: dashed; border-color: #cc9479; }
+.hail-event-costs { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
+.hail-event-costs > span { background: #0d1a20; padding: 4px 7px; border-radius: 4px; }
+.hail-event-effects, .hail-event-blocked { list-style: disc; padding-left: 20px; margin: 8px 0; font-size: 12px; line-height: 1.6; }
+.hail-event-effects { color: #cbd9e2; }
+.hail-event-blocked, .hail-event-error { color: #ffd0bd; }
+.hail-event-error { padding: 8px; border: 1px solid #d3957988; border-radius: 5px; font-size: 12px; }
+.hail-event-choice .hail-choice-card { width: 100%; min-height: 40px; margin-top: 6px; text-align: left; white-space: normal; }
+.hail-event-choice button:disabled { opacity: 0.6; cursor: not-allowed; }
+.hail-event-priority button:focus-visible, .hail-event-choice button:focus-visible {
+  outline: 3px solid #ffe2a6; outline-offset: 3px;
+}
+.hail-stem-brief { background: #17252ceb; border: 1px solid #6e91b180; padding: 14px; border-radius: 8px; text-align: left; }
+.hail-stem-brief.is-empty { font-size: 12px; color: #c7cfd5; }
+.hail-stem-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: space-between; }
+.hail-evidence-badge { font-size: 11px; padding: 3px 7px; border: 1px solid #8cb3b0; border-radius: 4px; color: #c3e0d6; }
+.hail-stem-brief h3 { font-size: 16px; color: #e2f1f0; margin: 10px 0 6px; }
+.hail-stem-brief p { font-size: 13px; color: #dde4ea; line-height: 1.65; }
+.hail-stem-brief small { display: block; margin-top: 8px; color: #b4c1cc; font-size: 11px; overflow-wrap: anywhere; }
+.hail-stem-brief .hail-stem-context { font-size: 12px; margin-top: 6px; color: #f0d9ab; }
+.hail-stem-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.hail-stem-metrics > div { background: #0d1a20; padding: 7px 10px; border-radius: 4px; font-size: 12px; }
+.hail-stem-metrics dd { color: #e3c783; margin: 4px 0 0; font-weight: bold; }
+.hail-night-cutscene {
+  width: min(920px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  padding: 0;
+  border-radius: 10px;
+  color: #e7e6df;
+  box-shadow: 0 24px 64px #000a;
+}
+.hail-night-cutscene::backdrop { background: #0e151bc2; backdrop-filter: blur(3px); }
+.hail-night-cutscene .night-content { padding: 24px; }
+.hail-night-cutscene .mission-kicker { color: #acd2ce; font-size: 11px; }
+.hail-night-cutscene h2 { font-size: 22px; margin: 14px 0; font-weight: bold; }
+.hail-night-cutscene h2 span { font-size: 16px; }
+.hail-night-cutscene .night-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+.hail-night-cutscene .night-stats > div { padding: 12px; border: 1px solid #6e91b188; border-radius: 6px; background: #13212be6; }
+.hail-night-cutscene .night-stats dt { color: #c1ced6; font-size: 12px; }
+.hail-night-cutscene .night-stats dd { margin: 6px 0 0; color: #e8cc8f; font-size: 22px; font-weight: bold; }
+.hail-night-cutscene .night-stats small { margin-left: 5px; font-size: 12px; }
+.hail-night-cutscene .night-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.hail-night-cutscene .night-actions button { padding: 10px 16px; border: 1px solid #8ab0a6; border-radius: 6px; background: #304b4a; color: #edf7f4; }
+.hail-night-cutscene .night-actions button:focus-visible { outline: 3px solid #ffe2a6; outline-offset: 3px; }
+@media (orientation: portrait) {
+  .hail-event-priority { top: max(10px, env(safe-area-inset-top)); width: calc(100vw - 20px); }
+}
+@media (max-width: 640px) {
+  .hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .hail-dialog-art-wrap { display: none; }
+  .hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-title { font-size: 15px; }
+  .hail-dialog:is(.mission-dialog--starlog, .mission-dialog--end) .mission-dialog-body { padding: 12px; }
+  .hail-crew-ration-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hail-night-cutscene .night-content { padding: 14px; }
+  .hail-night-cutscene .night-stats { gap: 6px; }
+  .hail-night-cutscene .night-stats > div { padding: 8px; }
+}
+@media (max-width: 760px) and (orientation: landscape) {
+  .hail-event-priority { width: 62vw; padding: 3px 6px; font-size: 9px; gap: 6px; }
+  .hail-event-priority-meta { font-size: 9px; }
+  .hail-event-priority .hail-btn { min-height: 26px; font-size: 10px; }
+}

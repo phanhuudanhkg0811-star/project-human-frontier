@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowDownUp, BatteryCharging, Droplets, Power, Utensils } from 'lucide-react';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
+import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
+import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
 import { HAIL_EQUIPMENT, HAIL_SVG } from '../cabin/hailAssets.ts';
@@ -20,10 +22,13 @@ const LOAD_LABELS: Record<PowerConsumerId, string> = {
 export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const inFlight = useRef(false);
   const inRationing = gameState.clock.phase === 'rationing';
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
+  const debriefView = selectDynamicDebrief(gameState, bundle);
 
   const movePriority = (idx: number, dir: -1 | 1) => {
     const nextIdx = idx + dir;
@@ -36,11 +41,19 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
   };
 
   const handleEndSol = async () => {
-    const res = await dispatch({ type: 'sol/end' });
-    if (res.ok) {
-      onClose();
-    } else {
-      setErrorMsg(res.error.message);
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setIsSubmitting(true);
+    setErrorMsg(null);
+    try {
+      const res = await dispatch({ type: 'sol/end' });
+      if (res.ok) onClose();
+      else setErrorMsg(res.error.message);
+    } catch {
+      setErrorMsg('Chưa thể chốt Sol. Hãy thử lại.');
+    } finally {
+      inFlight.current = false;
+      setIsSubmitting(false);
     }
   };
 
@@ -172,15 +185,17 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
           </section>
         </div>
 
+        <DynamicSTEMBrief view={debriefView} bundle={bundle} />
+
         <button
           type="button"
-          disabled={!inRationing}
+          disabled={!inRationing || isSubmitting}
           onClick={handleEndSol}
           className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
         >
           <Power className="w-4 h-4" />
           <img src={HAIL_SVG.actEndDay} alt="" className="w-4 h-4" />
-          Gạt cần Chốt Sol {gameState.clock.sol} (End-Sol)
+          {isSubmitting ? 'Đang chốt Sol…' : `Gạt cần Chốt Sol ${gameState.clock.sol} (End-Sol)`}
         </button>
       </div>
     </MissionDialog>

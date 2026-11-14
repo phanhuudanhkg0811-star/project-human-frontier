@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../../store/gameStore.ts';
-import type { GameState, ScienceBrief, SolSummary } from '../../types/index.ts';
+import { selectDynamicDebrief, type DynamicDebriefView } from '../../domain/eventSelectors.ts';
+import type { ContentBundle, GameState, SolSummary } from '../../types/index.ts';
+import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { HAIL_ENV, HAIL_SVG } from '../cabin/hailAssets.ts';
 
 function DebriefDialogBody({
   gameState,
   summary,
-  brief,
+  debriefView,
+  bundle,
   onDismiss,
   onReset,
 }: {
   gameState: GameState;
   summary: SolSummary;
-  brief: ScienceBrief | undefined;
+  debriefView: DynamicDebriefView;
+  bundle: ContentBundle;
   onDismiss: () => void;
   onReset: () => void;
 }) {
-  const fullText = brief?.content ?? '';
+  const fullText = debriefView.scienceBrief?.content ?? '';
   const prefersReduced =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [length, setLength] = useState(prefersReduced ? fullText.length : 0);
@@ -103,18 +107,13 @@ function DebriefDialogBody({
           ))}
         </div>
 
-        <section className="night-brief">
-          <p className="mission-kicker">NASA STEM Science Brief</p>
-          <h3>{brief?.title}</h3>
+        <DynamicSTEMBrief view={debriefView} bundle={bundle} content={<>
           <p aria-hidden="true" className="night-typewriter">
             {skip ? fullText : fullText.slice(0, length)}
             <span className="typewriter-cursor" />
           </p>
           <p className="sr-only">{fullText}</p>
-          <small>
-            {brief?.source} · Provenance: {brief?.provenance}
-          </small>
-        </section>
+        </>} />
 
         <div className="night-actions">
           {!skip && length < fullText.length && (
@@ -140,16 +139,17 @@ function DebriefDialogBody({
 export function NightCutsceneModal() {
   const { gameState, bundle, dispatch, resetCampaign } = useGameStore();
   const isDebrief = gameState.clock.phase === 'debrief' || gameState.clock.phase === 'terminal';
-  const summary = gameState.debrief.lastSummary;
+  const debriefView = selectDynamicDebrief(gameState, bundle);
+  const summary = debriefView.summary;
   if (!isDebrief || !summary) return null;
 
-  const brief = bundle.briefs.find((b) => b.id === summary.briefId) ?? bundle.briefs[0];
   return (
     <DebriefDialogBody
       key={`${summary.sol}-${gameState.clock.phase}`}
       gameState={gameState}
       summary={summary}
-      brief={brief}
+      debriefView={debriefView}
+      bundle={bundle}
       onDismiss={() => {
         dispatch({ type: 'debrief/dismiss' });
       }}
