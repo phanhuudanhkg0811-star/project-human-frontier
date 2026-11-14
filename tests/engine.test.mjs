@@ -53,6 +53,13 @@ test('Static catalogs validate cleanly including 3x32-day NASA DONKI samples and
   assert.equal(bundle.campaign.targetSol, 32);
   assert.equal(bundle.catalog.environment.dustTauMean, 0);
   assert.equal(bundle.donki.samples.length, 3);
+  assert.equal(bundle.lunarSites.length, 3);
+  assert.equal(bundle.crewPhysiology.recordCount, 72);
+  assert.equal(
+    bundle.crewPhysiology.convertedMeanMgyPerDay,
+    bundle.crewPhysiology.absorbedDoseRateUGyPerHour.mean * 24 / 1000
+  );
+  assert.match(bundle.crewPhysiology.caveat, /orbital/i);
 
   for (const sample of bundle.donki.samples) {
     assert.equal(sample.solCount, 32);
@@ -178,7 +185,6 @@ test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (W
       wrsEnabled: false,
       powerPriority: ['eclss', 'wrs', 'fabricator', 'rover'],
       mreTargets: [],
-      medkitTargets: [],
     },
     systems: {
       ...base.systems,
@@ -228,7 +234,6 @@ test('DONKI Space Weather probabilities are 100% deterministic and scale with st
       wrsEnabled: true,
       powerPriority: ['eclss', 'wrs', 'fabricator', 'rover'],
       mreTargets: [],
-      medkitTargets: [],
     },
     systems: {
       ...base.systems,
@@ -298,7 +303,6 @@ test('Load shedding cuts WRS before triggering ECLSS blackout even with inverted
       wrsEnabled: true,
       powerPriority: ['wrs', 'fabricator', 'eclss', 'rover'],
       mreTargets: [],
-      medkitTargets: [],
     },
     fabricator: {
       usedThisSol: true,
@@ -333,7 +337,7 @@ test('Load shedding cuts WRS before triggering ECLSS blackout even with inverted
   };
   const res = core.dispatchDomainCommand(
     starvingState,
-    { type: 'rover/launch', expeditionId: 'lunar-crater', equipmentIds: ['core_drill'] },
+    { type: 'rover/schedule', expeditionId: 'lunar-crater', equipmentIds: ['core_drill'], launchOperatorCrewId: 'geo' },
     bundle
   );
   assert.equal(res.ok, false);
@@ -448,7 +452,7 @@ test('Multi-task repair/upgrade, crew/unassign refund, fabricator/cancel anti-ex
   assert.equal(badPrio.error.code, 'E_PLAN_INVALID');
 });
 
-test('SaveEnvelope v1 verifies full envelope checksum, version lock, and storage error safety', () => {
+test('SaveEnvelope v2 verifies full envelope checksum, version lock, and storage error safety', () => {
   const bundle = core.loadContentBundle();
   const storage = createMemoryStorage();
   const state = core.createInitialGameState(bundle, { seed: 1234 });
@@ -489,4 +493,212 @@ test('SaveEnvelope v1 verifies full envelope checksum, version lock, and storage
   const writeErr = core.saveGameState(state, quotaStorage, '2026-11-14T12:00:00Z');
   assert.equal(writeErr.ok, false);
   assert.equal(writeErr.error.code, 'E_SAVE_CORRUPTED');
+});
+
+test('Phase 1.2 Rover uses the power ledger, completes exactly three ticks, grants rewards once, and frees Rover after debrief', () => {
+  const bundle = core.loadContentBundle();
+  let state = core.createInitialGameState(bundle, { seed: 205001, spaceWeatherOverride: 'quiet' });
+  state = {
+    ...state,
+    clock: { sol: 1, phase: 'comms', resolutionIndex: 0 },
+    dailyPlan: { ...state.dailyPlan, sol: 1 },
+  };
+
+  let result = core.dispatchDomainCommand(state, {
+    type: 'rover/schedule',
+    expeditionId: 'lunar-crater',
+    equipmentIds: ['core_drill'],
+    launchOperatorCrewId: 'geo',
+  }, bundle);
+  assert.equal(result.ok, true);
+  state = result.state;
+  assert.equal(state.rover.activeMission.status, 'scheduled');
+  assert.equal(state.equipment.core_drill.reservedForRover, true);
+
+  const endSol = () => core.resolveSol({
+    ...state,
+    clock: { ...state.clock, phase: 'rationing' },
+    dailyPlan: { ...state.dailyPlan, status: 'committed' },
+  }, bundle, 'commit').nextState;
+  const nextSol = () => {
+    const dismissed = core.dispatchDomainCommand(state, { type: 'debrief/dismiss' }, bundle);
+    assert.equal(dismissed.ok, true);
+    state = dismissed.state;
+  };
+
+  state = endSol();
+  assert.equal(state.rover.activeMission.status, 'outbound');
+  assert.equal(state.rover.activeMission.travelTicksCompleted, 1);
+  assert.equal(state.debrief.lastSummary.unmetLoads.includes('rover'), false);
+  nextSol();
+
+  state = endSol();
+  assert.equal(state.rover.activeMission.status, 'exploring');
+  assert.equal(state.rover.activeMission.travelTicksCompleted, 2);
+  nextSol();
+
+  const recovery = core.dispatchDomainCommand(
+    { ...state, clock: { ...state.clock, phase: 'engineering' } },
+    { type: 'rover/set-recovery-operator', crewId: 'geo' },
+    bundle
+  );
+  assert.equal(recovery.ok, true);
+  state = recovery.state;
+  state = endSol();
+  assert.equal(state.rover.activeMission.status, 'completed');
+  assert.equal(state.rover.missionHistory.length, 1);
+  assert.equal(state.rover.missionHistory[0].rewardSampleGranted, 'crater_core_sample');
+  assert.equal(state.campaign.sciencePoints, 20);
+  assert.equal(state.equipment.core_drill.durability, 75);
+  assert.equal(state.equipment.core_drill.reservedForRover, false);
+
+  nextSol();
+  assert.equal(state.rover.activeMission, null);
+  assert.equal(state.rover.missionHistory.length, 1);
+  assert.equal(core.selectRoverSamples(state).length, 1);
+});
+
+test('Phase 1.2 deadline failure, OR mitigation, immediate Medkit, and signal recovery are deterministic', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 1001, spaceWeatherOverride: 'quiet' });
+  assert.equal(core.selectMitigationSatisfied(base, bundle, 'regolith-field', ['dust_shield']), true);
+  assert.equal(core.selectMitigationSatisfied(base, bundle, 'regolith-field', ['radio_repeater']), true);
+  assert.equal(core.selectMitigationSatisfied(base, bundle, 'regolith-field', []), false);
+
+  const injured = {
+    ...base,
+    clock: { sol: 1, phase: 'engineering', resolutionIndex: 0 },
+    crew: { ...base.crew, cmd: { ...base.crew.cmd, health: 20, condition: 'injured' } },
+  };
+  const healed = core.dispatchDomainCommand(injured, {
+    type: 'crew/use-medkit', targetCrewId: 'cmd', administeredByCrewId: 'doc',
+  }, bundle);
+  assert.equal(healed.ok, true);
+  assert.equal(healed.state.crew.cmd.health, 70);
+  assert.equal(healed.state.crew.cmd.condition, 'fit');
+  assert.equal(healed.state.crew.doc.assignedTask.type, 'medical-care');
+  assert.equal(healed.state.resources.medkits, 1);
+  const healedEndSol = core.resolveSol({
+    ...healed.state,
+    clock: { ...healed.state.clock, phase: 'rationing' },
+    dailyPlan: { ...healed.state.dailyPlan, status: 'committed' },
+  }, bundle, 'commit').nextState;
+  assert.equal(healedEndSol.crew.cmd.health, 70, 'Medkit administration must not double-apply regular medical-care healing');
+
+  let deadline = {
+    ...base,
+    clock: { sol: 4, phase: 'comms', resolutionIndex: 3 },
+    dailyPlan: { ...base.dailyPlan, sol: 4 },
+    resources: { ...base.resources, batteryKWh: 0 },
+    systems: { ...base.systems, solar: { ...base.systems.solar, integrity: 0, status: 'offline' } },
+  };
+  const scheduled = core.dispatchDomainCommand(deadline, {
+    type: 'rover/schedule', expeditionId: 'lunar-crater', equipmentIds: ['core_drill'], launchOperatorCrewId: 'geo',
+  }, bundle);
+  assert.equal(scheduled.ok, true);
+  deadline = core.resolveSol({
+    ...scheduled.state,
+    clock: { ...scheduled.state.clock, phase: 'rationing' },
+    dailyPlan: { ...scheduled.state.dailyPlan, status: 'committed' },
+  }, bundle, 'commit').nextState;
+  assert.equal(deadline.rover.activeMission.status, 'failed');
+  assert.equal(deadline.rover.missionHistory[0].outcome, 'failed');
+  assert.equal(deadline.equipment.core_drill.reservedForRover, false);
+
+  const lost = {
+    ...base,
+    clock: { sol: 2, phase: 'engineering', resolutionIndex: 1 },
+    dailyPlan: { ...base.dailyPlan, sol: 2 },
+    equipment: { ...base.equipment, core_drill: { ...base.equipment.core_drill, reservedForRover: true } },
+    rover: {
+      activeMission: {
+        expeditionId: 'lunar-crater', status: 'signal-lost', scheduledSol: 1, launchedSol: 1,
+        statusEnteredSol: 1, expectedReturnSol: 3, launchOperatorCrewId: 'geo', recoveryOperatorCrewId: null,
+        equippedItems: ['core_drill'], travelTicksCompleted: 1, signalLostSols: 1,
+        resumeStatus: 'outbound', recoveryDelaySols: 0, incidents: [],
+      },
+      missionHistory: [],
+    },
+  };
+  const recovered = core.dispatchDomainCommand(lost, { type: 'rover/recover-signal' }, bundle);
+  assert.equal(recovered.ok, true);
+  assert.equal(recovered.state.rover.activeMission.status, 'outbound');
+  assert.equal(recovered.state.rover.activeMission.expectedReturnSol, 4);
+
+  const timedOut = core.resolveSol({
+    ...lost,
+    clock: { ...lost.clock, phase: 'rationing' },
+    dailyPlan: { ...lost.dailyPlan, status: 'committed' },
+  }, bundle, 'commit').nextState;
+  assert.equal(timedOut.rover.activeMission.status, 'failed');
+  assert.equal(timedOut.rover.missionHistory[0].outcome, 'failed');
+  assert.equal(timedOut.equipment.core_drill.reservedForRover, false);
+
+  const occupiedCrew = Object.fromEntries(Object.entries(base.crew).map(([id, crew]) => [id, {
+    ...crew, assignedTask: { type: 'rest' },
+  }]));
+  const recoveryPending = {
+    ...base,
+    clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+    dailyPlan: { ...base.dailyPlan, sol: 3, status: 'committed' },
+    crew: occupiedCrew,
+    equipment: { ...base.equipment, core_drill: { ...base.equipment.core_drill, reservedForRover: true } },
+    rover: {
+      activeMission: {
+        expeditionId: 'lunar-crater', status: 'recovery-pending', scheduledSol: 1, launchedSol: 1,
+        statusEnteredSol: 2, expectedReturnSol: 2, launchOperatorCrewId: 'geo', recoveryOperatorCrewId: null,
+        equippedItems: ['core_drill'], travelTicksCompleted: 3, signalLostSols: 0,
+        resumeStatus: null, recoveryDelaySols: 1, incidents: [],
+      },
+      missionHistory: [],
+    },
+  };
+  const recoveryFailed = core.resolveSol(recoveryPending, bundle, 'commit').nextState;
+  assert.equal(recoveryFailed.rover.activeMission.status, 'failed');
+  assert.equal(recoveryFailed.rover.activeMission.incidents.at(-1).kind, 'recovery-timeout');
+
+  const cancellable = core.dispatchDomainCommand(
+    { ...base, clock: { sol: 1, phase: 'comms', resolutionIndex: 0 } },
+    { type: 'rover/schedule', expeditionId: 'lunar-crater', equipmentIds: ['core_drill'], launchOperatorCrewId: 'geo' },
+    bundle
+  );
+  assert.equal(cancellable.ok, true);
+  const cancelled = core.dispatchDomainCommand(cancellable.state, { type: 'rover/cancel-schedule' }, bundle);
+  assert.equal(cancelled.ok, true);
+  assert.equal(cancelled.state.rover.activeMission, null);
+  assert.equal(cancelled.state.equipment.core_drill.reservedForRover, false);
+  assert.equal(cancelled.state.crew.geo.assignedTask, null);
+});
+
+test('SaveEnvelope v1 migrates to v2 without inventing historical operators and rewrites storage', () => {
+  const bundle = core.loadContentBundle();
+  const storage = createMemoryStorage();
+  const current = core.createInitialGameState(bundle, { seed: 5050 });
+  const { sciencePoints: _sciencePoints, ...legacyCampaign } = current.campaign;
+  const legacyState = {
+    ...current,
+    schemaVersion: 1,
+    campaign: legacyCampaign,
+    dailyPlan: { ...current.dailyPlan, medkitTargets: [] },
+    rover: {
+      status: 'idle', expeditionId: null, solsRemaining: 0, equippedItems: [],
+      samplesCollected: ['crater_core_sample'], completedExpeditions: ['lunar-crater'],
+    },
+  };
+  const unsigned = {
+    schemaVersion: 1,
+    savedAt: '2026-11-14T12:00:00Z',
+    appVersion: '1.1.0',
+    contentVersion: current.contentVersion,
+    modelVersion: current.modelVersion,
+    catalogVersion: current.catalogVersion,
+    state: legacyState,
+  };
+  storage.setItem(core.SAVE_STORAGE_KEY, JSON.stringify({ ...unsigned, checksum: core.computeEnvelopeChecksum(unsigned) }));
+  const loaded = core.loadGameState(bundle, storage);
+  assert.equal(loaded.status, 'ok');
+  assert.equal(loaded.state.schemaVersion, 2);
+  assert.equal(loaded.state.campaign.sciencePoints, 20);
+  assert.equal(loaded.state.rover.missionHistory[0].launchOperatorCrewId, null);
+  assert.equal(JSON.parse(storage.getItem(core.SAVE_STORAGE_KEY)).schemaVersion, 2);
 });

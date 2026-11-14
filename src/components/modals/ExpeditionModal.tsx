@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { CheckCircle2, Rocket, ShieldAlert } from 'lucide-react';
-import { selectWeatherOutlook } from '../../domain/selectors.ts';
+import {
+  selectCanScheduleExpedition,
+  selectCompletedExpeditions,
+  selectMitigationSatisfied,
+  selectRoverRemainingSols,
+  selectRoverSamples,
+  selectRoverStatus,
+  selectWeatherOutlook,
+} from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import { useUiStore } from '../../store/uiStore.ts';
-import type { EquipmentId, ExpeditionId } from '../../types/index.ts';
+import type { CrewId, EquipmentId, ExpeditionId } from '../../types/index.ts';
 import { HAIL_ENV, HAIL_ROVER } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 
@@ -21,21 +29,30 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
   const { selectedEquipmentIds, toggleRoverEquipment, clearRoverEquipment } = useUiStore();
   const [selectedSite, setSelectedSite] = useState<ExpeditionId>('lunar-crater');
+  const [launchOperator, setLaunchOperator] = useState<CrewId>('geo');
+  const [recoveryOperator, setRecoveryOperator] = useState<CrewId>('geo');
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const inComms = gameState.clock.phase === 'comms';
   const weather = selectWeatherOutlook(gameState, bundle, 'geo');
   const expedition = bundle.campaign.expeditions.find((e) => e.id === selectedSite) ?? bundle.campaign.expeditions[0];
-  const threatBlocked = expedition.requiredEquipment.every((req) => selectedEquipmentIds.includes(req));
+  const siteData = bundle.lunarSites.find((site) => site.expeditionId === expedition.id);
+  const threatBlocked = selectMitigationSatisfied(gameState, bundle, expedition.id, selectedEquipmentIds);
+  const roverStatus = selectRoverStatus(gameState);
+  const samples = selectRoverSamples(gameState);
+  const completed = selectCompletedExpeditions(gameState);
+  const schedulePermission = selectCanScheduleExpedition(gameState, bundle, selectedSite);
+  const activeMission = gameState.rover.activeMission;
   const ownedReadyEquipment = Object.values(gameState.equipment).filter(
     (eq) => eq.owned && eq.state !== 'damaged' && !eq.reservedForRover
   );
 
-  const handleLaunch = async () => {
+  const handleSchedule = async () => {
     const res = await dispatch({
-      type: 'rover/launch',
+      type: 'rover/schedule',
       expeditionId: selectedSite,
       equipmentIds: selectedEquipmentIds,
+      launchOperatorCrewId: launchOperator,
     });
     if (res.ok) {
       clearRoverEquipment();
@@ -45,11 +62,26 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
     }
   };
 
+  const handleCancel = async () => {
+    const res = await dispatch({ type: 'rover/cancel-schedule' });
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã hủy lịch.' : res.error.message);
+  };
+
+  const handleRecoverSignal = async () => {
+    const res = await dispatch({ type: 'rover/recover-signal' });
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã khôi phục tín hiệu.' : res.error.message);
+  };
+
+  const handleRecoveryOperator = async () => {
+    const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperator });
+    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã phân công thu hồi.' : res.error.message);
+  };
+
   return (
     <MissionDialog
       title="Thám hiểm Rover Mặt Trăng (3 Sites · BlockThreat)"
       eyebrow="PHA 3 · MAX 3 THIẾT BỊ TỪ LR RACK"
-      art={gameState.rover.status === 'idle' ? HAIL_ROVER.base : HAIL_ROVER.active}
+      art={roverStatus === 'available' ? HAIL_ROVER.base : HAIL_ROVER.active}
       panelType="expedition"
       dockSide="right"
       onClose={onClose}
@@ -58,7 +90,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
         <div className="hail-lunar-map-banner">
           <img src={HAIL_ENV.lunarMap} alt="Lunar Reconnaissance Map" className="hail-lunar-map-img" />
           <div className="hail-lunar-map-overlay">
-            <span className="hail-tag-pill">Mẫu thu thập: {gameState.rover.samplesCollected.length} / 3</span>
+            <span className="hail-tag-pill">Mẫu thu thập: {samples.length} / 3</span>
             <span className="hail-tag-pill">
               Rủi ro bão DONKI hôm nay: {Math.round(weather.roverIncidentProb * 100)}%
             </span>
@@ -67,10 +99,10 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
         <div className="hail-rover-status-card">
           <div>
-            <strong>Trạng thái Rover: {gameState.rover.status.toUpperCase()}</strong>
+            <strong>Trạng thái Rover: {roverStatus.toUpperCase()}</strong>
             <p className="text-xs text-slate-300 mt-0.5">
-              {gameState.rover.expeditionId
-                ? `Đang thám hiểm ${gameState.rover.expeditionId} (còn ${gameState.rover.solsRemaining} Sol)`
+              {activeMission
+                ? `Nhiệm vụ ${activeMission.expeditionId} (còn khoảng ${selectRoverRemainingSols(gameState)} Sol)`
                 : 'Sẵn sàng phóng từ bãi đáp Artemis (-4 kWh, cần 1 phi hành gia Fit & không Starving).'}
             </p>
           </div>
@@ -84,7 +116,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
         <div className="hail-site-tabs">
           {bundle.campaign.expeditions.map((exp) => {
-            const done = gameState.rover.completedExpeditions.includes(exp.id);
+            const done = completed.includes(exp.id);
             return (
               <button
                 key={exp.id}
@@ -106,7 +138,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               <span className="hail-tag-pill">Hiểm họa: {expedition.threat}</span>
             </div>
             <p className="text-xs text-slate-300">
-              Trang bị khắc chế yêu cầu: <strong>{expedition.requiredEquipment.join(', ')}</strong> →{' '}
+              Trang bị khắc chế (OR): <strong>{expedition.mitigationOptions.map((option) => `${option.allOf.join(' + ')}${option.requirements?.minBatteryKWh ? ` + Pin ≥ ${option.requirements.minBatteryKWh} kWh` : ''}`).join(' HOẶC ')}</strong> →{' '}
               {threatBlocked ? (
                 <span className="text-emerald-300 font-semibold inline-flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Đã chặn 100% hiểm họa địa hình
@@ -118,8 +150,13 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               )}
             </p>
             <p className="text-xs text-cyan-200">
-              Thưởng: Mẫu <code>{expedition.rewardSample}</code> + {expedition.rewards.partsKg}P · {expedition.rewards.oxygenKg}kg O₂ · {expedition.rewards.waterL}L Nước
+              Thưởng: Mẫu <code>{expedition.rewardSample}</code> + {expedition.rewards.science} Science · {expedition.rewards.partsKg}P · {expedition.rewards.waterL}L Nước
             </p>
+            {siteData && (
+              <p className="text-[11px] text-slate-400">
+                Điểm tham chiếu: {siteData.representativeLocation.name} ({siteData.representativeLocation.latitudeDeg}°, {siteData.representativeLocation.longitudeDegEast}°E) · Địa hình LOLA · Nhiệt Diviner. Mapping gameplay: {siteData.mappingProvenance}.
+              </p>
+            )}
           </div>
         </div>
 
@@ -148,15 +185,40 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           </div>
         </div>
 
+        {!activeMission && (
+          <label className="text-xs text-slate-200 flex items-center gap-2">
+            Người trực phóng
+            <select value={launchOperator} onChange={(event) => setLaunchOperator(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1">
+              {(Object.keys(gameState.crew) as CrewId[]).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
+            </select>
+          </label>
+        )}
+
         <button
           type="button"
-          disabled={!inComms || gameState.rover.status !== 'idle'}
-          onClick={handleLaunch}
+          disabled={!schedulePermission.allowed}
+          onClick={handleSchedule}
           className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
         >
           <Rocket className="w-4 h-4" />
-          {inComms ? `Phóng Rover tới ${expedition.name} (-4 kWh)` : 'Cần ở Pha 3 (Liên lạc) để phóng Rover'}
+          {inComms ? `Lập lịch Rover tới ${expedition.name} (4 kWh tại End-Sol)` : 'Cần ở Pha 3 (Liên lạc) để lập lịch Rover'}
         </button>
+        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{schedulePermission.message}</p>}
+
+        {activeMission?.status === 'scheduled' && (
+          <button type="button" onClick={handleCancel} className="hail-btn">Hủy lịch Rover</button>
+        )}
+        {activeMission?.status === 'signal-lost' && (
+          <button type="button" onClick={handleRecoverSignal} className="hail-btn hail-btn--accent">Khôi phục tín hiệu</button>
+        )}
+        {(activeMission?.status === 'exploring' || activeMission?.status === 'recovery-pending') && activeMission.expectedReturnSol !== null && gameState.clock.sol >= activeMission.expectedReturnSol && (
+          <div className="flex items-center gap-2">
+            <select value={recoveryOperator} onChange={(event) => setRecoveryOperator(event.target.value as CrewId)} className="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs">
+              {(Object.keys(gameState.crew) as CrewId[]).map((id) => <option key={id} value={id}>{gameState.crew[id].name}</option>)}
+            </select>
+            <button type="button" onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent">Phân công thu hồi</button>
+          </div>
+        )}
       </div>
     </MissionDialog>
   );

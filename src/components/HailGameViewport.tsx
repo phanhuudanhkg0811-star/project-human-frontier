@@ -1,5 +1,5 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { selectCanAdvancePhase, selectMissionProgress, selectWeatherOutlook } from '../domain/selectors.ts';
+import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import { useUiStore } from '../store/uiStore.ts';
 import type { ActiveModalType, CrewId, EquipmentId } from '../types/index.ts';
@@ -48,6 +48,7 @@ const CREW_SLOTS: ReadonlyArray<{
 
 export function HailGameViewport() {
   const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError } = useGameStore();
+  const roverSamples = selectRoverSamples(gameState);
   const { activeModal, openModal, closeModal } = useUiStore();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openModal('menu')];
 
@@ -268,7 +269,7 @@ export function HailGameViewport() {
                   );
                 })}
                 {[0, 1, 2].map((slotIdx) => {
-                  const sampleName = gameState.rover.samplesCollected[slotIdx];
+                  const sampleName = roverSamples[slotIdx];
                   return (
                     <button
                       key={`sample-${slotIdx}`}

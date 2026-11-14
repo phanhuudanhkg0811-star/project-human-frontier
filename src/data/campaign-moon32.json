@@ -29,38 +29,41 @@
     {
       "id": "lunar-crater",
       "name": "Lunar Crater Core Survey",
-      "windowStartSol": 4,
-      "windowEndSol": 6,
+      "windowStartSol": 1,
+      "windowEndSol": 4,
       "durationSols": 3,
       "launchPowerKWh": 4,
       "threat": "steep-terrain-crater",
-      "requiredEquipment": ["core_drill"],
+      "mitigationOptions": [{ "allOf": ["core_drill"] }],
       "rewardSample": "crater_core_sample",
-      "rewards": { "partsKg": 6, "batteryKWh": 0, "oxygenKg": 0, "waterL": 0 }
+      "rewards": { "partsKg": 0, "batteryKWh": 0, "oxygenKg": 0, "waterL": 0, "science": 20 }
     },
     {
       "id": "regolith-field",
       "name": "Regolith Field Dust Traverse",
-      "windowStartSol": 10,
-      "windowEndSol": 12,
+      "windowStartSol": 5,
+      "windowEndSol": 8,
       "durationSols": 3,
       "launchPowerKWh": 4,
       "threat": "electrostatic-dust",
-      "requiredEquipment": ["dust_shield", "radio_repeater"],
+      "mitigationOptions": [{ "allOf": ["dust_shield"] }, { "allOf": ["radio_repeater"] }],
       "rewardSample": "regolith_mineral_sample",
-      "rewards": { "partsKg": 8, "oxygenKg": 8, "batteryKWh": 0, "waterL": 0 }
+      "rewards": { "partsKg": 4, "oxygenKg": 0, "batteryKWh": 0, "waterL": 0, "science": 0 }
     },
     {
       "id": "polar-psr",
       "name": "Permanently Shadowed Region (Ice Hunt)",
-      "windowStartSol": 17,
-      "windowEndSol": 20,
+      "windowStartSol": 9,
+      "windowEndSol": 12,
       "durationSols": 3,
       "launchPowerKWh": 4,
       "threat": "cryo-extreme",
-      "requiredEquipment": ["cryo_thermal_rig", "solar_lantern"],
+      "mitigationOptions": [
+        { "allOf": ["cryo_thermal_rig"] },
+        { "allOf": ["solar_lantern"], "requirements": { "minBatteryKWh": 20 } }
+      ],
       "rewardSample": "polar_ice_core_sample",
-      "rewards": { "waterL": 30, "partsKg": 4, "oxygenKg": 10, "batteryKWh": 0 }
+      "rewards": { "waterL": 20, "partsKg": 0, "oxygenKg": 0, "batteryKWh": 0, "science": 0 }
     }
   ]
 }

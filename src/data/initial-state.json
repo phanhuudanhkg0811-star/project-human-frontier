@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "contentVersion": "1.1.0-moon32",
   "modelVersion": "1.1.0-ts-donki",
   "catalogVersion": "1.1.0-moon32",
@@ -13,6 +13,7 @@
     "seed": 205001,
     "donkiProfileId": "oct-2024-x9storm",
     "targetSol": 32,
+    "sciencePoints": 0,
     "endReason": null
   },
   "clock": {
@@ -106,16 +107,11 @@
     "status": "draft",
     "wrsEnabled": true,
     "powerPriority": ["eclss", "wrs", "fabricator", "rover"],
-    "mreTargets": [],
-    "medkitTargets": []
+    "mreTargets": []
   },
   "rover": {
-    "status": "idle",
-    "expeditionId": null,
-    "solsRemaining": 0,
-    "equippedItems": [],
-    "samplesCollected": [],
-    "completedExpeditions": []
+    "activeMission": null,
+    "missionHistory": []
   },
   "events": {
     "activeEventId": "sol1-arrival-check",

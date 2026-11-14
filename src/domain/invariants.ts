@@ -19,7 +19,7 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     recoverable: false,
   });
 
-  if (state.schemaVersion !== 1) return makeErr('Invalid schemaVersion');
+  if (state.schemaVersion !== 2) return makeErr('Invalid schemaVersion');
   if (!Number.isInteger(state.revision) || state.revision < 0) return makeErr('revision must be a non-negative integer');
   if (!Number.isInteger(state.clock.resolutionIndex) || state.clock.resolutionIndex < 0) {
     return makeErr('resolutionIndex must be a non-negative integer');
@@ -90,23 +90,53 @@ export function validateStateInvariants(state: GameState, bundle: ContentBundle)
     return makeErr(`dailyPlan.sol (${state.dailyPlan.sol}) !== clock.sol (${state.clock.sol})`);
   }
 
-  // Unique MRE / Medkit target lists
+  // Unique MRE target list
   if (new Set(state.dailyPlan.mreTargets).size !== state.dailyPlan.mreTargets.length) {
     return makeErr('Duplicate crew IDs in dailyPlan.mreTargets');
   }
-  if (new Set(state.dailyPlan.medkitTargets).size !== state.dailyPlan.medkitTargets.length) {
-    return makeErr('Duplicate crew IDs in dailyPlan.medkitTargets');
-  }
-
-  // Equipment durability bounds & reserved rover consistency
+  // Equipment durability bounds & exact Rover reservation consistency
+  const activeItems = new Set(state.rover.activeMission?.equippedItems ?? []);
   for (const eqId of EQUIPMENT_IDS) {
     const eq = state.equipment[eqId];
     if (!Number.isFinite(eq.durability) || eq.durability < 0 || eq.durability > 100) {
       return makeErr(`Equipment "${eqId}" durability out of bounds: ${eq.durability}`);
     }
-    if (eq.reservedForRover && state.rover.status === 'idle') {
-      return makeErr(`Equipment "${eqId}" reservedForRover while rover is idle`);
+    if (eq.reservedForRover !== activeItems.has(eqId)) {
+      return makeErr(`Equipment "${eqId}" reservation does not match activeMission`);
     }
+  }
+
+  const active = state.rover.activeMission;
+  if (active) {
+    if (active.equippedItems.length > 3 || new Set(active.equippedItems).size !== active.equippedItems.length) {
+      return makeErr('activeMission equipment must be unique and limited to 3 items');
+    }
+    if (active.status === 'scheduled' && active.launchedSol !== null) {
+      return makeErr('Scheduled mission cannot have launchedSol');
+    }
+    if (active.status !== 'scheduled' && active.launchedSol === null) {
+      return makeErr(`Mission status "${active.status}" requires launchedSol`);
+    }
+    if (active.status === 'signal-lost' && active.resumeStatus === null) {
+      return makeErr('signal-lost mission requires resumeStatus');
+    }
+  }
+
+  const resultIds = state.rover.missionHistory.map((m) => m.expeditionId);
+  if (new Set(resultIds).size !== resultIds.length) {
+    return makeErr('Each expedition may be settled only once');
+  }
+  if (
+    active &&
+    resultIds.includes(active.expeditionId) &&
+    active.status !== 'completed' &&
+    active.status !== 'failed'
+  ) {
+    return makeErr('Non-terminal active expedition already exists in missionHistory');
+  }
+  const scienceGranted = state.rover.missionHistory.reduce((sum, result) => sum + result.scienceGranted, 0);
+  if (state.campaign.sciencePoints !== scienceGranted) {
+    return makeErr('campaign.sciencePoints must equal settled mission science grants');
   }
 
   // Unique radio message IDs & sample IDs

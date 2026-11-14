@@ -113,16 +113,67 @@ export interface DailyPlan {
   readonly wrsEnabled: boolean;
   readonly powerPriority: readonly PowerConsumerId[];
   readonly mreTargets: readonly CrewId[];
-  readonly medkitTargets: readonly CrewId[];
+}
+
+export type RoverMissionStatus =
+  | 'scheduled'
+  | 'outbound'
+  | 'exploring'
+  | 'signal-lost'
+  | 'recovery-pending'
+  | 'completed'
+  | 'failed';
+export type RoverTravelStatus = 'outbound' | 'exploring';
+export type RoverTimelineStage =
+  | 'available'
+  | 'scheduled'
+  | 'launching'
+  | 'outbound'
+  | 'exploring'
+  | 'signal-lost'
+  | 'returning'
+  | 'completed'
+  | 'failed';
+
+export interface RoverIncident {
+  readonly kind: 'donki-storm' | 'unmitigated-threat' | 'power-delay' | 'signal-timeout' | 'recovery-timeout';
+  readonly occurredSol: number;
+  readonly summary: string;
+}
+
+export interface RoverMissionRecord {
+  readonly expeditionId: ExpeditionId;
+  readonly status: RoverMissionStatus;
+  readonly scheduledSol: number;
+  readonly launchedSol: number | null;
+  readonly statusEnteredSol: number;
+  readonly expectedReturnSol: number | null;
+  readonly launchOperatorCrewId: CrewId;
+  readonly recoveryOperatorCrewId: CrewId | null;
+  readonly equippedItems: readonly EquipmentId[];
+  readonly travelTicksCompleted: number;
+  readonly signalLostSols: number;
+  readonly resumeStatus: RoverTravelStatus | null;
+  readonly recoveryDelaySols: number;
+  readonly incidents: readonly RoverIncident[];
+}
+
+export interface RoverMissionResult {
+  readonly expeditionId: ExpeditionId;
+  readonly outcome: 'completed' | 'failed';
+  readonly launchedSol: number | null;
+  readonly settledSol: number;
+  readonly rewardSampleGranted: string | null;
+  readonly scienceGranted: number;
+  readonly launchOperatorCrewId: CrewId | null;
+  readonly recoveryOperatorCrewId: CrewId | null;
+  readonly equippedItems: readonly EquipmentId[];
+  readonly incidents: readonly RoverIncident[];
 }
 
 export interface RoverState {
-  readonly status: 'idle' | 'outbound' | 'exploring' | 'returning' | 'broken';
-  readonly expeditionId: ExpeditionId | null;
-  readonly solsRemaining: number;
-  readonly equippedItems: readonly EquipmentId[];
-  readonly samplesCollected: readonly string[];
-  readonly completedExpeditions: readonly ExpeditionId[];
+  readonly activeMission: RoverMissionRecord | null;
+  readonly missionHistory: readonly RoverMissionResult[];
 }
 
 export interface EventState {
@@ -218,6 +269,7 @@ export interface CampaignState {
   readonly donkiProfileId: string;
   readonly spaceWeatherOverride?: 'quiet';
   readonly targetSol: number;
+  readonly sciencePoints: number;
   readonly endReason: string | null;
 }
 
@@ -228,7 +280,7 @@ export interface MissionClock {
 }
 
 export interface GameState {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
   readonly contentVersion: string;
   readonly modelVersion: string;
   readonly catalogVersion: string;
@@ -445,13 +497,17 @@ export interface ExpeditionConfig {
   readonly durationSols: number;
   readonly launchPowerKWh: number;
   readonly threat: string;
-  readonly requiredEquipment: readonly EquipmentId[];
+  readonly mitigationOptions: readonly {
+    readonly allOf: readonly EquipmentId[];
+    readonly requirements?: { readonly minBatteryKWh?: number };
+  }[];
   readonly rewardSample: string;
   readonly rewards: {
     readonly partsKg: number;
     readonly batteryKWh: number;
     readonly oxygenKg: number;
     readonly waterL: number;
+    readonly science: number;
   };
 }
 
@@ -553,6 +609,51 @@ export interface ScienceBrief {
   readonly provenance: ProvenanceTag;
 }
 
+export interface LunarSiteConfig {
+  readonly expeditionId: ExpeditionId;
+  readonly representativeLocation: {
+    readonly name: string;
+    readonly latitudeDeg: number;
+    readonly longitudeDegEast: number;
+    readonly bbox: readonly [number, number, number, number];
+    readonly provenance: ProvenanceTag;
+    readonly source: string;
+  };
+  readonly mappingProvenance: ProvenanceTag;
+  readonly terrain: {
+    readonly productId: string;
+    readonly datasetReleaseId: string;
+    readonly layerId: string;
+    readonly unit: string;
+    readonly provenance: ProvenanceTag;
+    readonly source: string;
+  };
+  readonly thermal: {
+    readonly productId: string;
+    readonly layerId: string;
+    readonly unit: string;
+    readonly provenance: ProvenanceTag;
+    readonly source: string;
+  };
+  readonly gameplayNote: string;
+}
+
+export interface CrewPhysiologyDataset {
+  readonly datasetId: string;
+  readonly instrumentId: string;
+  readonly trajectory: string;
+  readonly queryUrl: string;
+  readonly sampledPeriod: { readonly startInclusive: string; readonly endExclusive: string };
+  readonly recordCount: number;
+  readonly absorbedDoseRateUGyPerHour: { readonly mean: number; readonly min: number; readonly max: number };
+  readonly convertedMeanMgyPerDay: number;
+  readonly conversionFormula: string;
+  readonly sha256: string;
+  readonly provenance: ProvenanceTag;
+  readonly caveat: string;
+  readonly source: string;
+}
+
 export interface ContentBundle {
   readonly balance: BalanceConfig;
   readonly crewCatalog: readonly CrewProfileConfig[];
@@ -562,6 +663,8 @@ export interface ContentBundle {
   readonly donki: DonkiCatalog;
   readonly events: readonly EventNode[];
   readonly briefs: readonly ScienceBrief[];
+  readonly lunarSites: readonly LunarSiteConfig[];
+  readonly crewPhysiology: CrewPhysiologyDataset;
 }
 
 export type GameCommand =
@@ -587,11 +690,19 @@ export type GameCommand =
   | { readonly type: 'comms/send-radio'; readonly id: string; readonly message: string; readonly nowMs?: number }
   | { readonly type: 'comms/tick-radio'; readonly nowMs: number }
   | { readonly type: 'comms/order-cargo'; readonly slots: Readonly<Partial<Record<CargoPackId, number>>> }
-  | { readonly type: 'rover/launch'; readonly expeditionId: ExpeditionId; readonly equipmentIds: readonly EquipmentId[] }
+  | {
+      readonly type: 'rover/schedule';
+      readonly expeditionId: ExpeditionId;
+      readonly equipmentIds: readonly EquipmentId[];
+      readonly launchOperatorCrewId: CrewId;
+    }
+  | { readonly type: 'rover/cancel-schedule' }
+  | { readonly type: 'rover/recover-signal' }
+  | { readonly type: 'rover/set-recovery-operator'; readonly crewId: CrewId }
+  | { readonly type: 'crew/use-medkit'; readonly targetCrewId: CrewId; readonly administeredByCrewId?: CrewId }
   | { readonly type: 'rationing/set-wrs'; readonly enabled: boolean }
   | { readonly type: 'rationing/set-power-priority'; readonly order: readonly PowerConsumerId[] }
   | { readonly type: 'rationing/toggle-mre'; readonly crewId: CrewId; readonly enabled?: boolean }
-  | { readonly type: 'rationing/toggle-medkit'; readonly crewId: CrewId; readonly enabled?: boolean }
   | { readonly type: 'sol/end' }
   | { readonly type: 'debrief/dismiss' };
 
@@ -619,7 +730,11 @@ export interface DomainEffect {
     | 'crew-assigned'
     | 'fabricator-queued'
     | 'cargo-ordered'
-    | 'rover-launched'
+    | 'rover-scheduled'
+    | 'rover-cancelled'
+    | 'rover-signal-recovered'
+    | 'rover-recovery-assigned'
+    | 'medkit-used'
     | 'sol-resolved'
     | 'debrief-dismissed'
     | 'game-started';
@@ -642,7 +757,7 @@ export interface SimulationRuntimeState {
 }
 
 export interface SaveEnvelope {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
   readonly savedAt: string;
   readonly appVersion: string;
   readonly contentVersion: string;

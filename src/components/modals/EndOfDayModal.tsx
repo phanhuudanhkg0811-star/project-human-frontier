@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowDownUp, BatteryCharging, Droplets, HeartPulse, Power, Utensils } from 'lucide-react';
+import { ArrowDownUp, BatteryCharging, Droplets, Power, Utensils } from 'lucide-react';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
@@ -70,7 +70,7 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
           <div className="flex items-center justify-between text-xs mb-2">
             <strong className="text-amber-300 flex items-center gap-1.5">
               <Utensils className="w-3.5 h-3.5" />
-              Phát MRE ({gameState.resources.mrePacks} gói) & Medkit ({gameState.resources.medkits} liều)
+              Phát MRE ({gameState.resources.mrePacks} gói)
             </strong>
             <span className="text-slate-400">Tự động -25% Satiety/Sol · 1 MRE hồi +75%</span>
           </div>
@@ -79,7 +79,6 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
             {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId: CrewId) => {
               const c = gameState.crew[crewId];
               const giveMre = gameState.dailyPlan.mreTargets.includes(crewId);
-              const giveMed = gameState.dailyPlan.medkitTargets.includes(crewId);
               return (
                 <div key={crewId} className="hail-ration-crew-pill flex flex-col gap-1.5 p-2">
                   <div className="flex items-center justify-between text-xs">
@@ -94,14 +93,6 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
                       className={`hail-btn flex-1 ${giveMre ? 'hail-btn--accent' : ''}`}
                     >
                       {giveMre ? '✓ Phát MRE' : '+ MRE'}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!inRationing || c.condition === 'evacuated'}
-                      onClick={() => dispatch({ type: 'rationing/toggle-medkit', crewId })}
-                      className={`hail-btn flex-1 flex items-center justify-center gap-1 ${giveMed ? 'hail-btn--warn' : ''}`}
-                    >
-                      <HeartPulse className="w-3 h-3" /> {giveMed ? '✓ Med' : 'Med'}
                     </button>
                   </div>
                 </div>
