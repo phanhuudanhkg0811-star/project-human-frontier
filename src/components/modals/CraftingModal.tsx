@@ -110,53 +110,59 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
             const canRecycle = inEngineering && !isBusy && isEq && Boolean(eq?.owned && !eq.reservedForRover);
 
             return (
-              <div key={recipe.id} className="p-2.5 rounded-lg bg-slate-900/70 border border-slate-800 flex items-center gap-3">
-                <img src={ITEM_ICON[recipe.id] ?? HAIL_INVENTORY.spareParts} alt="" className="w-10 h-10 object-contain rounded bg-slate-950 p-1 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <strong className="text-sm text-white">{recipe.name}</strong>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
-                      Xưởng Lv{recipe.requiredFabricatorLevel}
-                    </span>
-                    {eq?.owned && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-                        {eq.state.toUpperCase()} ({eq.durability}%) · Lv{eq.level}
+              <div key={recipe.id} className="p-3 rounded-lg bg-slate-900/75 border border-slate-800 flex flex-col gap-2.5">
+                <div className="flex items-start gap-3">
+                  <img
+                    src={ITEM_ICON[recipe.id] ?? HAIL_INVENTORY.spareParts}
+                    alt=""
+                    className="w-12 h-12 object-contain rounded-lg bg-slate-950 border border-slate-700/70 p-1.5 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <strong className="text-sm text-white">{recipe.name}</strong>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                        Xưởng Lv{recipe.requiredFabricatorLevel}
                       </span>
-                    )}
-                    {recipe.id === 'medkit' && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-950/60 border border-sky-500/40 text-sky-300">
-                        Kho: {gameState.resources.medkits} (Lv{gameState.resources.medkitLevel})
-                      </span>
-                    )}
-                    {recipe.id === 'mre_pack' && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300">
-                        Kho: {gameState.resources.mrePacks} gói
-                      </span>
-                    )}
+                      {eq?.owned && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+                          {eq.state.toUpperCase()} ({eq.durability}%) · Lv{eq.level}
+                        </span>
+                      )}
+                      {recipe.id === 'medkit' && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-sky-950/60 border border-sky-500/40 text-sky-300">
+                          Kho: {gameState.resources.medkits} (Lv{gameState.resources.medkitLevel})
+                        </span>
+                      )}
+                      {recipe.id === 'mre_pack' && (
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300">
+                          Kho: {gameState.resources.mrePacks} gói
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-300/90 mt-1 leading-relaxed">{recipe.effectSummary}</p>
+                    <p className="text-[11px] font-mono text-slate-400 mt-1">
+                      Chế tạo: {recipe.craftCost.partsKg}P + {recipe.craftCost.batteryKWh}kWh
+                      {recipe.craftCost.waterL > 0 ? ` + ${recipe.craftCost.waterL}L` : ''} ({recipe.craftCost.durationSols}d)
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">{recipe.effectSummary}</p>
-                  <p className="text-[11px] font-mono text-slate-500 mt-0.5">
-                    Chế tạo: {recipe.craftCost.partsKg}P + {recipe.craftCost.batteryKWh}kWh
-                    {recipe.craftCost.waterL > 0 ? ` + ${recipe.craftCost.waterL}L` : ''} ({recipe.craftCost.durationSols}d)
-                  </p>
                 </div>
 
-                <div className="flex flex-wrap gap-1 justify-end shrink-0">
-                  <button type="button" disabled={!canCraft} onClick={() => runAction('craft', recipe.id)} className="hail-btn hail-btn--accent flex items-center gap-1 text-[11px]">
-                    <Hammer className="w-3 h-3" /> In
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/90">
+                  <button type="button" disabled={!canCraft} onClick={() => runAction('craft', recipe.id)} className="hail-btn hail-btn--accent w-full text-[11px]">
+                    <Hammer className="w-3.5 h-3.5" /> In
                   </button>
                   {recipe.upgradeCost && (
-                    <button type="button" disabled={!canUpgrade} onClick={() => runAction('upgrade', recipe.id)} className="hail-btn flex items-center gap-1 text-[11px]">
-                      <Sparkles className="w-3 h-3" /> Nâng
+                    <button type="button" disabled={!canUpgrade} onClick={() => runAction('upgrade', recipe.id)} className="hail-btn w-full text-[11px]">
+                      <Sparkles className="w-3.5 h-3.5" /> Nâng
                     </button>
                   )}
                   {isEq && eq?.owned && (
                     <>
-                      <button type="button" disabled={!canRepair} onClick={() => runAction('repair', recipe.id)} className="hail-btn hail-btn--warn flex items-center gap-1 text-[11px]">
-                        <Wrench className="w-3 h-3" /> Sửa
+                      <button type="button" disabled={!canRepair} onClick={() => runAction('repair', recipe.id)} className="hail-btn hail-btn--warn w-full text-[11px]">
+                        <Wrench className="w-3.5 h-3.5" /> Sửa
                       </button>
-                      <button type="button" disabled={!canRecycle} onClick={() => runAction('recycle', recipe.id)} className="hail-btn flex items-center gap-1 text-[11px]">
-                        <RefreshCw className="w-3 h-3" /> Tái chế
+                      <button type="button" disabled={!canRecycle} onClick={() => runAction('recycle', recipe.id)} className="hail-btn w-full text-[11px]">
+                        <RefreshCw className="w-3.5 h-3.5" /> Tái chế
                       </button>
                     </>
                   )}

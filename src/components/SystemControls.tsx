@@ -98,24 +98,26 @@ export function SystemControls() {
 
           return (
             <div key={meta.id} className={`hail-sys-card ${sys.integrity < 0.85 ? 'is-damaged' : ''}`}>
-              <img src={sprite.sprite} alt="" className="hail-sys-thumb" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <strong className="text-sm text-white truncate">{meta.name}</strong>
-                  <span className="hail-level-pill">Lv{sys.level}/3</span>
-                  <span className="text-[11px] font-mono text-slate-300">
-                    {Math.round(sys.integrity * 100)}%
-                  </span>
+              <div className="flex items-start gap-3">
+                <img src={sprite.sprite} alt="" className="hail-sys-thumb" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <strong className="text-sm text-white truncate">{meta.name}</strong>
+                    <span className="hail-level-pill">Lv{sys.level}/3</span>
+                    <span className="text-[11px] font-mono text-slate-300">
+                      {Math.round(sys.integrity * 100)}%
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">{meta.role}</p>
                 </div>
-                <p className="text-xs text-slate-400">{meta.role}</p>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/60">
                 <button
                   type="button"
                   disabled={!canEdit || !repairPerm.allowed || workerBusy}
                   title={repairPerm.allowed ? 'Sửa hệ thống (-2 Parts)' : repairPerm.message}
                   onClick={() => handleAssignTask('repair-system', meta.id)}
-                  className="hail-btn hail-btn--warn"
+                  className="hail-btn hail-btn--warn w-full"
                 >
                   <img src={HAIL_SVG.actRepair} alt="" className="w-3.5 h-3.5" />
                   Sửa (2P)
@@ -124,7 +126,7 @@ export function SystemControls() {
                   type="button"
                   disabled={!canEdit || !targetLvl || gameState.resources.partsKg < upCost || workerBusy}
                   onClick={() => handleAssignTask('upgrade-system', meta.id)}
-                  className="hail-btn hail-btn--accent"
+                  className="hail-btn hail-btn--accent w-full"
                 >
                   <img src={HAIL_SVG.actUpgrade} alt="" className="w-3.5 h-3.5" />
                   {targetLvl ? `Nâng (${upCost}P)` : 'Tối đa'}
