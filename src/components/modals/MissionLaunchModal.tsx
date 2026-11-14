@@ -99,7 +99,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
           </div>
 
           <button type="button" disabled={!Number.isSafeInteger(seed)} onClick={handleStartNew} className="hail-btn hail-btn--accent py-2 font-bold flex items-center justify-center gap-2">
-            <Rocket className="w-4 h-4" />
+            <Rocket className="w-4 h-4" aria-hidden="true" />
             {t('launch.start')}
           </button>
         </section>

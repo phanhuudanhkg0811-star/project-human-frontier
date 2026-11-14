@@ -23,7 +23,7 @@ const ITEM_ICON: Record<string, string> = {
 };
 
 export function CraftingModal({ onClose }: CraftingModalProps) {
-  const { t, pickText } = useI18n();
+  const { t, pickText, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const [feedback, setFeedback] = useState<string | null>(null);
   const inEngineering = gameState.clock.phase === 'engineering';
@@ -81,7 +81,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
 
         {feedback && (
           <div className="text-xs px-3 py-2 rounded bg-slate-900 border border-cyan-500/40 text-cyan-200">
-            {feedback}
+            {localize(feedback, bundle)}
           </div>
         )}
 

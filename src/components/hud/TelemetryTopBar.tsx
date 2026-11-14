@@ -58,7 +58,7 @@ export function TelemetryTopBar() {
       <dl className="hail-resource-strip">
         {metrics.map((m) => (
           <div key={m.key} className={`hail-res-pill ${m.warn ? 'is-warn' : ''}`} title={`${m.label}: ${m.value}/${m.cap} ${m.unit}`}>
-            <img src={m.icon} alt="" className="hail-res-icon" />
+            <img src={m.icon} alt="" aria-hidden="true" className="hail-res-icon" />
             <div className="hail-res-data">
               <dt>{m.label}</dt>
               <dd>

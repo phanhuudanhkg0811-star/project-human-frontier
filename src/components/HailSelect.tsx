@@ -70,6 +70,11 @@ export function HailSelect<T extends string = string>({
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open || activeIndex < 0) return;
+    document.getElementById(`${listboxId}-opt-${activeIndex}`)?.scrollIntoView({ block: 'nearest' });
+  }, [open, activeIndex, listboxId]);
+
   const computePlacement = () => {
     const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return false;
@@ -79,13 +84,17 @@ export function HailSelect<T extends string = string>({
     return spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow;
   };
 
+  const syncSelectedIndex = () => {
+    const currentIdx = options.findIndex((opt) => opt.value === value && !opt.disabled);
+    const firstEnabled = options.findIndex((opt) => !opt.disabled);
+    setActiveIndex(currentIdx >= 0 ? currentIdx : Math.max(0, firstEnabled));
+  };
+
   const toggleOpen = () => {
     if (disabled) return;
     if (!open) {
       setOpenUpward(computePlacement());
-      const currentIdx = options.findIndex((opt) => opt.value === value && !opt.disabled);
-      const firstEnabled = options.findIndex((opt) => !opt.disabled);
-      setActiveIndex(currentIdx >= 0 ? currentIdx : Math.max(0, firstEnabled));
+      syncSelectedIndex();
     }
     setOpen((prev) => !prev);
   };
@@ -116,6 +125,7 @@ export function HailSelect<T extends string = string>({
         event.preventDefault();
         if (!open) {
           setOpenUpward(computePlacement());
+          syncSelectedIndex();
           setOpen(true);
         } else {
           moveActive(1);
@@ -125,6 +135,7 @@ export function HailSelect<T extends string = string>({
         event.preventDefault();
         if (!open) {
           setOpenUpward(computePlacement());
+          syncSelectedIndex();
           setOpen(true);
         } else {
           moveActive(-1);
@@ -140,28 +151,41 @@ export function HailSelect<T extends string = string>({
           }
         }
         break;
-      case 'Home':
-        if (open) {
-          event.preventDefault();
-          const first = options.findIndex((opt) => !opt.disabled);
-          if (first >= 0) setActiveIndex(first);
+      case 'Home': {
+        event.preventDefault();
+        const first = options.findIndex((opt) => !opt.disabled);
+        if (!open) {
+          setOpenUpward(computePlacement());
+          setOpen(true);
+        }
+        if (first >= 0) setActiveIndex(first);
+        break;
+      }
+      case 'End': {
+        event.preventDefault();
+        if (!open) {
+          setOpenUpward(computePlacement());
+          setOpen(true);
+        }
+        for (let i = options.length - 1; i >= 0; i--) {
+          if (!options[i]?.disabled) {
+            setActiveIndex(i);
+            break;
+          }
         }
         break;
-      case 'End':
+      }
+      case 'Tab':
         if (open) {
-          event.preventDefault();
-          for (let i = options.length - 1; i >= 0; i--) {
-            if (!options[i]?.disabled) {
-              setActiveIndex(i);
-              break;
-            }
-          }
+          setOpen(false);
         }
         break;
       default:
         break;
     }
   };
+
+  const activeDescendantId = open && options[activeIndex] ? `${listboxId}-opt-${activeIndex}` : undefined;
 
   return (
     <div
@@ -182,6 +206,7 @@ export function HailSelect<T extends string = string>({
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls={open ? listboxId : undefined}
+          aria-activedescendant={activeDescendantId}
           aria-labelledby={label ? `${labelId} ${buttonId}` : undefined}
           onClick={toggleOpen}
           onKeyDown={handleTriggerKeyDown}
@@ -214,6 +239,7 @@ export function HailSelect<T extends string = string>({
               return (
                 <li
                   key={opt.value}
+                  id={`${listboxId}-opt-${index}`}
                   role="option"
                   aria-selected={isSelected}
                   aria-disabled={opt.disabled || undefined}

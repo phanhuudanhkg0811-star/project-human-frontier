@@ -153,3 +153,32 @@ test('Phase 1.5 procedural audio contract is a safe no-op without browser Web Au
     mod.disposeSoundEngine();
   });
 });
+
+test('Phase 1.5 localizeDomainText translates engine errors, Sol logs, CAPCOM replies, and event logs in EN mode', () => {
+  const bundle = mod.loadContentBundle();
+  const sampleErr = 'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.';
+  assert.equal(mod.localizeDomainText(sampleErr, 'vi', bundle), sampleErr);
+  assert.equal(
+    mod.localizeDomainText(sampleErr, 'en', bundle),
+    'Marcus must be Fit and idle to directly administer a Medkit.'
+  );
+
+  const solLog = 'Kết thúc Sol 1: Pin 60 kWh, O₂ 66.6 kg, Nước 70 L.';
+  assert.equal(
+    mod.localizeDomainText(solLog, 'en', bundle),
+    'End of Sol 1: Battery 60 kWh, O₂ 66.6 kg, Water 70 L.'
+  );
+
+  const initLog = 'Artemis Lunar Base đi vào vận hành. Chuẩn bị cho chu kỳ 32 Sol và Đêm Trăng sắp tới.';
+  assert.match(mod.localizeDomainText(initLog, 'en', bundle), /^Artemis Lunar Base commissioned/);
+
+  const firstEvent = bundle.events[0];
+  const firstChoice = firstEvent.choices[0];
+  assert.equal(mod.localizeDomainText(firstChoice.log, 'en', bundle), firstChoice.logEn);
+
+  const expiredNote = `Sự kiện "${firstEvent.title}" đã quá hạn ở cuối Sol 3.`;
+  assert.equal(
+    mod.localizeDomainText(expiredNote, 'en', bundle),
+    `Event "${firstEvent.titleEn}" expired at the end of Sol 3.`
+  );
+});

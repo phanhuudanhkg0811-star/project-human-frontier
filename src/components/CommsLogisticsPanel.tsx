@@ -7,7 +7,7 @@ import { useI18n } from '../i18n/useI18n.ts';
 
 export function CommsLogisticsPanel() {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t, pickText } = useI18n();
+  const { t, pickText, localize } = useI18n();
   const [messageInput, setMessageInput] = useState(() => t('comms.defaultMessage', { sol: bundle.campaign.milestones.lunarNight.startSol }));
   const [slots, setSlots] = useState<Partial<Record<CargoPackId, number>>>({
     'water-pack': 2,
@@ -59,14 +59,14 @@ export function CommsLogisticsPanel() {
     <div className="flex flex-col gap-4 text-slate-200">
       {!inComms && (
         <div className="text-xs px-3 py-2 rounded bg-amber-950/60 border border-amber-500/40 text-amber-200 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
           {t('comms.phaseWarning')}
         </div>
       )}
 
       {statusNote && (
         <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
-          {statusNote}
+          {localize(statusNote, bundle)}
         </div>
       )}
 
@@ -74,7 +74,7 @@ export function CommsLogisticsPanel() {
       <section className="p-3 rounded-lg bg-slate-900/70 border border-slate-700/70 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
-            <Radio className="w-4 h-4" />
+            <Radio className="w-4 h-4" aria-hidden="true" />
             {t('comms.radioTitle')}
           </h3>
         </div>
@@ -82,6 +82,7 @@ export function CommsLogisticsPanel() {
           <input
             type="text"
             value={messageInput}
+            aria-label={t('comms.radioTitle')}
             onChange={(e) => setMessageInput(e.target.value)}
             className="flex-1 bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-100"
           />
@@ -91,7 +92,7 @@ export function CommsLogisticsPanel() {
             onClick={handleSendRadio}
             className="hail-btn hail-btn--accent flex items-center gap-1"
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-3.5 h-3.5" aria-hidden="true" />
             {t('comms.transmit')}
           </button>
         </div>
@@ -106,7 +107,7 @@ export function CommsLogisticsPanel() {
                   <strong>[Sol {m.sentSol}]</strong> {m.prompt}
                 </div>
                 <div className="text-emerald-300 mt-1">
-                  {m.status === 'transmitting' ? t('comms.transmitting') : m.reply}
+                  {m.status === 'transmitting' ? t('comms.transmitting') : localize(m.reply ?? '', bundle)}
                 </div>
               </div>
             ))

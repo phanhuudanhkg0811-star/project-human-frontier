@@ -44,9 +44,29 @@ export function MissionDialog({
     const dialog = ref.current;
     const previous = document.activeElement as HTMLElement | null;
     dialog?.showModal();
+
+    const focusTimer = window.requestAnimationFrame(() => {
+      if (!dialog) return;
+      const active = document.activeElement;
+      if (active && dialog.contains(active) && active !== dialog) {
+        return;
+      }
+      const firstFocusable = dialog.querySelector<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (firstFocusable) {
+        firstFocusable.focus();
+      } else {
+        dialog.focus();
+      }
+    });
+
     return () => {
+      window.cancelAnimationFrame(focusTimer);
       dialog?.close();
-      previous?.focus();
+      if (previous?.isConnected) {
+        previous.focus();
+      }
     };
   }, []);
 
@@ -54,6 +74,8 @@ export function MissionDialog({
     return (
       <dialog
         ref={ref}
+        tabIndex={-1}
+        aria-modal="true"
         className={`mission-dialog hail-dialog hail-dialog--tactile mission-dialog--${panelType}`}
         aria-label={title}
         onClick={(e) => {
@@ -74,6 +96,8 @@ export function MissionDialog({
   return (
     <dialog
       ref={ref}
+      tabIndex={-1}
+      aria-modal="true"
       className={`mission-dialog hail-dialog hail-dialog--dock-${dockSide} mission-dialog--${panelType}`}
       aria-labelledby="mission-dialog-title"
       onCancel={e => {
@@ -84,7 +108,7 @@ export function MissionDialog({
       <div className="mission-dialog-frame hail-dialog-frame">
         <header className="mission-dialog-header hail-dialog-header">
           {art && (
-            <div className="mission-dialog-art-wrap hail-dialog-art-wrap">
+            <div className="mission-dialog-art-wrap hail-dialog-art-wrap" aria-hidden="true">
               <img
                 src={art}
                 alt=""
@@ -107,7 +131,8 @@ export function MissionDialog({
           >
             <img
               src={HAIL_SVG.navClose}
-              alt="✕"
+              alt=""
+              aria-hidden="true"
               className="w-5 h-5 object-contain pointer-events-none"
             />
           </button>

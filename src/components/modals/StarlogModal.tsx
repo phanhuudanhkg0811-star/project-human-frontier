@@ -90,7 +90,7 @@ export function StarlogModal({
   onOpenJournal?: () => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { locale, t, pickText } = useI18n();
+  const { locale, t, pickText, localize } = useI18n();
   const [pressedKey, setPressedKey] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [choiceError, setChoiceError] = useState<string | null>(null);
@@ -250,7 +250,7 @@ export function StarlogModal({
             )}
             {choiceError && (
               <p role="alert" className="hail-event-error">
-                {choiceError}
+                {localize(choiceError, bundle)}
               </p>
             )}
 
@@ -274,7 +274,7 @@ export function StarlogModal({
                 <li className="is-active-line">
                   <span className="hail-term-prompt">&gt;</span>
                   <span>
-                    {pickText('KẾT QUẢ:', 'RESULT:')} {feedback}
+                    {pickText('KẾT QUẢ:', 'RESULT:')} {localize(feedback, bundle)}
                   </span>
                 </li>
               )}

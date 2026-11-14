@@ -1,5 +1,7 @@
 import { useUiStore } from '../store/uiStore.ts';
+import type { ContentBundle } from '../types/index.ts';
 import { dictionaries } from './dictionaries.ts';
+import { localizeDomainText } from './domainText.ts';
 import type { Locale, TranslationVars } from './types.ts';
 
 export function translate(locale: Locale, key: string, vars?: TranslationVars): string {
@@ -20,6 +22,8 @@ export function pickText(vi: string, en: string | undefined, locale: Locale): st
   return vi;
 }
 
+export { localizeDomainText };
+
 export function useI18n() {
   const locale = useUiStore((s) => s.locale);
   const setLocale = useUiStore((s) => s.setLocale);
@@ -29,5 +33,6 @@ export function useI18n() {
     setLocale,
     t: (key: string, vars?: TranslationVars) => translate(locale, key, vars),
     pickText: (vi: string, en?: string) => pickText(vi, en, locale),
+    localize: (text: string, bundle?: ContentBundle) => localizeDomainText(text, locale, bundle),
   };
 }

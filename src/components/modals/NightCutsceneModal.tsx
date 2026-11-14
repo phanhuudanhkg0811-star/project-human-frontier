@@ -28,7 +28,7 @@ function DebriefDialogBody({
   onReset: () => void;
   onReplay: () => void;
 }) {
-  const { t, pickText } = useI18n();
+  const { t, pickText, localize } = useI18n();
   const uiReducedMotion = useUiStore((state) => state.reducedMotion);
   const fullText = pickText(
     debriefView.scienceBrief?.content ?? '',
@@ -47,17 +47,32 @@ function DebriefDialogBody({
     if (el && !el.open) {
       el.showModal();
     }
-    if (prefersReduced) return;
-    const start = performance.now();
-    const timer = window.setInterval(() => {
-      const count = Math.min(fullText.length, Math.floor((performance.now() - start) / 14));
-      setLength(count);
-      if (count >= fullText.length) clearInterval(timer);
-    }, 30);
+    const focusTimer = window.requestAnimationFrame(() => {
+      if (!el) return;
+      const active = document.activeElement;
+      if (active && el.contains(active) && active !== el) return;
+      const firstFocusable = el.querySelector<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (firstFocusable) firstFocusable.focus();
+      else el.focus();
+    });
+
+    let timer: number | undefined;
+    if (!prefersReduced) {
+      const start = performance.now();
+      timer = window.setInterval(() => {
+        const count = Math.min(fullText.length, Math.floor((performance.now() - start) / 14));
+        setLength(count);
+        if (count >= fullText.length) clearInterval(timer);
+      }, 30);
+    }
+
     return () => {
-      clearInterval(timer);
+      window.cancelAnimationFrame(focusTimer);
+      if (timer !== undefined) clearInterval(timer);
       if (el?.open) el.close();
-      previous?.focus();
+      if (previous?.isConnected) previous.focus();
     };
   }, [fullText, prefersReduced]);
 
@@ -67,6 +82,8 @@ function DebriefDialogBody({
   return (
     <dialog
       ref={dialog}
+      tabIndex={-1}
+      aria-modal="true"
       className="night-cutscene hail-night-cutscene"
       aria-labelledby="night-title"
       data-locale={locale}
@@ -82,7 +99,7 @@ function DebriefDialogBody({
 
       <div className="night-content">
         <p className="mission-kicker flex items-center gap-2">
-          <img src={HAIL_SVG.badgeNasaStem} alt="" className="w-4 h-4" />
+          <img src={HAIL_SVG.badgeNasaStem} alt="" aria-hidden="true" className="w-4 h-4" />
           <span>{t('night.kicker', { sol: paddedSol })}</span>
         </p>
 
@@ -96,7 +113,7 @@ function DebriefDialogBody({
         </h2>
 
         {gameState.campaign.endReason && (
-          <p className="text-sm text-amber-300 font-semibold mt-1">{gameState.campaign.endReason}</p>
+          <p className="text-sm text-amber-300 font-semibold mt-1">{localize(gameState.campaign.endReason, bundle)}</p>
         )}
         {isTerminal ? (
           <CampaignReportCard state={gameState} bundle={bundle} />
@@ -132,7 +149,7 @@ function DebriefDialogBody({
           </div>
           {summary.highlights.slice(0, 3).map((h, i) => (
             <div key={i} className="text-amber-200 mt-1">
-              • {h}
+              • {localize(h, bundle)}
             </div>
           ))}
         </div>

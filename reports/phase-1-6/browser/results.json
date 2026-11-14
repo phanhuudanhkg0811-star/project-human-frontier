@@ -1,0 +1,114 @@
+{
+  "phase": "1.6",
+  "method": "Option B 5-flow E2E via live Vite + Chrome CDP (Desktop 1440x900, Laptop 1280x720, Mobile 390x844, VI & EN, Corrupt Save Recovery, Keyboard a11y).",
+  "contentHash": "aeac3dc74bd5fce55b130a8b035f4ab2d4a1f4d5f3c957bc76347c0061ba5e90",
+  "checks": [
+    "Desktop 1440px VI: bottom action band stays on 1 horizontal row without wrapping",
+    "Laptop 1280px VI: bottom action band stays on 1 horizontal row without wrapping",
+    "Laptop 1280px EN: bottom action band stays on 1 horizontal row without wrapping",
+    "Flow 1 (EN): HUD and bottom bar phase hint localize to English cleanly",
+    "Flow 5 (A11y): About/Credits dialog opens, receives focus, and sets aria-modal",
+    "Flow 5 (A11y): Escape closes About dialog and restores focus to Credits trigger",
+    "Flow 5 (A11y): HailSelect exposes aria-activedescendant during ArrowDown navigation",
+    "Flow 5 (A11y): HailSelect commits option on Enter and collapses listbox",
+    "Flow 4 (Recovery): Corrupt save triggers fail-closed banner and preserves raw bytes",
+    "Flow 4 (Recovery): Reset from recovery banner clears alert and boots clean Sol 1 state",
+    "Flow 1: Clean Sol 1 start with seed 205099",
+    "Flow 2: Sol 12 training debrief renders accurately",
+    "Flow 3: Lunar Night Sol 15 reload preserves exact stateHash",
+    "Flow 2 (A): Terminal report renders victory",
+    "Flow 5 (Mobile 390x844): Terminal report has zero horizontal overflow & >= 44px CTA touch target",
+    "Flow 5 (A11y): Keyboard Tab keeps focus within terminal dialog",
+    "Flow 3 (A): Exported replay verifies UI final hash",
+    "Flow 1: Clean Sol 1 start with seed 205099",
+    "Flow 2 (water): Terminal report renders defeat",
+    "Flow 3 (water): Exported replay verifies UI final hash",
+    "Flow 5 (Mobile 390x844): Cockpit has zero horizontal overflow & 44px primary button",
+    "No uncaught browser runtime exceptions"
+  ],
+  "errors": [],
+  "screenshots": [
+    "desktop-1280-en-cockpit.png",
+    "corrupt-save-recovery-banner.png",
+    "terminal-A-desktop.png",
+    "terminal-A-mobile-390.png",
+    "terminal-water-desktop.png",
+    "cockpit-mobile-390.png"
+  ],
+  "campaigns": [
+    {
+      "scenario": "A",
+      "steps": 369,
+      "outcome": {
+        "status": "victory",
+        "reasonCode": "moon-victory",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": true,
+            "actual": 32,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 21.2,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": true,
+            "actual": 113.72,
+            "target": 0
+          }
+        ],
+        "rank": "S",
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "0a6fb1cf52cb1357550e47ad784d42f93962dc98cb1bca167f94b04815157e00"
+    },
+    {
+      "scenario": "water",
+      "steps": 68,
+      "outcome": {
+        "status": "defeat",
+        "reasonCode": "water-depleted",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": false,
+            "actual": 9,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 79.4,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": false,
+            "actual": 0,
+            "target": 0
+          }
+        ],
+        "rank": null,
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "7c467080f2582c2f41cc345d71474aae08675813e88f2dfcf50601d6dddd74ec"
+    }
+  ]
+}

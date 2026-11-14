@@ -8,15 +8,15 @@ import { MissionDialog } from './MissionDialog.tsx';
 function StepIcon({ icon }: { icon: (typeof TUTORIAL_STEPS)[number]['icon'] }) {
   switch (icon) {
     case 'briefing':
-      return <Compass className="w-4 h-4 text-cyan-300 shrink-0" />;
+      return <Compass className="w-4 h-4 text-cyan-300 shrink-0" aria-hidden="true" />;
     case 'engineering':
-      return <Cpu className="w-4 h-4 text-amber-300 shrink-0" />;
+      return <Cpu className="w-4 h-4 text-amber-300 shrink-0" aria-hidden="true" />;
     case 'comms':
-      return <Radio className="w-4 h-4 text-emerald-300 shrink-0" />;
+      return <Radio className="w-4 h-4 text-emerald-300 shrink-0" aria-hidden="true" />;
     case 'rationing':
-      return <Utensils className="w-4 h-4 text-sky-300 shrink-0" />;
+      return <Utensils className="w-4 h-4 text-sky-300 shrink-0" aria-hidden="true" />;
     case 'lunar-night':
-      return <Moon className="w-4 h-4 text-indigo-300 shrink-0" />;
+      return <Moon className="w-4 h-4 text-indigo-300 shrink-0" aria-hidden="true" />;
   }
 }
 
