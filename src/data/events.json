@@ -2,111 +2,161 @@
   {
     "id": "sol1-arrival-check",
     "title": "Kiểm tra Khởi động Trạm Artemis (Sol 1)",
+    "titleEn": "Artemis Station Boot & Sensor Check (Sol 1)",
     "category": "ops",
-    "art": "techFault",
+    "art": "tech-fault",
+    "priority": 90,
+    "weight": 100,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-lunar-cycle",
     "when": [{ "sol": 1 }],
     "mandatory": true,
     "prompt": "Ngày đầu tiên tại căn cứ Artemis Nam Cực Mặt Trăng. Chỉ huy Sarah đề nghị hiệu chỉnh cảm biến pin mặt trời & máy lọc nước trước Đêm Trăng Sol 15.",
+    "promptEn": "First Sol at the Artemis Lunar South Pole outpost. Commander Sarah recommends calibrating the solar array and WRS sensors ahead of the Sol 15 Lunar Night.",
     "choices": [
       {
         "id": "calibrate-now",
         "label": "Hiệu chỉnh ngay (-2 kg Phụ tùng, +5 Morale toàn đội)",
-        "effects": {
-          "resources": { "partsKg": -2 },
-          "crew": { "moraleDelta": 5 }
-        },
-        "log": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis."
+        "labelEn": "Calibrate now (-2 kg Parts, +5 Crew Morale)",
+        "effects": [
+          { "kind": "resource", "resource": "partsKg", "delta": -2 },
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
+        ],
+        "log": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis.",
+        "logEn": "Calibrated Artemis station sensors."
       },
       {
         "id": "hold-parts",
         "label": "Giữ lại Phụ tùng cho 3D Fabricator (Không tốn vật tư)",
-        "effects": {},
-        "log": "Giữ nguyên mức Phụ tùng dự phòng và chuyển sang kiểm tra vận hành."
+        "labelEn": "Hold spare parts for 3D Fabricator (No cost)",
+        "effects": [],
+        "log": "Giữ nguyên mức Phụ tùng dự phòng và chuyển sang kiểm tra vận hành.",
+        "logEn": "Retained spare parts and proceeded to routine operations."
       }
     ]
   },
   {
     "id": "sol3-airlock-seal-alert",
     "title": "Bụi tĩnh điện bám gioăng cửa Airlock",
+    "titleEn": "Electrostatic Regolith on Airlock Seal",
     "category": "hazard",
-    "art": "airlockLeak",
+    "art": "airlock-leak",
+    "priority": 70,
+    "weight": 50,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-oxygen-eclss",
     "when": [{ "solMin": 3, "solMax": 5 }],
     "mandatory": true,
     "prompt": "Bụi regolith bám vào gioăng cửa khoang điều áp Airlock làm tăng nguy cơ rò rỉ dưỡng khí O₂.",
+    "promptEn": "Abrasive lunar regolith on the airlock gasket risks slow O2 pressure leakage.",
     "choices": [
       {
         "id": "use-sealant-tape",
         "label": "Dùng Băng keo Sealant Tape (Khắc chế, miễn phí Parts)",
+        "labelEn": "Apply Sealant Tape (Mitigates leak, 0 Parts)",
         "requiresEquipment": "sealant_tape",
-        "effects": {
-          "equipmentDamage": { "id": "sealant_tape", "wear": 50 }
-        },
-        "log": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng."
+        "effects": [
+          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 }
+        ],
+        "log": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng.",
+        "logEn": "Sealed the airlock gasket with Sealant Tape without spending spare parts."
       },
       {
         "id": "patch-with-parts",
         "label": "Thay gioăng dự phòng (-2 kg Phụ tùng)",
-        "effects": {
-          "resources": { "partsKg": -2 }
-        },
-        "log": "Đã thay gioăng Airlock bằng 2 kg Phụ tùng."
+        "labelEn": "Replace gasket with spare parts (-2 kg Parts)",
+        "effects": [
+          { "kind": "resource", "resource": "partsKg", "delta": -2 }
+        ],
+        "log": "Đã thay gioăng Airlock bằng 2 kg Phụ tùng.",
+        "logEn": "Replaced the airlock gasket using 2 kg of spare parts."
       },
       {
         "id": "ignore-leak",
         "label": "Tạm bỏ qua (-5 kg O₂ do rò rỉ)",
-        "effects": {
-          "resources": { "oxygenKg": -5 },
-          "systemIntegrity": { "id": "airlock", "delta": -0.2 }
-        },
-        "log": "Airlock rò rỉ nhẹ trước khi được siết lại cuối ca."
+        "labelEn": "Defer maintenance (-5 kg O2 leak, -20% Airlock integrity)",
+        "effects": [
+          { "kind": "resource", "resource": "oxygenKg", "delta": -5 },
+          { "kind": "system-integrity", "systemId": "airlock", "delta": -0.2 },
+          { "kind": "set-flag", "key": "airlock_dusty", "value": true }
+        ],
+        "log": "Airlock rò rỉ nhẹ trước khi được siết lại cuối ca.",
+        "logEn": "Airlock leaked O2 before the hatch was tightened at shift end."
       }
     ]
   },
   {
     "id": "sol7-golden-comms-crisis",
     "title": "Sol 7: Sụt nguồn & Mất tín hiệu Rover gần Miệng hố",
+    "titleEn": "Sol 7: Power Brownout & Rover Telemetry Crisis",
     "category": "crisis",
-    "art": "robotSignalLoss",
+    "art": "robot-signal-loss",
+    "priority": 100,
+    "weight": 100,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-wrs-eclss",
     "when": [{ "sol": 7 }],
     "mandatory": true,
     "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu và Rover phát tín hiệu yếu do địa hình che khuất. Bạn chọn ưu tiên điện cho Rover hay chạy WRS tái chế nước?",
+    "promptEn": "Sol 7 Alert: Clean water reserves are dropping while the Rover link weakens behind ridge terrain. Prioritize power to save the Rover link or run the WRS?",
     "choices": [
       {
         "id": "save-rover-link",
         "label": "Ưu tiên cứu tín hiệu Rover (-2 kWh Pin, tắt WRS hôm nay)",
-        "effects": {
-          "resources": { "batteryKWh": -2 },
-          "planOverride": { "wrsEnabled": false }
-        },
-        "log": "Đã giữ tín hiệu liên lạc Rover an toàn trong ca Sol 7."
+        "labelEn": "Save Rover telemetry link (-2 kWh Battery, disable WRS today)",
+        "effects": [
+          { "kind": "resource", "resource": "batteryKWh", "delta": -2 },
+          { "kind": "plan-override", "wrsEnabled": false },
+          { "kind": "rover-action", "action": "continue-expedition", "expeditionId": "regolith-field" },
+          { "kind": "set-flag", "key": "sol7_saved_rover", "value": true }
+        ],
+        "log": "Đã giữ tín hiệu liên lạc Rover an toàn trong ca Sol 7.",
+        "logEn": "Boosted antenna power and preserved the Rover link through Sol 7."
       },
       {
         "id": "prioritize-wrs",
         "label": "Ưu tiên bật máy lọc nước WRS 90% (Giữ điện chạy WRS)",
-        "effects": {
-          "planOverride": { "wrsEnabled": true },
-          "crew": { "moraleDelta": -5 }
-        },
-        "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7."
+        "labelEn": "Prioritize WRS 90% water recovery (Keep power for WRS)",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": true },
+          { "kind": "crew", "target": "all", "moraleDelta": -5 },
+          { "kind": "rover-action", "action": "fail-expedition", "expeditionId": "regolith-field" },
+          { "kind": "set-flag", "key": "sol7_prioritized_station", "value": true }
+        ],
+        "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7.",
+        "logEn": "Prioritized station water recycling on Sol 7."
       }
     ]
   },
   {
     "id": "sol15-lunar-nightfall",
     "title": "Sol 15: Hoàng hôn tắt nắng — Bước vào 14 Sol Đêm Trăng",
+    "titleEn": "Sol 15: Lunar Sunset — Entering the 14-Sol Lunar Night",
     "category": "milestone",
-    "art": "solarParticle",
+    "art": "solar-particle",
+    "priority": 100,
+    "weight": 100,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-lunar-cycle",
     "when": [{ "sol": 15 }],
     "mandatory": true,
     "prompt": "Mặt Trời lặn xuống đường chân trời Nam Cực Mặt Trăng. Tấm pin Solar ngừng phát điện suốt 14 Sol tới (chỉ còn Lò Fission +8 kWh/Sol).",
+    "promptEn": "The Sun dips below the South Pole horizon. Solar arrays drop to 0 kWh for the next 14 Sols, leaving only the 8 kWh/Sol Fission baseline.",
     "choices": [
       {
         "id": "night-protocol",
         "label": "Kích hoạt Chế độ Tiết kiệm Đêm Trăng",
-        "effects": {
-          "crew": { "moraleDelta": 5 }
-        },
-        "log": "Toàn trạm chuyển sang nguồn Fission & Pin dự phòng cho 14 Sol Đêm Trăng."
+        "labelEn": "Engage Lunar Night Conservation Protocol",
+        "effects": [
+          { "kind": "crew", "target": "all", "moraleDelta": 5 },
+          { "kind": "set-flag", "key": "lunar_night_started", "value": true }
+        ],
+        "log": "Toàn trạm chuyển sang nguồn Fission & Pin dự phòng cho 14 Sol Đêm Trăng.",
+        "logEn": "Station switched to Fission baseline and battery reserves for the 14-Sol Lunar Night."
       }
     ]
   }
