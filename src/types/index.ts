@@ -42,6 +42,9 @@ export type CargoPackId = 'oxygen-pack' | 'water-pack' | 'food-med-pack' | 'powe
 export type ExpeditionId = 'lunar-crater' | 'regolith-field' | 'polar-psr';
 export type DonkiLevel = 'quiet' | 'moderate' | 'storm' | 'extreme';
 export type ProvenanceTag = 'observed' | 'inferred' | 'assumption' | 'simulated';
+export type EventArtId = 'tech-fault' | 'airlock-leak' | 'solar-particle' | 'robot-signal-loss';
+export type EventRepeatPolicy = 'once' | 'cooldown' | 'repeatable';
+export type EventResourceKey = 'batteryKWh' | 'oxygenKg' | 'waterL' | 'partsKg' | 'mrePacks' | 'medkits';
 
 export interface AssignedCrewTask {
   readonly type: CrewTaskType;
@@ -176,9 +179,35 @@ export interface RoverState {
   readonly missionHistory: readonly RoverMissionResult[];
 }
 
+export interface ActiveEvent {
+  readonly eventId: string;
+  readonly triggeredAtSol: number;
+  readonly deadlineSol: number;
+  readonly context: Readonly<Record<string, string | number | boolean>>;
+}
+
+export interface EventOccurrenceRecord {
+  readonly eventId: string;
+  readonly triggeredSol: number;
+  readonly settledSol: number;
+  readonly outcome: 'resolved' | 'expired';
+  readonly choiceId: string | null;
+}
+
+export interface PendingFollowUpEvent {
+  readonly eventId: string;
+  readonly triggerSol: number;
+  readonly sourceEventId: string;
+  readonly sourceChoiceId: string;
+}
+
 export interface EventState {
   readonly activeEventId: string | null;
+  readonly activeEvent: ActiveEvent | null;
   readonly resolvedEventIds: readonly string[];
+  readonly occurrenceHistory: readonly EventOccurrenceRecord[];
+  readonly flags: Readonly<Record<string, boolean | string | number>>;
+  readonly pendingFollowUps: readonly PendingFollowUpEvent[];
 }
 
 export interface CargoOrder {
@@ -220,6 +249,22 @@ export interface SpaceWeatherOutcome {
   readonly headline: string | null;
 }
 
+export interface DebriefMetricDelta {
+  readonly key: string;
+  readonly label: string;
+  readonly delta: number;
+  readonly unit: string;
+}
+
+export interface DebriefContext {
+  readonly briefId: string;
+  readonly reasonTag: string;
+  readonly sourceEventId: string | null;
+  readonly sourceChoiceId: string | null;
+  readonly evidenceType: ProvenanceTag;
+  readonly metricHighlights: readonly DebriefMetricDelta[];
+}
+
 export interface SolSummary {
   readonly sol: number;
   readonly isLunarNight: boolean;
@@ -239,6 +284,7 @@ export interface SolSummary {
   };
   readonly weather: SpaceWeatherOutcome;
   readonly briefId: string;
+  readonly debriefContext: DebriefContext | null;
   readonly highlights: readonly string[];
 }
 
@@ -280,7 +326,7 @@ export interface MissionClock {
 }
 
 export interface GameState {
-  readonly schemaVersion: 2;
+  readonly schemaVersion: 3;
   readonly contentVersion: string;
   readonly modelVersion: string;
   readonly catalogVersion: string;
@@ -575,29 +621,88 @@ export interface SimulationCatalog {
   readonly baselineProvenance: Readonly<Record<string, ProvenanceTag>>;
 }
 
+export interface EventTriggerCondition {
+  readonly sol?: number;
+  readonly solMin?: number;
+  readonly solMax?: number;
+  readonly isLunarNight?: boolean;
+  readonly flagSet?: string;
+  readonly flagNotSet?: string;
+  readonly flagEquals?: { readonly key: string; readonly value: boolean | string | number };
+  readonly choiceMade?: { readonly eventId: string; readonly choiceId: string };
+  readonly eventSeen?: string;
+  readonly eventNotSeen?: string;
+  readonly roverExpeditionId?: ExpeditionId;
+  readonly roverStatus?: RoverTimelineStage;
+  readonly systemIntegrityBelow?: { readonly id: SystemId; readonly maxIntegrity: number };
+  readonly minResource?: Readonly<Partial<Record<EventResourceKey, number>>>;
+  readonly maxResource?: Readonly<Partial<Record<EventResourceKey, number>>>;
+  readonly crewCondition?: { readonly crewId?: CrewId; readonly condition: CrewCondition };
+}
+
+export type EventEffect =
+  | { readonly kind: 'resource'; readonly resource: EventResourceKey; readonly delta: number }
+  | { readonly kind: 'science'; readonly delta: number }
+  | {
+      readonly kind: 'crew';
+      readonly target: CrewId | 'all';
+      readonly healthDelta?: number;
+      readonly moraleDelta?: number;
+      readonly satietyDelta?: number;
+    }
+  | { readonly kind: 'equipment-wear'; readonly equipmentId: EquipmentId; readonly wear: number }
+  | { readonly kind: 'system-integrity'; readonly systemId: SystemId; readonly delta: number }
+  | { readonly kind: 'plan-override'; readonly wrsEnabled?: boolean; readonly extraPowerCostKWh?: number }
+  | { readonly kind: 'set-flag'; readonly key: string; readonly value: boolean | string | number }
+  | { readonly kind: 'clear-flag'; readonly key: string }
+  | {
+      readonly kind: 'assign-task';
+      readonly crewId: CrewId;
+      readonly task: CrewTaskType;
+      readonly targetSystemId?: SystemId;
+      readonly targetCrewId?: CrewId;
+    }
+  | {
+      readonly kind: 'rover-action';
+      readonly action: 'continue-expedition' | 'fail-expedition' | 'recover-signal' | 'delay-1-sol';
+      readonly expeditionId?: ExpeditionId;
+    }
+  | { readonly kind: 'schedule-follow-up'; readonly eventId: string; readonly delaySols: number };
+
 export interface EventChoice {
   readonly id: string;
   readonly label: string;
+  readonly labelEn?: string;
   readonly requiresEquipment?: EquipmentId;
-  readonly effects: {
-    readonly resources?: Readonly<Partial<Record<'batteryKWh' | 'oxygenKg' | 'waterL' | 'partsKg' | 'mrePacks', number>>>;
-    readonly crew?: { readonly moraleDelta?: number; readonly healthDelta?: number };
-    readonly equipmentDamage?: { readonly id: EquipmentId; readonly wear: number };
-    readonly systemIntegrity?: { readonly id: SystemId; readonly delta: number };
-    readonly planOverride?: { readonly wrsEnabled?: boolean };
+  readonly requiresFlag?: string;
+  readonly requiresCrew?: {
+    readonly crewId: CrewId;
+    readonly requireFree?: boolean;
+    readonly requireFit?: boolean;
   };
+  readonly effects: readonly EventEffect[];
   readonly log: string;
+  readonly logEn?: string;
 }
 
 export interface EventNode {
   readonly id: string;
   readonly title: string;
+  readonly titleEn?: string;
   readonly category: 'ops' | 'hazard' | 'crisis' | 'milestone';
-  readonly art: string;
-  readonly when: ReadonlyArray<{ readonly sol?: number; readonly solMin?: number; readonly solMax?: number }>;
+  readonly art: EventArtId;
+  readonly priority: number;
+  readonly weight: number;
+  readonly repeatPolicy: EventRepeatPolicy;
+  readonly cooldownSols?: number;
+  readonly deadlineOffsetSols?: number;
+  readonly scienceBriefId: string | null;
+  readonly when: readonly EventTriggerCondition[];
   readonly mandatory: boolean;
   readonly prompt: string;
+  readonly promptEn?: string;
   readonly choices: readonly EventChoice[];
+  readonly onExpireEffects?: readonly EventEffect[];
 }
 
 export interface ScienceBrief {
@@ -757,7 +862,7 @@ export interface SimulationRuntimeState {
 }
 
 export interface SaveEnvelope {
-  readonly schemaVersion: 2;
+  readonly schemaVersion: 3;
   readonly savedAt: string;
   readonly appVersion: string;
   readonly contentVersion: string;

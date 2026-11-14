@@ -144,63 +144,101 @@ export function dispatchDomainCommand(
           return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần thiết bị ${choice.requiresEquipment} còn dùng được.`);
         }
       }
+      if (choice.requiresFlag && !state.events.flags[choice.requiresFlag]) {
+        return fail(state, 'E_PLAN_INVALID', `Chưa đạt điều kiện ${choice.requiresFlag}.`);
+      }
 
       const r = { ...state.resources };
       const s = bundle.balance.storages;
-      if (choice.effects.resources?.partsKg) {
-        const nextVal = round2(r.partsKg + choice.effects.resources.partsKg);
-        if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Phụ tùng cho lựa chọn này.');
-        r.partsKg = clamp(nextVal, 0, s.partsKg.max);
-      }
-      if (choice.effects.resources?.batteryKWh) {
-        const nextVal = round2(r.batteryKWh + choice.effects.resources.batteryKWh);
-        if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Pin cho lựa chọn này.');
-        r.batteryKWh = clamp(nextVal, 0, s.batteryKWh.max);
-      }
-      if (choice.effects.resources?.oxygenKg) {
-        r.oxygenKg = clamp(round2(r.oxygenKg + choice.effects.resources.oxygenKg), 0, s.oxygenKg.max);
-      }
-      if (choice.effects.resources?.waterL) {
-        r.waterL = clamp(round2(r.waterL + choice.effects.resources.waterL), 0, s.waterL.max);
-      }
-      if (choice.effects.resources?.mrePacks) {
-        r.mrePacks = clamp(r.mrePacks + choice.effects.resources.mrePacks, 0, bundle.balance.consumables.mrePacks.max);
-      }
-
       const nextCrew = { ...state.crew };
-      if (choice.effects.crew) {
-        for (const id of ['cmd', 'eng', 'doc', 'geo'] as const) {
-          const c = nextCrew[id];
-          if (c.condition === 'evacuated') continue;
-          nextCrew[id] = {
-            ...c,
-            health: clamp(c.health + (choice.effects.crew.healthDelta ?? 0), 0, 100),
-            morale: clamp(c.morale + (choice.effects.crew.moraleDelta ?? 0), 0, 100),
+      const nextEq = { ...state.equipment };
+      const nextSys = { ...state.systems };
+      const nextFlags: Record<string, boolean | string | number> = { ...state.events.flags };
+      const nextFollowUps = [...state.events.pendingFollowUps];
+      let nextWrsEnabled = state.dailyPlan.wrsEnabled;
+
+      for (const eff of choice.effects) {
+        if (eff.kind === 'resource') {
+          if (eff.resource === 'partsKg') {
+            const nextVal = round2(r.partsKg + eff.delta);
+            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Phụ tùng cho lựa chọn này.');
+            r.partsKg = clamp(nextVal, 0, s.partsKg.max);
+          } else if (eff.resource === 'batteryKWh') {
+            const nextVal = round2(r.batteryKWh + eff.delta);
+            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Pin cho lựa chọn này.');
+            r.batteryKWh = clamp(nextVal, 0, s.batteryKWh.max);
+          } else if (eff.resource === 'oxygenKg') {
+            r.oxygenKg = clamp(round2(r.oxygenKg + eff.delta), 0, s.oxygenKg.max);
+          } else if (eff.resource === 'waterL') {
+            r.waterL = clamp(round2(r.waterL + eff.delta), 0, s.waterL.max);
+          } else if (eff.resource === 'mrePacks') {
+            const nextVal = r.mrePacks + eff.delta;
+            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ gói MRE cho lựa chọn này.');
+            r.mrePacks = clamp(nextVal, 0, bundle.balance.consumables.mrePacks.max);
+          } else if (eff.resource === 'medkits') {
+            const nextVal = r.medkits + eff.delta;
+            if (nextVal < 0) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ Medkit cho lựa chọn này.');
+            r.medkits = clamp(nextVal, 0, bundle.balance.consumables.medkits.max);
+          }
+        } else if (eff.kind === 'crew') {
+          const targets = eff.target === 'all' ? (['cmd', 'eng', 'doc', 'geo'] as const) : ([eff.target] as const);
+          for (const id of targets) {
+            const c = nextCrew[id];
+            if (c.condition === 'evacuated') continue;
+            nextCrew[id] = {
+              ...c,
+              health: clamp(c.health + (eff.healthDelta ?? 0), 0, 100),
+              morale: clamp(c.morale + (eff.moraleDelta ?? 0), 0, 100),
+              satiety: clamp(c.satiety + (eff.satietyDelta ?? 0), 0, 100),
+            };
+          }
+        } else if (eff.kind === 'equipment-wear') {
+          const eq = nextEq[eff.equipmentId];
+          const nextDur = clamp(eq.durability - eff.wear, 0, 100);
+          nextEq[eff.equipmentId] = {
+            ...eq,
+            durability: nextDur,
+            state: nextDur > 50 ? 'good' : nextDur > 0 ? 'worn' : 'damaged',
           };
+        } else if (eff.kind === 'system-integrity') {
+          const sys = nextSys[eff.systemId];
+          const nextInt = clamp(round2(sys.integrity + eff.delta), 0, 1);
+          nextSys[eff.systemId] = {
+            ...sys,
+            integrity: nextInt,
+            status: nextInt >= 0.85 ? 'nominal' : nextInt > 0 ? 'degraded' : 'offline',
+          };
+        } else if (eff.kind === 'plan-override') {
+          if (eff.wrsEnabled !== undefined) nextWrsEnabled = eff.wrsEnabled;
+        } else if (eff.kind === 'set-flag') {
+          nextFlags[eff.key] = eff.value;
+        } else if (eff.kind === 'clear-flag') {
+          delete nextFlags[eff.key];
+        } else if (eff.kind === 'schedule-follow-up') {
+          nextFollowUps.push({
+            eventId: eff.eventId,
+            triggerSol: state.clock.sol + eff.delaySols,
+            sourceEventId: ev.id,
+            sourceChoiceId: choice.id,
+          });
         }
       }
 
-      const nextEq = { ...state.equipment };
-      if (choice.effects.equipmentDamage) {
-        const eq = nextEq[choice.effects.equipmentDamage.id];
-        const nextDur = clamp(eq.durability - choice.effects.equipmentDamage.wear, 0, 100);
-        nextEq[choice.effects.equipmentDamage.id] = {
-          ...eq,
-          durability: nextDur,
-          state: nextDur > 50 ? 'good' : nextDur > 0 ? 'worn' : 'damaged',
-        };
-      }
-
-      const nextSys = { ...state.systems };
-      if (choice.effects.systemIntegrity) {
-        const sys = nextSys[choice.effects.systemIntegrity.id];
-        const nextInt = clamp(round2(sys.integrity + choice.effects.systemIntegrity.delta), 0, 1);
-        nextSys[choice.effects.systemIntegrity.id] = {
-          ...sys,
-          integrity: nextInt,
-          status: nextInt >= 0.85 ? 'nominal' : nextInt > 0 ? 'degraded' : 'offline',
-        };
-      }
+      const nextOccurrenceHistory = [
+        ...state.events.occurrenceHistory,
+        {
+          eventId: ev.id,
+          triggeredSol: state.events.activeEvent?.triggeredAtSol ?? state.clock.sol,
+          settledSol: state.clock.sol,
+          outcome: 'resolved' as const,
+          choiceId: choice.id,
+        },
+      ];
+      const nextResolvedIds = [
+        ...new Set(
+          nextOccurrenceHistory.filter((occ) => occ.outcome === 'resolved').map((occ) => occ.eventId)
+        ),
+      ];
 
       candidate = {
         ...state,
@@ -211,11 +249,16 @@ export function dispatchDomainCommand(
         systems: nextSys,
         dailyPlan: {
           ...state.dailyPlan,
-          wrsEnabled: choice.effects.planOverride?.wrsEnabled ?? state.dailyPlan.wrsEnabled,
+          wrsEnabled: nextWrsEnabled,
         },
         events: {
+          ...state.events,
           activeEventId: null,
-          resolvedEventIds: [...state.events.resolvedEventIds, ev.id],
+          activeEvent: null,
+          resolvedEventIds: nextResolvedIds,
+          occurrenceHistory: nextOccurrenceHistory,
+          flags: nextFlags,
+          pendingFollowUps: nextFollowUps,
         },
         history: {
           ...state.history,
@@ -844,9 +887,17 @@ export function dispatchDomainCommand(
       const previewNextState: GameState = {
         ...state,
         clock: { ...state.clock, sol: nextSol, phase: 'briefing' },
-        events: { ...state.events, activeEventId: null },
+        events: { ...state.events, activeEventId: null, activeEvent: null },
       };
       const pendingEv = findNextPendingEvent(previewNextState, bundle.events);
+      const nextActiveEvent = pendingEv
+        ? {
+            eventId: pendingEv.id,
+            triggeredAtSol: nextSol,
+            deadlineSol: nextSol + (pendingEv.deadlineOffsetSols ?? 0),
+            context: {},
+          }
+        : null;
       candidate = {
         ...previewNextState,
         revision: state.revision + 1,
@@ -861,8 +912,9 @@ export function dispatchDomainCommand(
           ? { ...state.rover, activeMission: null }
           : state.rover,
         events: {
-          activeEventId: pendingEv ? pendingEv.id : null,
-          resolvedEventIds: state.events.resolvedEventIds,
+          ...state.events,
+          activeEventId: nextActiveEvent ? nextActiveEvent.eventId : null,
+          activeEvent: nextActiveEvent,
         },
         debrief: {
           pendingDismiss: false,

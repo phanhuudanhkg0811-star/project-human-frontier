@@ -3,6 +3,7 @@ import { selectAvailableCrew, selectCanRepair, selectWeatherOutlook } from '../d
 import { useGameStore } from '../store/gameStore.ts';
 import type { CrewId, SystemId } from '../types/index.ts';
 import { HAIL_SVG, getHailSystemSprite } from './cabin/hailAssets.ts';
+import { HailSelect } from './HailSelect.tsx';
 
 const SYSTEM_META: ReadonlyArray<{ id: SystemId; name: string; role: string }> = [
   { id: 'solar', name: 'Pin Mặt Trời (Solar)', role: '24 / 30 / 36 kWh ngày (0 kWh Đêm Trăng)' },
@@ -47,7 +48,7 @@ export function SystemControls() {
       </div>
 
       {/* WRS Toggle + Worker Selection */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2.5 rounded-lg bg-slate-900/70 border border-slate-700/70">
+      <div className="grid grid-cols-1 sm:grid-cols-2 items-center gap-3 p-2.5 rounded-lg bg-slate-900/70 border border-slate-700/70">
         <div className="flex items-center justify-between gap-2">
           <div>
             <div className="text-xs font-semibold text-cyan-200">Tái chế nước WRS</div>
@@ -65,20 +66,17 @@ export function SystemControls() {
           </button>
         </div>
 
-        <label className="flex items-center justify-between gap-2 text-xs text-slate-200">
-          <span>Người thực thi:</span>
-          <select
-            value={selectedWorker}
-            onChange={(e) => setSelectedWorker(e.target.value as CrewId)}
-            className="bg-slate-950 border border-slate-600 rounded px-2 py-1 text-xs text-slate-100"
-          >
-            {Object.values(gameState.crew).map((c) => (
-              <option key={c.id} value={c.id} disabled={c.condition === 'evacuated'}>
-                {c.name} ({c.roleTag}) {c.assignedTask ? '· Đã bận' : ''}
-              </option>
-            ))}
-          </select>
-        </label>
+        <HailSelect
+          label="Người thực thi"
+          value={selectedWorker}
+          onChange={(val) => setSelectedWorker(val as CrewId)}
+          options={Object.values(gameState.crew).map((c) => ({
+            value: c.id,
+            label: c.name,
+            meta: `${c.roleTag}${c.assignedTask ? ' · Bận' : ''}`,
+            disabled: c.condition === 'evacuated',
+          }))}
+        />
       </div>
 
       {feedback && (

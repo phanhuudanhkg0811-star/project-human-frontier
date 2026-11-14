@@ -1079,6 +1079,7 @@ export function resolveSol(
     },
     weather: weatherOutcome,
     briefId: pickBriefId(weather, isNight, eclssOut.wrsRecoveredWaterL, bundle),
+    debriefContext: null,
     highlights,
   };
 
