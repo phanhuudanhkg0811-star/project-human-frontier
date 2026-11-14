@@ -247,6 +247,7 @@ function resolvePowerAndEclss(
 ): {
   resources: GameState['resources'];
   fabricatorCompleted: boolean;
+  roverLaunchPowered: boolean;
   powerGeneratedKWh: number;
   powerConsumedKWh: number;
   unmetLoads: PowerConsumerId[];
@@ -268,6 +269,7 @@ function resolvePowerAndEclss(
   let blackout = false;
   let wrsRan = false;
   let fabricatorRan = false;
+  let roverLaunchPowered = false;
 
   const activeJob = state.fabricator.activeJob;
   const recycler = systems.recycler;
@@ -311,6 +313,24 @@ function resolvePowerAndEclss(
       } else {
         unmetLoads.push('fabricator');
       }
+    } else if (consumer === 'rover' && state.rover.activeMission?.status === 'scheduled') {
+      const expedition = bundle.campaign.expeditions.find(
+        (entry) => entry.id === state.rover.activeMission?.expeditionId
+      );
+      const launchOperator = state.crew[state.rover.activeMission.launchOperatorCrewId];
+      const operatorReady =
+        launchOperator.condition === 'fit' &&
+        launchOperator.hungerState !== 'starving' &&
+        launchOperator.morale >= bundle.balance.crew.tiredBelowMorale &&
+        (launchOperator.assignedTask === null || launchOperator.assignedTask.type === 'rover-operate');
+      const need = expedition?.launchPowerKWh ?? 0;
+      if (operatorReady && availableKWh + 1e-6 >= need) {
+        availableKWh = round2(availableKWh - need);
+        consumedKWh = round2(consumedKWh + need);
+        roverLaunchPowered = true;
+      } else {
+        unmetLoads.push('rover');
+      }
     }
   }
 
@@ -343,6 +363,7 @@ function resolvePowerAndEclss(
       wasteWaterL: nextWasteWater,
     },
     fabricatorCompleted: Boolean(activeJob && fabricatorRan),
+    roverLaunchPowered,
     powerGeneratedKWh,
     powerConsumedKWh: consumedKWh,
     unmetLoads,
@@ -381,7 +402,6 @@ function resolveCrewAndWeather(
   );
 
   const nextCrew: Record<CrewId, CrewMemberState> = { ...state.crew };
-  const isMedicFit = nextCrew.doc.condition === 'fit';
   const medicDoingCare =
     nextCrew.doc.condition !== 'evacuated' && nextCrew.doc.assignedTask?.type === 'medical-care';
   const careTargetId = nextCrew.doc.assignedTask?.targetCrewId;
@@ -424,19 +444,6 @@ function resolveCrewAndWeather(
       satiety = clamp(satiety + bundle.balance.consumables.mrePacks.satietyRestore, 0, 100);
     }
 
-    // Medkit consumption
-    let usedMedkit = false;
-    if (state.dailyPlan.medkitTargets.includes(crewId) && resources.medkits > 0) {
-      resources = { ...resources, medkits: resources.medkits - 1 };
-      const baseHeal =
-        resources.medkitLevel === 2
-          ? bundle.balance.consumables.medkits.healLv2
-          : bundle.balance.consumables.medkits.healLv1;
-      const medicExtra = isMedicFit ? bundle.balance.consumables.medkits.medicBonus : 0;
-      health = clamp(health + baseHeal + medicExtra, 0, 100);
-      usedMedkit = true;
-    }
-
     // Crew task rest / medical-care
     if (member.assignedTask?.type === 'rest') {
       morale = clamp(morale + bundle.balance.crew.restMoraleGain, 0, 100);
@@ -472,14 +479,12 @@ function resolveCrewAndWeather(
       health = clamp(health - 8, 0, 100);
     }
 
-    const condition = usedMedkit && health > 0
-      ? 'fit'
-      : deriveCrewCondition(
-          health,
-          member.condition,
-          bundle.balance.crew.fitRecoverAtHealth,
-          bundle.balance.crew.injuredBelowHealth
-        );
+    const condition = deriveCrewCondition(
+      health,
+      member.condition,
+      bundle.balance.crew.fitRecoverAtHealth,
+      bundle.balance.crew.injuredBelowHealth
+    );
 
     nextCrew[crewId] = {
       ...member,
@@ -507,107 +512,399 @@ function resolveRoverTick(
   state: GameState,
   resourcesIn: GameState['resources'],
   weather: DonkiSolEntry,
-  bundle: ContentBundle
+  bundle: ContentBundle,
+  roverLaunchPowered: boolean
 ): {
   rover: GameState['rover'];
   equipment: Record<EquipmentId, EquipmentItemState>;
   resources: GameState['resources'];
+  sciencePoints: number;
   roverIncidentProb: number;
   roverIncidentTriggered: boolean;
   note: string | null;
 } {
   const equipment: Record<EquipmentId, EquipmentItemState> = { ...state.equipment };
   let resources = { ...resourcesIn };
+  const mission = state.rover.activeMission;
 
-  if (state.rover.status === 'idle' || state.rover.status === 'broken' || !state.rover.expeditionId) {
+  if (!mission || mission.status === 'completed' || mission.status === 'failed') {
     return {
       rover: state.rover,
       equipment,
       resources,
+      sciencePoints: state.campaign.sciencePoints,
       roverIncidentProb: 0,
       roverIncidentTriggered: false,
       note: null,
     };
   }
 
-  const exp = bundle.campaign.expeditions.find((e) => e.id === state.rover.expeditionId);
+  const exp = bundle.campaign.expeditions.find((e) => e.id === mission.expeditionId);
+  if (!exp) {
+    return {
+      rover: state.rover,
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb: 0,
+      roverIncidentTriggered: false,
+      note: 'Không tìm thấy expedition config cho nhiệm vụ Rover đang hoạt động.',
+    };
+  }
+
+  const releaseEquipment = (wear: number) => {
+    for (const eqId of mission.equippedItems) {
+      const prev = equipment[eqId];
+      const nextDur = clamp(prev.durability - wear, 0, 100);
+      equipment[eqId] = {
+        ...prev,
+        durability: nextDur,
+        state: deriveEquipmentCondition(nextDur),
+        reservedForRover: false,
+      };
+    }
+  };
+
+  const settle = (
+    outcome: 'completed' | 'failed',
+    note: string,
+    wear: number,
+    settlementMission = mission
+  ) => {
+    const alreadySettled = state.rover.missionHistory.some((result) => result.expeditionId === settlementMission.expeditionId);
+    if (alreadySettled) {
+      return {
+        rover: state.rover,
+        equipment,
+        resources,
+        sciencePoints: state.campaign.sciencePoints,
+        roverIncidentProb: 0,
+        roverIncidentTriggered: false,
+        note: null,
+      };
+    }
+
+    releaseEquipment(wear);
+    if (outcome === 'completed') {
+      const caps = bundle.balance.storages;
+      resources = {
+        ...resources,
+        partsKg: clamp(round2(resources.partsKg + exp.rewards.partsKg), 0, caps.partsKg.max),
+        oxygenKg: clamp(round2(resources.oxygenKg + exp.rewards.oxygenKg), 0, caps.oxygenKg.max),
+        waterL: clamp(round2(resources.waterL + exp.rewards.waterL), 0, caps.waterL.max),
+        batteryKWh: clamp(round2(resources.batteryKWh + exp.rewards.batteryKWh), 0, caps.batteryKWh.max),
+      };
+    }
+
+    const terminalMission = { ...settlementMission, status: outcome, statusEnteredSol: state.clock.sol } as const;
+    const result = {
+      expeditionId: settlementMission.expeditionId,
+      outcome,
+      launchedSol: settlementMission.launchedSol,
+      settledSol: state.clock.sol,
+      rewardSampleGranted: outcome === 'completed' ? exp.rewardSample : null,
+      scienceGranted: outcome === 'completed' ? exp.rewards.science : 0,
+      launchOperatorCrewId: settlementMission.launchOperatorCrewId,
+      recoveryOperatorCrewId: settlementMission.recoveryOperatorCrewId,
+      equippedItems: settlementMission.equippedItems,
+      incidents: settlementMission.incidents,
+    } as const;
+
+    return {
+      rover: {
+        activeMission: terminalMission,
+        missionHistory: [...state.rover.missionHistory, result],
+      },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints + result.scienceGranted,
+      roverIncidentProb: 0,
+      roverIncidentTriggered: false,
+      note,
+    };
+  };
+
+  if (mission.status === 'scheduled') {
+    if (!roverLaunchPowered) {
+      const incidents = mission.incidents.some(
+        (incident) => incident.kind === 'power-delay' && incident.occurredSol === state.clock.sol
+      )
+        ? mission.incidents
+        : [
+            ...mission.incidents,
+            {
+              kind: 'power-delay' as const,
+              occurredSol: state.clock.sol,
+              summary: 'Power ledger không cấp đủ 4 kWh hoặc người trực phóng không sẵn sàng.',
+            },
+          ];
+      if (state.clock.sol >= exp.windowEndSol) {
+        const failedMission = { ...mission, incidents };
+        return settle(
+          'failed',
+          `Cửa sổ ${exp.name} đã đóng trước khi Rover nhận đủ điều kiện phóng.`,
+          0,
+          failedMission
+        );
+      }
+      return {
+        rover: { ...state.rover, activeMission: { ...mission, incidents } },
+        equipment,
+        resources,
+        sciencePoints: state.campaign.sciencePoints,
+        roverIncidentProb: 0,
+        roverIncidentTriggered: false,
+        note: 'Thiếu điện hoặc người trực: lịch phóng Rover được giữ sang Sol kế tiếp.',
+      };
+    }
+
+    return {
+      rover: {
+        ...state.rover,
+        activeMission: {
+          ...mission,
+          status: 'outbound',
+          launchedSol: state.clock.sol,
+          statusEnteredSol: state.clock.sol,
+          expectedReturnSol: state.clock.sol + 2,
+          travelTicksCompleted: 1,
+        },
+      },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb: 0,
+      roverIncidentTriggered: false,
+      note: `Rover đã được cấp ${exp.launchPowerKWh} kWh và rời trạm tới ${exp.name}.`,
+    };
+  }
+
+  if (mission.status === 'signal-lost') {
+    const lostSols = mission.signalLostSols + 1;
+    if (lostSols >= 2) {
+      const incidents = [
+        ...mission.incidents,
+        { kind: 'signal-timeout' as const, occurredSol: state.clock.sol, summary: 'Mất tín hiệu quá 2 Sol.' },
+      ];
+      const timedOutState = {
+        ...state,
+        rover: { ...state.rover, activeMission: { ...mission, signalLostSols: lostSols, incidents } },
+      };
+      const timedOutMission = timedOutState.rover.activeMission!;
+      releaseEquipment(75);
+      return {
+        rover: {
+          activeMission: { ...timedOutMission, status: 'failed', statusEnteredSol: state.clock.sol },
+          missionHistory: [
+            ...state.rover.missionHistory,
+            {
+              expeditionId: mission.expeditionId,
+              outcome: 'failed',
+              launchedSol: mission.launchedSol,
+              settledSol: state.clock.sol,
+              rewardSampleGranted: null,
+              scienceGranted: 0,
+              launchOperatorCrewId: mission.launchOperatorCrewId,
+              recoveryOperatorCrewId: mission.recoveryOperatorCrewId,
+              equippedItems: mission.equippedItems,
+              incidents,
+            },
+          ],
+        },
+        equipment,
+        resources,
+        sciencePoints: state.campaign.sciencePoints,
+        roverIncidentProb: 0,
+        roverIncidentTriggered: false,
+        note: 'Rover mất tín hiệu quá 2 Sol; nhiệm vụ thất bại và thiết bị được thu hồi ở trạng thái hư hao.',
+      };
+    }
+    return {
+      rover: { ...state.rover, activeMission: { ...mission, signalLostSols: lostSols } },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb: 0,
+      roverIncidentTriggered: false,
+      note: `Rover vẫn mất tín hiệu (${lostSols}/2 Sol).`,
+    };
+  }
+
+  const isEligibleRecoveryCrew = (crewId: CrewId): boolean => {
+    const crew = state.crew[crewId];
+    return (
+      crew.condition === 'fit' &&
+      crew.hungerState !== 'starving' &&
+      crew.morale >= bundle.balance.crew.tiredBelowMorale &&
+      (crew.assignedTask === null || crew.assignedTask.type === 'rover-operate')
+    );
+  };
+
+  if (mission.status === 'recovery-pending') {
+    const selected = mission.recoveryOperatorCrewId;
+    const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
+      ? selected
+      : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+    if (recoveryCrewId) {
+      const recoveryMission = { ...mission, recoveryOperatorCrewId: recoveryCrewId };
+      const wear = recoveryCrewId === 'geo' ? 25 : 50;
+      return settle(
+        'completed',
+        `Rover đã thu hồi trễ bởi ${state.crew[recoveryCrewId].name}; nhận ${exp.rewardSample}.`,
+        wear,
+        recoveryMission
+      );
+    }
+    const incidents = [
+      ...mission.incidents,
+      { kind: 'recovery-timeout' as const, occurredSol: state.clock.sol, summary: 'Không có crew đủ điều kiện sau một grace Sol.' },
+    ];
+    releaseEquipment(75);
+    return {
+      rover: {
+        activeMission: { ...mission, status: 'failed', statusEnteredSol: state.clock.sol, recoveryDelaySols: 1, incidents },
+        missionHistory: [
+          ...state.rover.missionHistory,
+          {
+            expeditionId: mission.expeditionId,
+            outcome: 'failed',
+            launchedSol: mission.launchedSol,
+            settledSol: state.clock.sol,
+            rewardSampleGranted: null,
+            scienceGranted: 0,
+            launchOperatorCrewId: mission.launchOperatorCrewId,
+            recoveryOperatorCrewId: null,
+            equippedItems: mission.equippedItems,
+            incidents,
+          },
+        ],
+      },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb: 0,
+      roverIncidentTriggered: false,
+      note: 'Không có crew thu hồi sau một grace Sol; nhiệm vụ thất bại an toàn.',
+    };
+  }
+
   const diffMult = bundle.campaign.difficultyProfiles[state.campaign.difficulty].weatherRiskMultiplier;
-  const threatBlocked = Boolean(
-    exp && exp.requiredEquipment.every((req) => state.rover.equippedItems.includes(req))
-  );
-  const elenaOperating = Object.values(state.crew).some(
-    (c) => c.id === 'geo' && c.condition !== 'evacuated' && c.assignedTask?.type === 'rover-operate'
+  const threatBlocked = exp.mitigationOptions.some(
+    (option) =>
+      option.allOf.every((required) => mission.equippedItems.includes(required)) &&
+      (option.requirements?.minBatteryKWh === undefined || resources.batteryKWh >= option.requirements.minBatteryKWh)
   );
 
   const roverIncidentProb = computeRoverRiskProb(weather, bundle.balance, diffMult, {
     threatBlocked,
-    isElenaOperating: elenaOperating,
+    isElenaOperating: mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
   });
-  const roll = deriveRoll(state.campaign.seed, state.clock.sol, 'rover-hazard');
+  const roll = deriveRoll(state.campaign.seed, state.clock.sol, `rover-hazard:${mission.expeditionId}`);
   const roverIncidentTriggered = roll < roverIncidentProb;
 
-  const nextRemaining = Math.max(0, state.rover.solsRemaining - 1);
-  if (nextRemaining > 0) {
-    const nextStatus = nextRemaining === 2 ? 'exploring' : 'returning';
+  if (roverIncidentTriggered) {
+    const incident = {
+      kind: threatBlocked ? 'donki-storm' as const : 'unmitigated-threat' as const,
+      occurredSol: state.clock.sol,
+      summary: threatBlocked ? 'Nhiễu DONKI làm mất liên lạc Rover.' : `Hiểm họa ${exp.threat} không được khắc chế.`,
+    };
     return {
-      rover: { ...state.rover, status: nextStatus, solsRemaining: nextRemaining },
+      rover: {
+        ...state.rover,
+        activeMission: {
+          ...mission,
+          status: 'signal-lost',
+          statusEnteredSol: state.clock.sol,
+          signalLostSols: 0,
+          resumeStatus: mission.status,
+          incidents: [...mission.incidents, incident],
+        },
+      },
       equipment,
       resources,
+      sciencePoints: state.campaign.sciencePoints,
       roverIncidentProb,
       roverIncidentTriggered,
-      note: roverIncidentTriggered
-        ? 'Nhiễu bão mặt trời DONKI làm chậm nhẹ đường truyền Rover.'
-        : null,
+      note: incident.summary,
     };
   }
 
-  // Expedition returning to base on this End-Sol
-  const wear = elenaOperating ? 25 : 50;
-  for (const eqId of state.rover.equippedItems) {
-    const prev = equipment[eqId];
-    const nextDur = clamp(prev.durability - (roverIncidentTriggered ? wear + 25 : wear), 0, 100);
-    equipment[eqId] = {
-      ...prev,
-      durability: nextDur,
-      state: deriveEquipmentCondition(nextDur),
-      reservedForRover: false,
+  const nextTicks = mission.travelTicksCompleted + 1;
+  if (nextTicks < exp.durationSols) {
+    return {
+      rover: {
+        ...state.rover,
+        activeMission: { ...mission, status: 'exploring', statusEnteredSol: state.clock.sol, travelTicksCompleted: nextTicks },
+      },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb,
+      roverIncidentTriggered,
+      note: null,
     };
   }
 
-  const s = bundle.balance.storages;
-  if (exp) {
-    resources = {
-      ...resources,
-      partsKg: clamp(round2(resources.partsKg + exp.rewards.partsKg), 0, s.partsKg.max),
-      oxygenKg: clamp(round2(resources.oxygenKg + exp.rewards.oxygenKg), 0, s.oxygenKg.max),
-      waterL: clamp(round2(resources.waterL + exp.rewards.waterL), 0, s.waterL.max),
-      batteryKWh: clamp(round2(resources.batteryKWh + exp.rewards.batteryKWh), 0, s.batteryKWh.max),
+  const selected = mission.recoveryOperatorCrewId;
+  const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
+    ? selected
+    : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+  if (!recoveryCrewId) {
+    return {
+      rover: {
+        ...state.rover,
+        activeMission: {
+          ...mission,
+          status: 'recovery-pending',
+          statusEnteredSol: state.clock.sol,
+          travelTicksCompleted: nextTicks,
+          recoveryDelaySols: 1,
+        },
+      },
+      equipment,
+      resources,
+      sciencePoints: state.campaign.sciencePoints,
+      roverIncidentProb,
+      roverIncidentTriggered,
+      note: 'Rover đã tới điểm thu hồi nhưng chưa có crew đủ điều kiện; bắt đầu grace Sol.',
     };
   }
 
-  const samplesCollected =
-    exp && !state.rover.samplesCollected.includes(exp.rewardSample)
-      ? [...state.rover.samplesCollected, exp.rewardSample]
-      : state.rover.samplesCollected;
-  const completedExpeditions =
-    exp && !state.rover.completedExpeditions.includes(exp.id)
-      ? [...state.rover.completedExpeditions, exp.id]
-      : state.rover.completedExpeditions;
-
+  const completedMission = { ...mission, recoveryOperatorCrewId: recoveryCrewId, travelTicksCompleted: nextTicks };
+  const wear = recoveryCrewId === 'geo' ? 25 : 50;
+  releaseEquipment(wear);
+  resources = {
+    ...resources,
+    partsKg: clamp(round2(resources.partsKg + exp.rewards.partsKg), 0, bundle.balance.storages.partsKg.max),
+    oxygenKg: clamp(round2(resources.oxygenKg + exp.rewards.oxygenKg), 0, bundle.balance.storages.oxygenKg.max),
+    waterL: clamp(round2(resources.waterL + exp.rewards.waterL), 0, bundle.balance.storages.waterL.max),
+    batteryKWh: clamp(round2(resources.batteryKWh + exp.rewards.batteryKWh), 0, bundle.balance.storages.batteryKWh.max),
+  };
   return {
     rover: {
-      status: 'idle',
-      expeditionId: null,
-      solsRemaining: 0,
-      equippedItems: [],
-      samplesCollected,
-      completedExpeditions,
+      activeMission: { ...completedMission, status: 'completed', statusEnteredSol: state.clock.sol },
+      missionHistory: [
+        ...state.rover.missionHistory,
+        {
+          expeditionId: mission.expeditionId,
+          outcome: 'completed',
+          launchedSol: mission.launchedSol,
+          settledSol: state.clock.sol,
+          rewardSampleGranted: exp.rewardSample,
+          scienceGranted: exp.rewards.science,
+          launchOperatorCrewId: mission.launchOperatorCrewId,
+          recoveryOperatorCrewId: recoveryCrewId,
+          equippedItems: mission.equippedItems,
+          incidents: mission.incidents,
+        },
+      ],
     },
     equipment,
     resources,
+    sciencePoints: state.campaign.sciencePoints + exp.rewards.science,
     roverIncidentProb,
     roverIncidentTriggered,
-    note: exp ? `Rover hoàn tất thám hiểm "${exp.name}", thu về mẫu ${exp.rewardSample}.` : null,
+    note: `Rover hoàn tất "${exp.name}"; ${state.crew[recoveryCrewId].name} thu hồi ${exp.rewardSample}.`,
   };
 }
 
@@ -699,11 +996,18 @@ export function resolveSol(
   nextResources = crewOut.resources;
 
   // Tier 4: Rover tick + DONKI rover risk
+  const roverCrew = Object.fromEntries(
+    (Object.keys(crewOut.crew) as CrewId[]).map((id) => [
+      id,
+      { ...crewOut.crew[id], assignedTask: afterCargo.state.crew[id].assignedTask },
+    ])
+  ) as Record<CrewId, CrewMemberState>;
   const roverOut = resolveRoverTick(
-    { ...afterCargo.state, crew: crewOut.crew, equipment: nextEquipment },
+    { ...afterCargo.state, crew: roverCrew, equipment: nextEquipment },
     nextResources,
     weather,
-    bundle
+    bundle,
+    eclssOut.roverLaunchPowered
   );
   nextResources = roverOut.resources;
   nextEquipment = roverOut.equipment;
@@ -786,6 +1090,7 @@ export function resolveSol(
     campaign: {
       ...state.campaign,
       status: campaignStatus,
+      sciencePoints: roverOut.sciencePoints,
       endReason,
     },
     clock: {

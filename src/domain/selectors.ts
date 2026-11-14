@@ -11,9 +11,12 @@ import type {
   ContentBundle,
   CrewId,
   CrewMemberState,
+  EquipmentId,
+  ExpeditionId,
   ForecastPoint,
   GameState,
   Permission,
+  RoverTimelineStage,
   SolSummary,
   SystemId,
 } from '../types/index.ts';
@@ -21,6 +24,80 @@ import type {
 /** List crew members eligible for tasks today (excludes evacuated). */
 export function selectAvailableCrew(state: GameState): readonly CrewMemberState[] {
   return Object.values(state.crew).filter((c) => c.condition !== 'evacuated' && c.assignedTask === null);
+}
+
+export function selectCompletedExpeditions(state: GameState): readonly ExpeditionId[] {
+  return state.rover.missionHistory
+    .filter((result) => result.outcome === 'completed')
+    .map((result) => result.expeditionId);
+}
+
+export function selectRoverSamples(state: GameState): readonly string[] {
+  return state.rover.missionHistory.flatMap((result) =>
+    result.outcome === 'completed' && result.rewardSampleGranted ? [result.rewardSampleGranted] : []
+  );
+}
+
+export function selectRoverStatus(state: GameState): RoverTimelineStage {
+  const status = state.rover.activeMission?.status;
+  if (!status) return 'available';
+  return status === 'recovery-pending' ? 'returning' : status;
+}
+
+export function selectRoverRemainingSols(state: GameState): number {
+  const mission = state.rover.activeMission;
+  if (!mission || mission.status === 'completed' || mission.status === 'failed') return 0;
+  return Math.max(0, 3 - mission.travelTicksCompleted + mission.signalLostSols + mission.recoveryDelaySols);
+}
+
+export function selectRoverProgressPct(state: GameState): number {
+  const mission = state.rover.activeMission;
+  if (!mission) return 0;
+  if (mission.status === 'completed') return 100;
+  return Math.round((Math.min(3, mission.travelTicksCompleted) / 3) * 100);
+}
+
+export function selectRoverTimeline(state: GameState): readonly RoverTimelineStage[] {
+  const current = selectRoverStatus(state);
+  const base: RoverTimelineStage[] = ['available', 'scheduled', 'launching', 'outbound', 'exploring'];
+  if (current === 'signal-lost') base.push('signal-lost');
+  base.push('returning', current === 'failed' ? 'failed' : 'completed');
+  return base;
+}
+
+export function selectMitigationSatisfied(
+  state: GameState,
+  bundle: ContentBundle,
+  expeditionId: ExpeditionId,
+  equipmentIds: readonly EquipmentId[]
+): boolean {
+  const expedition = bundle.campaign.expeditions.find((entry) => entry.id === expeditionId);
+  return Boolean(
+    expedition?.mitigationOptions.some(
+      (option) =>
+        option.allOf.every((id) => equipmentIds.includes(id)) &&
+        (option.requirements?.minBatteryKWh === undefined ||
+          state.resources.batteryKWh >= option.requirements.minBatteryKWh)
+    )
+  );
+}
+
+export function selectCanScheduleExpedition(
+  state: GameState,
+  bundle: ContentBundle,
+  expeditionId: ExpeditionId
+): Permission {
+  const expedition = bundle.campaign.expeditions.find((entry) => entry.id === expeditionId);
+  if (!expedition) return { allowed: false, code: 'E_EXPEDITION_UNKNOWN', message: 'Expedition không tồn tại.' };
+  if (state.clock.phase !== 'comms') return { allowed: false, code: 'E_PHASE_INVALID', message: 'Cần ở pha Liên lạc.' };
+  if (state.rover.activeMission) return { allowed: false, code: 'E_ROVER_BUSY', message: 'Rover đang bận.' };
+  if (state.rover.missionHistory.some((result) => result.expeditionId === expeditionId)) {
+    return { allowed: false, code: 'E_EXPEDITION_SETTLED', message: 'Expedition đã được giải quyết.' };
+  }
+  if (state.clock.sol < expedition.windowStartSol || state.clock.sol > expedition.windowEndSol) {
+    return { allowed: false, code: 'E_WINDOW_CLOSED', message: `Cửa sổ Sol ${expedition.windowStartSol}-${expedition.windowEndSol}.` };
+  }
+  return { allowed: true };
 }
 
 /** Check whether the player can advance from the current phase to the next phase. */
@@ -107,7 +184,6 @@ export function selectFiveSolResourceTrend(state: GameState, bundle: ContentBund
         sol: nextSol,
         status: 'draft',
         mreTargets: [],
-        medkitTargets: [],
       },
     };
   }
@@ -129,7 +205,9 @@ export function selectWeatherOutlook(state: GameState, bundle: ContentBundle, cr
     isAlexAssigned: crewId === 'eng' || state.crew.eng.assignedTask?.type === 'repair-system',
   });
   const roverIncidentProb = computeRoverRiskProb(weather, bundle.balance, diffMult, {
-    threatBlocked: state.rover.equippedItems.length > 0,
+    threatBlocked: state.rover.activeMission
+      ? selectMitigationSatisfied(state, bundle, state.rover.activeMission.expeditionId, state.rover.activeMission.equippedItems)
+      : false,
     isElenaOperating: crewId === 'geo' || state.crew.geo.assignedTask?.type === 'rover-operate',
   });
   const crewWeatherRisk = computeCrewWeatherRisk(
@@ -180,8 +258,8 @@ export function selectMissionProgress(state: GameState, bundle: ContentBundle) {
     {
       id: 'samples-collected',
       label: 'Thu thập mẫu khoa học Rover',
-      met: state.rover.samplesCollected.length >= 1,
-      currentText: `${state.rover.samplesCollected.length}/3 mẫu`,
+      met: selectRoverSamples(state).length >= 1,
+      currentText: `${selectRoverSamples(state).length}/3 mẫu`,
       targetText: '≥ 1 mẫu',
     },
     {

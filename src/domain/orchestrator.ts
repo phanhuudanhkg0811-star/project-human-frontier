@@ -28,6 +28,16 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
+function canOperateRover(state: GameState, crewId: keyof GameState['crew'], bundle: ContentBundle): boolean {
+  const crew = state.crew[crewId];
+  return (
+    crew.condition === 'fit' &&
+    crew.hungerState !== 'starving' &&
+    crew.morale >= bundle.balance.crew.tiredBelowMorale &&
+    crew.assignedTask === null
+  );
+}
+
 /** Find the first unresolved mandatory event triggered for the current Sol. */
 export function findNextPendingEvent(state: GameState, events: readonly EventNode[]): EventNode | null {
   if (state.events.activeEventId) {
@@ -315,6 +325,15 @@ export function dispatchDomainCommand(
       if (!member.assignedTask) {
         return fail(state, 'E_PLAN_INVALID', `${member.name} chưa được giao việc.`);
       }
+      const mission = state.rover.activeMission;
+      if (
+        member.assignedTask.type === 'rover-operate' &&
+        mission &&
+        ((mission.status === 'scheduled' && mission.launchOperatorCrewId === command.crewId) ||
+          mission.recoveryOperatorCrewId === command.crewId)
+      ) {
+        return fail(state, 'E_PLAN_INVALID', 'Nhiệm vụ Rover đang giữ slot này; hãy hủy lịch hoặc đổi người thu hồi Rover.');
+      }
       const fallbackParts =
         member.assignedTask.type === 'repair-system' ? bundle.balance.systems.repairPartsCost : 0;
       const partsRefund = member.assignedTask.partsSpent ?? fallbackParts;
@@ -563,27 +582,28 @@ export function dispatchDomainCommand(
       };
     }
 
-    case 'rover/launch': {
+    case 'rover/schedule': {
       if (state.clock.phase !== 'comms') {
-        return fail(state, 'E_PHASE_INVALID', 'Chỉ phóng Rover trong pha Liên lạc.');
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ lập lịch Rover trong pha Liên lạc.');
       }
-      if (state.rover.status !== 'idle') {
-        return fail(state, 'E_PLAN_INVALID', 'Rover đang bận hoặc hỏng.');
+      if (state.rover.activeMission !== null) {
+        return fail(state, 'E_PLAN_INVALID', 'Rover đang có nhiệm vụ hoạt động.');
       }
       const exp = bundle.campaign.expeditions.find((e) => e.id === command.expeditionId);
       if (!exp) return fail(state, 'E_PLAN_INVALID', 'Chuyến thám hiểm không hợp lệ.');
+      if (state.rover.missionHistory.some((result) => result.expeditionId === exp.id)) {
+        return fail(state, 'E_PLAN_INVALID', 'Chuyến thám hiểm này đã được giải quyết và không thể chạy lại.');
+      }
+      if (state.clock.sol < exp.windowStartSol || state.clock.sol > exp.windowEndSol) {
+        return fail(state, 'E_PLAN_INVALID', `Chỉ có thể lập lịch chuyến này trong Sol ${exp.windowStartSol}-${exp.windowEndSol}.`);
+      }
       if (command.equipmentIds.length > 3) {
         return fail(state, 'E_PLAN_INVALID', 'Rover chỉ mang tối đa 3 thiết bị.');
       }
-      const operator = Object.values(state.crew).find(
-        (c) => c.condition === 'fit' && c.hungerState !== 'starving' && c.morale >= bundle.balance.crew.tiredBelowMorale && c.assignedTask === null
-      );
-      if (!operator) {
-        return fail(state, 'E_PLAN_INVALID', 'Cần 1 phi hành gia rảnh rỗi, Fit, không Tired/Starving để trực phóng Rover.');
+      if (!canOperateRover(state, command.launchOperatorCrewId, bundle)) {
+        return fail(state, 'E_PLAN_INVALID', 'Người trực phóng phải rảnh, Fit và không Tired/Starving.');
       }
-      if (state.resources.batteryKWh < exp.launchPowerKWh) {
-        return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần ${exp.launchPowerKWh} kWh Pin để phóng Rover.`);
-      }
+      const operator = state.crew[command.launchOperatorCrewId];
 
       const nextEq = { ...state.equipment };
       for (const eqId of command.equipmentIds) {
@@ -597,7 +617,6 @@ export function dispatchDomainCommand(
       candidate = {
         ...state,
         revision: state.revision + 1,
-        resources: { ...state.resources, batteryKWh: round2(state.resources.batteryKWh - exp.launchPowerKWh) },
         crew: {
           ...state.crew,
           [operator.id]: { ...operator, assignedTask: { type: 'rover-operate' } },
@@ -605,10 +624,22 @@ export function dispatchDomainCommand(
         equipment: nextEq,
         rover: {
           ...state.rover,
-          status: 'outbound',
-          expeditionId: exp.id,
-          solsRemaining: exp.durationSols,
-          equippedItems: [...command.equipmentIds],
+          activeMission: {
+            expeditionId: exp.id,
+            status: 'scheduled',
+            scheduledSol: state.clock.sol,
+            launchedSol: null,
+            statusEnteredSol: state.clock.sol,
+            expectedReturnSol: null,
+            launchOperatorCrewId: operator.id,
+            recoveryOperatorCrewId: null,
+            equippedItems: [...command.equipmentIds],
+            travelTicksCompleted: 0,
+            signalLostSols: 0,
+            resumeStatus: null,
+            recoveryDelaySols: 0,
+            incidents: [],
+          },
         },
       };
       const invErr = validateStateInvariants(candidate, bundle);
@@ -616,8 +647,126 @@ export function dispatchDomainCommand(
       return {
         ok: true,
         state: candidate,
-        effects: [{ type: 'rover-launched', message: `${operator.name} đã phóng Rover tới ${exp.name}.` }],
+        effects: [{ type: 'rover-scheduled', message: `${operator.name} đã lập lịch phóng Rover tới ${exp.name}.` }],
       };
+    }
+
+    case 'rover/cancel-schedule': {
+      if (state.clock.phase !== 'comms') {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ hủy lịch Rover trong pha Liên lạc.');
+      }
+      const mission = state.rover.activeMission;
+      if (!mission || mission.status !== 'scheduled') {
+        return fail(state, 'E_PLAN_INVALID', 'Không có lịch Rover đang chờ để hủy.');
+      }
+      const equipment = { ...state.equipment };
+      for (const id of mission.equippedItems) equipment[id] = { ...equipment[id], reservedForRover: false };
+      const operator = state.crew[mission.launchOperatorCrewId];
+      candidate = {
+        ...state,
+        revision: state.revision + 1,
+        equipment,
+        crew: {
+          ...state.crew,
+          [operator.id]: operator.assignedTask?.type === 'rover-operate' ? { ...operator, assignedTask: null } : operator,
+        },
+        rover: { ...state.rover, activeMission: null },
+      };
+      const invErr = validateStateInvariants(candidate, bundle);
+      if (invErr) return fail(state, invErr.code, invErr.message, false);
+      return { ok: true, state: candidate, effects: [{ type: 'rover-cancelled', message: 'Đã hủy lịch Rover và trả thiết bị về LR Rack.' }] };
+    }
+
+    case 'rover/recover-signal': {
+      if (state.clock.phase !== 'engineering' && state.clock.phase !== 'comms') {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ khôi phục tín hiệu Rover trong pha Kỹ thuật hoặc Liên lạc.');
+      }
+      const mission = state.rover.activeMission;
+      if (!mission || mission.status !== 'signal-lost' || mission.resumeStatus === null) {
+        return fail(state, 'E_PLAN_INVALID', 'Rover hiện không ở trạng thái mất tín hiệu.');
+      }
+      candidate = {
+        ...state,
+        revision: state.revision + 1,
+        rover: {
+          ...state.rover,
+          activeMission: {
+            ...mission,
+            status: mission.resumeStatus,
+            statusEnteredSol: state.clock.sol,
+            expectedReturnSol: mission.expectedReturnSol === null ? null : mission.expectedReturnSol + mission.signalLostSols,
+            signalLostSols: 0,
+            resumeStatus: null,
+          },
+        },
+      };
+      return { ok: true, state: candidate, effects: [{ type: 'rover-signal-recovered', message: 'Đã khôi phục liên lạc với Rover.' }] };
+    }
+
+    case 'rover/set-recovery-operator': {
+      if (state.clock.phase !== 'engineering' && state.clock.phase !== 'comms') {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ phân công thu hồi Rover trong pha Kỹ thuật hoặc Liên lạc.');
+      }
+      const mission = state.rover.activeMission;
+      if (!mission || (mission.status !== 'exploring' && mission.status !== 'recovery-pending')) {
+        return fail(state, 'E_PLAN_INVALID', 'Rover chưa đến thời điểm phân công thu hồi.');
+      }
+      if (mission.expectedReturnSol !== null && state.clock.sol < mission.expectedReturnSol) {
+        return fail(state, 'E_PLAN_INVALID', `Chỉ phân công thu hồi từ Sol ${mission.expectedReturnSol}.`);
+      }
+      if (!canOperateRover(state, command.crewId, bundle)) {
+        return fail(state, 'E_PLAN_INVALID', 'Người thu hồi phải rảnh, Fit và không Tired/Starving.');
+      }
+      const operator = state.crew[command.crewId];
+      candidate = {
+        ...state,
+        revision: state.revision + 1,
+        crew: { ...state.crew, [operator.id]: { ...operator, assignedTask: { type: 'rover-operate' } } },
+        rover: { ...state.rover, activeMission: { ...mission, recoveryOperatorCrewId: operator.id } },
+      };
+      return { ok: true, state: candidate, effects: [{ type: 'rover-recovery-assigned', message: `${operator.name} sẽ trực thu hồi Rover.` }] };
+    }
+
+    case 'crew/use-medkit': {
+      if (state.clock.phase !== 'engineering' && state.clock.phase !== 'rationing') {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ dùng Medkit trong pha Kỹ thuật hoặc Phân phối.');
+      }
+      if (state.resources.medkits < 1) return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không còn Medkit trong kho.');
+      const target = state.crew[command.targetCrewId];
+      if (target.condition === 'evacuated') return fail(state, 'E_PLAN_INVALID', 'Không thể điều trị phi hành gia đã evacuated.');
+      if (target.health >= 100) return fail(state, 'E_PLAN_INVALID', `${target.name} đang có Health tối đa.`);
+      let medicBonus = 0;
+      const crew = { ...state.crew };
+      if (command.administeredByCrewId !== undefined) {
+        if (command.administeredByCrewId !== 'doc') {
+          return fail(state, 'E_PLAN_INVALID', 'Chỉ Marcus Vance có bonus khi trực tiếp dùng Medkit.');
+        }
+        const medic = state.crew.doc;
+        if (medic.condition !== 'fit' || medic.assignedTask !== null) {
+          return fail(state, 'E_PLAN_INVALID', 'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.');
+        }
+        medicBonus = bundle.balance.consumables.medkits.medicBonus;
+        // Occupies Marcus's task slot, but must not also apply the separate End-Sol medical-care heal.
+        crew.doc = { ...medic, assignedTask: { type: 'medical-care' } };
+      }
+      const baseHeal = state.resources.medkitLevel === 2
+        ? bundle.balance.consumables.medkits.healLv2
+        : bundle.balance.consumables.medkits.healLv1;
+      const nextHealth = clamp(target.health + baseHeal + medicBonus, 0, 100);
+      crew[target.id] = {
+        ...crew[target.id],
+        health: nextHealth,
+        condition: nextHealth >= bundle.balance.crew.injuredBelowHealth ? 'fit' : 'injured',
+      };
+      candidate = {
+        ...state,
+        revision: state.revision + 1,
+        resources: { ...state.resources, medkits: state.resources.medkits - 1 },
+        crew,
+      };
+      const invErr = validateStateInvariants(candidate, bundle);
+      if (invErr) return fail(state, invErr.code, invErr.message, false);
+      return { ok: true, state: candidate, effects: [{ type: 'medkit-used', message: `Đã dùng Medkit cho ${target.name}: Health ${nextHealth}.` }] };
     }
 
     case 'rationing/set-wrs': {
@@ -669,28 +818,6 @@ export function dispatchDomainCommand(
       return { ok: true, state: candidate, effects: [] };
     }
 
-    case 'rationing/toggle-medkit': {
-      if (state.clock.phase !== 'rationing') {
-        return fail(state, 'E_PHASE_INVALID', 'Chỉ phát Medkit trong pha Phân phối.');
-      }
-      const already = state.dailyPlan.medkitTargets.includes(command.crewId);
-      const nextEnable = command.enabled ?? !already;
-      if (nextEnable && state.dailyPlan.medkitTargets.length >= state.resources.medkits) {
-        return fail(state, 'E_INSUFFICIENT_RESOURCE', 'Không đủ liều Medkit trong kho.');
-      }
-      const nextList = nextEnable
-        ? already
-          ? state.dailyPlan.medkitTargets
-          : [...state.dailyPlan.medkitTargets, command.crewId]
-        : state.dailyPlan.medkitTargets.filter((id) => id !== command.crewId);
-      candidate = {
-        ...state,
-        revision: state.revision + 1,
-        dailyPlan: { ...state.dailyPlan, medkitTargets: nextList },
-      };
-      return { ok: true, state: candidate, effects: [] };
-    }
-
     case 'sol/end': {
       if (state.clock.phase !== 'rationing') {
         return fail(state, 'E_PHASE_INVALID', 'Chỉ có thể chốt ngày (End-Sol) tại pha Phân phối (Rationing).');
@@ -729,8 +856,10 @@ export function dispatchDomainCommand(
           wrsEnabled: state.dailyPlan.wrsEnabled,
           powerPriority: state.dailyPlan.powerPriority,
           mreTargets: [],
-          medkitTargets: [],
         },
+        rover: state.rover.activeMission?.status === 'completed' || state.rover.activeMission?.status === 'failed'
+          ? { ...state.rover, activeMission: null }
+          : state.rover,
         events: {
           activeEventId: pendingEv ? pendingEv.id : null,
           resolvedEventIds: state.events.resolvedEventIds,
