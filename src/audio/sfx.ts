@@ -1,4 +1,5 @@
 import { hailUrl } from '../components/cabin/hailAssets.ts';
+import { useUiStore } from '../store/uiStore.ts';
 
 const SFX = {
   click: 'PH_SFX_UI_CLICK_V01',
@@ -18,6 +19,7 @@ const audioUrl = (file: string) => hailUrl(`audio/${file}.ogg`);
 const loaded = new Map<SfxName, HTMLAudioElement>();
 
 export function playSfx(name: SfxName, volume = 0.6): void {
+  if (useUiStore.getState().audioMuted) return;
   if (typeof Audio === 'undefined') return; // SSR / node tests
   let base = loaded.get(name);
   if (!base) {
@@ -34,6 +36,10 @@ let music: HTMLAudioElement | null = null;
 
 /** Starts the looping background music; browsers only allow it after a user gesture. */
 export function startMusic(volume = 0.35): void {
+  if (useUiStore.getState().audioMuted) {
+    music?.pause();
+    return;
+  }
   if (music || typeof Audio === 'undefined') return;
   music = new Audio(audioUrl('PH_MUS_LUNAR_BASE_LOOP_V01'));
   music.loop = true;
@@ -41,4 +47,13 @@ export function startMusic(volume = 0.35): void {
   void music.play().catch(() => {
     music = null; // blocked by autoplay policy, retry on the next gesture
   });
+}
+
+export function syncMusicMuted(muted: boolean): void {
+  if (!music) return;
+  if (muted) {
+    music.pause();
+  } else {
+    void music.play().catch(() => undefined);
+  }
 }

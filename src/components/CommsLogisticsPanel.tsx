@@ -3,10 +3,12 @@ import { Radio, PackageCheck, Send, Truck, AlertTriangle } from 'lucide-react';
 import { playSfx } from '../audio/sfx.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import type { CargoPackId } from '../types/index.ts';
+import { useI18n } from '../i18n/useI18n.ts';
 
 export function CommsLogisticsPanel() {
   const { gameState, bundle, dispatch } = useGameStore();
-  const [messageInput, setMessageInput] = useState(`Kiểm tra thời tiết Mặt Trời DONKI & đề xuất tiếp tế trước Sol ${bundle.campaign.milestones.lunarNight.startSol}`);
+  const { t } = useI18n();
+  const [messageInput, setMessageInput] = useState(() => t('comms.defaultMessage', { sol: bundle.campaign.milestones.lunarNight.startSol }));
   const [slots, setSlots] = useState<Partial<Record<CargoPackId, number>>>({
     'water-pack': 2,
     'power-parts-pack': 2,
@@ -38,7 +40,7 @@ export function CommsLogisticsPanel() {
   const handleOrderCargo = async () => {
     const res = await dispatch({ type: 'comms/order-cargo', slots });
     if (res.ok) playSfx('launch', 0.55);
-    setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã đặt tàu hàng.' : res.error.message);
+    setStatusNote(res.ok ? res.effects[0]?.message ?? t('comms.ordered') : res.error.message);
   };
 
   const handleSendRadio = async () => {
@@ -50,7 +52,7 @@ export function CommsLogisticsPanel() {
       nowMs: Date.now(),
     });
     if (res.ok) playSfx('radio', 0.55);
-    setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã gửi.' : res.error.message);
+    setStatusNote(res.ok ? res.effects[0]?.message ?? t('comms.sent') : res.error.message);
   };
 
   return (
@@ -58,7 +60,7 @@ export function CommsLogisticsPanel() {
       {!inComms && (
         <div className="text-xs px-3 py-2 rounded bg-amber-950/60 border border-amber-500/40 text-amber-200 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 shrink-0" />
-          Hãy chuyển sang Pha 3 (Liên lạc & Rover) để gửi điện tín hoặc đặt tàu hàng 80 kg.
+          {t('comms.phaseWarning')}
         </div>
       )}
 
@@ -73,7 +75,7 @@ export function CommsLogisticsPanel() {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-cyan-300 flex items-center gap-2">
             <Radio className="w-4 h-4" />
-            Vô tuyến Houston CAPCOM (Độ trễ ~1.3s/chiều)
+            {t('comms.radioTitle')}
           </h3>
         </div>
         <div className="flex gap-2">
@@ -90,13 +92,13 @@ export function CommsLogisticsPanel() {
             className="hail-btn hail-btn--accent flex items-center gap-1"
           >
             <Send className="w-3.5 h-3.5" />
-            Phát sóng
+            {t('comms.transmit')}
           </button>
         </div>
 
         <div className="max-h-32 overflow-y-auto flex flex-col gap-1.5 text-xs">
           {gameState.logistics.radioMessages.length === 0 ? (
-            <p className="text-slate-400">Chưa có phiên liên lạc nào trong chiến dịch.</p>
+            <p className="text-slate-400">{t('comms.empty')}</p>
           ) : (
             gameState.logistics.radioMessages.slice(-4).map((m) => (
               <div key={m.id} className="p-2 rounded bg-slate-950/80 border border-slate-800">
@@ -104,7 +106,7 @@ export function CommsLogisticsPanel() {
                   <strong>[Sol {m.sentSol}]</strong> {m.prompt}
                 </div>
                 <div className="text-emerald-300 mt-1">
-                  {m.status === 'transmitting' ? 'Đang truyền tín hiệu tới Trái Đất...' : m.reply}
+                  {m.status === 'transmitting' ? t('comms.transmitting') : m.reply}
                 </div>
               </div>
             ))
@@ -117,18 +119,23 @@ export function CommsLogisticsPanel() {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
             <Truck className="w-4 h-4" />
-            Tàu Tiếp tế 80 kg ({totalSlots * 20} / 80 kg) · Bay 4 Sol
+            {t('comms.cargoTitle', { used: totalSlots * 20 })}
           </h3>
           {gameState.clock.sol >= bundle.campaign.milestones.recommendedLastCargoSol && !gameState.logistics.activeOrder && (
-            <span className="text-[11px] text-amber-300 font-mono">Mốc đặt hàng khuyến nghị: Sol {bundle.campaign.milestones.recommendedLastCargoSol}, trước Đêm Trăng Sol {bundle.campaign.milestones.lunarNight.startSol}</span>
+            <span className="text-[11px] text-amber-300 font-mono">{t('comms.recommended', {
+              orderSol: bundle.campaign.milestones.recommendedLastCargoSol,
+              nightSol: bundle.campaign.milestones.lunarNight.startSol,
+            })}</span>
           )}
         </div>
 
         {gameState.logistics.activeOrder ? (
           <div className="p-3 rounded bg-emerald-950/40 border border-emerald-500/40 text-xs flex items-center gap-2 text-emerald-200">
             <PackageCheck className="w-4 h-4 shrink-0" />
-            Tàu hàng đang trên đường bay (Đặt ở Sol {gameState.logistics.activeOrder.orderedAtSol}, dự kiến hạ cánh tại Sol{' '}
-            <strong>{gameState.logistics.activeOrder.arrivalSol}</strong>).
+            {t('comms.activeOrder', {
+              ordered: gameState.logistics.activeOrder.orderedAtSol,
+              arrival: gameState.logistics.activeOrder.arrivalSol,
+            })}
           </div>
         ) : (
           <>
@@ -153,8 +160,8 @@ export function CommsLogisticsPanel() {
             <div className="flex items-center justify-between pt-1">
               <span className="text-xs text-slate-400">
                 {gameState.logistics.padCooldownSols > 0
-                  ? `Bãi đáp đang hồi phục (${gameState.logistics.padCooldownSols} Sol)`
-                  : 'Bãi đáp sẵn sàng nhận chuyến tiếp tế mới.'}
+                  ? t('comms.padCooldown', { sols: gameState.logistics.padCooldownSols })
+                  : t('comms.padReady')}
               </span>
               <button
                 type="button"
@@ -162,7 +169,7 @@ export function CommsLogisticsPanel() {
                 onClick={handleOrderCargo}
                 className="hail-btn hail-btn--accent"
               >
-                Phóng tàu hàng ({totalSlots * 20} kg)
+                {t('comms.launchCargo', { kg: totalSlots * 20 })}
               </button>
             </div>
           </>

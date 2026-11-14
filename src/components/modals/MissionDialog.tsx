@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
+import { useI18n } from '../../i18n/useI18n.ts';
 
 export type MissionDialogType =
   | 'journal'
@@ -36,6 +37,7 @@ export function MissionDialog({
   children,
 }: MissionDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const { t } = useI18n();
 
   useEffect(() => {
     const dialog = ref.current;
@@ -99,7 +101,7 @@ export function MissionDialog({
           <button
             type="button"
             className="mission-close-btn hail-close-btn"
-            aria-label="Đóng cửa sổ"
+            aria-label={t('common.closeDialog')}
             onClick={onClose}
           >
             <img

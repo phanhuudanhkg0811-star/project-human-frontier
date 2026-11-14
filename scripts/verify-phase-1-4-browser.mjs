@@ -125,6 +125,18 @@ try {
   await viewport(1440, 900);
   await call('Page.navigate', { url: 'http://127.0.0.1:5194' });
   for (let i = 0; i < 120 && !await evaluate("!!document.querySelector('.hail-action-band')"); i++) await pause(250);
+  check('Phase 1.5 ambient canvas is mounted in the observation window', await evaluate("document.querySelector('.hail-ambient-canvas')?.width > 0 && document.querySelector('.hail-ambient-canvas')?.height > 0"));
+  check('Phase 1.5 quick controls expose language, audio, and tutorial actions', await evaluate("document.querySelectorAll('.hail-utility-controls button').length === 3"));
+  await click(`document.querySelector('.hail-utility-controls button[aria-label="VI / EN"]')`);
+  check('Phase 1.5 switches the critical HUD to English', await evaluate("[...document.querySelectorAll('.hail-action-band button')].some(el => el.textContent.includes('Briefing')) && document.querySelector('.hail-telemetry')?.textContent.includes('Battery')"));
+  await click(`document.querySelector('.hail-utility-controls button[aria-label="VI / EN"]')`);
+  check('Phase 1.5 returns the critical HUD to Vietnamese', await evaluate("[...document.querySelectorAll('.hail-action-band button')].some(el => el.textContent.includes('Giao ban')) && document.querySelector('.hail-telemetry')?.textContent.includes('Pin')"));
+  await click(`document.querySelector('.hail-utility-controls button[aria-label="Hướng dẫn (?)"]')`);
+  check('Phase 1.5 tutorial opens only on request', await evaluate("!!document.querySelector('.mission-dialog--tutorial[open]')"));
+  await close();
+  await click(`document.querySelector('.hail-utility-controls button[aria-label="Tắt âm thanh"]')`);
+  check('Phase 1.5 persists the muted audio preference', await evaluate("JSON.parse(localStorage.getItem('phf_ui_prefs_v1')).audioMuted === true"));
+  await click(`document.querySelector('.hail-utility-controls button[aria-label="Bật âm thanh"]')`);
   for (const scenario of ['A', 'B', 'oxygen', 'water']) {
     await start();
     const policy = ['A', 'B'].includes(scenario) ? core.createPolicy('balanced', scenario) : core.createDefeatPolicy(scenario);

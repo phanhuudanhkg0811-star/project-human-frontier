@@ -10,6 +10,7 @@ import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, SolPhase, SystemId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_SVG, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
+import { useI18n } from '../../i18n/useI18n.ts';
 
 export type JournalTabId = 'log' | 'crew' | 'systems' | 'cargo';
 
@@ -59,6 +60,7 @@ export function JournalModal({
   onOpenPanel: (panel: 'comms' | 'expedition' | 'launch') => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
+  const { t } = useI18n();
   const [tab, setTab] = useState<JournalTabId>(initialTab);
   const [logPage, setLogPage] = useState(0);
   const [crewIdx, setCrewIdx] = useState(0);
@@ -475,7 +477,7 @@ export function JournalModal({
         <button
           type="button"
           className="hail-tactile-corner-close"
-          aria-label="Đóng Nhật ký"
+          aria-label={t('common.closeDialog')}
           onClick={() => {
             playSfx('click', 0.4);
             onClose();

@@ -123,6 +123,16 @@
   pointer-events: none;
 }
 
+.hail-ambient-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
 .hail-l00-space {
   position: absolute;
   inset: 0;
@@ -1027,6 +1037,45 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   font-size: 0.68em;
   font-weight: 500;
   color: #C7CBC8;
+}
+
+.hail-utility-controls {
+  position: absolute;
+  top: 8.4%;
+  right: 1.2%;
+  z-index: 48;
+  display: flex;
+  align-items: center;
+  gap: 0.35cqi;
+}
+
+.hail-utility-controls button {
+  min-width: clamp(28px, 2.3cqi, 36px);
+  height: clamp(28px, 2.3cqi, 36px);
+  padding: 0 0.45cqi;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25cqi;
+  border: 1px solid rgba(117, 169, 165, 0.52);
+  border-radius: 0.45cqi;
+  background: rgba(38, 55, 70, 0.92);
+  color: #E7E6DF;
+  font: 700 clamp(9px, 0.78cqi, 11px) 'JetBrains Mono', monospace;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+.hail-utility-controls button:hover,
+.hail-utility-controls button:focus-visible {
+  border-color: #D7B66C;
+  color: #D7B66C;
+  outline: none;
+}
+
+.hail-utility-controls svg {
+  width: clamp(14px, 1.15cqi, 18px);
+  height: clamp(14px, 1.15cqi, 18px);
 }
 
 /* ==========================================================================
@@ -2641,18 +2690,26 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 /* SCREEN 3: Allocation & End-Sol Lever Calibration (PH_UI_ALLOCATION_FRAME_V01) */
 .hail-alloc-main-screen {
   position: absolute;
-  left: 5.83%;
-  top: 12.60%;
-  width: 66.67%;
-  height: 68.15%;
-  padding: 1.75cqi 2.6cqi;
+  left: 6.30%;
+  top: 13.30%;
+  width: 65.65%;
+  height: 64.50%;
+  padding: 1.1cqi 2.15cqi 1.25cqi;
+  border-radius: 1.4cqi;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 0.65cqi;
-  overflow: hidden;
+  justify-content: flex-start;
+  gap: 0.5cqi;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: #75A9A5 rgba(20, 31, 41, 0.4);
+  scrollbar-width: thin;
   z-index: 2;
+}
+
+.hail-alloc-main-screen > * {
+  flex-shrink: 0;
 }
 
 .hail-alloc-phase-cmds {
@@ -2664,9 +2721,8 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .hail-alloc-crew-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.9cqi;
-  flex: 1;
-  min-height: 0;
+  gap: 0.8cqi;
+  flex: 0 0 auto;
   align-items: stretch;
 }
 
@@ -2674,19 +2730,19 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   background: rgba(20, 31, 41, 0.48);
   border: 1px solid rgba(146, 155, 157, 0.34);
   border-radius: 6px;
-  padding: 0.75cqi;
+  padding: 0.55cqi 0.65cqi;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 0.7cqi;
+  gap: 0.45cqi;
 }
 
 .hail-alloc-checks {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin-top: 0;
+  margin-bottom: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.55cqi;
+  gap: 0.35cqi;
 }
 
 .hail-alloc-crew-col.is-evacuated {
@@ -2697,7 +2753,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   display: flex;
   align-items: center;
   gap: 0.55cqi;
-  padding-bottom: 0.45cqi;
+  padding-bottom: 0.35cqi;
   border-bottom: 1px solid rgba(146, 155, 157, 0.25);
 }
 
@@ -2763,6 +2819,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   display: flex;
   flex-direction: column;
   gap: 0.42cqi;
+  margin-top: auto;
   padding-top: 0.5cqi;
   border-top: 1px solid rgba(117, 169, 165, 0.3);
   flex-shrink: 0;
@@ -3184,11 +3241,25 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   list-style: none;
 }
 
-.hail-alloc-debrief-drawer .hail-stem-brief {
+.hail-alloc-debrief-drawer > div {
   margin-top: 0.35cqi;
-  padding: 0.6cqi 0.8cqi;
-  max-height: 9cqi;
+  max-height: 8.5cqi;
   overflow-y: auto;
+  padding-right: 4px;
+  border-radius: 8px;
+  scrollbar-color: #75A9A5 rgba(20, 31, 41, 0.4);
+  scrollbar-width: thin;
+}
+
+.hail-alloc-debrief-drawer .campaign-readiness,
+.hail-alloc-debrief-drawer .hail-stem-brief {
+  margin: 0;
+  padding: 0.55cqi 0.75cqi;
+  border-radius: 8px;
+  font-size: clamp(11px, 1.12cqi, 13.5px);
+  line-height: 1.42;
+  max-height: none;
+  overflow: visible;
 }
 
 /* Phase 1.3 event guidance: stays outside the camera transform and native dialogs. */
@@ -3345,3 +3416,37 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 .campaign-readiness dt { color: #a6c6cb; }.campaign-readiness dd { margin: 0; }
 .campaign-readiness p { font-size: 11px; margin-top: 8px; }.campaign-readiness [role="status"] { color: #ffdb9a; }
 .campaign-migration-notice { position: fixed; z-index: 70; top: 65px; left: 4%; width: 92%; max-width: 680px; padding: 14px; border: 1px solid #91d6c6; border-radius: 8px; color: #edf7f4; background: #163d3ef5; font-size: 13px; }
+
+/* Phase 1.5 motion and compact-control accessibility. */
+@media (max-width: 760px) {
+  .hail-utility-controls {
+    top: 8.8%;
+    right: 1.6%;
+    gap: 4px;
+  }
+
+  .hail-utility-controls button {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 5px;
+  }
+
+  .hail-utility-controls button span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hail-camera-rig,
+  .hail-sprite-contain,
+  .hail-station,
+  .hail-res-pill,
+  .hail-event-priority,
+  .hail-night-cutscene,
+  .hail-btn,
+  .hail-action-band button {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

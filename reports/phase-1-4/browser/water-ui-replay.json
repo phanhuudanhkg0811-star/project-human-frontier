@@ -4,7 +4,7 @@
   "coverage": "full-campaign",
   "provenance": {
     "buildId": null,
-    "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+    "contentHash": "1b5bafdd81f4f37e4f526148861a6197e78bea0f078a8fb22985c282166d43a2",
     "rankingVersion": "1.4.0-moon32"
   },
   "initialState": {
@@ -15,7 +15,7 @@
     "revision": 1,
     "campaign": {
       "id": "moon-32",
-      "runId": "run-moon32-205099-d0877af4",
+      "runId": "run-moon32-205099-6d997b38",
       "planet": "moon",
       "status": "active",
       "difficulty": "cadet",
@@ -229,7 +229,7 @@
       ]
     }
   },
-  "initialHash": "888ba423b46674b6ed6aa86281c7305da0e75ba9f2080eebd39efe8ed2871d0b",
+  "initialHash": "2539ef8c0d9bdeab497c1084d540da9e432b58cfeb90977c8a3050e7f3016728",
   "steps": [
     {
       "command": {
@@ -239,7 +239,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "0786ddd8f0cd211c3f94ae5dbc9d42859c1394b07e86b10c1d40828dee55b8ca"
+      "stateHash": "fb0705b92762c474ae292d2deafb0f25c21b792466ca900c7280523bc4cbeb31"
     },
     {
       "command": {
@@ -247,7 +247,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "6c5af88bf5431254d5e149f05d59ae4190a2269b601518208761eab757d4b187"
+      "stateHash": "7f82b179de880cc50977ef295aaf20acadca4c2641411e6a8b3b9c73119b2494"
     },
     {
       "command": {
@@ -255,7 +255,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "9a1b2ff712faef9e81c3f94dd56a3758d7f9f82f752af9fb58ac22528bfeaac5"
+      "stateHash": "957899590379a81ff031cf65ed6427fd432f42a325c445c43d0aa709c397f0dc"
     },
     {
       "command": {
@@ -269,7 +269,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "817d07da311349d6957f077803789c1bef60b020a74644615f920f6eb4af58be"
+      "stateHash": "a0effc19704e0ad6302568b4dad226459ce1cdf9e047316395ab2d7963f69410"
     },
     {
       "command": {
@@ -277,7 +277,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "a039e1684c57821a8c433e3db0625dd4212532791d4453598713f38f3032dcea"
+      "stateHash": "f5af174c4663bba019fb21557ae02d7ddcfa31a921b040cda11295dea12f5cf3"
     },
     {
       "command": {
@@ -286,7 +286,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "5f26914350e293ba4d6538259f2c996213755f371ab0bc5d2125e858d97d774f"
+      "stateHash": "e7b92dd685d3034e7f70e09f4dc8a806061b03aae5b98804b8de4b967a420759"
     },
     {
       "command": {
@@ -294,7 +294,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "773a1094ee13d796a3625149767d97d77e930fb0d18b851d196aa5dbc275105f"
+      "stateHash": "949227689639e97e2c7a47633bdd37a0bd375805aa817f730f52ee3f1f5db1d4"
     },
     {
       "command": {
@@ -302,7 +302,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "33374bded469a165db0a4663719dbe5e0e312fafbbe1e7d7b06ec153bbe01993"
+      "stateHash": "25dbb3f7922743cd8d38cd28192d77f9dd81c4baab3cf7066f0c61c74d9cb098"
     },
     {
       "command": {
@@ -312,7 +312,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "1e5ee8c36b52e54a3c22be2c2b2d7e61e527b3c7b396355c9b5e5d55499cd84f"
+      "stateHash": "4aac90de31e2c878b2d62c436d1e87919d622327085fbc06eca041c36ff90ca5"
     },
     {
       "command": {
@@ -320,7 +320,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "91b224cb0fd626b297cdeffcb76234a172387275efb59c529e9a6ff77cc6e5b9"
+      "stateHash": "58678d5c72541ee767654cc99267da1530e84ded7cc0793da710a4816c8347b6"
     },
     {
       "command": {
@@ -328,7 +328,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "66a652d2d608e7a22f70fe53c313448f45fe365ac584bb4efc4097dc3ad96623"
+      "stateHash": "e78bbcd55f1a67d264bfcc559c6e956fef2dfd78494bc3f0b0f7eae1d44fd641"
     },
     {
       "command": {
@@ -336,7 +336,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "e3039757bd3ed6e260f8bc3c8d652f5c30eb8754e093945aee19d5872d1397a0"
+      "stateHash": "0847425d218d9d62447c012305e2d1199fdad681e57b7e0ad7deae6363b9c4f6"
     },
     {
       "command": {
@@ -344,7 +344,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "e07edd0e0a199986ece833aec3ce33c4df4dfcbc9a5a83a8924adafe1390ca74"
+      "stateHash": "8a4836f5e4effaa2cfa2486d0296306f9d5fbcfc4093b0b458d07317a1efa474"
     },
     {
       "command": {
@@ -352,7 +352,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "a7c33696a76a0c54cf614578e486a05d6ea696345c75ca9f47ddd0652c0ae475"
+      "stateHash": "0fb9b1711a2eb1d781fbc0d2bb3651fa4fb99efa188e14d5c5c66d8df844359d"
     },
     {
       "command": {
@@ -362,7 +362,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "1cba74388d08674283e317b87e6e0ec7801e99d5ecbf86ab90711b660c7695c3"
+      "stateHash": "baf6003b870fc2ecb3f5c4a15f5ef1d4acfa1a6e654989010986fdb997715fb5"
     },
     {
       "command": {
@@ -370,7 +370,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "c876fdc73103380c09401c57b90322e5dcdd8681f01ec15e7c00346730661caa"
+      "stateHash": "159f736ac80a78cfe3ac2341af8acf3afef3ffc6739ea6d2849aa82417f249b3"
     },
     {
       "command": {
@@ -378,7 +378,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "f4f3f4f608b303235c64b5edead5f86809996238d298112cf0f6f873058beb40"
+      "stateHash": "305931ec63b0f9ddf15dd6ab847da945b8e7794aa94766a68d52abde7b5e7358"
     },
     {
       "command": {
@@ -386,7 +386,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "b8bc665fa7a4a68b746ebce721336c23ad68801bc13d7e3d95c2255f38d30770"
+      "stateHash": "32b9c314d4c5502cbe0a5d6b8e00bc40333949e293e2993b2be480136fa2d952"
     },
     {
       "command": {
@@ -395,7 +395,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "43accbed8fd2b554fcd88e9fc02a940fafc9bddb337aaf421662ed226578ec8c"
+      "stateHash": "c2b0b148d45e479a36d36a8d9e90ae474cd711238a9f49a6760de4d3fe44646a"
     },
     {
       "command": {
@@ -404,7 +404,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "d86c678115c69a2e4b9f1e7d71fe98864c7593b92607540c986ea47d47854c92"
+      "stateHash": "93cf2cf21ab4355869cb44e28b56af2212802a6e48150efed2f2b089272ae3e9"
     },
     {
       "command": {
@@ -413,7 +413,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "43817c0fc96b936389ddec830fc33041396882b47de773c65832934711bce4f0"
+      "stateHash": "76cbbf930d92ee765f095c8b7301aa8b2a79c4d03795168a65e92059969ac67e"
     },
     {
       "command": {
@@ -422,7 +422,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "29cd63d1a49ae0c65f3b71e0f0373aba30b82458303823829bc4e41d7ae68733"
+      "stateHash": "cea32f044f462196e65f776da4db8aa58de6f34bdeb14c65cb48dffec1ca41cc"
     },
     {
       "command": {
@@ -430,7 +430,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "f06e4372ce956ae80e532b8b90e8c592d83096757ed8279f4725af571ea3daef"
+      "stateHash": "077597f70f8817576b603bdb05a17d32ddebc07162602fd4f2d39dcfcdc11250"
     },
     {
       "command": {
@@ -438,7 +438,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "ea75e0766de20b2e12bf50af19af0378cfa4ef51fab4fa9b2dc9203b598682d0"
+      "stateHash": "c92f9096f82112a03b6ce84ecb6d4131382e016d94b87056232ed0c6fcdef571"
     },
     {
       "command": {
@@ -446,7 +446,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "c09ddf16ad1c6cacc8fe56ea1df240b6305bff237e52dc63a25fe76728fe2615"
+      "stateHash": "365de63c8f2f67d539026c33a805bf336a141f306da327dcda6f9aea6537efc1"
     },
     {
       "command": {
@@ -454,7 +454,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "6967e0ca013836a5e4bcca419058e399078223cc0985760597823ad35cf368af"
+      "stateHash": "4d94adeb8276be4b791af9408034afeff176381d71a8d7fc49ab16b5dc77fe3d"
     },
     {
       "command": {
@@ -462,7 +462,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "5381aa10247b8426bc1ab340294a3f0c140d13eff7c312499634f57a95423661"
+      "stateHash": "e9391a59b32a5fb985212f36eade097e11b3a2c11f2164b5caf5352a591a7bac"
     },
     {
       "command": {
@@ -470,7 +470,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "e33c22238212066ed42a9acf0f047ca76dc9fe1a7d775838bd09f082ec2abd17"
+      "stateHash": "4a74cb872c8362ad69a5682684c6095b313b83171ad7c03c4ffc689a645d1c2c"
     },
     {
       "command": {
@@ -478,7 +478,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "c9030dca9aaba0567afff7c78daf96cec3fe32d1f16cfc88760c195d666b7d7a"
+      "stateHash": "4e4afb74886fa1e3782bc1dbbbb9fb55ec1080f69898134cb9c45990096490aa"
     },
     {
       "command": {
@@ -486,7 +486,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "d9f0015b5c171e7479ace77453c75152e9eb1b39606a26589facf69322fc5c5e"
+      "stateHash": "50116e886fe3ebb46b6603c726176023c41174990fa4b7fc4205e3a6a697eb8a"
     },
     {
       "command": {
@@ -494,7 +494,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "25a3de27b4165aa65d16c253e13b0aff18a314bd334ca18f940076459a6fd7da"
+      "stateHash": "a68db21f33488aeacc440fe32b59787021140bf032224bcfca19db1756f24aff"
     },
     {
       "command": {
@@ -502,7 +502,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "2d139a6a1459cae4b3622e51b661f57772302ed70215910b61fa419395c6a4c7"
+      "stateHash": "6b48297c0e548f9ba13f98010b272b71ccbb0da0408fdb4a03e247affa7a6a20"
     },
     {
       "command": {
@@ -511,7 +511,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "f321e6d913b32795b4f3770ff5eeda037c6b32685952f90597f9182e0bd71211"
+      "stateHash": "6a616ba3c2f06d331a3a79d306261d3d64aa2fbe099c74a8663cd284c4845c78"
     },
     {
       "command": {
@@ -520,7 +520,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "dbb5a6bce39d8bc1ec901e7fdac639a99be7031842a81263a3b09dfe34ad5892"
+      "stateHash": "ffaaf9c68b6306020547585f2a5cf9b81df6aead8f11a8cef13f7566f3d00b2c"
     },
     {
       "command": {
@@ -529,7 +529,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "875a6d59447dc83d3ad08b5dec2c6e3a8400157cd771508754c12f85093078d6"
+      "stateHash": "1eb53887b0764e8a11a5289845bd9d72dba8f644c7b1da21af3d8c8c2e38c490"
     },
     {
       "command": {
@@ -538,7 +538,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "99c851c6fff9db7d6d3e0b9b7f4191298d8d33d3fe7306915df97fda80528ecf"
+      "stateHash": "b4f3af9f12c377bab61ee15f21c6d0b626e63c5e9566ecbc18871b49cde5570c"
     },
     {
       "command": {
@@ -546,7 +546,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "2b47e6dd07ea8ea55e627005d283c4c9ca168b7942663f40a9e9c7dd2584185b"
+      "stateHash": "f2122d2d8df7d4317e08c9181bf5ee55dcb2a86a1a836ba85bc897d0f4977a18"
     },
     {
       "command": {
@@ -554,7 +554,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "c51de935a57f5acf847327123c928ee16f7cfba19ea2846f3f2119cb5254cf58"
+      "stateHash": "69fab081306b2c6b285a46a95c62f1a2d65ef032bee6aaaffd5c02e02cbf9702"
     },
     {
       "command": {
@@ -564,7 +564,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "a4762382d0ac30ed82c37ace75d7596083548e80146148feefceac4bbdc815d7"
+      "stateHash": "0501f847d51469cde3887f8282e314819adc91cccaff093d4af3cea67feb3afb"
     },
     {
       "command": {
@@ -572,7 +572,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "ba2bfbb0004765d23775e52e809c67df7449500f21f83d11aec298e37acd0978"
+      "stateHash": "bbbbffa6d6c5b7c75635918c6057328431e40d72629f0591809ad3f999b9cb3e"
     },
     {
       "command": {
@@ -580,7 +580,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "43381ab4560898129215f48bd4f4ca05f6450f1ee5d6a48e6b7748cd5b3eef7b"
+      "stateHash": "c215c092b490fc86d206a1df975dbf65b42e4eee1c6887e915efd90aa82c6163"
     },
     {
       "command": {
@@ -588,7 +588,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "d0b68e7c622c5b34519d790ed0f41ee6d7dd78abceefb07c2de118eb7d30f212"
+      "stateHash": "42914d3e9414b3ebe22ccac8daa874bbb990d36a6bf3d8b89f4a126ed9350f7b"
     },
     {
       "command": {
@@ -596,7 +596,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "bb0c89bfc4650e96e9c6433170d5643af9f560c6eaf933df90b486b35cc3fb48"
+      "stateHash": "0e6b32c219a5f58d9e16f3d480c0ad7618ae22cf281eb38d77ab1842628314e2"
     },
     {
       "command": {
@@ -604,7 +604,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "68636826837feb32c45f33cb793b14bf3112851f8b72548bc4f2b47467717a13"
+      "stateHash": "b01c6acdaf43085c8579754313f999f9f4bc41e5a3c00b60d52e4d851e07d2f7"
     },
     {
       "command": {
@@ -614,7 +614,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "d23d8e183b7d46de5bf7debfaa778ef1d4540e05ad89edb3ed88d7afaed568e0"
+      "stateHash": "f99f60de7fad51fedf72e10da093115074e26beefea89ac691db84f76039b2b7"
     },
     {
       "command": {
@@ -622,7 +622,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "9a72f936e6e395baaaef478b51a395afa8faa9b4aed348fcd40ff9561234aaed"
+      "stateHash": "29fe9d14c8b03ac25c08797bc6003622dcd5f9ad752610f9f8c18efeb23fa435"
     },
     {
       "command": {
@@ -630,7 +630,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "fcaf9760b2190ebcd4bb501d8fbd72cb6ba8e6add446322dcfb262db35bf727e"
+      "stateHash": "abbfa6ceb28e4a55915bde797963c48ed302111ee8d008061ffc5a0a109994ab"
     },
     {
       "command": {
@@ -644,7 +644,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "cdf56fca556b2e5ab54f24f5c8931d9ca64c03e848d08c90cc9cd5273b965eaa"
+      "stateHash": "42544cf493f751aaacc009bafdbd275296fe1ca7c747746c94c2d0cffdc46db2"
     },
     {
       "command": {
@@ -652,7 +652,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "aa4ac645a9e1598d51ab2f665eca752e8785dcc8d44a99a43ab6b72fb7f2524f"
+      "stateHash": "05b1ac4e15c9cefc3b3bf4dd8aaaab804118745a2b74abe129ea1f1ba38c4d04"
     },
     {
       "command": {
@@ -661,7 +661,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "67abcdf1e17966ee7c358fdff7ba05723d66ee42731932bfecab9a840459051f"
+      "stateHash": "be83ed88b4118c56f9cce6589ca3308274cea1d06622b05ee59a4873b4a27529"
     },
     {
       "command": {
@@ -670,7 +670,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "73e9822c0b6ef0af796e6101800226d0be1e5d040f8d89843bb6a91e8b4b1922"
+      "stateHash": "4c71e8b8dfc3b632d0ee1c681fed81a0f5b4ec84e8447fe757dbfc757551ad20"
     },
     {
       "command": {
@@ -679,7 +679,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "8130664c748e7259873d0e308fb15f626b08465e8cf8aa3b22890364c60f98c7"
+      "stateHash": "945fa10d39657c1de065ee96df5dc5c6871630e4bc4cd40a1ba1a8228871eaf8"
     },
     {
       "command": {
@@ -688,7 +688,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "293352ee3daaa38092547a0b0f5e134ccefc3117a53207749b0e94e8c6efabe5"
+      "stateHash": "200012bd856bbb050f5007353c5f53f0d70e6dbdd60d0b99a31acf465fd9102c"
     },
     {
       "command": {
@@ -696,7 +696,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "e81983d8d3792133209e68997116515c429960970f768992125203cbd4698eaf"
+      "stateHash": "dc2b5359bee37aca0b2253c00a13faeb718c8f65295ed59e8b156008dc374080"
     },
     {
       "command": {
@@ -704,7 +704,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "8b3ced15c19be315fac1f09d987b473a871119dee4fb27cd31d43abaf370e1f4"
+      "stateHash": "fe81839fa4077dde2e4999827f41cc8476dc8106fb95926c90614d0f45ac56a5"
     },
     {
       "command": {
@@ -712,7 +712,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "1869595f589e7fcb71ed87bad3ca60b655fdc8935fb98a2a0052dfbdecb16465"
+      "stateHash": "a3270c0642a28c4430e4cbfdc4ed106dce18e30516920ba8bcad53989a26b081"
     },
     {
       "command": {
@@ -720,7 +720,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "7fdab01ed1f64542f8320ef58482b021328b26a1f67e5434a2f40e4708afa5d3"
+      "stateHash": "a59f68d811700ee327aab788081766072a542741fc8859bee86a6024aa411568"
     },
     {
       "command": {
@@ -728,7 +728,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "20937947486b1a8733b10cc14a1e35864510ec1767152f634be3087dc587a7f1"
+      "stateHash": "1ae2c243029e19b647036d4753948fb2f0acbc071792a7cc9d792ee4465d8b4a"
     },
     {
       "command": {
@@ -736,7 +736,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "35f32fb6180c2ddcdb0ee23b5f91668da2dd3101c898f365b5ac5e5b0efab694"
+      "stateHash": "55fe701433649df5a7d6634ed8d2d7ca688c6f1f048a1709207fa106cc8ce4fc"
     },
     {
       "command": {
@@ -744,7 +744,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "228f1a18b7797c11b7ce6b4765359cec788c51b0dba72cf89fa1c96a4a04b57d"
+      "stateHash": "453895acba422d2ffdcda5f0f5b74400a891e77b616247c2e742d188931639f6"
     },
     {
       "command": {
@@ -752,7 +752,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "7ad2a8d5b89252da197ecc7bbe90b7e8904008fd5aba95c93c50eb901d914977"
+      "stateHash": "e1d691fbc6748459d6b908c63285bb0116e377d27b8fbe0e3f21d027e39cb210"
     },
     {
       "command": {
@@ -760,7 +760,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "038fbc3a6243a8cc16dfd1c661b27fb377789769bbad13cca7c9ac019b3f73d6"
+      "stateHash": "c20416b5b789e0b90e782acd991c468c724de6efb81af66dd997f90b0d3b0659"
     },
     {
       "command": {
@@ -768,7 +768,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "d4ca038aebc0bd560e1d1169d2247cded8dad23254c6b0b34c1d720c06e60ecf"
+      "stateHash": "f909013e03f86d3118eb7372be836ac9dc7dbf8ff299b37a97183fb85a503a47"
     },
     {
       "command": {
@@ -777,7 +777,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "8c71673dcf9b128ad12842cfabbb9a3f7aa5e7be47983cf089fd8f04d995a0f5"
+      "stateHash": "1aa628f8f637bc5cf2c35568604597ee6f10f58645ad88991b063c3809d5d420"
     },
     {
       "command": {
@@ -786,7 +786,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "202dc20ac1ba04b38d30d0ab292381c8ce4910cae02bf90c99ecfac59d5ae6c8"
+      "stateHash": "c966c296bfcdbbb6cd2af06d97a51a937239b20beea126f811a38481a03e34df"
     },
     {
       "command": {
@@ -795,7 +795,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "35054e32ed104b9676bf411c7f8e9b5490860dda555b33ceba5064175dc770bd"
+      "stateHash": "bc2dbdb03dcb06ec2ea23335bd01323efed529cbe1218a08a7caa59b2f810401"
     },
     {
       "command": {
@@ -804,7 +804,7 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "8cf003c5050b16cee2b4e069519645ba286148f346b2c3b540ad72901af31135"
+      "stateHash": "1286635f58d700eec456e180f8d3041ef0e26b1ce4079fba0c6253f1328e2107"
     },
     {
       "command": {
@@ -812,9 +812,9 @@
       },
       "ok": true,
       "errorCode": null,
-      "stateHash": "0e2d6fa37abf339e7160a782f812b70aa956211237cc7f7e277def2561ca3cfc"
+      "stateHash": "671a7192b3926dbceaa1577f06bf9b985faee894b1337b9a68273cb7dc7cd8e4"
     }
   ],
-  "finalHash": "0e2d6fa37abf339e7160a782f812b70aa956211237cc7f7e277def2561ca3cfc",
+  "finalHash": "671a7192b3926dbceaa1577f06bf9b985faee894b1337b9a68273cb7dc7cd8e4",
   "expectedOutcome": "defeat"
 }

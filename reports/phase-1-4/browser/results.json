@@ -1,7 +1,13 @@
 {
   "method": "All campaign actions use rendered UI buttons, with read-only localStorage snapshots. No state injection or store.dispatch from DevTools.",
-  "contentHash": "27bdcdceaf93719372b5946ded177331eb556abe4a8be8a319eeaccf48395b35",
+  "contentHash": "1b5bafdd81f4f37e4f526148861a6197e78bea0f078a8fb22985c282166d43a2",
   "checks": [
+    "Phase 1.5 ambient canvas is mounted in the observation window",
+    "Phase 1.5 quick controls expose language, audio, and tutorial actions",
+    "Phase 1.5 switches the critical HUD to English",
+    "Phase 1.5 returns the critical HUD to Vietnamese",
+    "Phase 1.5 tutorial opens only on request",
+    "Phase 1.5 persists the muted audio preference",
     "New mission is clean Sol 1 with requested seed",
     "Training report appears after End-Sol 12 without terminating campaign",
     "Lunar Night reload preserves exact state",
@@ -73,7 +79,7 @@
         "rank": "S",
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "c8de3d4a7e45a871c11e25c0f3e2a5d2bc2bb8017bcdb75dd8fef6fae34f33f7",
+      "finalHash": "719dcfc4dd48d964719a95d2c49defa397b1f2d8086bce5ab0efe8e06baf4f12",
       "completedSols": 32
     },
     {
@@ -111,7 +117,7 @@
         "rank": "A",
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "adda71c1945ac6f85784cc9054faa17e9d64786e4789981137ce61dc1674abf8",
+      "finalHash": "e30bc7f8b0e7e4bdd79e1762d2aa3f3e36ad69fdbe20deaade5fb35a97f22bfd",
       "completedSols": 32
     },
     {
@@ -149,7 +155,7 @@
         "rank": null,
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "ea3c50b2d214394a0e3f7f24f6cdf14b6efe7294d2d10b39d0a0200863d5a3e0",
+      "finalHash": "57dc23b2426399e9ffd15ab98a265b6f8e85dc33fd14d4dc95cb70cde57c41e2",
       "completedSols": 21
     },
     {
@@ -187,7 +193,7 @@
         "rank": null,
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "0e2d6fa37abf339e7160a782f812b70aa956211237cc7f7e277def2561ca3cfc",
+      "finalHash": "671a7192b3926dbceaa1577f06bf9b985faee894b1337b9a68273cb7dc7cd8e4",
       "completedSols": 9
     }
   ]

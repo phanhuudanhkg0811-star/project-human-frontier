@@ -1,0 +1,2768 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "scripts/build-hail-asset-manifest.mjs",
+  "assetRoot": "/assets/hail/",
+  "assetCount": 141,
+  "assets": [
+    {
+      "id": "audio:PH_MUS_LUNAR_BASE_LOOP_V01",
+      "path": "/assets/hail/audio/PH_MUS_LUNAR_BASE_LOOP_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 356279,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "91d50fa09b0252a4306bc4a07d32560ee01bbdf2c839ac80d84d40dc71496344"
+    },
+    {
+      "id": "audio:PH_SFX_ALERT_V01",
+      "path": "/assets/hail/audio/PH_SFX_ALERT_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 30524,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8ae9b00dc3717aab92a140f6b298ab69461765e6426ce2571f5947ab7cd89076"
+    },
+    {
+      "id": "audio:PH_SFX_END_SOL_V01",
+      "path": "/assets/hail/audio/PH_SFX_END_SOL_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 38205,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "391ada6d9d882f6cfd2b148b5364f1b4ce61d072de987221ad5e51409050b714"
+    },
+    {
+      "id": "audio:PH_SFX_LAUNCH_V01",
+      "path": "/assets/hail/audio/PH_SFX_LAUNCH_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 56893,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "efca223c79aae0ad747fdf7ba012a5e19e72bd7c5256087c19c3084e501c2eef"
+    },
+    {
+      "id": "audio:PH_SFX_RADIO_ON_V01",
+      "path": "/assets/hail/audio/PH_SFX_RADIO_ON_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 14419,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "a2be2027362e273b85d3031dbbc9f6b452552ea85f93264ce97a0af9b51f00b5"
+    },
+    {
+      "id": "audio:PH_SFX_RADIO_TRANSMIT_V01",
+      "path": "/assets/hail/audio/PH_SFX_RADIO_TRANSMIT_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 15061,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "627ac0ed62d57e599eee9eea5898be53858b123241e7b1c35f5f1935dc9dd9b1"
+    },
+    {
+      "id": "audio:PH_SFX_REPAIR_V01",
+      "path": "/assets/hail/audio/PH_SFX_REPAIR_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 19950,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "d8f3067cf7c510c794f5f1550736a39a969fcf03556151ef4b9099ba177c6ffc"
+    },
+    {
+      "id": "audio:PH_SFX_UI_CLICK_V01",
+      "path": "/assets/hail/audio/PH_SFX_UI_CLICK_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 5214,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "dbd25968c5b4716b6481305377a727d5dfc6da50f92f89449b779274616e38c7"
+    },
+    {
+      "id": "audio:PH_SFX_UI_OPEN_V01",
+      "path": "/assets/hail/audio/PH_SFX_UI_OPEN_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 8622,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "005071b1139ea0c084128de8a268bf0c29b6da8ad95e295ba4d95698738cc1ee"
+    },
+    {
+      "id": "audio:PH_SFX_UPGRADE_V01",
+      "path": "/assets/hail/audio/PH_SFX_UPGRADE_V01.ogg",
+      "mediaType": "audio/ogg",
+      "bytes": 15642,
+      "dimensions": null,
+      "anchor": null,
+      "layer": "audio",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "76d9e58781beffe1e83111b292336fc46c54a62f310d6e59e686d6f7a6865bb1"
+    },
+    {
+      "id": "characters:PH_CHAR_ALEX_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ALEX_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 78490,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "0f3381bb2e2fb19b4f872944c5f6ef719628fa77f5786ddcb119c569d4a0bbb0"
+    },
+    {
+      "id": "characters:PH_CHAR_ALEX_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ALEX_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 68472,
+      "dimensions": {
+        "width": 230,
+        "height": 410
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "9ee13a53d4b2325816ef3ccad7bc32e4289f68948706c67e5a8b02552ceebd7c"
+    },
+    {
+      "id": "characters:PH_CHAR_ELENA_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ELENA_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 97434,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f2ec1ebe8e7a1c41893a935fae1ecc274a191300a632ff09db1e53159605bd22"
+    },
+    {
+      "id": "characters:PH_CHAR_ELENA_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ELENA_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 114238,
+      "dimensions": {
+        "width": 307,
+        "height": 616
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "27fce953e2136388b335ff19025351c226b53f7e5f1f153cc93cd8ecaed4cb1a"
+    },
+    {
+      "id": "characters:PH_CHAR_MARCUS_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_MARCUS_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 75422,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "af68bb8fa42d9a8e26a1f71c1783598824dcc8287a2e3d22e390bdb14c9439dc"
+    },
+    {
+      "id": "characters:PH_CHAR_MARCUS_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_MARCUS_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 64458,
+      "dimensions": {
+        "width": 230,
+        "height": 410
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "d035813703453a3e90b9e2794848c28e8b3a8d4fea27e3d4fd709f6b4620e930"
+    },
+    {
+      "id": "characters:PH_CHAR_NV1_PORTRAIT_HUNGRY_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV1_PORTRAIT_HUNGRY_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 45380,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "hungry",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "d7292570780531e9a107e13757a58e82655d5c2e8e1c6e97191d1756198b4f59"
+    },
+    {
+      "id": "characters:PH_CHAR_NV1_PORTRAIT_NORMAL_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV1_PORTRAIT_NORMAL_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 44734,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "normal",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "5dbf991ca1cf81b118ae70a6b7a60cd1fd6110f4dc3377b5d14f65c2526a0f5f"
+    },
+    {
+      "id": "characters:PH_CHAR_NV1_PORTRAIT_SICK_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV1_PORTRAIT_SICK_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 45080,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "sick",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "602447f585647566a79a872d36a8b1758781b3d70bc0ec55091dd57df5592bbd"
+    },
+    {
+      "id": "characters:PH_CHAR_NV2_PORTRAIT_HUNGRY_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV2_PORTRAIT_HUNGRY_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 30150,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "hungry",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "aefce14f84bdcb0e69ac4e9187bc0cdfa5cffeead61fe8408c35cf156143c500"
+    },
+    {
+      "id": "characters:PH_CHAR_NV2_PORTRAIT_NORMAL_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV2_PORTRAIT_NORMAL_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 30484,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "normal",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "5a395c4f7ac3e775d44a951d02c86cdd53987cc254012d78445761e78d4ec5fb"
+    },
+    {
+      "id": "characters:PH_CHAR_NV2_PORTRAIT_SICK_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV2_PORTRAIT_SICK_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 29690,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "sick",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "ab5e1621d0aee9e553e25ff058f5a16cec3cfbf4935bf084a1ea3686113a8b32"
+    },
+    {
+      "id": "characters:PH_CHAR_NV3_PORTRAIT_HUNGRY_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV3_PORTRAIT_HUNGRY_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 45530,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "hungry",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "fbc46ed4a7115afec5c93a8dc4c6f59ac5a629f3fda4d06c8f80ee436048f279"
+    },
+    {
+      "id": "characters:PH_CHAR_NV3_PORTRAIT_NORMAL_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV3_PORTRAIT_NORMAL_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 43980,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "normal",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "3aee6d4dee6df6085ff0b508317914354956f253254e6eb1bde11404752e15d8"
+    },
+    {
+      "id": "characters:PH_CHAR_NV3_PORTRAIT_SICK_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV3_PORTRAIT_SICK_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 44270,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "sick",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "4aa540af7914a00f104dd0ff808f33fad9c20d541d7577af565335a53d58ac51"
+    },
+    {
+      "id": "characters:PH_CHAR_NV4_PORTRAIT_HUNGRY_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV4_PORTRAIT_HUNGRY_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 50996,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "hungry",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "f40d8000c6819184e99058545247640c9168c73c4f53904578b208c8adbc7cf2"
+    },
+    {
+      "id": "characters:PH_CHAR_NV4_PORTRAIT_NORMAL_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV4_PORTRAIT_NORMAL_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 50054,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "normal",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "0d337e37fade81c7820a69e5af4524ecf2247f4acf40348e7fa4e4997d8fdf39"
+    },
+    {
+      "id": "characters:PH_CHAR_NV4_PORTRAIT_SICK_V02",
+      "path": "/assets/hail/characters/PH_CHAR_NV4_PORTRAIT_SICK_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 51204,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "sick",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "f8d6420320716762af282ff7a0c93ae6e77e69140531231dc6e4b32c0ca20c75"
+    },
+    {
+      "id": "characters:PH_CHAR_SARAH_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_SARAH_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 68844,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "64de7b69194026af782bd383c315c4b1449703930bf79781328afc52cb627e73"
+    },
+    {
+      "id": "characters:PH_CHAR_SARAH_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_SARAH_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 117992,
+      "dimensions": {
+        "width": 307,
+        "height": 616
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "3b4c5c4787b102b91131c41dcffb4a88b4cf04b15ad37025650e4f683213757c"
+    },
+    {
+      "id": "effects:PH_FX_OVERLAY_BROKEN_V01",
+      "path": "/assets/hail/effects/PH_FX_OVERLAY_BROKEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 2008,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "broken",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "79f2569cd5ca1a5c3248e926008a65735284d3a7f78f2aa38407d7af8efc2719"
+    },
+    {
+      "id": "effects:PH_FX_OVERLAY_DEGRADED_V01",
+      "path": "/assets/hail/effects/PH_FX_OVERLAY_DEGRADED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 3382,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "764b7bb899cbd23540c898ec4c1f57407aa8a77b063790d9af7bb61b47aa278b"
+    },
+    {
+      "id": "environments:PH_ENV_COCKPIT_SHELL_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_COCKPIT_SHELL_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 845202,
+      "dimensions": {
+        "width": 1920,
+        "height": 1080
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "7d1a585d09c200b5cc6efbd57e8580d284d267a51d9d780bf58c20e99afb5b2a"
+    },
+    {
+      "id": "environments:PH_ENV_LUNAR_CRATER_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_LUNAR_CRATER_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 138702,
+      "dimensions": {
+        "width": 1376,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "a8610d01c0d0c8f0149bc77a7d75ad08967b552c3b41f97c20d837f9b74a4203"
+    },
+    {
+      "id": "environments:PH_ENV_LUNAR_EXTERIOR_DAY_V01",
+      "path": "/assets/hail/environments/PH_ENV_LUNAR_EXTERIOR_DAY_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 91428,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "day",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "72afa7f933e8fc3cfe15579819afcc6eb6537e7f1470a04a937c225ef937a02e"
+    },
+    {
+      "id": "environments:PH_ENV_LUNAR_EXTERIOR_NIGHT_V01",
+      "path": "/assets/hail/environments/PH_ENV_LUNAR_EXTERIOR_NIGHT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 78270,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "night",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8649f8f0b9a22777b1efad389d23501825666edc9942b8da9d27f02714ea8830"
+    },
+    {
+      "id": "environments:PH_ENV_LUNAR_MAP_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_LUNAR_MAP_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 297592,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "3721d871cad20521c216c55b292af819e9d6a066426d10ab1c78d15b6931b0b0"
+    },
+    {
+      "id": "environments:PH_ENV_LUNAR_PSR_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_LUNAR_PSR_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 165830,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "42f6cd0e741747bbb7551ba8ce5bb6ca2e1cf52bbac1544537239e121319e8ec"
+    },
+    {
+      "id": "environments:PH_ENV_REGOLITH_FIELD_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_REGOLITH_FIELD_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 149324,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f4a18eb29cd04df83cc474a6ffc4e3b82f08311bf4068b05e23d08e5c60f7957"
+    },
+    {
+      "id": "environments:PH_ENV_SPACE_DEEP_BASE_V01",
+      "path": "/assets/hail/environments/PH_ENV_SPACE_DEEP_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 5908,
+      "dimensions": {
+        "width": 1376,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8cd0af6f9a1b3e42f059842e011a223b59f078e732638da78e74a7181c739cbf"
+    },
+    {
+      "id": "equipment:PH_EQP_COMMS_TERMINAL_BASE_V03",
+      "path": "/assets/hail/equipment/PH_EQP_COMMS_TERMINAL_BASE_V03.webp",
+      "mediaType": "image/webp",
+      "bytes": 67438,
+      "dimensions": {
+        "width": 798,
+        "height": 888
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 3,
+      "sha256": "fc4a7cef4ffd86e5ff530cd648b3934796ebf0c05b9b8519e5c221385c27613d"
+    },
+    {
+      "id": "equipment:PH_EQP_CONSOLE_DESK_BASE_V02",
+      "path": "/assets/hail/equipment/PH_EQP_CONSOLE_DESK_BASE_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 124974,
+      "dimensions": {
+        "width": 1266,
+        "height": 659
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "9a963599091ce14d34a7eea7f248750db13524cd4ef79dc1ee1b65a1e97d0c49"
+    },
+    {
+      "id": "equipment:PH_EQP_CREW_SEAT_BASE_V01",
+      "path": "/assets/hail/equipment/PH_EQP_CREW_SEAT_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 69982,
+      "dimensions": {
+        "width": 560,
+        "height": 840
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "765e58750c1151814674773285c9325812e04ba907f8a5b0def7a95be0aaf384"
+    },
+    {
+      "id": "equipment:PH_EQP_CREW_SEAT_CAPTAIN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_CREW_SEAT_CAPTAIN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 97168,
+      "dimensions": {
+        "width": 680,
+        "height": 840
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "2e61d74f10474edbad72c26b8861f2bf0306709fd9036fef43386dc9f227c5e9"
+    },
+    {
+      "id": "equipment:PH_EQP_ENDDAY_CONSOLE_BASE_V01",
+      "path": "/assets/hail/equipment/PH_EQP_ENDDAY_CONSOLE_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 83202,
+      "dimensions": {
+        "width": 840,
+        "height": 766
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "day",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "6362d37e6fafa9c9c0efcb3b1eee9f1287f0d5b0cd111510c5df138a89ddec2e"
+    },
+    {
+      "id": "equipment:PH_EQP_FABRICATOR_DAMAGED_V02",
+      "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_DAMAGED_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 74926,
+      "dimensions": {
+        "width": 813,
+        "height": 879
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "damaged",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "d0de92f59333613913df073e66fa6293085048c9d877fb6b67acd0490a3316d7"
+    },
+    {
+      "id": "equipment:PH_EQP_FABRICATOR_IDLE_V02",
+      "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_IDLE_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 65764,
+      "dimensions": {
+        "width": 813,
+        "height": 879
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "idle",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "a60d92ac150b5eb7cd20945c18dc05244ce336b3a4a7b37f25442f38ee935ddc"
+    },
+    {
+      "id": "equipment:PH_EQP_FABRICATOR_WORKING_V02",
+      "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_WORKING_V02.webp",
+      "mediaType": "image/webp",
+      "bytes": 73722,
+      "dimensions": {
+        "width": 813,
+        "height": 879
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "working",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 2,
+      "sha256": "a73df2f0d51124f90bd418e0b79ce3a9c56015bb6f6c75b5cc0b2fd99bfd96d3"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_DOOR_LEFT_BOT_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_LEFT_BOT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 12072,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "cf902a6d07fb1e55429575eddeeb13e4ba5087db5ed4b6cffe72875fa3476071"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_DOOR_LEFT_TOP_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_LEFT_TOP_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 13094,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "73da0b1a4a31e81e26a3a0fa28c8c95fd27dfaef3cece54eabc0045335b62fbb"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_DOOR_RIGHT_BOT_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_RIGHT_BOT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 11884,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "40523b22c4a1e371cc9e5793c2be8fd8769c4421889a524057659781a18de5fd"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_DOOR_RIGHT_TOP_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_RIGHT_TOP_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 13474,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ce11066164039bdce0969d846171e982809c451793d9a8fcee965e6cb4477578"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_LEFT_OPEN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_LEFT_OPEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 37130,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "6bf0fde1fdcd6a477ec37a492731a67c7179aaf22cefa7db6bd173d40af95711"
+    },
+    {
+      "id": "equipment:PH_EQP_LOCKER_RIGHT_OPEN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_LOCKER_RIGHT_OPEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 37276,
+      "dimensions": {
+        "width": 307,
+        "height": 265
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "1b2301090221f1c38220a259d9cdc6f8723f59fa936f14790323350cf8c11dd3"
+    },
+    {
+      "id": "equipment:PH_EQP_MEDICAL_STATION_BASE_V01",
+      "path": "/assets/hail/equipment/PH_EQP_MEDICAL_STATION_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 73416,
+      "dimensions": {
+        "width": 560,
+        "height": 840
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "51b9f3d50b018ba56d9430f6301bf220cdb1f758510ec7b9f455a76b7253ac9e"
+    },
+    {
+      "id": "equipment:PH_EQP_OXYGEN_GENERATOR_BASE_V12",
+      "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_BASE_V12.webp",
+      "mediaType": "image/webp",
+      "bytes": 63310,
+      "dimensions": {
+        "width": 266,
+        "height": 296
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 12,
+      "sha256": "a57ccc01b39de682854a7d70cdc2a5b576e20cef2ccd2a47b3994f07c73ebe4e"
+    },
+    {
+      "id": "equipment:PH_EQP_OXYGEN_GENERATOR_BROKEN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_BROKEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 62956,
+      "dimensions": {
+        "width": 307,
+        "height": 346
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "broken",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ab6a3fafb246835fa5b0ec7979c9dfee025f38583d8046ad517c1fddde5eb93a"
+    },
+    {
+      "id": "equipment:PH_EQP_OXYGEN_GENERATOR_DEGRADED_V01",
+      "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_DEGRADED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 63952,
+      "dimensions": {
+        "width": 307,
+        "height": 346
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "33c5f26556d061f67c9e79825f52f281b0bf2b498d486ae8f45346b240fa5a63"
+    },
+    {
+      "id": "equipment:PH_EQP_POWER_MODULE_BASE_V12",
+      "path": "/assets/hail/equipment/PH_EQP_POWER_MODULE_BASE_V12.webp",
+      "mediaType": "image/webp",
+      "bytes": 59046,
+      "dimensions": {
+        "width": 271,
+        "height": 293
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 12,
+      "sha256": "5a1fd782086863e5a4870b0880763e987218b6bd73f1ad8c5accd574800f2a84"
+    },
+    {
+      "id": "equipment:PH_EQP_POWER_MODULE_BROKEN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_POWER_MODULE_BROKEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 71926,
+      "dimensions": {
+        "width": 326,
+        "height": 292
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "broken",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "dfe4f0486351d6f4f1ea912eb4538e7923a37442aedbe9c4d4ef7e2b690b1087"
+    },
+    {
+      "id": "equipment:PH_EQP_ROBOT_STATION_BASE_V01",
+      "path": "/assets/hail/equipment/PH_EQP_ROBOT_STATION_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 92056,
+      "dimensions": {
+        "width": 840,
+        "height": 469
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "c85cbdbb01715c69d3007f871be0caf1741ce258e1daae376a7c7e1b15ce5b86"
+    },
+    {
+      "id": "equipment:PH_EQP_WATER_RECYCLER_BASE_V12",
+      "path": "/assets/hail/equipment/PH_EQP_WATER_RECYCLER_BASE_V12.webp",
+      "mediaType": "image/webp",
+      "bytes": 72370,
+      "dimensions": {
+        "width": 271,
+        "height": 293
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 12,
+      "sha256": "0e73d124c7034abb948f9fedee958e7aad4f6f4be098e3ec73d7cd4b379d917e"
+    },
+    {
+      "id": "equipment:PH_EQP_WATER_RECYCLER_BROKEN_V01",
+      "path": "/assets/hail/equipment/PH_EQP_WATER_RECYCLER_BROKEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 67416,
+      "dimensions": {
+        "width": 326,
+        "height": 292
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "equipment",
+      "state": "broken",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ac536cd991cf07c8145f8f46a53e1d7f97f9e66473de6d8e1e4609fe5c6091b5"
+    },
+    {
+      "id": "events:PH_EVT_AIRLOCK_LEAK_BASE_V01",
+      "path": "/assets/hail/events/PH_EVT_AIRLOCK_LEAK_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 266816,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "event",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "35a00a071490fe495a250980d31494a5fb79733864450d210410edf47a98ce6f"
+    },
+    {
+      "id": "events:PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01",
+      "path": "/assets/hail/events/PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 266044,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "event",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "386aaa901a0a3b2914e466c92d5f12ef428973b3568929b2a779abc0b3fa6f08"
+    },
+    {
+      "id": "events:PH_EVT_SOLAR_PARTICLE_BASE_V01",
+      "path": "/assets/hail/events/PH_EVT_SOLAR_PARTICLE_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 277418,
+      "dimensions": {
+        "width": 1600,
+        "height": 900
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "event",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "5640edba092a4eb808857883cb39db82ae0a61b72c2c15af56bb3e4ab6dae961"
+    },
+    {
+      "id": "events:PH_EVT_TECHNICAL_FAULT_BASE_V01",
+      "path": "/assets/hail/events/PH_EVT_TECHNICAL_FAULT_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 192794,
+      "dimensions": {
+        "width": 1376,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "event",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ca263dfaba30c51bfe47e44ba06b059a86f1e0e3a100eeb6787f391191f1a7cf"
+    },
+    {
+      "id": "inventory:PH_ITEM_CRYO_THERMAL_RIG_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_CRYO_THERMAL_RIG_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 38118,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "3ad3d16eec34a4bc47e937fe916b1d257c96cf5fbfa6be1450857eadcf79eada"
+    },
+    {
+      "id": "inventory:PH_ITEM_DUST_SHIELD_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_DUST_SHIELD_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 59238,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "96cda9be8873a40c82e033dd804299d89dcc48a3c02b9e157bb2560787c6ad54"
+    },
+    {
+      "id": "inventory:PH_ITEM_FILTER_SEAL_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_FILTER_SEAL_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 64614,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "32aa60101c5b00d677b0b29232380e98e9014b9b8430f9ea2080dd9db7794719"
+    },
+    {
+      "id": "inventory:PH_ITEM_LUNAR_SAMPLE_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_LUNAR_SAMPLE_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 27828,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "e4bffba72b2e782082c6c7ded492a06c4da33f5fc6d9a32ba8a314f13fc6369d"
+    },
+    {
+      "id": "inventory:PH_ITEM_MEDICAL_KIT_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_MEDICAL_KIT_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 33966,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ba5304eae67dcf7adea74c6b2ee692009dbcd21bf205a164a3d7fb037eec7bfb"
+    },
+    {
+      "id": "inventory:PH_ITEM_MRE_PACK_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_MRE_PACK_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 25644,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "47cfa348f453d1114f7fc31fc8850a9497dfa92f53abba57927c38de5b4b26f2"
+    },
+    {
+      "id": "inventory:PH_ITEM_OXYGEN_CELL_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_OXYGEN_CELL_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 23542,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "500db53ebe7606cd3e128a2166ff195b629b448f866a2740029c59afe2bcd5d8"
+    },
+    {
+      "id": "inventory:PH_ITEM_RADIO_REPEATER_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_RADIO_REPEATER_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 29842,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8c79bc637c6cb59424154d00dd3c1d9f0bb678bb1763182a4e9cf05de317bad8"
+    },
+    {
+      "id": "inventory:PH_ITEM_SAMPLE_DRILL_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_SAMPLE_DRILL_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 34938,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "12753e53759b466a35a5feaf43a556548b3249bc8b830fabf563c40724d72c0a"
+    },
+    {
+      "id": "inventory:PH_ITEM_SEALANT_TAPE_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_SEALANT_TAPE_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 44116,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "71e6313a4fa2c9860e4987c15623da8eda435167a857e457e2e7a9a83b8d3159"
+    },
+    {
+      "id": "inventory:PH_ITEM_SOLAR_LANTERN_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_SOLAR_LANTERN_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 23294,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "b1f210874d518c79c94526a53a65417415e610bf5bfa2e6a3200e4fa3b42383c"
+    },
+    {
+      "id": "inventory:PH_ITEM_SPARE_PARTS_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_SPARE_PARTS_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 62048,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "56b85048faff579ed47dcd6e822f4d7d7cf5da229f171cf9077d900f5699dfb4"
+    },
+    {
+      "id": "inventory:PH_ITEM_SPECIAL_BEACON_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_SPECIAL_BEACON_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 22220,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "afb08c15dcf4511c93ac31f7612a855e435ae108f8ad8f8ceac845935ee0f715"
+    },
+    {
+      "id": "inventory:PH_ITEM_WATER_PACK_BASE_V01",
+      "path": "/assets/hail/inventory/PH_ITEM_WATER_PACK_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 19460,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "inventory",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "aa5df477104f905e56c7c378b664dd97886d07692c1a357edc310b00853f9d6a"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bệnh:nv 1",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 1.webp",
+      "mediaType": "image/webp",
+      "bytes": 312460,
+      "dimensions": {
+        "width": 1002,
+        "height": 1366
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "6fb9d5e5701dfd8fc27926d9b2b949aa10725203db375655fbf49d11773c5a82"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bệnh:nv 2",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 2.webp",
+      "mediaType": "image/webp",
+      "bytes": 142378,
+      "dimensions": {
+        "width": 517,
+        "height": 1034
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "10c302fcbb25f644c20cc66b27c30c3151a064736ca891292d45c7ec34c87b8e"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bệnh:nv 3",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 3.webp",
+      "mediaType": "image/webp",
+      "bytes": 223580,
+      "dimensions": {
+        "width": 448,
+        "height": 1145
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "be4dad40b008fbd81ecea9cd4c1da9769e3b5b9123c9f6450f71f5d732fd1c9e"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bệnh:nv 4",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bệnh/nv 4.webp",
+      "mediaType": "image/webp",
+      "bytes": 322096,
+      "dimensions": {
+        "width": 769,
+        "height": 1321
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "69814c433caa038896db2272f3a65d139965bf8e0ad1da1610dbcf482f640afa"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bình thường:nv 1",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 1.webp",
+      "mediaType": "image/webp",
+      "bytes": 307026,
+      "dimensions": {
+        "width": 1004,
+        "height": 1364
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f8f5cb866c3539f2f61c0f2abb6624c88f2144b256aea8fd16a56c0e0dd2a175"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bình thường:nv 2",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 2.webp",
+      "mediaType": "image/webp",
+      "bytes": 139472,
+      "dimensions": {
+        "width": 526,
+        "height": 1026
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "2e3dbb310144812abaefc0fce6405b2810f0f6b44f7ee04fabca8902033cf536"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bình thường:nv 3",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 3.webp",
+      "mediaType": "image/webp",
+      "bytes": 221442,
+      "dimensions": {
+        "width": 451,
+        "height": 1135
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "0b61fe7b2706def1d47de313c18cc7731a4ddf941aea0f91bbf53aedb1df84be"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái bình thường:nv 4",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái bình thường/nv 4.webp",
+      "mediaType": "image/webp",
+      "bytes": 316028,
+      "dimensions": {
+        "width": 769,
+        "height": 1323
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ff7c47f9fdf59b3ef619f64ade5ab233662b652475e111b0ef0e6955cbdab37b"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái đói:nv 1",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 1.webp",
+      "mediaType": "image/webp",
+      "bytes": 306802,
+      "dimensions": {
+        "width": 1001,
+        "height": 1366
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "6a7bad838fb3925e14d9ef35129e042c4beeca8ec95a4e4b623e9d8238e2c0f8"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái đói:nv 2",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 2.webp",
+      "mediaType": "image/webp",
+      "bytes": 138774,
+      "dimensions": {
+        "width": 531,
+        "height": 1050
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "3dcd57859cc4757e1dccd0035b0099ab1ee6902a3a46d8b2f04385b39bcf01f2"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái đói:nv 3",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 3.webp",
+      "mediaType": "image/webp",
+      "bytes": 221234,
+      "dimensions": {
+        "width": 436,
+        "height": 1126
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "fd07689e7ec9f118b95a50571054eec18858133f4b8806ddccb3b26bc592b4a2"
+    },
+    {
+      "id": "nhân vật cho project hail:trạng thái đói:nv 4",
+      "path": "/assets/hail/nhân vật cho project hail/trạng thái đói/nv 4.webp",
+      "mediaType": "image/webp",
+      "bytes": 315124,
+      "dimensions": {
+        "width": 758,
+        "height": 1316
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "801e4db51b38edfac08b684c4ce622f73125a5ede81f3324f2f74e9ace47fbce"
+    },
+    {
+      "id": "resources:PH_UI_RES_FOOD_V01",
+      "path": "/assets/hail/resources/PH_UI_RES_FOOD_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 497,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "hud",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f1a4e835490cc8784766c3b0cfb9035314ea2472394f7c55b92e5b59dd93cfc4"
+    },
+    {
+      "id": "resources:PH_UI_RES_OXYGEN_V01",
+      "path": "/assets/hail/resources/PH_UI_RES_OXYGEN_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 538,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "hud",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f80c6d330c720529f650c48259ae58c33c4c704c47fb00989a6b1b7a4a2a431d"
+    },
+    {
+      "id": "resources:PH_UI_RES_PARTS_V01",
+      "path": "/assets/hail/resources/PH_UI_RES_PARTS_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 418,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "hud",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "200849647c5b14dd216e597b9f22b094e2b94c58e7b73b387ed9cd0604393c62"
+    },
+    {
+      "id": "resources:PH_UI_RES_POWER_V01",
+      "path": "/assets/hail/resources/PH_UI_RES_POWER_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 343,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "hud",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "b5c1ac47cb2aa18701f724fc514339ae18c32f49e8ae1dd3ce215351bf5423bf"
+    },
+    {
+      "id": "resources:PH_UI_RES_WATER_V01",
+      "path": "/assets/hail/resources/PH_UI_RES_WATER_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 515,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "hud",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "77ee2e7700d1f865e1bb29cf74a7b140c9ff3f722da115183256514799fd7bdb"
+    },
+    {
+      "id": "robots:PH_BOT_SURVEY_ROVER_ACTIVE_V01",
+      "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_ACTIVE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 125554,
+      "dimensions": {
+        "width": 840,
+        "height": 729
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "active",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8e8f6b6dba722987d6b4ee4b32da6c4eff4a5310a4aa74dc5a3cb22fee7b1a35"
+    },
+    {
+      "id": "robots:PH_BOT_SURVEY_ROVER_BASE_V01",
+      "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 116526,
+      "dimensions": {
+        "width": 840,
+        "height": 729
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "31ee3a929ab488f289e2dc8a1a2c5af6d9cd929808bc40382a1794bd924919d6"
+    },
+    {
+      "id": "robots:PH_BOT_SURVEY_ROVER_BROKEN_V01",
+      "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_BROKEN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 115762,
+      "dimensions": {
+        "width": 840,
+        "height": 729
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "broken",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "e8ce7a56574b8e280f1d7574558943159262ec211b988411bb595b77725d10c8"
+    },
+    {
+      "id": "ui:PH_UI_ACT_ENDDAY_V01",
+      "path": "/assets/hail/ui/PH_UI_ACT_ENDDAY_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 332,
+      "dimensions": {
+        "width": 16,
+        "height": 16
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "day",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "1832912099513188acdd7e86150ec590d804bfbcfe3208ccc8143a5165f41f5c"
+    },
+    {
+      "id": "ui:PH_UI_ACT_EXPLORE_V01",
+      "path": "/assets/hail/ui/PH_UI_ACT_EXPLORE_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 390,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f600cf67d2780d7785cc78d976cedcda715953f1b66fad65dcd35e14d5e3a42a"
+    },
+    {
+      "id": "ui:PH_UI_ACT_REPAIR_V01",
+      "path": "/assets/hail/ui/PH_UI_ACT_REPAIR_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 294,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "c2b822f7bc13b8ffeac21bc70e4cd31c5e75da727294b18ded14e5e57976f15a"
+    },
+    {
+      "id": "ui:PH_UI_ACT_UPGRADE_V01",
+      "path": "/assets/hail/ui/PH_UI_ACT_UPGRADE_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 327,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "b0dadb07e310f10715cb4dce7b22ac9a533b0a5e01e2ad58b87783e35bf60209"
+    },
+    {
+      "id": "ui:PH_UI_ALLOCATION_FRAME_V01",
+      "path": "/assets/hail/ui/PH_UI_ALLOCATION_FRAME_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 84400,
+      "dimensions": {
+        "width": 1920,
+        "height": 992
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "b4012c611322a3ce3dfd2cf6643fc5a998df7fd6812d3d7800fa6d3b4b9b5592"
+    },
+    {
+      "id": "ui:PH_UI_BADGE_NASA_STEM_V01",
+      "path": "/assets/hail/ui/PH_UI_BADGE_NASA_STEM_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 407,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "04bf7aa81c18bc897137e223d19641bc47529dd8362b0d036d3ee8bcf671ae0e"
+    },
+    {
+      "id": "ui:PH_UI_BTN_CLOSE_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_CLOSE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 1890,
+      "dimensions": {
+        "width": 96,
+        "height": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "44897c17dc107bd16baf236dc35bb359f767d4a295ba61046daa0f76ec16d759"
+    },
+    {
+      "id": "ui:PH_UI_BTN_CONFIRM_IDLE_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_CONFIRM_IDLE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 3894,
+      "dimensions": {
+        "width": 264,
+        "height": 144
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "idle",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "2cad6cfc870236ae3ab3b7ca2014d96d76d5329ec14004996799cdd37ded310c"
+    },
+    {
+      "id": "ui:PH_UI_BTN_CONFIRM_PRESSED_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_CONFIRM_PRESSED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 4272,
+      "dimensions": {
+        "width": 264,
+        "height": 144
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "6a2ba0263fa31866523d36fd82fa319232fb41c5fb6801ca160ad3ec6bf51ecc"
+    },
+    {
+      "id": "ui:PH_UI_BTN_SQ_GREEN_IDLE_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_SQ_GREEN_IDLE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 2072,
+      "dimensions": {
+        "width": 176,
+        "height": 176
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "idle",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "a9b4fb0cd809be4f17da7cd4ff01259fd5532f91a55d34aa4e106efe5fdff32c"
+    },
+    {
+      "id": "ui:PH_UI_BTN_SQ_GREEN_PRESSED_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_SQ_GREEN_PRESSED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 2442,
+      "dimensions": {
+        "width": 176,
+        "height": 176
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ea6ff57dc962e87557d9197c3a59c2c62d3d1c1f40536ef320eb4d773c12b31a"
+    },
+    {
+      "id": "ui:PH_UI_BTN_SQ_RED_IDLE_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_SQ_RED_IDLE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 2970,
+      "dimensions": {
+        "width": 176,
+        "height": 176
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "idle",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "2435fe37bb738a7473cf4b789a5965e3640f65eb17f95b0bbcbd23180ec8d5b1"
+    },
+    {
+      "id": "ui:PH_UI_BTN_SQ_RED_PRESSED_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_SQ_RED_PRESSED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 3204,
+      "dimensions": {
+        "width": 176,
+        "height": 176
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "79e523661ebf17a9af5d07dc061afa0d058989010fc3d2d4e1de72a8dbcb7d8d"
+    },
+    {
+      "id": "ui:PH_UI_BTN_TACTILE_IDLE_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_TACTILE_IDLE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 7362,
+      "dimensions": {
+        "width": 640,
+        "height": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "idle",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "96f20c0aff69b55efe51cbc3e3ddaafdff3e51b20a42d1a6ebecabf0bb662ce1"
+    },
+    {
+      "id": "ui:PH_UI_BTN_TACTILE_PRESSED_V01",
+      "path": "/assets/hail/ui/PH_UI_BTN_TACTILE_PRESSED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 8482,
+      "dimensions": {
+        "width": 640,
+        "height": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ef51fea88ea116f1f2921ed5a14ca4b4cc5a31eccf93d2172c2826ab17f9bf1f"
+    },
+    {
+      "id": "ui:PH_UI_CHECKBOX_CHECKED_V01",
+      "path": "/assets/hail/ui/PH_UI_CHECKBOX_CHECKED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 2608,
+      "dimensions": {
+        "width": 96,
+        "height": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "098d1113667d11183bf2412d84ae5f0d21ed2357a1fb85bd8e6be5cdbf0c0e1e"
+    },
+    {
+      "id": "ui:PH_UI_CHECKBOX_UNCHECKED_V01",
+      "path": "/assets/hail/ui/PH_UI_CHECKBOX_UNCHECKED_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 1990,
+      "dimensions": {
+        "width": 96,
+        "height": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "d05d0b8f078d193c115f75927c3a99204e37b7074528f0848e983e27d5c27023"
+    },
+    {
+      "id": "ui:PH_UI_CONSOLE_POPUP_FRAME_V01",
+      "path": "/assets/hail/ui/PH_UI_CONSOLE_POPUP_FRAME_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 51802,
+      "dimensions": {
+        "width": 1408,
+        "height": 896
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f40bb1a1897f8dee6ffd6fe7d1313cc2813174102d7d38e434c7814e3eabc6bd"
+    },
+    {
+      "id": "ui:PH_UI_DECISION_FRAME_V01",
+      "path": "/assets/hail/ui/PH_UI_DECISION_FRAME_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 105430,
+      "dimensions": {
+        "width": 1904,
+        "height": 1424
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "a4ff05b26efca96010372b7171ea904b41f174e69d1689559270a4e615224b01"
+    },
+    {
+      "id": "ui:PH_UI_FRAME_CORNER_V01",
+      "path": "/assets/hail/ui/PH_UI_FRAME_CORNER_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 229,
+      "dimensions": {
+        "width": 2,
+        "height": 3
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "44bfdb99f3e3c082610c5befca872eeba1764556b26d3cfc307aca9dd63ef3da"
+    },
+    {
+      "id": "ui:PH_UI_JOURNAL_FRAME_V01",
+      "path": "/assets/hail/ui/PH_UI_JOURNAL_FRAME_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 101610,
+      "dimensions": {
+        "width": 1920,
+        "height": 1240
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "c3790d25e4cf71f5c5e07d954ec32f06c38f425e1b0540682d5088c840036064"
+    },
+    {
+      "id": "ui:PH_UI_JOURNAL_TAB_OFF_V01",
+      "path": "/assets/hail/ui/PH_UI_JOURNAL_TAB_OFF_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 1682,
+      "dimensions": {
+        "width": 144,
+        "height": 144
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "55223a434b8fd8e62207146fe5e1ca963195c621aaa3b877b7dc00303cddfaa7"
+    },
+    {
+      "id": "ui:PH_UI_JOURNAL_TAB_ON_V01",
+      "path": "/assets/hail/ui/PH_UI_JOURNAL_TAB_ON_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 1778,
+      "dimensions": {
+        "width": 144,
+        "height": 144
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "87da07741b4b51c5c072b7251244ed4e70f72cd6b4ec55a9732da46fc29f5a8f"
+    },
+    {
+      "id": "ui:PH_UI_KEYCAP_ARROW_V01",
+      "path": "/assets/hail/ui/PH_UI_KEYCAP_ARROW_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 1952,
+      "dimensions": {
+        "width": 96,
+        "height": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "64b3f461c988c740d9f3ae3aa7db8797a66f4be42b9f52e636908895f0942a1c"
+    },
+    {
+      "id": "ui:PH_UI_LEVER_ENDSOL_DOWN_V01",
+      "path": "/assets/hail/ui/PH_UI_LEVER_ENDSOL_DOWN_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 9472,
+      "dimensions": {
+        "width": 300,
+        "height": 540
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8eda18c56ee71018477b43facd481a976271995270f3ffbb47aa09b542c7fdef"
+    },
+    {
+      "id": "ui:PH_UI_LEVER_ENDSOL_UP_V01",
+      "path": "/assets/hail/ui/PH_UI_LEVER_ENDSOL_UP_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 10444,
+      "dimensions": {
+        "width": 300,
+        "height": 540
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "493a11862d48db5f32a5fc3f2cce4f5dc825f61ff10dd8f9fd3ba3450dc0cbec"
+    },
+    {
+      "id": "ui:PH_UI_NAV_BACK_V01",
+      "path": "/assets/hail/ui/PH_UI_NAV_BACK_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 195,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "aceaef3add256b6234ab6b308e5acf92c7edb7a63f11f5756ba70cd5f101c156"
+    },
+    {
+      "id": "ui:PH_UI_NAV_CLOSE_V01",
+      "path": "/assets/hail/ui/PH_UI_NAV_CLOSE_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 191,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "1692d6d1f17c503af91689a665eac87579e99caa1173851fd1f9a9cb9e923780"
+    },
+    {
+      "id": "ui:PH_UI_STATE_CRITICAL_V01",
+      "path": "/assets/hail/ui/PH_UI_STATE_CRITICAL_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 326,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "8c7f1f2ab1620a59e62b54860fcaed8aee5cec24e3e795379115c405ea4bab1b"
+    },
+    {
+      "id": "ui:PH_UI_STATE_OK_V01",
+      "path": "/assets/hail/ui/PH_UI_STATE_OK_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 311,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "964f3ee42d3f5599df0c40856e5c41ffebe1166954ca3da312dde400f3e7e5bf"
+    },
+    {
+      "id": "ui:PH_UI_STATE_WARN_V01",
+      "path": "/assets/hail/ui/PH_UI_STATE_WARN_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 358,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "08d980c750e2c956f25866b26c2022f15748425fbf393f4beb66bc80cab09857"
+    },
+    {
+      "id": "ui:PH_UI_STENCIL_REJECT_X_V01",
+      "path": "/assets/hail/ui/PH_UI_STENCIL_REJECT_X_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 4954,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "4cbd0056f8ebdb7b6873d72d26c52fc0066fd962194adb1b5e8af338821e2a60"
+    },
+    {
+      "id": "ui:PH_UI_SWITCH_TOGGLE_OFF_V01",
+      "path": "/assets/hail/ui/PH_UI_SWITCH_TOGGLE_OFF_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 20084,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "87b42a7c3b1bdbd39cc3f7c831ce681f03130e804308a294d445c5819e20a8a0"
+    },
+    {
+      "id": "ui:PH_UI_SWITCH_TOGGLE_ON_V01",
+      "path": "/assets/hail/ui/PH_UI_SWITCH_TOGGLE_ON_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 19938,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "fe893bd4f37e63c38743b2b0cdc8aa3d2fcda586823c787c292367ce1b793a54"
+    },
+    {
+      "id": "ui:PH_UI_SYS_COMMS_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_COMMS_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 585,
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f241836bcfa0008a9ea2668aa3d6d7360503aea295b247219c80b6a84a83b60d"
+    },
+    {
+      "id": "ui:PH_UI_SYS_MED_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_MED_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 387,
+      "dimensions": {
+        "width": 17,
+        "height": 13.5
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f35678a4a12a3b29e2dddd66c89d5c2b2283dc9e6c92af9970246d4beda273b3"
+    },
+    {
+      "id": "ui:PH_UI_SYS_OXYGEN_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_OXYGEN_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 544,
+      "dimensions": {
+        "width": 6.5,
+        "height": 15
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "aea2b435d4befb3a35e6d4c6487d91417296e452d7ba9f51ae0faa29ee38161f"
+    },
+    {
+      "id": "ui:PH_UI_SYS_POWER_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_POWER_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 440,
+      "dimensions": {
+        "width": 18,
+        "height": 13
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "bf1e5a51f3ac7ecf29fb77f712144664d0b98916cf2050a0bf4a36655930294a"
+    },
+    {
+      "id": "ui:PH_UI_SYS_ROBOT_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_ROBOT_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 660,
+      "dimensions": {
+        "width": 12,
+        "height": 7
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "cad4135acc81e2bfc6627bbd634103439dbd9178a9b001e1d6699fd3381eda2f"
+    },
+    {
+      "id": "ui:PH_UI_SYS_WATER_V01",
+      "path": "/assets/hail/ui/PH_UI_SYS_WATER_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 488,
+      "dimensions": {
+        "width": 17,
+        "height": 15
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "ui",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "ca7c281d0b8cbe4ca7af587dfacad3c1590b61c9b26faa21555911baa6b4e3a9"
+    }
+  ]
+}

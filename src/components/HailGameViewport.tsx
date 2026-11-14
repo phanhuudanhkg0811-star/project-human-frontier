@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { playSfx, startMusic } from '../audio/sfx.ts';
+import { AlertTriangle, CircleHelp, Languages, RefreshCw, Volume2, VolumeX } from 'lucide-react';
+import { playSfx, startMusic, syncMusicMuted } from '../audio/sfx.ts';
+import { playSfx as playSynthSfx, syncAmbientAudio } from '../audio/soundEngine.ts';
 import { selectActiveEventView } from '../domain/eventSelectors.ts';
 import { EventPriorityBanner } from './EventPriorityBanner.tsx';
 import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
@@ -29,6 +30,8 @@ import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
 import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
 import { StarlogModal } from './modals/StarlogModal.tsx';
 import { TutorialModal } from './modals/TutorialModal.tsx';
+import { AmbientCanvasLayer } from './cabin/AmbientCanvasLayer.tsx';
+import { useI18n } from '../i18n/useI18n.ts';
 
 const EQUIPMENT_RACK_META: ReadonlyArray<{
   id: EquipmentId;
@@ -57,11 +60,25 @@ const CREW_SLOTS: ReadonlyArray<{
 export function HailGameViewport() {
   const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError, migrationNotice, dismissMigrationNotice } = useGameStore();
   const roverSamples = selectRoverSamples(gameState);
-  const { activeModal, openModal, closeModal, selectCrew } = useUiStore();
+  const {
+    activeModal,
+    openModal,
+    closeModal,
+    selectCrew,
+    audioMuted,
+    toggleAudioMute,
+    reducedMotion,
+    locale,
+    setLocale,
+  } = useUiStore();
+  const { t } = useI18n();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
 
   useEffect(() => {
-    const bootMusic = () => startMusic(0.28);
+    const bootMusic = () => {
+      startMusic(0.28);
+      playSynthSfx('click');
+    };
     window.addEventListener('pointerdown', bootMusic, { once: true });
     return () => window.removeEventListener('pointerdown', bootMusic);
   }, []);
@@ -71,6 +88,19 @@ export function HailGameViewport() {
   const advancePerm = selectCanAdvancePhase(gameState, bundle);
   const activeEventView = selectActiveEventView(gameState, bundle);
   const requiresBriefingChoice = gameState.clock.phase === 'briefing' && activeEventView?.mandatory === true;
+
+  useEffect(() => {
+    syncAmbientAudio({
+      isLunarNight: progress.isLunarNight,
+      weatherLevel: weather.level,
+      muted: audioMuted,
+    });
+    syncMusicMuted(audioMuted);
+  }, [progress.isLunarNight, weather.level, audioMuted]);
+
+  useEffect(() => {
+    if ((activeEventView?.priority ?? 0) >= 4) playSynthSfx('alert');
+  }, [activeEventView?.event.id, activeEventView?.priority]);
 
   const fabSprite =
     gameState.systems.fabricator.status === 'offline'
@@ -92,6 +122,7 @@ export function HailGameViewport() {
     startMusic(0.28);
     if (m) {
       playSfx(m === 'comms' ? 'radioOn' : 'open', 0.55);
+      playSynthSfx('click');
     }
     openModal(m);
   };
@@ -108,6 +139,7 @@ export function HailGameViewport() {
     }
     if (advancePerm.allowed) {
       playSfx('click', 0.45);
+      playSynthSfx('phase-advance');
       await dispatch({ type: 'phase/advance' });
     }
   };
@@ -115,7 +147,7 @@ export function HailGameViewport() {
   return (
     <main className="hail-viewport">
       {migrationNotice && <div role="status" className="campaign-migration-notice">
-        <p>{migrationNotice}</p><button type="button" className="hail-btn" onClick={dismissMigrationNotice}>Đã hiểu</button>
+        <p>{migrationNotice}</p><button type="button" className="hail-btn" onClick={dismissMigrationNotice}>{t('cockpit.understood')}</button>
       </div>}
       {/* Fail-Closed Save Recovery Banner */}
       {saveRecoveryError && (
@@ -126,19 +158,19 @@ export function HailGameViewport() {
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" />
             <div>
-              <strong>Lỗi Khôi phục Save [{saveRecoveryError.code}]:</strong> {saveRecoveryError.message}
+              <strong>{t('cockpit.recoveryError')} [{saveRecoveryError.code}]:</strong> {saveRecoveryError.message}
             </div>
           </div>
           <button type="button" className="hail-btn" onClick={() => { try {
             const raw = localStorage.getItem(SAVE_STORAGE_KEY);
             if (raw) downloadArtifact('moon32-original-save.json', raw, true);
-          } catch { /* Storage errors are already displayed by recovery. */ } }}>Export save gốc</button>
+          } catch { /* Storage errors are already displayed by recovery. */ } }}>{t('cockpit.exportOriginal')}</button>
           <button
             type="button"
             onClick={() => resetCampaign()}
             className="hail-btn hail-btn--warn shrink-0 flex items-center gap-1"
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Tạo Chiến dịch Mới
+            <RefreshCw className="w-3.5 h-3.5" /> {t('cockpit.newCampaign')}
           </button>
         </div>
       )}
@@ -149,12 +181,43 @@ export function HailGameViewport() {
           onClick={dismissError}
           className="fixed top-20 right-4 z-50 max-w-sm p-2.5 rounded-lg bg-amber-950/95 border border-amber-400/60 text-amber-100 text-xs cursor-pointer shadow-lg"
         >
-          <strong>[{lastError.code}]</strong> {lastError.message} (Chạm để đóng)
+          <strong>[{lastError.code}]</strong> {lastError.message} ({t('cockpit.tapToClose')})
         </div>
       )}
 
       <div className="hail-stage">
         <TelemetryTopBar />
+
+        <nav className="hail-utility-controls" aria-label={t('hud.settingsAria')}>
+          <button
+            type="button"
+            onClick={() => setLocale(locale === 'vi' ? 'en' : 'vi')}
+            aria-label={t('hud.language')}
+            title={t('hud.language')}
+          >
+            <Languages aria-hidden="true" />
+            <span>{locale.toUpperCase()}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              toggleAudioMute();
+              if (audioMuted) playSynthSfx('confirm');
+            }}
+            aria-label={audioMuted ? t('hud.unmuteAudio') : t('hud.muteAudio')}
+            title={audioMuted ? t('hud.unmuteAudio') : t('hud.muteAudio')}
+          >
+            {audioMuted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => openPanel('tutorial')}
+            aria-label={t('hud.tutorial')}
+            title={t('hud.tutorial')}
+          >
+            <CircleHelp aria-hidden="true" />
+          </button>
+        </nav>
 
         <div
           className={`hail-camera-rig ${focusClass} ${progress.isLunarNight ? 'is-lunar-night' : ''} ${weather.level === 'storm' || weather.level === 'extreme' ? 'is-storm' : ''}`.trim()}
@@ -168,13 +231,18 @@ export function HailGameViewport() {
               className="hail-l01-lunar"
               draggable={false}
             />
+            <AmbientCanvasLayer
+              isLunarNight={progress.isLunarNight}
+              weatherLevel={weather.level}
+              reducedMotion={reducedMotion}
+            />
           </div>
 
-          <img src={HAIL_ENV.cockpitShell} alt="Khoang chỉ huy trạm Artemis" className="hail-l02-shell" draggable={false} />
+          <img src={HAIL_ENV.cockpitShell} alt={t('cockpit.shellAlt')} className="hail-l02-shell" draggable={false} />
           <div className="hail-cabin-lighting" aria-hidden="true" />
 
           {/* UL: Food & Aid Wall Rack */}
-          <div className="hail-bay-rack hail-bay-rack--ul" aria-label="Tủ Thực phẩm MRE và Y tế">
+          <div className="hail-bay-rack hail-bay-rack--ul" aria-label={t('cockpit.foodAidRack')}>
             <div className="hail-bay-rack-shell">
               <div className="hail-rack-header" aria-hidden="true">
                 <span className="hail-rack-header-stripe" />
@@ -185,7 +253,7 @@ export function HailGameViewport() {
                   type="button"
                   className="hail-rack-cell"
                   onClick={() => openPanel('end')}
-                  aria-label={`MRE (${gameState.resources.mrePacks} gói)`}
+                  aria-label={t('cockpit.packCount', { name: 'MRE', count: gameState.resources.mrePacks })}
                 >
                   <img
                     src={HAIL_INVENTORY.mrePack}
@@ -199,7 +267,7 @@ export function HailGameViewport() {
                   type="button"
                   className="hail-rack-cell"
                   onClick={() => openPanel('character')}
-                  aria-label={`Medkit (${gameState.resources.medkits} bộ)`}
+                  aria-label={t('cockpit.medkitCount', { count: gameState.resources.medkits })}
                 >
                   <img
                     src={HAIL_INVENTORY.medicalKit}
@@ -213,7 +281,7 @@ export function HailGameViewport() {
                   type="button"
                   className="hail-rack-cell"
                   onClick={() => openPanel('end')}
-                  aria-label={`Nước (${gameState.resources.waterL.toFixed(0)}L)`}
+                  aria-label={t('cockpit.waterAmount', { amount: gameState.resources.waterL.toFixed(0) })}
                 >
                   <img
                     src={HAIL_INVENTORY.waterPack}
@@ -248,12 +316,12 @@ export function HailGameViewport() {
             className="hail-station hail-station--floor is-primary-focus"
             style={{ left: '2.8708%', top: '53.56%', width: '16.2081%', height: '31.1371%' }}
             onClick={() => openPanel('crafting')}
-            aria-label="Mở Xưởng in 3D Fabricator"
+            aria-label={t('cockpit.openFabricator')}
           >
             <img src={fabSprite} alt="3D Fabricator" className="hail-sprite-contain" draggable={false} />
             <span className="hail-station-tag">
               3D FAB Lv{gameState.systems.fabricator.level}{' '}
-              {gameState.fabricator.activeJob ? '· ĐANG IN' : '· SẴN SÀNG'}
+              · {gameState.fabricator.activeJob ? t('cockpit.printing') : t('cockpit.ready')}
             </span>
           </button>
 
@@ -264,7 +332,7 @@ export function HailGameViewport() {
             className="hail-station hail-station--wall"
             style={{ left: '81.1005%', top: '14.9841%', width: '15.9091%', height: '31.4559%' }}
             onClick={() => openPanel('comms')}
-            aria-label="Mở Trạm liên lạc CAPCOM & Tàu hàng"
+            aria-label={t('cockpit.openComms')}
           >
             <img src={HAIL_EQUIPMENT.comms} alt="CAPCOM" className="hail-sprite-contain" draggable={false} />
             <span className="hail-station-tag">
@@ -273,7 +341,7 @@ export function HailGameViewport() {
           </button>
 
           {/* LR: Inventory (6 Equipment) & 3 Samples */}
-          <div className="hail-bay-rack hail-bay-rack--lr" aria-label="Kho 6 Thiết bị & 3 Mẫu thám hiểm Rover">
+          <div className="hail-bay-rack hail-bay-rack--lr" aria-label={t('cockpit.inventoryRack')}>
             <div className="hail-bay-rack-shell">
               <div className="hail-rack-header" aria-hidden="true">
                 <span className="hail-rack-header-stripe" />
@@ -288,7 +356,7 @@ export function HailGameViewport() {
                       type="button"
                       className="hail-rack-cell"
                       onClick={() => openPanel('expedition')}
-                      title={`${item.label}: ${eq.owned ? `${eq.state} (${eq.durability}%)` : 'Chưa chế tạo'}`}
+                      title={`${item.label}: ${eq.owned ? `${eq.state} (${eq.durability}%)` : t('cockpit.notCrafted')}`}
                     >
                       <img
                         src={item.img}
@@ -310,7 +378,7 @@ export function HailGameViewport() {
                       type="button"
                       className="hail-rack-cell is-sample-slot"
                       onClick={() => openPanel('expedition')}
-                      title={sampleName ?? `Khoang mẫu ${slotIdx + 1}`}
+                      title={sampleName ?? t('cockpit.sampleBay', { slot: slotIdx + 1 })}
                     >
                       <img
                         src={HAIL_INVENTORY.lunarSample}
@@ -318,7 +386,7 @@ export function HailGameViewport() {
                         className={`hail-rack-item ${!sampleName ? 'is-empty-slot' : ''}`}
                         draggable={false}
                       />
-                      <span className="hail-rack-cell-tag">{sampleName ? 'MẪU ✓' : `S${slotIdx + 1}`}</span>
+                      <span className="hail-rack-cell-tag">{sampleName ? t('cockpit.sampleReady') : `S${slotIdx + 1}`}</span>
                     </button>
                   );
                 })}
@@ -331,6 +399,7 @@ export function HailGameViewport() {
             {CREW_SLOTS.map((slot) => {
               const member = gameState.crew[slot.crewId];
               const visual = getHailCrewVisual(slot.crewId, member);
+              const stateLabel = t(`crew.visual.${visual.state}`);
               const impaired = visual.state === 'sick' || member.condition === 'evacuated';
               return (
                 <button
@@ -342,16 +411,16 @@ export function HailGameViewport() {
                   }}
                   className={`hail-crew-member ${slot.depth === 'rear' ? 'is-rear' : 'is-foreground'} ${impaired ? 'is-impaired' : ''}`}
                   style={slot.style}
-                  aria-label={`Phi hành gia ${member.name} (${visual.stateLabel})`}
+                  aria-label={t('cockpit.astronaut', { name: member.name, state: stateLabel })}
                 >
                   <img
                     src={visual.seated}
-                    alt={`${member.name} · ${visual.stateLabel}`}
+                    alt={`${member.name} · ${stateLabel}`}
                     className="hail-crew-figure"
                     draggable={false}
                   />
                   <span className={`hail-crew-pill ${slot.depth === 'rear' ? 'is-rear-pill' : ''}`}>
-                    {member.name.split(' ')[0]} · ♥{member.health} · {visual.stateLabel.toUpperCase()}
+                    {member.name.split(' ')[0]} · ♥{member.health} · {stateLabel.toUpperCase()}
                   </span>
                 </button>
               );
@@ -363,13 +432,13 @@ export function HailGameViewport() {
             className="hail-decision-console"
             style={{ left: '27.5%', top: '55.6%', width: '45%', height: '37.1%' }}
           >
-            <img src={HAIL_EQUIPMENT.consoleDesk} alt="Bàn điều khiển trung tâm" className="hail-console-art" draggable={false} />
+            <img src={HAIL_EQUIPMENT.consoleDesk} alt={t('cockpit.consoleAlt')} className="hail-console-art" draggable={false} />
             <div className="hail-console-screens">
               <button
                 type="button"
                 className="hail-console-screen"
                 onClick={() => openPanel('journal')}
-                aria-label="Mở Nhật ký Trạm 4-Tab"
+                aria-label={t('cockpit.openJournal')}
               >
                 <span className="hail-screen-code">SOL</span>
                 <strong>{String(gameState.clock.sol).padStart(2, '0')}/{bundle.campaign.targetSol}</strong>
@@ -378,19 +447,19 @@ export function HailGameViewport() {
                 type="button"
                 className={`hail-console-screen ${gameState.events.activeEventId || weather.level === 'storm' || weather.level === 'extreme' ? 'is-alert' : ''}`}
                 onClick={() => openPanel('starlog')}
-                aria-label="Mở Terminal Quyết định & Sự kiện"
+                aria-label={t('cockpit.openDecision')}
               >
                 <span className="hail-screen-code">DECISION</span>
-                <strong>{gameState.events.activeEventId ? 'SỰ CỐ!' : weather.level.toUpperCase()}</strong>
+                <strong>{gameState.events.activeEventId ? t('cockpit.incident') : weather.level.toUpperCase()}</strong>
               </button>
               <button
                 type="button"
                 className={`hail-console-screen ${gameState.clock.phase === 'rationing' ? 'is-alert' : ''}`}
                 onClick={() => openPanel('end')}
-                aria-label="Mở Bảng Khẩu phần & Cần gạt End-Sol"
+                aria-label={t('cockpit.openRationing')}
               >
-                <span className="hail-screen-code">KHẨU PHẦN</span>
-                <strong>{gameState.clock.phase === 'rationing' ? 'CHIA MRE' : 'KẾT SOL'}</strong>
+                <span className="hail-screen-code">{t('cockpit.rationing')}</span>
+                <strong>{gameState.clock.phase === 'rationing' ? t('cockpit.distributeMre') : t('cockpit.closeSol')}</strong>
               </button>
             </div>
           </div>
@@ -401,41 +470,41 @@ export function HailGameViewport() {
           <div className="flex items-center gap-1.5 flex-wrap">
             <button type="button" onClick={() => openPanel('journal')}>
               <img src={HAIL_SVG.frameCorner} alt="" />
-              <span>Nhật ký</span>
+              <span>{t('hud.journal')}</span>
             </button>
             <button type="button" onClick={() => openPanel('starlog')}>
               <img src={HAIL_SVG.sysComms} alt="" />
-              <span>Giao ban{gameState.events.activeEventId ? ' (!)' : ''}</span>
+              <span>{t('hud.briefing')}{gameState.events.activeEventId ? ' (!)' : ''}</span>
             </button>
             <button type="button" onClick={() => setSysModalOpen()}>
               <img src={HAIL_SVG.sysPower} alt="" />
-              <span>Hệ thống</span>
+              <span>{t('hud.systems')}</span>
             </button>
             <button type="button" onClick={() => openPanel('crafting')}>
               <img src={HAIL_SVG.resParts} alt="" />
-              <span>3D Fab</span>
+              <span>{t('hud.fabricator')}</span>
             </button>
             <button type="button" onClick={() => openPanel('character')}>
               <img src={HAIL_SVG.sysMed} alt="" />
-              <span>Crew</span>
+              <span>{t('hud.crew')}</span>
             </button>
             <button type="button" onClick={() => openPanel('comms')}>
               <img src={HAIL_SVG.sysComms} alt="" />
-              <span>CAPCOM</span>
+              <span>{t('hud.comms')}</span>
             </button>
             <button type="button" onClick={() => openPanel('expedition')}>
               <img src={HAIL_SVG.sysRobot} alt="" />
-              <span>Rover</span>
+              <span>{t('hud.rover')}</span>
             </button>
             <button type="button" onClick={() => openPanel('launch')}>
               <img src={HAIL_SVG.badgeNasaStem} alt="" />
-              <span>Chiến dịch</span>
+              <span>{t('hud.campaign')}</span>
             </button>
           </div>
 
           <div className="hail-action-band-right">
             <span className="hail-phase-hint">
-              {advancePerm.allowed ? 'Sẵn sàng sang pha tiếp theo' : advancePerm.message}
+              {advancePerm.allowed ? t('hud.readyAdvance') : advancePerm.message}
             </span>
             <button
               type="button"
@@ -445,10 +514,10 @@ export function HailGameViewport() {
               <img src={HAIL_SVG.actExplore} alt="" />
               <span>
                 {requiresBriefingChoice
-                  ? 'Xử lý Sự kiện'
+                  ? t('hud.handleEvent')
                   : gameState.clock.phase === 'rationing'
-                    ? 'End-Sol'
-                    : 'Pha tiếp →'}
+                    ? t('hud.endSol')
+                    : t('hud.nextPhase')}
               </span>
             </button>
           </div>
@@ -488,8 +557,8 @@ export function HailGameViewport() {
       {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
       {sysModalOpen && (
         <MissionDialog
-          title="Telemetry Console · 5 Hệ thống Trạm & WRS"
-          eyebrow="PHA 2 · ENGINEERING & LIFE SUPPORT"
+          title={t('systems.dialogTitle')}
+          eyebrow={t('systems.dialogEyebrow')}
           art={HAIL_EQUIPMENT.consoleDesk}
           panelType="menu"
           dockSide="left"

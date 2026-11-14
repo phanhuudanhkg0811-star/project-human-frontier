@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "savedAt": "2026-11-14T11:57:56.484Z",
+  "savedAt": "2026-11-14T14:47:12.522Z",
   "appVersion": "1.4.0",
   "contentVersion": "1.4.0-moon32",
   "modelVersion": "1.4.0-ts-donki",
@@ -13,7 +13,7 @@
     "revision": 159,
     "campaign": {
       "id": "moon-32",
-      "runId": "run-moon32-205099-7f6554a7",
+      "runId": "run-moon32-205099-f341d203",
       "planet": "moon",
       "status": "defeat",
       "difficulty": "cadet",
@@ -4378,5 +4378,5 @@
       ]
     }
   },
-  "checksum": "f360411419a00dc508b756b235dc8003fc4376dc71566f28f351111c961bccc5"
+  "checksum": "8c533595fec6f013efba086581d7d08638c5f0011fe30e486710f503477dda22"
 }

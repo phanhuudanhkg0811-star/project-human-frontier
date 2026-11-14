@@ -5,14 +5,9 @@ import { useGameStore } from '../store/gameStore.ts';
 import type { CrewId, SystemId } from '../types/index.ts';
 import { HAIL_SVG, getHailSystemSprite } from './cabin/hailAssets.ts';
 import { HailSelect } from './HailSelect.tsx';
+import { useI18n } from '../i18n/useI18n.ts';
 
-const SYSTEM_META: ReadonlyArray<{ id: SystemId; name: string; role: string }> = [
-  { id: 'solar', name: 'Pin Mặt Trời (Solar)', role: '24 / 30 / 36 kWh ngày (0 kWh Đêm Trăng)' },
-  { id: 'recycler', name: 'Máy lọc nước (WRS)', role: 'Thu hồi 90% → 95% nước xám (Max 20 L/mẻ)' },
-  { id: 'scrubber', name: 'Lọc CO₂ & Che chắn', role: 'Giảm tác hại bức xạ SEP / bão hạt DONKI' },
-  { id: 'airlock', name: 'Khoang điều áp Airlock', role: 'Giữ kín áp suất (hỏng rò -1 kg O₂/Sol)' },
-  { id: 'fabricator', name: 'Xưởng in 3D Fabricator', role: 'Mở khóa công thức Lv1–Lv3 (0 slot crew)' },
-];
+const SYSTEM_IDS: ReadonlyArray<SystemId> = ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'];
 
 export function SystemControls() {
   const { gameState, bundle, dispatch } = useGameStore();
@@ -21,6 +16,7 @@ export function SystemControls() {
   const availableCrew = selectAvailableCrew(gameState);
   const weather = selectWeatherOutlook(gameState, bundle, selectedWorker);
   const canEdit = gameState.clock.phase === 'engineering';
+  const { t } = useI18n();
 
   const handleAssignTask = async (task: 'repair-system' | 'upgrade-system', systemId: SystemId) => {
     const res = await dispatch({
@@ -30,22 +26,20 @@ export function SystemControls() {
       targetSystemId: systemId,
     });
     if (res.ok) playSfx(task === 'upgrade-system' ? 'upgrade' : 'repair', 0.55);
-    setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã nhận lệnh.' : res.error.message);
+    setFeedback(res.ok ? res.effects[0]?.message ?? t('systems.accepted') : res.error.message);
   };
 
   return (
-    <section className="hail-sys-panel" aria-label="Điều khiển 5 Hệ thống Trạm">
+    <section className="hail-sys-panel" aria-label={t('systems.aria')}>
       <div className="hail-sys-header">
         <div>
-          <h3>Bảng Telemetry 5 Hệ thống & WRS</h3>
+          <h3>{t('systems.title')}</h3>
           <p className="text-xs text-slate-300">
-            Xác suất sửa thành công hôm nay (theo bão DONKI{' '}
-            <strong>{weather.level.toUpperCase()}</strong>):{' '}
-            <strong className="text-cyan-300">{Math.round(weather.repairSuccessProb * 100)}%</strong>
+            {t('systems.repairOdds', { level: weather.level.toUpperCase(), pct: Math.round(weather.repairSuccessProb * 100) })}
           </p>
         </div>
         <span className={`hail-phase-tag ${canEdit ? 'is-ready' : ''}`}>
-          {canEdit ? 'Đang mở Kỹ thuật' : `Pha hiện tại: ${gameState.clock.phase}`}
+          {canEdit ? t('systems.engineeringOpen') : t('systems.currentPhase', { phase: t(`phase.${gameState.clock.phase}`) })}
         </span>
       </div>
 
@@ -53,9 +47,9 @@ export function SystemControls() {
       <div className="grid grid-cols-1 sm:grid-cols-2 items-center gap-3 p-2.5 rounded-lg bg-slate-900/70 border border-slate-700/70">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <div className="text-xs font-semibold text-cyan-200">Tái chế nước WRS</div>
+            <div className="text-xs font-semibold text-cyan-200">{t('systems.wrsTitle')}</div>
             <div className="text-[11px] text-slate-400">
-              Nước xám chờ xử lý: {gameState.resources.wasteWaterL.toFixed(1)} L
+              {t('systems.wastewater', { liters: gameState.resources.wasteWaterL.toFixed(1) })}
             </div>
           </div>
           <button
@@ -64,18 +58,18 @@ export function SystemControls() {
             onClick={() => dispatch({ type: 'rationing/set-wrs', enabled: !gameState.dailyPlan.wrsEnabled })}
             className={`hail-btn ${gameState.dailyPlan.wrsEnabled ? 'hail-btn--accent' : ''}`}
           >
-            {gameState.dailyPlan.wrsEnabled ? 'WRS: BẬT' : 'WRS: TẮT'}
+            {gameState.dailyPlan.wrsEnabled ? t('systems.wrsOn') : t('systems.wrsOff')}
           </button>
         </div>
 
         <HailSelect
-          label="Người thực thi"
+          label={t('systems.worker')}
           value={selectedWorker}
           onChange={(val) => setSelectedWorker(val as CrewId)}
           options={Object.values(gameState.crew).map((c) => ({
             value: c.id,
             label: c.name,
-            meta: `${c.roleTag}${c.assignedTask ? ' · Bận' : ''}`,
+            meta: `${c.roleTag}${c.assignedTask ? ` · ${t('systems.busy')}` : ''}`,
             disabled: c.condition === 'evacuated',
           }))}
         />
@@ -88,53 +82,53 @@ export function SystemControls() {
       )}
 
       <div className="grid grid-cols-1 gap-2">
-        {SYSTEM_META.map((meta) => {
-          const sys = gameState.systems[meta.id];
-          const sprite = getHailSystemSprite(meta.id, sys.integrity);
-          const repairPerm = selectCanRepair(gameState, meta.id, bundle);
+        {SYSTEM_IDS.map((systemId) => {
+          const sys = gameState.systems[systemId];
+          const sprite = getHailSystemSprite(systemId, sys.integrity);
+          const repairPerm = selectCanRepair(gameState, systemId, bundle);
           const pendingUpgrades = Object.values(gameState.crew).filter((crew) => crew.condition !== 'evacuated'
-            && crew.assignedTask?.type === 'upgrade-system' && crew.assignedTask.targetSystemId === meta.id).length;
+            && crew.assignedTask?.type === 'upgrade-system' && crew.assignedTask.targetSystemId === systemId).length;
           const nextLevel = sys.level + pendingUpgrades + 1;
           const targetLvl = nextLevel <= bundle.balance.systems.maxLevel ? (String(nextLevel) as '2' | '3') : null;
           const baseUpCost = targetLvl ? bundle.balance.systems.upgradePartsByTargetLevel[targetLvl] : 0;
-          const discount = selectedWorker === 'eng' && meta.id !== 'fabricator' ? 1 : 0;
+          const discount = selectedWorker === 'eng' && systemId !== 'fabricator' ? 1 : 0;
           const upCost = targetLvl ? Math.max(1, baseUpCost - discount) : 0;
           const workerBusy = !availableCrew.some((c) => c.id === selectedWorker);
 
           return (
-            <div key={meta.id} className={`hail-sys-card ${sys.integrity < 0.85 ? 'is-damaged' : ''}`}>
+            <div key={systemId} className={`hail-sys-card ${sys.integrity < 0.85 ? 'is-damaged' : ''}`}>
               <div className="flex items-start gap-3">
                 <img src={sprite.sprite} alt="" className="hail-sys-thumb" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <strong className="text-sm text-white truncate">{meta.name}</strong>
+                    <strong className="text-sm text-white truncate">{t(`system.${systemId}`)}</strong>
                     <span className="hail-level-pill">Lv{sys.level}/3</span>
                     <span className="text-[11px] font-mono text-slate-300">
                       {Math.round(sys.integrity * 100)}%
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-0.5">{meta.role}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t(`systems.role.${systemId}`)}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/60">
                 <button
                   type="button"
                   disabled={!canEdit || !repairPerm.allowed || workerBusy}
-                  title={repairPerm.allowed ? 'Sửa hệ thống (-2 Parts)' : repairPerm.message}
-                  onClick={() => handleAssignTask('repair-system', meta.id)}
+                  title={repairPerm.allowed ? t('systems.repairTitle') : repairPerm.message}
+                  onClick={() => handleAssignTask('repair-system', systemId)}
                   className="hail-btn hail-btn--warn w-full"
                 >
                   <img src={HAIL_SVG.actRepair} alt="" className="w-3.5 h-3.5" />
-                  Sửa (2P)
+                  {t('systems.repair')}
                 </button>
                 <button
                   type="button"
                   disabled={!canEdit || !targetLvl || gameState.resources.partsKg < upCost || workerBusy}
-                  onClick={() => handleAssignTask('upgrade-system', meta.id)}
+                  onClick={() => handleAssignTask('upgrade-system', systemId)}
                   className="hail-btn hail-btn--accent w-full"
                 >
                   <img src={HAIL_SVG.actUpgrade} alt="" className="w-3.5 h-3.5" />
-                  {targetLvl ? `Nâng (${upCost}P)` : 'Tối đa'}
+                  {targetLvl ? t('systems.upgrade', { cost: upCost }) : t('systems.max')}
                 </button>
               </div>
             </div>

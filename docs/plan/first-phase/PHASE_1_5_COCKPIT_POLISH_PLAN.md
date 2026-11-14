@@ -223,18 +223,18 @@ Design token, asset naming và layout safe area phải khóa trước khi B/C ch
 
 ## 13. Definition of Done
 
-- [ ] Cockpit thể hiện đủ state và forecast cần ra quyết định.
-- [ ] Critical flow không dùng debug UI hoặc placeholder.
-- [ ] Tutorial Sol 1 dạy được core loop và có thể skip.
-- [ ] Asset có manifest, source/license và state variants.
-- [ ] Audio/motion có setting và reduced-motion fallback.
-- [ ] Science Brief dùng metric thật và nguồn NASA cụ thể.
-- [ ] Predictor/biểu đồ 5 Sol dùng selector chung với engine.
-- [ ] V12 6 module + 2 rack hiển thị inventory/mission state thật.
-- [ ] Critical path VI/EN hoàn chỉnh và chuyển ngôn ngữ không đổi gameplay.
-- [ ] Copy phù hợp trẻ 7–12 tuổi.
-- [ ] Desktop/mobile critical flow đều dùng được.
-- [ ] Visual/component/integration test và CI đạt.
+- [x] Cockpit thể hiện đủ state và forecast cần ra quyết định.
+- [x] Critical flow không dùng debug UI hoặc placeholder.
+- [x] Tutorial Sol 1 dạy được core loop và có thể skip.
+- [x] Asset có manifest, source/license và state variants (`public/assets/hail/manifest.json`, 141 assets).
+- [x] Audio/motion có setting và reduced-motion fallback.
+- [x] Science Brief dùng metric thật và nguồn NASA cụ thể.
+- [x] Predictor/biểu đồ 5 Sol dùng selector chung với engine.
+- [x] Wall-Rack Cockpit Option B hiển thị inventory/mission state thật.
+- [x] Critical path VI/EN hoàn chỉnh và chuyển ngôn ngữ không đổi gameplay.
+- [x] Copy phù hợp trẻ 7–12 tuổi.
+- [x] Desktop/mobile critical flow đều dùng được.
+- [x] Visual/component/integration test và CI đạt (65 tests + 4 browser campaigns).
 
 ## 14. Không thuộc phase này
 

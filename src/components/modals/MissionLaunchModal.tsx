@@ -7,6 +7,7 @@ import { MissionProgressionPanel } from '../MissionProgressionPanel.tsx';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 import { ArtifactExportButtons, TrainingReport } from '../CampaignReportCard.tsx';
+import { useI18n } from '../../i18n/useI18n.ts';
 
 interface MissionLaunchModalProps {
   onClose: () => void;
@@ -17,6 +18,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
   const [selectedProfile, setSelectedProfile] = useState(gameState.campaign.donkiProfileId);
   const [difficulty, setDifficulty] = useState<DifficultyId>(gameState.campaign.difficulty);
   const [seed, setSeed] = useState(gameState.campaign.seed);
+  const { t } = useI18n();
 
   const handleStartNew = async () => {
     playSfx('launch', 0.6);
@@ -31,8 +33,8 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
 
   return (
     <MissionDialog
-      title={`Thiết lập Chiến dịch & Mục tiêu Moon ${bundle.campaign.targetSol} Sol`}
-      eyebrow="NASA DONKI SPACE WEATHER PROFILES"
+      title={t('modal.launchTitle', { sols: bundle.campaign.targetSol })}
+      eyebrow={t('modal.launchEyebrow')}
       panelType="launch"
       dockSide="center"
       onClose={onClose}
@@ -43,7 +45,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
         <ArtifactExportButtons />
 
         <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70 flex flex-col gap-3 text-xs">
-          <h3 className="font-bold text-cyan-300">Khởi tạo Chiến dịch Mới với Mẫu Dữ liệu NASA DONKI (32 ngày)</h3>
+          <h3 className="font-bold text-cyan-300">{t('launch.newCampaign')}</h3>
 
           <div className="grid grid-cols-1 gap-2">
             {bundle.donki.samples.map((sample) => (
@@ -77,7 +79,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <HailSelect
-              label="Độ khó"
+              label={t('common.difficulty')}
               value={difficulty}
               onChange={(val) => setDifficulty(val as DifficultyId)}
               options={Object.values(bundle.campaign.difficultyProfiles).map((d) => ({
@@ -86,7 +88,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
               }))}
             />
             <label className="hail-select-field">
-              <span className="hail-select-label">Mission Seed (Deterministic)</span>
+              <span className="hail-select-label">{t('launch.seed')}</span>
               <input
                 type="number"
                 value={seed}
@@ -98,7 +100,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
 
           <button type="button" disabled={!Number.isSafeInteger(seed)} onClick={handleStartNew} className="hail-btn hail-btn--accent py-2 font-bold flex items-center justify-center gap-2">
             <Rocket className="w-4 h-4" />
-            Bắt đầu Chiến dịch Mới (Reset về Sol 1)
+            {t('launch.start')}
           </button>
         </section>
       </div>

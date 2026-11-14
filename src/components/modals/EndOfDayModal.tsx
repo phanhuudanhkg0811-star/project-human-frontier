@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
@@ -43,13 +43,6 @@ export function EndOfDayModal({
   const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
   const inRationing = gameState.clock.phase === 'rationing' && !ended;
   const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
-
-  useEffect(() => {
-    inFlight.current = false;
-    setIsSubmitting(false);
-    setLeverPulled(false);
-    setErrorMsg(null);
-  }, [sol]);
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
@@ -107,7 +100,6 @@ export function EndOfDayModal({
     setErrorMsg(null);
     playSfx('endSol', 0.7);
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 220));
       const res = await dispatch({ type: 'sol/end' });
       if (res.ok) {
         onClose();
@@ -206,7 +198,7 @@ export function EndOfDayModal({
               return (
                 <div
                   key={crewId}
-                  className={`hail-alloc-crew-col ${evacuated ? 'is-evacuated' : ''}`}
+                  className={`hail-alloc-crew-col hail-ration-crew-pill ${evacuated ? 'is-evacuated' : ''}`}
                 >
                   <div className="hail-alloc-crew-head">
                     <img
@@ -280,7 +272,7 @@ export function EndOfDayModal({
                   alt=""
                   draggable={false}
                 />
-                <span>WRS {gameState.dailyPlan.wrsEnabled ? '90% ON' : 'OFF'}</span>
+                <span>WRS: {gameState.dailyPlan.wrsEnabled ? '90% ON' : 'OFF'}</span>
               </button>
 
               <div className="hail-alloc-priority-row" aria-label="Thứ tự ưu tiên điện">
@@ -364,7 +356,7 @@ export function EndOfDayModal({
               {isSubmitting || leverPulled
                 ? 'ĐANG QUA ĐÊM...'
                 : canPullLever
-                  ? `Chốt Sol ${sol}`
+                  ? t('endDay.endSolBtn', { sol })
                   : 'KHÓA AN TOÀN'}
             </span>
           </button>
@@ -374,7 +366,7 @@ export function EndOfDayModal({
         <button
           type="button"
           className="hail-tactile-corner-close"
-          aria-label="Đóng Bảng Phân bổ"
+          aria-label={t('common.closeDialog')}
           onClick={() => {
             playSfx('click', 0.4);
             onClose();

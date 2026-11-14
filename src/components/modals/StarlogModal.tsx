@@ -128,7 +128,6 @@ export function StarlogModal({
     setPressedKey(choiceId);
     playSfx('click', 0.55);
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 120));
       const res = await dispatch({
         type: 'event/resolve',
         eventId: event.id,
@@ -528,7 +527,7 @@ export function StarlogModal({
         <button
           type="button"
           className="hail-tactile-corner-close"
-          aria-label={pickText('Đóng Terminal Quyết định', 'Close Decision Terminal')}
+          aria-label={t('common.closeDialog')}
           onClick={() => {
             playSfx('click', 0.4);
             onClose();

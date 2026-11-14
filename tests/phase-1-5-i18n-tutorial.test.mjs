@@ -12,6 +12,7 @@ async function loadUiAndI18nBundle() {
         export * from './src/store/uiStore.ts';
         export * from './src/data/tutorialSteps.ts';
         export * from './src/schemas/contracts.ts';
+        export * from './src/audio/soundEngine.ts';
       `,
       loader: 'ts',
       resolveDir: simulationRoot,
@@ -119,4 +120,13 @@ test('Phase 1.5 useUiStore works safely under Node without window and preserves 
   store.getState().setLocale('vi');
   store.getState().setAudioMuted(false);
   assert.equal(store.getState().tutorialCompleted, false);
+});
+
+test('Phase 1.5 procedural audio contract is a safe no-op without browser Web Audio', () => {
+  assert.doesNotThrow(() => {
+    mod.syncAmbientAudio({ isLunarNight: true, weatherLevel: 'extreme', muted: true });
+    mod.playSfx('alert');
+    mod.playSfx('victory');
+    mod.disposeSoundEngine();
+  });
 });
