@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
@@ -29,13 +29,18 @@ export function EndOfDayModal({
   onClose: () => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t, locale } = useI18n();
-  const [leverPulled, setLeverPulled] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { t, locale, localize } = useI18n();
+  const [leverPulledSol, setLeverPulledSol] = useState<number | null>(null);
+  const [errorState, setErrorState] = useState<{ sol: number; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inFlight = useRef(false);
 
   const sol = gameState.clock.sol;
+  const leverPulled = leverPulledSol === sol;
+  const errorMsg = errorState?.sol === sol ? errorState.message : null;
+  const setErrorMsg = (message: string | null) => {
+    setErrorState(message ? { sol, message } : null);
+  };
   const ended = gameState.campaign.status !== 'active' || gameState.clock.phase === 'terminal';
   const pendingEvent = gameState.events.activeEventId
     ? bundle.events.find((e) => e.id === gameState.events.activeEventId) ?? null
@@ -43,13 +48,6 @@ export function EndOfDayModal({
   const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
   const inRationing = gameState.clock.phase === 'rationing' && !ended;
   const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
-
-  useEffect(() => {
-    inFlight.current = false;
-    setIsSubmitting(false);
-    setLeverPulled(false);
-    setErrorMsg(null);
-  }, [sol]);
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
@@ -103,7 +101,7 @@ export function EndOfDayModal({
     if (!canPullLever || inFlight.current) return;
     inFlight.current = true;
     setIsSubmitting(true);
-    setLeverPulled(true);
+    setLeverPulledSol(sol);
     setErrorMsg(null);
     playSfx('endSol', 0.7);
     try {
@@ -112,11 +110,11 @@ export function EndOfDayModal({
       if (res.ok) {
         onClose();
       } else {
-        setLeverPulled(false);
+        setLeverPulledSol(null);
         setErrorMsg(res.error.message);
       }
     } catch {
-      setLeverPulled(false);
+      setLeverPulledSol(null);
       setErrorMsg(t('endDay.submitError'));
     } finally {
       inFlight.current = false;
@@ -191,7 +189,7 @@ export function EndOfDayModal({
           </header>
 
           {errorMsg && (
-            <p className="hail-term-plain-line is-warn">{t('endDay.errorPrefix', { message: errorMsg })}</p>
+            <p className="hail-term-plain-line is-warn">{t('endDay.errorPrefix', { message: localize(errorMsg, bundle) })}</p>
           )}
 
           {/* 4-Crew Columns with Dynamic 3-State Portraits + Square Checkboxes */}

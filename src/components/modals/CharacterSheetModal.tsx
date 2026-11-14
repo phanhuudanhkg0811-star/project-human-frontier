@@ -20,7 +20,7 @@ const HUNGER_BADGE = {
 } as const;
 
 export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
-  const { t, locale, pickText } = useI18n();
+  const { t, locale, pickText, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const { selectedCrewId } = useUiStore();
   const [note, setNote] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       <div className="flex flex-col gap-3 text-slate-200">
         {note && (
           <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
-            {note}
+            {localize(note, bundle)}
           </div>
         )}
 
@@ -166,17 +166,17 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                     <>
                       <span className="text-cyan-300 font-mono">{t('character.assignment', { task: member.assignedTask.type })}</span>
                       <button type="button" disabled={!canAssign} onClick={() => handleUnassign(crewId)} className="hail-btn flex items-center gap-1">
-                        <Undo2 className="w-3 h-3" /> {t('character.cancel')}
+                        <Undo2 className="w-3 h-3" aria-hidden="true" /> {t('character.cancel')}
                       </button>
                     </>
                   ) : (
                     <div className="flex flex-wrap items-center gap-1.5 w-full">
                       <button type="button" disabled={!canAssign || member.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'rest')} className="hail-btn flex items-center gap-1">
-                        <Coffee className="w-3 h-3" /> {t('character.rest')}
+                        <Coffee className="w-3 h-3" aria-hidden="true" /> {t('character.rest')}
                       </button>
                       {crewId === 'cmd' && (
                         <button type="button" disabled={!canAssign || member.condition !== 'fit' || isTired} onClick={() => handleAssign(crewId, 'emergency-response')} className="hail-btn hail-btn--accent flex items-center gap-1">
-                          <ShieldAlert className="w-3 h-3" /> {t('character.capcom')}
+                          <ShieldAlert className="w-3 h-3" aria-hidden="true" /> {t('character.capcom')}
                         </button>
                       )}
                       {crewId === 'doc' && (
@@ -195,7 +195,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                             />
                           </div>
                           <button type="button" disabled={!canAssign || member.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'medical-care')} className="hail-btn hail-btn--accent flex items-center gap-1 shrink-0">
-                            <HeartPulse className="w-3 h-3" /> {t('character.care')}
+                            <HeartPulse className="w-3 h-3" aria-hidden="true" /> {t('character.care')}
                           </button>
                         </div>
                       )}

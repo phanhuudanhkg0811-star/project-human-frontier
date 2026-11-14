@@ -3465,6 +3465,44 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   .hail-phase-hint {
     display: none;
   }
+
+  .hail-action-band {
+    top: auto;
+    bottom: 0;
+    height: auto;
+    min-height: 48px;
+  }
+
+  .hail-dialog .hail-btn,
+  .hail-select-trigger,
+  .hail-night-cutscene .night-actions button,
+  .hail-action-band button.is-primary {
+    min-height: 44px;
+  }
+
+  .hail-dialog .hail-close-btn,
+  .hail-tactile-corner-close,
+  .hail-tactile-frame--allocation .hail-tactile-corner-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  .hail-utility-controls {
+    top: auto;
+    bottom: 54px;
+    right: 6px;
+  }
+}
+
+.hail-action-band button:focus-visible,
+.hail-utility-controls button:focus-visible,
+.hail-select-trigger:focus-visible,
+.hail-btn:focus-visible,
+.hail-dialog .hail-close-btn:focus-visible {
+  outline: 2px solid #ffe2a6;
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

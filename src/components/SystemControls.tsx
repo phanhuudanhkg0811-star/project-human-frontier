@@ -16,7 +16,7 @@ export function SystemControls() {
   const availableCrew = selectAvailableCrew(gameState);
   const weather = selectWeatherOutlook(gameState, bundle, selectedWorker);
   const canEdit = gameState.clock.phase === 'engineering';
-  const { t } = useI18n();
+  const { t, localize } = useI18n();
 
   const handleAssignTask = async (task: 'repair-system' | 'upgrade-system', systemId: SystemId) => {
     const res = await dispatch({
@@ -77,7 +77,7 @@ export function SystemControls() {
 
       {feedback && (
         <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
-          {feedback}
+          {localize(feedback, bundle)}
         </div>
       )}
 
@@ -98,7 +98,7 @@ export function SystemControls() {
           return (
             <div key={systemId} className={`hail-sys-card ${sys.integrity < 0.85 ? 'is-damaged' : ''}`}>
               <div className="flex items-start gap-3">
-                <img src={sprite.sprite} alt="" className="hail-sys-thumb" />
+                <img src={sprite.sprite} alt="" aria-hidden="true" className="hail-sys-thumb" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <strong className="text-sm text-white truncate">{t(`system.${systemId}`)}</strong>
@@ -114,7 +114,7 @@ export function SystemControls() {
                 <button
                   type="button"
                   disabled={!canEdit || !repairPerm.allowed || workerBusy}
-                  title={repairPerm.allowed ? t('systems.repairTitle') : repairPerm.message}
+                  title={repairPerm.allowed ? t('systems.repairTitle') : localize(repairPerm.message ?? '', bundle)}
                   onClick={() => handleAssignTask('repair-system', systemId)}
                   className="hail-btn hail-btn--warn w-full"
                 >

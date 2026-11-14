@@ -29,7 +29,7 @@ const SITE_ART: Record<ExpeditionId, string> = {
 };
 
 export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
-  const { t } = useI18n();
+  const { t, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const { selectedEquipmentIds, toggleRoverEquipment, clearRoverEquipment } = useUiStore();
   const [selectedSite, setSelectedSite] = useState<ExpeditionId>('lunar-crater');
@@ -61,28 +61,40 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
     if (res.ok) {
       playSfx('launch', 0.6);
       clearRoverEquipment();
-      setFeedback(res.effects[0]?.message ?? t('expedition.launched'));
+      setFeedback(localize(res.effects[0]?.message ?? '', bundle) || t('expedition.launched'));
     } else {
-      setFeedback(res.error.message);
+      setFeedback(localize(res.error.message, bundle));
     }
   };
 
   const handleCancel = async () => {
     const res = await dispatch({ type: 'rover/cancel-schedule' });
     if (res.ok) playSfx('click', 0.45);
-    setFeedback(res.ok ? res.effects[0]?.message ?? t('expedition.cancelled') : res.error.message);
+    setFeedback(
+      res.ok
+        ? localize(res.effects[0]?.message ?? '', bundle) || t('expedition.cancelled')
+        : localize(res.error.message, bundle)
+    );
   };
 
   const handleRecoverSignal = async () => {
     const res = await dispatch({ type: 'rover/recover-signal' });
     if (res.ok) playSfx('radio', 0.55);
-    setFeedback(res.ok ? res.effects[0]?.message ?? t('expedition.signalRestored') : res.error.message);
+    setFeedback(
+      res.ok
+        ? localize(res.effects[0]?.message ?? '', bundle) || t('expedition.signalRestored')
+        : localize(res.error.message, bundle)
+    );
   };
 
   const handleRecoveryOperator = async () => {
     const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperator });
     if (res.ok) playSfx('click', 0.45);
-    setFeedback(res.ok ? res.effects[0]?.message ?? t('expedition.recoveryAssigned') : res.error.message);
+    setFeedback(
+      res.ok
+        ? localize(res.effects[0]?.message ?? '', bundle) || t('expedition.recoveryAssigned')
+        : localize(res.error.message, bundle)
+    );
   };
 
   return (
@@ -118,7 +130,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
         {feedback && (
           <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
-            {feedback}
+            {localize(feedback, bundle)}
           </div>
         )}
 
@@ -213,10 +225,10 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           onClick={handleSchedule}
           className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
         >
-          <Rocket className="w-4 h-4" />
+          <Rocket className="w-4 h-4" aria-hidden="true" />
           {inComms ? t('expedition.schedule', { site: expedition.name }) : t('expedition.phaseLock')}
         </button>
-        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{schedulePermission.message}</p>}
+        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)}</p>}
 
         {activeMission?.status === 'scheduled' && (
           <button type="button" onClick={handleCancel} className="hail-btn">{t('expedition.cancel')}</button>

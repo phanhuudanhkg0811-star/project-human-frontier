@@ -42,7 +42,7 @@ export function JournalModal({
   onOpenPanel: (panel: 'comms' | 'expedition' | 'launch') => void;
 }) {
   const { gameState, bundle, dispatch } = useGameStore();
-  const { t, locale, pickText } = useI18n();
+  const { t, locale, pickText, localize } = useI18n();
   const [tab, setTab] = useState<JournalTabId>(initialTab);
   const [logPage, setLogPage] = useState(0);
   const [crewIdx, setCrewIdx] = useState(0);
@@ -210,7 +210,7 @@ export function JournalModal({
 
           <div className="hail-term-body">
             {statusNote && (
-              <p className="hail-term-plain-line is-ok">{t('journal.systemPrefix', { note: statusNote })}</p>
+              <p className="hail-term-plain-line is-ok">{t('journal.systemPrefix', { note: localize(statusNote, bundle) })}</p>
             )}
 
             {tab === 'log' && (
@@ -250,7 +250,7 @@ export function JournalModal({
                       <li key={`${safePage}-${idx}`}>
                         <span className="hail-term-prompt">&gt;</span>
                         <span>
-                          [Sol {entry.sol} · {entry.phase}] {entry.message}
+                          [Sol {entry.sol} · {entry.phase}] {localize(entry.message, bundle)}
                         </span>
                       </li>
                     ))

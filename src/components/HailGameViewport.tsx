@@ -78,7 +78,7 @@ export function HailGameViewport() {
     locale,
     setLocale,
   } = useUiStore();
-  const { t } = useI18n();
+  const { t, localize } = useI18n();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
 
   useEffect(() => {
@@ -154,7 +154,7 @@ export function HailGameViewport() {
   return (
     <main className="hail-viewport">
       {migrationNotice && <div role="status" className="campaign-migration-notice">
-        <p>{migrationNotice}</p><button type="button" className="hail-btn" onClick={dismissMigrationNotice}>{t('cockpit.understood')}</button>
+        <p>{localize(migrationNotice, bundle)}</p><button type="button" className="hail-btn" onClick={dismissMigrationNotice}>{t('cockpit.understood')}</button>
       </div>}
       {/* Fail-Closed Save Recovery Banner */}
       {saveRecoveryError && (
@@ -165,7 +165,7 @@ export function HailGameViewport() {
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" />
             <div>
-              <strong>{t('cockpit.recoveryError')} [{saveRecoveryError.code}]:</strong> {saveRecoveryError.message}
+              <strong>{t('cockpit.recoveryError')} [{saveRecoveryError.code}]:</strong> {localize(saveRecoveryError.message, bundle)}
             </div>
           </div>
           <button type="button" className="hail-btn" onClick={() => { try {
@@ -188,7 +188,7 @@ export function HailGameViewport() {
           onClick={dismissError}
           className="fixed top-20 right-4 z-50 max-w-sm p-2.5 rounded-lg bg-amber-950/95 border border-amber-400/60 text-amber-100 text-xs cursor-pointer shadow-lg"
         >
-          <strong>[{lastError.code}]</strong> {lastError.message} ({t('cockpit.tapToClose')})
+          <strong>[{lastError.code}]</strong> {localize(lastError.message, bundle)} ({t('cockpit.tapToClose')})
         </div>
       )}
 

@@ -46,15 +46,15 @@ export function TrainingReport({ state, bundle }: { state: GameState; bundle: Co
   const localizedChecks =
     locale === 'en'
       ? [
-          {
-            label: t('report.trainingCheckCrew', { min: bundle.campaign.training.minActiveCrew }),
-            met: report.checks[0]?.met ?? null,
-          },
-          {
-            label: t('report.trainingCheckExpedition', { min: bundle.campaign.training.minExpeditions }),
-            met: report.checks[1]?.met ?? null,
-          },
-        ]
+        {
+          label: t('report.trainingCheckCrew', { min: bundle.campaign.training.minActiveCrew }),
+          met: report.checks[0]?.met ?? null,
+        },
+        {
+          label: t('report.trainingCheckExpedition', { min: bundle.campaign.training.minExpeditions }),
+          met: report.checks[1]?.met ?? null,
+        },
+      ]
       : report.checks;
 
   return (
@@ -74,7 +74,7 @@ export function TrainingReport({ state, bundle }: { state: GameState; bundle: Co
 }
 
 export function CampaignReportCard({ state, bundle }: { state: GameState; bundle: ContentBundle }) {
-  const { locale, t, pickText } = useI18n();
+  const { locale, t, pickText, localize } = useI18n();
   const report = selectCampaignReport(state, bundle);
   const outcome = report.outcome;
 
@@ -103,10 +103,10 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
     report.wrs.efficiency === null
       ? t('report.wrsNoData')
       : t('report.wrsStats', {
-          pct: (report.wrs.efficiency * 100).toFixed(1),
-          recovered: report.wrs.recoveredL.toFixed(2),
-          processed: report.wrs.processedL.toFixed(2),
-        });
+        pct: (report.wrs.efficiency * 100).toFixed(1),
+        recovered: report.wrs.recoveredL.toFixed(2),
+        processed: report.wrs.processedL.toFixed(2),
+      });
 
   return (
     <section className="campaign-report" aria-label="NASA Cadet Report Card">
@@ -190,7 +190,7 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
         <ol>
           {report.timeline.map((entry) => (
             <li key={entry.sol}>
-              Sol {entry.sol}: {entry.highlights.join(' ')}
+              Sol {entry.sol}: {entry.highlights.map((h) => localize(h, bundle)).join(' ')}
             </li>
           ))}
         </ol>
