@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { playSfx, startMusic } from '../audio/sfx.ts';
 import { selectActiveEventView } from '../domain/eventSelectors.ts';
 import { EventPriorityBanner } from './EventPriorityBanner.tsx';
 import { selectCanAdvancePhase, selectMissionProgress, selectRoverSamples, selectWeatherOutlook } from '../domain/selectors.ts';
@@ -21,6 +23,7 @@ import { CommsLogisticsModal } from './modals/CommsLogisticsModal.tsx';
 import { CraftingModal } from './modals/CraftingModal.tsx';
 import { EndOfDayModal } from './modals/EndOfDayModal.tsx';
 import { ExpeditionModal } from './modals/ExpeditionModal.tsx';
+import { JournalModal } from './modals/JournalModal.tsx';
 import { MissionDialog } from './modals/MissionDialog.tsx';
 import { MissionLaunchModal } from './modals/MissionLaunchModal.tsx';
 import { NightCutsceneModal } from './modals/NightCutsceneModal.tsx';
@@ -34,10 +37,10 @@ const EQUIPMENT_RACK_META: ReadonlyArray<{
 }> = [
   { id: 'core_drill', label: 'Core Drill', img: HAIL_INVENTORY.sampleDrill },
   { id: 'sealant_tape', label: 'Sealant Tape', img: HAIL_INVENTORY.sealantTape },
-  { id: 'solar_lantern', label: 'Solar Lantern', img: HAIL_INVENTORY.specialBeacon },
+  { id: 'solar_lantern', label: 'Solar Lantern', img: HAIL_INVENTORY.solarLantern },
   { id: 'dust_shield', label: 'Dust Shield', img: HAIL_INVENTORY.dustShield },
   { id: 'radio_repeater', label: 'Radio Repeater', img: HAIL_INVENTORY.radioRepeater },
-  { id: 'cryo_thermal_rig', label: 'Cryo Thermal Rig', img: HAIL_INVENTORY.filterSeal },
+  { id: 'cryo_thermal_rig', label: 'Cryo Thermal Rig', img: HAIL_INVENTORY.cryoThermalRig },
 ];
 
 const CREW_SLOTS: ReadonlyArray<{
@@ -45,21 +48,27 @@ const CREW_SLOTS: ReadonlyArray<{
   depth: 'foreground' | 'rear';
   style: { left: string; top: string; width: string; height: string };
 }> = [
-  { crewId: 'cmd', depth: 'foreground', style: { left: '14%', top: '38%', width: '16%', height: '55%' } },
-  { crewId: 'eng', depth: 'rear', style: { left: '36%', top: '42%', width: '12%', height: '38%' } },
-  { crewId: 'doc', depth: 'rear', style: { left: '52%', top: '42%', width: '12%', height: '38%' } },
-  { crewId: 'geo', depth: 'foreground', style: { left: '70%', top: '38%', width: '16%', height: '55%' } },
+  { crewId: 'cmd', depth: 'foreground', style: { left: '13.5%', top: '39%', width: '21.5%', height: '53%' } },
+  { crewId: 'eng', depth: 'rear', style: { left: '34.5%', top: '35.5%', width: '13%', height: '42.5%' } },
+  { crewId: 'doc', depth: 'rear', style: { left: '52.5%', top: '34.5%', width: '12.5%', height: '43.5%' } },
+  { crewId: 'geo', depth: 'foreground', style: { left: '67.5%', top: '39%', width: '18.5%', height: '53%' } },
 ];
 
 export function HailGameViewport() {
   const { gameState, bundle, dispatch, saveRecoveryError, resetCampaign, lastError, dismissError, migrationNotice, dismissMigrationNotice } = useGameStore();
   const roverSamples = selectRoverSamples(gameState);
-  const { activeModal, openModal, closeModal } = useUiStore();
-  const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openModal('menu')];
+  const { activeModal, openModal, closeModal, selectCrew } = useUiStore();
+  const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
+
+  useEffect(() => {
+    const bootMusic = () => startMusic(0.28);
+    window.addEventListener('pointerdown', bootMusic, { once: true });
+    return () => window.removeEventListener('pointerdown', bootMusic);
+  }, []);
 
   const progress = selectMissionProgress(gameState, bundle);
   const weather = selectWeatherOutlook(gameState, bundle);
-  const advancePerm = selectCanAdvancePhase(gameState);
+  const advancePerm = selectCanAdvancePhase(gameState, bundle);
   const activeEventView = selectActiveEventView(gameState, bundle);
   const requiresBriefingChoice = gameState.clock.phase === 'briefing' && activeEventView?.mandatory === true;
 
@@ -75,13 +84,20 @@ export function HailGameViewport() {
       ? 'is-focus-left-floor'
       : activeModal === 'comms' || activeModal === 'expedition'
         ? 'is-focus-right-wall'
-        : activeModal === 'starlog' || activeModal === 'end'
+        : activeModal === 'journal' || activeModal === 'starlog' || activeModal === 'end'
           ? 'is-focus-console'
           : '';
 
-  const openPanel = (m: ActiveModalType) => openModal(m);
+  const openPanel = (m: ActiveModalType) => {
+    startMusic(0.28);
+    if (m) {
+      playSfx(m === 'comms' ? 'radioOn' : 'open', 0.55);
+    }
+    openModal(m);
+  };
 
   const handlePrimaryAction = async () => {
+    startMusic(0.28);
     if (requiresBriefingChoice) {
       openPanel('starlog');
       return;
@@ -91,6 +107,7 @@ export function HailGameViewport() {
       return;
     }
     if (advancePerm.allowed) {
+      playSfx('click', 0.45);
       await dispatch({ type: 'phase/advance' });
     }
   };
@@ -313,20 +330,28 @@ export function HailGameViewport() {
           <div className="hail-crew-stage">
             {CREW_SLOTS.map((slot) => {
               const member = gameState.crew[slot.crewId];
-              const visual = getHailCrewVisual(slot.crewId);
-              const impaired = member.condition !== 'fit' || member.hungerState === 'starving';
+              const visual = getHailCrewVisual(slot.crewId, member);
+              const impaired = visual.state === 'sick' || member.condition === 'evacuated';
               return (
                 <button
                   key={slot.crewId}
                   type="button"
-                  onClick={() => openPanel('character')}
+                  onClick={() => {
+                    selectCrew(slot.crewId);
+                    openPanel('character');
+                  }}
                   className={`hail-crew-member ${slot.depth === 'rear' ? 'is-rear' : 'is-foreground'} ${impaired ? 'is-impaired' : ''}`}
                   style={slot.style}
-                  aria-label={`Phi hành gia ${member.name}`}
+                  aria-label={`Phi hành gia ${member.name} (${visual.stateLabel})`}
                 >
-                  <img src={visual.seated} alt={member.name} className="hail-crew-figure" draggable={false} />
+                  <img
+                    src={visual.seated}
+                    alt={`${member.name} · ${visual.stateLabel}`}
+                    className="hail-crew-figure"
+                    draggable={false}
+                  />
                   <span className={`hail-crew-pill ${slot.depth === 'rear' ? 'is-rear-pill' : ''}`}>
-                    {member.name.split(' ')[0]} · ♥{member.health} · {member.hungerState.toUpperCase()}
+                    {member.name.split(' ')[0]} · ♥{member.health} · {visual.stateLabel.toUpperCase()}
                   </span>
                 </button>
               );
@@ -342,30 +367,30 @@ export function HailGameViewport() {
             <div className="hail-console-screens">
               <button
                 type="button"
-                className={`hail-console-screen ${gameState.events.activeEventId ? 'is-alert' : ''}`}
-                onClick={() => openPanel('starlog')}
-                aria-label="Mở Giao ban & Sự kiện"
+                className="hail-console-screen"
+                onClick={() => openPanel('journal')}
+                aria-label="Mở Nhật ký Trạm 4-Tab"
               >
                 <span className="hail-screen-code">SOL</span>
                 <strong>{String(gameState.clock.sol).padStart(2, '0')}/{bundle.campaign.targetSol}</strong>
               </button>
               <button
                 type="button"
-                className={`hail-console-screen ${weather.level === 'storm' || weather.level === 'extreme' ? 'is-alert' : ''}`}
-                onClick={() => openPanel('launch')}
-                aria-label="Mở Chiến dịch & NASA DONKI"
+                className={`hail-console-screen ${gameState.events.activeEventId || weather.level === 'storm' || weather.level === 'extreme' ? 'is-alert' : ''}`}
+                onClick={() => openPanel('starlog')}
+                aria-label="Mở Terminal Quyết định & Sự kiện"
               >
-                <span className="hail-screen-code">DONKI</span>
-                <strong>{weather.level.toUpperCase()}</strong>
+                <span className="hail-screen-code">DECISION</span>
+                <strong>{gameState.events.activeEventId ? 'SỰ CỐ!' : weather.level.toUpperCase()}</strong>
               </button>
               <button
                 type="button"
-                className="hail-console-screen"
-                onClick={() => setSysModalOpen()}
-                aria-label="Mở Telemetry 5 Hệ thống & WRS"
+                className={`hail-console-screen ${gameState.clock.phase === 'rationing' ? 'is-alert' : ''}`}
+                onClick={() => openPanel('end')}
+                aria-label="Mở Bảng Khẩu phần & Cần gạt End-Sol"
               >
-                <span className="hail-screen-code">WRS</span>
-                <strong>{gameState.dailyPlan.wrsEnabled ? '90% ON' : 'OFF'}</strong>
+                <span className="hail-screen-code">KHẨU PHẦN</span>
+                <strong>{gameState.clock.phase === 'rationing' ? 'CHIA MRE' : 'KẾT SOL'}</strong>
               </button>
             </div>
           </div>
@@ -373,7 +398,11 @@ export function HailGameViewport() {
 
         {/* Bottom Action Bar */}
         <footer className="hail-action-band">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button type="button" onClick={() => openPanel('journal')}>
+              <img src={HAIL_SVG.frameCorner} alt="" />
+              <span>Nhật ký</span>
+            </button>
             <button type="button" onClick={() => openPanel('starlog')}>
               <img src={HAIL_SVG.sysComms} alt="" />
               <span>Giao ban{gameState.events.activeEventId ? ' (!)' : ''}</span>
@@ -427,17 +456,34 @@ export function HailGameViewport() {
       </div>
 
       {/* Modals */}
-      {gameState.campaign.status === 'active' && <EventPriorityBanner
-        view={activeEventView}
-        currentSol={gameState.clock.sol}
-        onOpen={() => openPanel('starlog')}
-      />}
-      {activeModal === 'starlog' && <StarlogModal onClose={closeModal} />}
+      {gameState.campaign.status === 'active' && (
+        <EventPriorityBanner
+          view={activeEventView}
+          currentSol={gameState.clock.sol}
+          onOpen={() => openPanel('starlog')}
+        />
+      )}
+      {activeModal === 'journal' && (
+        <JournalModal
+          onClose={closeModal}
+          onOpenDecision={() => openPanel('starlog')}
+          onOpenPanel={(panel) => openPanel(panel)}
+        />
+      )}
+      {activeModal === 'starlog' && (
+        <StarlogModal onClose={closeModal} onOpenJournal={() => openPanel('journal')} />
+      )}
       {activeModal === 'character' && <CharacterSheetModal onClose={closeModal} />}
       {activeModal === 'crafting' && <CraftingModal onClose={closeModal} />}
       {activeModal === 'expedition' && <ExpeditionModal onClose={closeModal} />}
       {activeModal === 'comms' && <CommsLogisticsModal onClose={closeModal} />}
-      {activeModal === 'end' && <EndOfDayModal onClose={closeModal} />}
+      {activeModal === 'end' && (
+        <EndOfDayModal
+          onClose={closeModal}
+          onStarlog={() => openPanel('starlog')}
+          onComms={() => openPanel('comms')}
+        />
+      )}
       {activeModal === 'launch' && <MissionLaunchModal onClose={closeModal} />}
       {activeModal === 'tutorial' && <TutorialModal onClose={closeModal} />}
       {sysModalOpen && (

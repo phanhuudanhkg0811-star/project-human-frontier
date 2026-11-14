@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Radio, PackageCheck, Send, Truck, AlertTriangle } from 'lucide-react';
+import { playSfx } from '../audio/sfx.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import type { CargoPackId } from '../types/index.ts';
 
@@ -36,6 +37,7 @@ export function CommsLogisticsPanel() {
 
   const handleOrderCargo = async () => {
     const res = await dispatch({ type: 'comms/order-cargo', slots });
+    if (res.ok) playSfx('launch', 0.55);
     setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã đặt tàu hàng.' : res.error.message);
   };
 
@@ -47,6 +49,7 @@ export function CommsLogisticsPanel() {
       message: messageInput.trim(),
       nowMs: Date.now(),
     });
+    if (res.ok) playSfx('radio', 0.55);
     setStatusNote(res.ok ? res.effects[0]?.message ?? 'Đã gửi.' : res.error.message);
   };
 

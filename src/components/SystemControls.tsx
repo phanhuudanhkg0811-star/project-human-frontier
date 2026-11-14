@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { playSfx } from '../audio/sfx.ts';
 import { selectAvailableCrew, selectCanRepair, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import type { CrewId, SystemId } from '../types/index.ts';
@@ -28,6 +29,7 @@ export function SystemControls() {
       task,
       targetSystemId: systemId,
     });
+    if (res.ok) playSfx(task === 'upgrade-system' ? 'upgrade' : 'repair', 0.55);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã nhận lệnh.' : res.error.message);
   };
 

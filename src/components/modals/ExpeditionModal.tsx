@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Rocket, ShieldAlert } from 'lucide-react';
+import { playSfx } from '../../audio/sfx.ts';
 import {
   selectCanScheduleExpedition,
   selectCompletedExpeditions,
@@ -56,6 +57,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
       launchOperatorCrewId: launchOperator,
     });
     if (res.ok) {
+      playSfx('launch', 0.6);
       clearRoverEquipment();
       setFeedback(res.effects[0]?.message ?? 'Đã phóng Rover!');
     } else {
@@ -65,16 +67,19 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
   const handleCancel = async () => {
     const res = await dispatch({ type: 'rover/cancel-schedule' });
+    if (res.ok) playSfx('click', 0.45);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã hủy lịch.' : res.error.message);
   };
 
   const handleRecoverSignal = async () => {
     const res = await dispatch({ type: 'rover/recover-signal' });
+    if (res.ok) playSfx('radio', 0.55);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã khôi phục tín hiệu.' : res.error.message);
   };
 
   const handleRecoveryOperator = async () => {
     const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperator });
+    if (res.ok) playSfx('click', 0.45);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã phân công thu hồi.' : res.error.message);
   };
 

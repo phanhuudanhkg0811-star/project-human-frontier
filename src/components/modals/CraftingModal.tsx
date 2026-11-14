@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Hammer, RefreshCw, Sparkles, Wrench, XCircle } from 'lucide-react';
+import { playSfx } from '../../audio/sfx.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { EquipmentId } from '../../types/index.ts';
 import { HAIL_EQUIPMENT, HAIL_INVENTORY } from '../cabin/hailAssets.ts';
@@ -14,10 +15,10 @@ const ITEM_ICON: Record<string, string> = {
   medkit: HAIL_INVENTORY.medicalKit,
   core_drill: HAIL_INVENTORY.sampleDrill,
   sealant_tape: HAIL_INVENTORY.sealantTape,
-  solar_lantern: HAIL_INVENTORY.specialBeacon,
+  solar_lantern: HAIL_INVENTORY.solarLantern,
   dust_shield: HAIL_INVENTORY.dustShield,
   radio_repeater: HAIL_INVENTORY.radioRepeater,
-  cryo_thermal_rig: HAIL_INVENTORY.filterSeal,
+  cryo_thermal_rig: HAIL_INVENTORY.cryoThermalRig,
 };
 
 export function CraftingModal({ onClose }: CraftingModalProps) {
@@ -30,11 +31,13 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
 
   const runAction = async (action: 'craft' | 'upgrade' | 'repair' | 'recycle', itemId: any) => {
     const res = await dispatch({ type: 'fabricator/queue', action, itemId });
+    if (res.ok) playSfx(action === 'repair' ? 'repair' : 'upgrade', 0.55);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã xếp hàng 3D Fabricator.' : res.error.message);
   };
 
   const handleCancel = async () => {
     const res = await dispatch({ type: 'fabricator/cancel' });
+    if (res.ok) playSfx('click', 0.45);
     setFeedback(res.ok ? res.effects[0]?.message ?? 'Đã hủy lệnh.' : res.error.message);
   };
 

@@ -1,56 +1,120 @@
-import { useRef, useState } from 'react';
-import { ArrowDownUp, BatteryCharging, Droplets, Power, Utensils } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { CrewId, PowerConsumerId } from '../../types/index.ts';
-import { HAIL_EQUIPMENT, HAIL_SVG } from '../cabin/hailAssets.ts';
+import { getHailCrewVisual, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 import { NightReadinessChecklist } from '../NightReadinessChecklist.tsx';
 
-interface EndOfDayModalProps {
-  onClose: () => void;
-}
+const CREW_IDS: readonly CrewId[] = ['cmd', 'eng', 'doc', 'geo'];
 
-const LOAD_LABELS: Record<PowerConsumerId, string> = {
-  eclss: 'Hệ thống Sống (O₂/Nhiệt 12 kWh)',
-  wrs: 'Máy lọc nước WRS (4/3 kWh)',
-  fabricator: 'Xưởng in 3D Fabricator',
-  rover: 'Trạm sạc Rover',
+const SHORT_LOAD_LABEL: Record<PowerConsumerId, string> = {
+  eclss: 'ECLSS',
+  wrs: 'WRS',
+  fabricator: 'FAB',
+  rover: 'ROVER',
 };
 
-export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
+export function EndOfDayModal({
+  onStarlog,
+  onComms,
+  onClose,
+}: {
+  onStarlog?: () => void;
+  onComms?: () => void;
+  onClose: () => void;
+}) {
   const { gameState, bundle, dispatch } = useGameStore();
+  const [leverPulled, setLeverPulled] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const inFlight = useRef(false);
-  const inRationing = gameState.clock.phase === 'rationing';
+
+  const sol = gameState.clock.sol;
+  const ended = gameState.campaign.status !== 'active' || gameState.clock.phase === 'terminal';
+  const pendingEvent = gameState.events.activeEventId
+    ? bundle.events.find((e) => e.id === gameState.events.activeEventId) ?? null
+    : null;
+  const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
+  const inRationing = gameState.clock.phase === 'rationing' && !ended;
+  const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
+
+  useEffect(() => {
+    inFlight.current = false;
+    setIsSubmitting(false);
+    setLeverPulled(false);
+    setErrorMsg(null);
+  }, [sol]);
 
   const preview = selectResourceForecast(gameState, bundle);
   const fiveSolTrend = selectFiveSolResourceTrend(gameState, bundle, 5);
   const debriefView = selectDynamicDebrief(gameState, bundle);
 
-  const movePriority = (idx: number, dir: -1 | 1) => {
-    const nextIdx = idx + dir;
-    if (nextIdx < 0 || nextIdx >= gameState.dailyPlan.powerPriority.length) return;
-    const copy = [...gameState.dailyPlan.powerPriority];
-    const tmp = copy[idx];
-    copy[idx] = copy[nextIdx];
-    copy[nextIdx] = tmp;
-    dispatch({ type: 'rationing/set-power-priority', order: copy });
+  const prepareRations = async () => {
+    playSfx('click', 0.45);
+    setErrorMsg(null);
+    for (let i = 0; i < 3; i += 1) {
+      const state = useGameStore.getState().gameState;
+      if (state.clock.phase === 'rationing' || state.clock.phase === 'terminal') {
+        break;
+      }
+      const res = await dispatch({ type: 'phase/advance' });
+      if (!res.ok) {
+        setErrorMsg(res.error.message);
+        break;
+      }
+    }
   };
 
-  const handleEndSol = async () => {
-    if (inFlight.current) return;
+  const promotePriority = async (idx: number) => {
+    if (!inRationing || isSubmitting || idx <= 0) return;
+    playSfx('click', 0.4);
+    const copy = [...gameState.dailyPlan.powerPriority];
+    const tmp = copy[idx - 1];
+    copy[idx - 1] = copy[idx];
+    copy[idx] = tmp;
+    const res = await dispatch({ type: 'rationing/set-power-priority', order: copy });
+    if (!res.ok) setErrorMsg(res.error.message);
+  };
+
+  const handleToggleMre = async (crewId: CrewId) => {
+    if (!inRationing || isSubmitting) return;
+    playSfx('click', 0.45);
+    const res = await dispatch({ type: 'rationing/toggle-mre', crewId });
+    if (!res.ok) setErrorMsg(res.error.message);
+  };
+
+  const handleToggleWrs = async () => {
+    if (!inRationing || isSubmitting) return;
+    playSfx('click', 0.45);
+    const res = await dispatch({
+      type: 'rationing/set-wrs',
+      enabled: !gameState.dailyPlan.wrsEnabled,
+    });
+    if (!res.ok) setErrorMsg(res.error.message);
+  };
+
+  const handlePullLever = async () => {
+    if (!canPullLever || inFlight.current) return;
     inFlight.current = true;
     setIsSubmitting(true);
+    setLeverPulled(true);
     setErrorMsg(null);
+    playSfx('endSol', 0.7);
     try {
+      await new Promise((resolve) => window.setTimeout(resolve, 220));
       const res = await dispatch({ type: 'sol/end' });
-      if (res.ok) onClose();
-      else setErrorMsg(res.error.message);
+      if (res.ok) {
+        onClose();
+      } else {
+        setLeverPulled(false);
+        setErrorMsg(res.error.message);
+      }
     } catch {
+      setLeverPulled(false);
       setErrorMsg('Chưa thể chốt Sol. Hãy thử lại.');
     } finally {
       inFlight.current = false;
@@ -60,146 +124,260 @@ export function EndOfDayModal({ onClose }: EndOfDayModalProps) {
 
   return (
     <MissionDialog
-      title={`Phân phối Khẩu phần & Chốt Sol ${gameState.clock.sol}`}
-      eyebrow="PHA 4 · RATIONING & RESOURCE PREDICTOR"
-      art={HAIL_EQUIPMENT.endDayConsole}
+      title={`Phân phối Khẩu phần & Chốt Sol ${sol}`}
+      eyebrow="ALLOCATION"
       panelType="end"
-      dockSide="center"
+      tactileFrame
       onClose={onClose}
     >
-      <div className="flex flex-col gap-3 text-slate-200">
-        {!inRationing && (
-          <div className="text-xs px-3 py-2 rounded bg-amber-950/60 border border-amber-500/40 text-amber-200">
-            Hãy chuyển qua Pha 1 → 2 → 3 → Pha 4 (Phân phối) để chỉnh khẩu phần và gạt cần End-Sol.
-          </div>
-        )}
-        {errorMsg && (
-          <div className="text-xs px-3 py-2 rounded bg-rose-950/70 border border-rose-500/50 text-rose-200">
-            {errorMsg}
-          </div>
-        )}
+      <section
+        className="hail-tactile-frame hail-tactile-frame--allocation"
+        aria-label="Phân bổ Tài nguyên và Kết thúc Sol"
+      >
+        <img
+          src={HAIL_TACTILE_UI.allocationFrame}
+          alt=""
+          className="hail-tactile-bg"
+          draggable={false}
+        />
 
-        {/* MRE & Medkit Crew Strip */}
-        <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70">
-          <div className="flex items-center justify-between text-xs mb-2">
-            <strong className="text-amber-300 flex items-center gap-1.5">
-              <Utensils className="w-3.5 h-3.5" />
-              Phát MRE ({gameState.resources.mrePacks} gói)
-            </strong>
-            <span className="text-slate-400">Tự động -25% Satiety/Sol · 1 MRE hồi +75%</span>
-          </div>
+        {/* Left Main Screen: 4-Astronaut MRE Allocation & Predictor */}
+        <div className="hail-alloc-main-screen">
+          <header className="hail-term-topbar">
+            <div className="hail-term-title-group">
+              <span className="hail-term-code">
+                PHÂN BỔ KHẨU PHẦN · MRE KHO: {gameState.resources.mrePacks} GÓI
+              </span>
+              <h2 className="hail-term-title">ĐỊNH MỨC SINH TỒN 4 PHI HÀNH GIA</h2>
+            </div>
 
-          <div className="hail-crew-ration-strip">
-            {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId: CrewId) => {
-              const c = gameState.crew[crewId];
-              const giveMre = gameState.dailyPlan.mreTargets.includes(crewId);
+            <div className="hail-alloc-phase-cmds">
+              {mustResolveEvent && (
+                <button
+                  type="button"
+                  className="hail-term-inline-cmd is-warn"
+                  onClick={() => {
+                    playSfx('click', 0.45);
+                    onStarlog?.();
+                  }}
+                >
+                  [XỬ LÝ SỰ CỐ TRƯỚC]
+                </button>
+              )}
+              {!mustResolveEvent && !inRationing && !ended && (
+                <>
+                  <button
+                    type="button"
+                    className="hail-term-inline-cmd"
+                    onClick={() => {
+                      playSfx('radioOn', 0.45);
+                      onComms?.();
+                    }}
+                  >
+                    [LIÊN LẠC]
+                  </button>
+                  <button
+                    type="button"
+                    className="hail-term-inline-cmd is-primary"
+                    onClick={prepareRations}
+                  >
+                    [CHỐT PHA → CHIA KHẨU PHẦN]
+                  </button>
+                </>
+              )}
+            </div>
+          </header>
+
+          {errorMsg && (
+            <p className="hail-term-plain-line is-warn">&gt; LỖI: {errorMsg}</p>
+          )}
+
+          {/* 4-Crew Columns with Dynamic 3-State Portraits + Square Checkboxes */}
+          <div className="hail-alloc-crew-grid">
+            {CREW_IDS.map((crewId) => {
+              const member = gameState.crew[crewId];
+              const evacuated = member.condition === 'evacuated';
+              const giveMre = !evacuated && gameState.dailyPlan.mreTargets.includes(crewId);
+              const isRationCut = inRationing && !giveMre;
+              const vis = getHailCrewVisual(crewId, member, isRationCut);
+
               return (
-                <div key={crewId} className="hail-ration-crew-pill flex flex-col gap-1.5 p-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <strong className="text-white">{c.name.split(' ')[0]}</strong>
-                    <span className="font-mono text-[10px] text-amber-300">No: {c.satiety}%</span>
+                <div
+                  key={crewId}
+                  className={`hail-alloc-crew-col ${evacuated ? 'is-evacuated' : ''}`}
+                >
+                  <div className="hail-alloc-crew-head">
+                    <img
+                      src={vis.portrait}
+                      alt={`${member.name} (${vis.stateLabel})`}
+                      className="hail-alloc-avatar"
+                      draggable={false}
+                    />
+                    <div className="hail-alloc-crew-meta">
+                      <strong>{member.name.split(' ')[0]}</strong>
+                      <span>
+                        {evacuated
+                          ? 'ĐÃ SƠ TÁN'
+                          : `HP ${member.health}% · ${vis.stateLabel}`}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px]">
+
+                  <div className="hail-alloc-checks">
                     <button
                       type="button"
-                      disabled={!inRationing || c.condition === 'evacuated'}
-                      onClick={() => dispatch({ type: 'rationing/toggle-mre', crewId })}
-                      className={`hail-btn flex-1 ${giveMre ? 'hail-btn--accent' : ''}`}
+                      role="checkbox"
+                      aria-checked={giveMre}
+                      aria-label={`Phát MRE cho ${member.name}`}
+                      className="hail-alloc-check-btn"
+                      disabled={!inRationing || evacuated || isSubmitting}
+                      onClick={() => handleToggleMre(crewId)}
                     >
-                      {giveMre ? '✓ Phát MRE' : '+ MRE'}
+                      <img
+                        src={
+                          giveMre
+                            ? HAIL_TACTILE_UI.checkboxChecked
+                            : HAIL_TACTILE_UI.checkboxUnchecked
+                        }
+                        alt=""
+                        className="hail-alloc-checkbox-img"
+                        draggable={false}
+                      />
+                      <span>{giveMre ? 'Phát MRE ✓' : 'Cắt MRE'}</span>
                     </button>
+
+                    <div className="hail-alloc-crew-statline">
+                      <span>No: {member.satiety}%</span>
+                      <span className={member.hungerState === 'starving' ? 'is-crit' : ''}>
+                        {member.hungerState.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </section>
 
-        {/* WRS & Power Priority */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70 flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs">
-              <strong className="text-cyan-300 flex items-center gap-1.5">
-                <ArrowDownUp className="w-3.5 h-3.5" />
-                Thứ tự Cắt tải Điện (Load Shedding)
-              </strong>
+          {/* Bottom WRS + Power Priority + End-Sol Forecast */}
+          <footer className="hail-alloc-footer">
+            <div className="hail-alloc-toggles">
               <button
                 type="button"
-                disabled={!inRationing}
-                onClick={() => dispatch({ type: 'rationing/set-wrs', enabled: !gameState.dailyPlan.wrsEnabled })}
-                className={`hail-btn text-[11px] flex items-center gap-1 ${gameState.dailyPlan.wrsEnabled ? 'hail-btn--accent' : ''}`}
+                role="checkbox"
+                aria-checked={gameState.dailyPlan.wrsEnabled}
+                className="hail-alloc-sys-check"
+                disabled={!inRationing || isSubmitting}
+                onClick={handleToggleWrs}
               >
-                <Droplets className="w-3 h-3" />
-                {gameState.dailyPlan.wrsEnabled ? 'WRS: ON' : 'WRS: OFF'}
+                <img
+                  src={
+                    gameState.dailyPlan.wrsEnabled
+                      ? HAIL_TACTILE_UI.checkboxChecked
+                      : HAIL_TACTILE_UI.checkboxUnchecked
+                  }
+                  alt=""
+                  draggable={false}
+                />
+                <span>WRS {gameState.dailyPlan.wrsEnabled ? '90% ON' : 'OFF'}</span>
               </button>
-            </div>
-            {gameState.dailyPlan.powerPriority.map((id, idx) => (
-              <div key={id} className="flex items-center justify-between gap-2 text-xs px-2 py-1 rounded bg-slate-950/80 border border-slate-800">
-                <span>
-                  {idx + 1}. {LOAD_LABELS[id]}
-                </span>
-                <div className="flex gap-1">
-                  <button type="button" disabled={!inRationing || idx === 0} onClick={() => movePriority(idx, -1)} className="hail-btn px-1.5 py-0.5 text-[10px]">↑</button>
-                  <button type="button" disabled={!inRationing || idx === 3} onClick={() => movePriority(idx, 1)} className="hail-btn px-1.5 py-0.5 text-[10px]">↓</button>
-                </div>
-              </div>
-            ))}
-          </section>
 
-          {/* Resource Predictor (Single Source of Truth from resolveSol preview) */}
-          <section className="p-3 rounded-lg bg-slate-900/75 border border-cyan-500/30 flex flex-col gap-2">
-            <strong className="text-xs text-cyan-300 flex items-center gap-1.5">
-              <BatteryCharging className="w-3.5 h-3.5" />
-              Dự báo Cuối Sol (Pure TS Resolver Preview)
-            </strong>
-            <div className="grid grid-cols-3 gap-2 text-xs font-mono bg-slate-950/80 p-2 rounded">
-              <div>
-                <div className="text-slate-400">Pin ròng</div>
-                <strong className={preview.resourceDeltas.batteryKWh < 0 ? 'text-amber-300' : 'text-emerald-300'}>
-                  {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}{preview.resourceDeltas.batteryKWh} kWh
-                </strong>
-              </div>
-              <div>
-                <div className="text-slate-400">O₂ ròng</div>
-                <strong className="text-sky-300">{preview.resourceDeltas.oxygenKg} kg</strong>
-              </div>
-              <div>
-                <div className="text-slate-400">Nước ròng</div>
-                <strong className="text-cyan-300">{preview.resourceDeltas.waterL} L</strong>
+              <div className="hail-alloc-priority-row" aria-label="Thứ tự ưu tiên điện">
+                <span className="hail-alloc-priority-lbl">ƯU TIÊN ĐIỆN:</span>
+                {gameState.dailyPlan.powerPriority.map((id, idx) => (
+                  <button
+                    key={id}
+                    type="button"
+                    disabled={!inRationing || idx === 0 || isSubmitting}
+                    onClick={() => promotePriority(idx)}
+                    title={idx === 0 ? `${SHORT_LOAD_LABEL[id]} ưu tiên #1` : `Đẩy ${SHORT_LOAD_LABEL[id]} lên mức #${idx}`}
+                    className="hail-alloc-priority-pill"
+                  >
+                    {idx + 1}.{SHORT_LOAD_LABEL[id]}
+                    {idx > 0 ? '↑' : ''}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="text-[11px] font-mono text-slate-300">
-              Xu hướng 5 Sol tới:
-              <div className="flex gap-1.5 mt-1 flex-wrap">
-                {fiveSolTrend.map((pt) => (
-                  <span key={pt.sol} className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800">
-                    S{pt.sol}: ⚡{pt.batteryKWh.toFixed(0)} · 💧{pt.waterL.toFixed(0)}
+
+            <div className="hail-alloc-predictor-row">
+              <p className="hail-alloc-summary-line">
+                Dự báo Cuối Sol {sol}: PIN {preview.resourceDeltas.batteryKWh >= 0 ? '+' : ''}
+                {preview.resourceDeltas.batteryKWh}kWh · O₂ {preview.resourceDeltas.oxygenKg}kg · NƯỚC{' '}
+                {preview.resourceDeltas.waterL}L
+                {preview.blackout ? ' · [CẢNH BÁO BLACKOUT!]' : ''}
+              </p>
+              <div className="hail-alloc-trend-chips">
+                {fiveSolTrend.slice(0, 4).map((pt) => (
+                  <span key={pt.sol}>
+                    S{pt.sol}:⚡{pt.batteryKWh.toFixed(0)}/💧{pt.waterL.toFixed(0)}
                   </span>
                 ))}
               </div>
             </div>
-            {preview.blackout && (
-              <p className="text-xs text-rose-300 font-semibold">
-                CẢNH BÁO: Dự báo thiếu điện thiết yếu (Blackout) vào đêm nay!
-              </p>
-            )}
-          </section>
+
+            <details className="hail-alloc-debrief-drawer">
+              <summary>
+                {debriefView.summary
+                  ? `NASA STEM · Báo cáo đã hoàn thành Sol ${debriefView.summary.sol} ▾`
+                  : 'NASA STEM · Nhật ký Sol gần nhất ▾'}
+              </summary>
+              <DynamicSTEMBrief view={debriefView} bundle={bundle} />
+            </details>
+          </footer>
         </div>
 
-        <DynamicSTEMBrief view={debriefView} bundle={bundle} />
-        <NightReadinessChecklist state={gameState} bundle={bundle} />
+        {/* Right Top Sol Counter Display */}
+        <div className="hail-alloc-sol-box">
+          <span className="hail-mini-label">CHU KỲ SOL</span>
+          <strong className="hail-alloc-sol-num">
+            {ended ? 'HOÀN TẤT' : `${String(sol).padStart(2, '0')} → ${String(sol + 1).padStart(2, '0')}`}
+          </strong>
+        </div>
 
+        {/* Right End-Sol Physical Lever Bay */}
+        <div className="hail-alloc-lever-bay">
+          <button
+            type="button"
+            className={`hail-lever-btn ${leverPulled ? 'is-pulled' : ''}`}
+            disabled={!canPullLever}
+            aria-label="Gạt cần kết thúc Sol"
+            title={
+              canPullLever
+                ? `Gạt cần Chốt Sol ${sol}`
+                : mustResolveEvent
+                  ? 'Hãy xử lý sự cố trước khi gạt cần'
+                  : 'Chốt pha chuẩn bị để kích hoạt cần gạt'
+            }
+            onClick={handlePullLever}
+          >
+            <img
+              src={leverPulled ? HAIL_TACTILE_UI.leverDown : HAIL_TACTILE_UI.leverUp}
+              alt={leverPulled ? 'Cần gạt đang đóng Sol' : 'Cần gạt Kết thúc Sol'}
+              draggable={false}
+            />
+            <span className="hail-lever-caption">
+              {isSubmitting || leverPulled
+                ? 'ĐANG QUA ĐÊM...'
+                : canPullLever
+                  ? `Chốt Sol ${sol}`
+                  : 'KHÓA AN TOÀN'}
+            </span>
+          </button>
+        </div>
+
+        {/* Close Frame Button */}
         <button
           type="button"
-          disabled={!inRationing || isSubmitting}
-          onClick={handleEndSol}
-          className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
+          className="hail-tactile-corner-close"
+          aria-label="Đóng Bảng Phân bổ"
+          onClick={() => {
+            playSfx('click', 0.4);
+            onClose();
+          }}
         >
-          <Power className="w-4 h-4" />
-          <img src={HAIL_SVG.actEndDay} alt="" className="w-4 h-4" />
-          {isSubmitting ? 'Đang chốt Sol…' : `Gạt cần Chốt Sol ${gameState.clock.sol} (End-Sol)`}
+          <img src={HAIL_TACTILE_UI.btnClose} alt="×" draggable={false} />
         </button>
-      </div>
+      </section>
     </MissionDialog>
   );
 }

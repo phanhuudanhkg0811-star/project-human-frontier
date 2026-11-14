@@ -936,6 +936,7 @@ export interface ToastMessage {
 
 export type ActiveModalType =
   | null
+  | 'journal'
   | 'starlog'
   | 'character'
   | 'crafting'

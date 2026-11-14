@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { HeartPulse, Coffee, ShieldAlert, Undo2 } from 'lucide-react';
+import { playSfx } from '../../audio/sfx.ts';
 import { useGameStore } from '../../store/gameStore.ts';
+import { useUiStore } from '../../store/uiStore.ts';
 import type { CrewId } from '../../types/index.ts';
 import { getHailCrewVisual } from '../cabin/hailAssets.ts';
 import { HailSelect } from '../HailSelect.tsx';
@@ -18,8 +20,9 @@ const HUNGER_BADGE = {
 
 export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
   const { gameState, bundle, dispatch } = useGameStore();
+  const { selectedCrewId } = useUiStore();
   const [note, setNote] = useState<string | null>(null);
-  const [medTarget, setMedTarget] = useState<CrewId>('cmd');
+  const [medTarget, setMedTarget] = useState<CrewId>(selectedCrewId ?? 'cmd');
   const canAssign = gameState.clock.phase === 'engineering' || gameState.clock.phase === 'comms';
 
   const handleAssign = async (crewId: CrewId, task: 'rest' | 'emergency-response' | 'medical-care') => {
@@ -29,11 +32,13 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       task,
       targetCrewId: task === 'medical-care' ? medTarget : undefined,
     });
+    if (res.ok) playSfx('click', 0.45);
     setNote(res.ok ? res.effects[0]?.message ?? 'Đã phân công.' : res.error.message);
   };
 
   const handleUnassign = async (crewId: CrewId) => {
     const res = await dispatch({ type: 'crew/unassign', crewId });
+    if (res.ok) playSfx('click', 0.4);
     setNote(res.ok ? res.effects[0]?.message ?? 'Đã hủy lệnh.' : res.error.message);
   };
 
@@ -43,6 +48,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       targetCrewId: medTarget,
       administeredByCrewId: withMarcus ? 'doc' : undefined,
     });
+    if (res.ok) playSfx('repair', 0.55);
     setNote(res.ok ? res.effects[0]?.message ?? 'Đã dùng Medkit.' : res.error.message);
   };
 
@@ -93,18 +99,28 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
           {(['cmd', 'eng', 'doc', 'geo'] as const).map((crewId) => {
             const member = gameState.crew[crewId];
             const profile = bundle.crewCatalog.find((p) => p.id === crewId);
-            const visual = getHailCrewVisual(crewId);
+            const visual = getHailCrewVisual(crewId, member);
+            const isSelected = selectedCrewId === crewId;
             const isTired = member.morale < bundle.balance.crew.tiredBelowMorale;
 
             return (
-              <div key={crewId} className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/80 flex flex-col gap-2">
+              <div
+                key={crewId}
+                className={`p-3 rounded-lg bg-slate-900/75 border flex flex-col gap-2 ${
+                  isSelected ? 'border-teal-400/80 ring-1 ring-teal-400/40' : 'border-slate-700/80'
+                }`}
+              >
                 <div className="flex items-start gap-3">
-                  <img src={visual.portrait} alt={member.name} className="w-14 h-14 rounded-lg object-cover border border-slate-600 shrink-0" />
+                  <img
+                    src={visual.portrait}
+                    alt={`${member.name} (${visual.stateLabel})`}
+                    className="w-16 h-16 rounded-lg object-contain bg-slate-950 border border-slate-600 shrink-0"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
                       <strong className="text-sm text-white truncate">{member.name}</strong>
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
-                        {member.roleTag}
+                        {member.roleTag} · {visual.stateLabel}
                       </span>
                     </div>
                     <p className="text-[11px] text-slate-400 mt-0.5">{profile?.perkDescription}</p>

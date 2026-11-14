@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Rocket } from 'lucide-react';
+import { playSfx } from '../../audio/sfx.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { DifficultyId } from '../../types/index.ts';
 import { MissionProgressionPanel } from '../MissionProgressionPanel.tsx';
@@ -18,6 +19,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
   const [seed, setSeed] = useState(gameState.campaign.seed);
 
   const handleStartNew = async () => {
+    playSfx('launch', 0.6);
     await dispatch({
       type: 'game/start',
       donkiProfileId: selectedProfile,

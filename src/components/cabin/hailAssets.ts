@@ -1,9 +1,9 @@
-import type { EventArtId, SystemId } from '../../types/index.ts';
+import type { CrewMemberState, EventArtId, SystemId } from '../../types/index.ts';
 
 export const HAIL_ASSET_BASE = '/assets/hail';
 
 export function hailUrl(relPath: string): string {
-  return `${HAIL_ASSET_BASE}/${relPath.replace(/^\/+/, '')}`;
+  return encodeURI(`${HAIL_ASSET_BASE}/${relPath.replace(/^\/+/, '')}`);
 }
 
 export const HAIL_ENV = {
@@ -67,6 +67,29 @@ export const HAIL_INVENTORY = {
   sealantTape: hailUrl('inventory/PH_ITEM_SEALANT_TAPE_BASE_V01.webp'),
   dustShield: hailUrl('inventory/PH_ITEM_DUST_SHIELD_BASE_V01.webp'),
   radioRepeater: hailUrl('inventory/PH_ITEM_RADIO_REPEATER_BASE_V01.webp'),
+  solarLantern: hailUrl('inventory/PH_ITEM_SOLAR_LANTERN_BASE_V01.webp'),
+  cryoThermalRig: hailUrl('inventory/PH_ITEM_CRYO_THERMAL_RIG_BASE_V01.webp'),
+} as const;
+
+export const HAIL_TACTILE_UI = {
+  journalFrame: hailUrl('ui/PH_UI_JOURNAL_FRAME_V01.webp'),
+  journalTabOff: hailUrl('ui/PH_UI_JOURNAL_TAB_OFF_V01.webp'),
+  journalTabOn: hailUrl('ui/PH_UI_JOURNAL_TAB_ON_V01.webp'),
+  decisionFrame: hailUrl('ui/PH_UI_DECISION_FRAME_V01.webp'),
+  btnSqGreenIdle: hailUrl('ui/PH_UI_BTN_SQ_GREEN_IDLE_V01.webp'),
+  btnSqGreenPressed: hailUrl('ui/PH_UI_BTN_SQ_GREEN_PRESSED_V01.webp'),
+  btnSqRedIdle: hailUrl('ui/PH_UI_BTN_SQ_RED_IDLE_V01.webp'),
+  btnSqRedPressed: hailUrl('ui/PH_UI_BTN_SQ_RED_PRESSED_V01.webp'),
+  stencilRejectX: hailUrl('ui/PH_UI_STENCIL_REJECT_X_V01.webp'),
+  btnConfirmIdle: hailUrl('ui/PH_UI_BTN_CONFIRM_IDLE_V01.webp'),
+  btnConfirmPressed: hailUrl('ui/PH_UI_BTN_CONFIRM_PRESSED_V01.webp'),
+  allocationFrame: hailUrl('ui/PH_UI_ALLOCATION_FRAME_V01.webp'),
+  leverUp: hailUrl('ui/PH_UI_LEVER_ENDSOL_UP_V01.webp'),
+  leverDown: hailUrl('ui/PH_UI_LEVER_ENDSOL_DOWN_V01.webp'),
+  checkboxUnchecked: hailUrl('ui/PH_UI_CHECKBOX_UNCHECKED_V01.webp'),
+  checkboxChecked: hailUrl('ui/PH_UI_CHECKBOX_CHECKED_V01.webp'),
+  keycapArrow: hailUrl('ui/PH_UI_KEYCAP_ARROW_V01.webp'),
+  btnClose: hailUrl('ui/PH_UI_BTN_CLOSE_V01.webp'),
 } as const;
 
 export const HAIL_SVG = {
@@ -94,42 +117,114 @@ export const HAIL_SVG = {
   frameCorner: hailUrl('ui/PH_UI_FRAME_CORNER_V01.svg'),
 } as const;
 
-export interface HailCrewVisual {
-  role: string;
-  specialty: string;
+export type HailCrewState = 'normal' | 'hungry' | 'sick';
+
+export interface HailCrewStateSprites {
   portrait: string;
   seated: string;
 }
 
-export const HAIL_CREW_VISUALS: Record<string, HailCrewVisual> = {
+export interface HailCrewVisual {
+  role: string;
+  specialty: string;
+  state: HailCrewState;
+  stateLabel: string;
+  portrait: string;
+  seated: string;
+  states: Record<HailCrewState, HailCrewStateSprites>;
+}
+
+const CREW_CHAR_DIR = 'nhân vật cho project hail';
+
+function buildCrewStates(charIndex: 1 | 2 | 3 | 4): Record<HailCrewState, HailCrewStateSprites> {
+  return {
+    normal: {
+      portrait: hailUrl(`characters/PH_CHAR_NV${charIndex}_PORTRAIT_NORMAL_V02.webp`),
+      seated: hailUrl(`${CREW_CHAR_DIR}/trạng thái bình thường/nv ${charIndex}.webp`),
+    },
+    hungry: {
+      portrait: hailUrl(`characters/PH_CHAR_NV${charIndex}_PORTRAIT_HUNGRY_V02.webp`),
+      seated: hailUrl(`${CREW_CHAR_DIR}/trạng thái đói/nv ${charIndex}.webp`),
+    },
+    sick: {
+      portrait: hailUrl(`characters/PH_CHAR_NV${charIndex}_PORTRAIT_SICK_V02.webp`),
+      seated: hailUrl(`${CREW_CHAR_DIR}/trạng thái bệnh/nv ${charIndex}.webp`),
+    },
+  };
+}
+
+export const HAIL_CREW_VISUALS: Record<string, Omit<HailCrewVisual, 'state' | 'stateLabel'>> = {
   cmd: {
     role: 'Chỉ huy Trạm (Commander)',
     specialty: 'Điều phối nhiệm vụ & Quản lý ECLSS',
-    portrait: hailUrl('characters/PH_CHAR_SARAH_PORTRAIT_V01.webp'),
-    seated: hailUrl('characters/PH_CHAR_SARAH_SEATED_BASE_V01.webp'),
+    ...buildCrewStates(1).normal,
+    states: buildCrewStates(1),
   },
   eng: {
     role: 'Kỹ sư Hệ thống (Systems Engineer)',
     specialty: 'Bảo trì pin Mặt Trời, WRS & Rover',
-    portrait: hailUrl('characters/PH_CHAR_ALEX_PORTRAIT_V01.webp'),
-    seated: hailUrl('characters/PH_CHAR_ALEX_SEATED_BASE_V01.webp'),
+    ...buildCrewStates(2).normal,
+    states: buildCrewStates(2),
   },
   doc: {
     role: 'Bác sĩ Hàng không (Flight Surgeon)',
     specialty: 'Y tế phi hành đoàn & Kiểm soát tâm lý',
-    portrait: hailUrl('characters/PH_CHAR_MARCUS_PORTRAIT_V01.webp'),
-    seated: hailUrl('characters/PH_CHAR_MARCUS_SEATED_BASE_V01.webp'),
+    ...buildCrewStates(3).normal,
+    states: buildCrewStates(3),
   },
   geo: {
     role: 'Nhà Địa chất Mặt Trăng (Lunar Geologist)',
     specialty: 'Khảo sát hố thiên thạch & Phân tích regolith',
-    portrait: hailUrl('characters/PH_CHAR_ELENA_PORTRAIT_V01.webp'),
-    seated: hailUrl('characters/PH_CHAR_ELENA_SEATED_BASE_V01.webp'),
+    ...buildCrewStates(4).normal,
+    states: buildCrewStates(4),
   },
 };
 
-export function getHailCrewVisual(id: string): HailCrewVisual {
-  return HAIL_CREW_VISUALS[id] ?? HAIL_CREW_VISUALS.cmd;
+export function getHailCrewState(
+  member?: Partial<CrewMemberState> | null,
+  hungryOverride = false
+): HailCrewState {
+  if (!member) {
+    return hungryOverride ? 'hungry' : 'normal';
+  }
+  if (
+    member.condition === 'injured' ||
+    (typeof member.health === 'number' && member.health < 65) ||
+    (typeof member.radiationMgy === 'number' && member.radiationMgy >= 50)
+  ) {
+    return 'sick';
+  }
+  if (
+    hungryOverride ||
+    (member.hungerState !== undefined && member.hungerState !== 'ok') ||
+    (typeof member.satiety === 'number' && member.satiety < 55)
+  ) {
+    return 'hungry';
+  }
+  return 'normal';
+}
+
+const CREW_STATE_LABELS: Record<HailCrewState, string> = {
+  normal: 'Ổn định',
+  hungry: 'Đói',
+  sick: 'Bệnh',
+};
+
+export function getHailCrewVisual(
+  id: string,
+  member?: Partial<CrewMemberState> | null,
+  hungryOverride = false
+): HailCrewVisual {
+  const base = HAIL_CREW_VISUALS[id] ?? HAIL_CREW_VISUALS.cmd;
+  const state = getHailCrewState(member, hungryOverride);
+  const stateSprites = base.states[state];
+  return {
+    ...base,
+    state,
+    stateLabel: CREW_STATE_LABELS[state],
+    portrait: stateSprites.portrait,
+    seated: stateSprites.seated,
+  };
 }
 
 export function getHailSystemSprite(id: SystemId, integrity: number): {
@@ -168,7 +263,6 @@ export function getHailSystemSprite(id: SystemId, integrity: number): {
       state,
     };
   }
-  // airlock / comms bay
   return {
     sprite: HAIL_EQUIPMENT.comms,
     overlay: state === 'broken' ? HAIL_FX.broken : state === 'degraded' ? HAIL_FX.degraded : null,
