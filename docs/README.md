@@ -28,6 +28,7 @@ docs/
 │   └── second-phase/                  # PHASE 2: Moon Complete onboarding & narrative
 │       ├── PHASE_2_MOON_COMPLETE_MASTER_PLAN.md
 │       ├── PHASE_2_0_UX_LOCK_PLAN.md
+│       ├── PHASE_2_0_ONBOARDING_CONTRACT.md      # Hợp đồng UX & Onboarding đã khóa (Frozen)
 │       ├── PHASE_2_1_ONBOARDING_FOUNDATION_PLAN.md
 │       ├── PHASE_2_2_TITLE_INTRO_PLAN.md
 │       ├── PHASE_2_3_GUIDED_SOL1_PLAN.md
