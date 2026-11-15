@@ -214,6 +214,17 @@ export function selectResourceForecast(state: GameState, bundle: ContentBundle):
   return resolveSol(state, bundle, 'preview').summary;
 }
 
+function selectForecastMreTargets(state: GameState, bundle: ContentBundle): CrewId[] {
+  const hungryAfterDrainAtOrBelow = bundle.balance.crew.satietyDrainPerSol + 25;
+  return (Object.keys(state.crew) as CrewId[])
+    .filter((crewId) => {
+      const crew = state.crew[crewId];
+      return crew.condition !== 'evacuated' && crew.satiety <= hungryAfterDrainAtOrBelow;
+    })
+    .sort((a, b) => state.crew[a].satiety - state.crew[b].satiety || a.localeCompare(b))
+    .slice(0, state.resources.mrePacks);
+}
+
 /** Multi-Sol (up to 5 Sols) resource trend using repeated `preview` calls with zero side effects. */
 export function selectFiveSolResourceTrend(state: GameState, bundle: ContentBundle, horizonSols = 5): readonly ForecastPoint[] {
   const points: ForecastPoint[] = [];
@@ -228,6 +239,7 @@ export function selectFiveSolResourceTrend(state: GameState, bundle: ContentBund
       oxygenKg: nextState.resources.oxygenKg,
       waterL: nextState.resources.waterL,
       partsKg: nextState.resources.partsKg,
+      mrePacks: nextState.resources.mrePacks,
       isLunarNight: summary.isLunarNight,
       weatherLevel: summary.weather.level,
     });
@@ -242,7 +254,7 @@ export function selectFiveSolResourceTrend(state: GameState, bundle: ContentBund
         ...nextState.dailyPlan,
         sol: nextSol,
         status: 'draft',
-        mreTargets: [],
+        mreTargets: selectForecastMreTargets(nextState, bundle),
       },
     };
   }

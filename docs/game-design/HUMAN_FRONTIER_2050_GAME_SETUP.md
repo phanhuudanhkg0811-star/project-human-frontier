@@ -216,7 +216,7 @@ flowchart TD
 2. **Milestone Bắt buộc (`Sol 7`):** **`evt_sol7_blackout_dilemma`** — Golden Scenario cố định:
    - *Fixture đầu Sol 7:* `waterL = 35.0 L`, `wasteWaterL = 10.0 L`, `Fission = 8 kWh`, `Battery = 8 kWh` (tổng điện `16 kWh`), `Essential = 12 kWh`, `WRS = 4 kWh` (Lv1 `90%`), 4 crew sống (`10.0 L` nước tiêu thụ), chỉ `Elena` rảnh tay.
    - *Nhánh A (Cứu Rover, `-2 kWh`, tắt WRS):* Cuối Sol còn **`25.0 L` nước, `2.0 kWh` pin**; `EXP-REGOLITH` tiếp tục hoàn thành ở Sol 8 (set flag `sol7_saved_rover`).
-   - *Nhánh B (Ưu tiên Trạm, bật `WRS 90%`, `-4 kWh`):* Thu hồi `10 × 90% = +9.0 L` → Cuối Sol còn **`34.0 L` nước, `0.0 kWh` pin**; `EXP-REGOLITH` hết hạn thất bại, Rover an toàn cho `EXP-PSR` (set flag `sol7_prioritized_station`).
+   - *Nhánh B (Ưu tiên Trạm, bật `WRS 90%`, `-4 kWh`):* Xử lý `10.0 L` tồn + `8.8 L` nước xám phát sinh trong Sol, thu hồi `+16.9 L` → Cuối Sol còn **`41.9 L` nước, `0.0 kWh` pin**; `EXP-REGOLITH` hết hạn thất bại, Rover an toàn cho `EXP-PSR` (set flag `sol7_prioritized_station`).
 3. **Deck 2 — Night Prep (`Sol 8–14`, `5` events):** `evt_rover2_aftermath` (theo flag Sol 7), `evt_sol10_last_cargo_window` (Milestone nhắc đặt Cargo Sol 10), `evt_sol12_training_report` (tổng kết nửa đầu), `evt_psr_ice_vein` (follow-up `EXP-PSR`), `evt_sol14_sunset_warning` (Milestone chuyển cảnh hoàng hôn).
 4. **Deck 3 — Lunar Night (`Sol 15–28`, `9` events, Solar = `0 kWh`):** `evt_sol15_night_begins` (Milestone Sol 15), `evt_fission_coolant`, `evt_cryo_seal_crack` (nặng hơn nếu còn `airlock_dusty` hoặc giảm nhẹ nếu có `Sealant Tape` / `Cryo Thermal Rig`), `evt_cabin_fever` (giảm nhẹ nếu có `Solar Lantern`), `evt_emergency_load_shed`, `evt_mid_night_resupply`, `evt_dust_electrostatic`, `evt_crew_fatigue_debate`, `evt_fabricator_jam`.
 5. **Deck 4 — Sunrise & Finale (`Sol 29–32`, `3` events):** `evt_sol29_sunrise_surge` (lau bụi Solar sau 14 đêm), `evt_sol31_final_inspection`, `evt_sol32_mission_end` (chốt Victory & NASA Cadet Report Card).
@@ -232,7 +232,7 @@ flowchart TD
 
 - **Engine / Web Dev:**
   - Cập nhật `GameState` & `balance.json` theo đúng 4 kho + `MRE` + `Medkit` + `6` Equipment (`durability: 100 | 50 | 0`) + `fabricator` (`Lv1..3`) + `Satiety FSM (100/75/50 -> 25 -> 0)`.
-  - Viết `End-Sol Resolver` đúng thứ tự 5 tầng + Load Shedding tự động, khóa Golden Test Sol 7 (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`).
+  - Viết `End-Sol Resolver` đúng thứ tự 5 tầng + Load Shedding tự động, khóa Golden Test Sol 7 (`25.0 L / 2.0 kWh` vs `41.9 L / 0.0 kWh`, WRS xử lý nước xám cùng Sol).
 - **Artist / UI-UX:**
   - Tích hợp bộ asset Wall-Rack & `3D Fabricator` (`IDLE / WORKING / DAMAGED`) do Lead/User sinh mới và bàn giao: gỡ 3 máy `OXYGEN / WATER / POWER` khỏi vách Cockpit; đặt 2 Rack tại `UL` & `LR`, `3D Fabricator` tại `LL`.
   - Gom toàn bộ thông số & nút sửa/nâng cấp `solar / recycler / scrubber / airlock` vào **Telemetry Console** ở bàn trung tâm; giữ Observation Window & 4 ghế phi hành gia thông thoáng.
@@ -240,5 +240,5 @@ flowchart TD
   - Soạn `22` Events bám sát **Bộ bậc số chuẩn (`5 / 10 / 20 / 30`)** và bảng `Equipment / Role` khắc chế.
   - Gắn `DebriefContext` + `NASA Science Brief` song ngữ `VI / EN` cho từng biến động chính (WRS 90%/95%, Fission 8 kWh trong Đêm Trăng 14 Sol, độ bền thiết bị trước bụi tĩnh điện regolith, In 3D vũ trụ).
 - **QA & Tiêu chuẩn Kiểm định Thực tế (Giảm nhẹ cho vừa sức Team):**
-  - **Bắt buộc đạt:** Unit tests `End-Sol Resolver` + `Fabricator` + `Hunger FSM`, **Golden Test Sol 7** (`25.0 L / 2.0 kWh` vs `34.0 L / 0.0 kWh`), full deterministic trace (`1` Victory qua Đêm Trăng + `2` Defeat), `Save/Reload` ở các pha chính, `4–5` E2E luồng cốt lõi (Desktop & Mobile dùng được, phím Tab/Esc/tương phản WCAG cơ bản), bundle `< 2.5 MB` / 60 FPS.
+  - **Bắt buộc đạt:** Unit tests `End-Sol Resolver` + `Fabricator` + `Hunger FSM`, **Golden Test Sol 7** (`25.0 L / 2.0 kWh` vs `41.9 L / 0.0 kWh`), full deterministic trace (`1` Victory qua Đêm Trăng + `2` Defeat), `Save/Reload` ở các pha chính, `4–5` E2E luồng cốt lõi (Desktop & Mobile dùng được, phím Tab/Esc/tương phản WCAG cơ bản), bundle `< 2.5 MB` / 60 FPS.
   - **Không bắt buộc ở Phase 1 (giảm tải so với spec phase cũ):** Bot mô phỏng 10.000 ván, ma trận 13 E2E chi tiết, chặn cứng `Initial JS <= 150 kB` hay audit Screen Reader toàn diện (chỉ cần chạy smoke ~100 seed kiểm tra không `NaN`/âm/soft-lock).

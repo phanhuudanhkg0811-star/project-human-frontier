@@ -288,7 +288,7 @@ test('Crew injury hysteresis is identical for event health effects', () => {
   assert.equal(at65.state.crew.cmd.condition, 'fit');
 });
 
-test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8) vs Choice B (34.0L / 0.0kWh + Regolith fails + Save/Reload)', () => {
+test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8) vs Choice B (41.9L / 0.0kWh + Regolith fails + Save/Reload)', () => {
   const bundle = core.loadContentBundle();
   const fixturePath = path.join(rootDir, 'tests', 'fixtures', 'sol7-save-rover.json');
   const rawFixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
@@ -345,7 +345,7 @@ test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8)
   assert.equal(aSol9Start.ok, true);
   assert.equal(aSol9Start.state.events.activeEventId, 'evt-rover2-aftermath');
 
-  // --- BRANCH B: Prioritize Station WRS 90% (+9.0 L recovered -> 34.0 L water, 0.0 kWh battery, Regolith fails) ---
+  // --- BRANCH B: WRS processes 10.0 L stored + 8.8 L same-Sol greywater -> 41.9 L water, Regolith fails ---
   const resB = core.dispatchDomainCommand(
     sol7State,
     { type: 'event/resolve', eventId: 'sol7-golden-comms-crisis', choiceId: 'prioritize-wrs' },
@@ -365,7 +365,9 @@ test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8)
   const bRat = core.dispatchDomainCommand(bComms.state, { type: 'phase/advance' }, bundle);
   const bEndSol7 = core.dispatchDomainCommand(bRat.state, { type: 'sol/end' }, bundle);
   assert.equal(bEndSol7.ok, true);
-  assert.equal(bEndSol7.state.resources.waterL, 34);
+  assert.equal(bEndSol7.state.debrief.lastSummary?.checkpoint.wrsProcessedWasteWaterL, 18.8);
+  assert.equal(bEndSol7.state.debrief.lastSummary?.wrsRecoveredWaterL, 16.9);
+  assert.equal(bEndSol7.state.resources.waterL, 41.9);
   assert.equal(bEndSol7.state.resources.batteryKWh, 0);
 
   // Save & Reload round-trip on Branch B
@@ -375,7 +377,7 @@ test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8)
   const loaded = core.loadGameState(bundle, storage);
   assert.equal(loaded.status, 'ok');
   assert.equal(loaded.envelope.schemaVersion, 4);
-  assert.equal(loaded.state.resources.waterL, 34);
+  assert.equal(loaded.state.resources.waterL, 41.9);
   assert.equal(loaded.state.resources.batteryKWh, 0);
   assert.equal(loaded.state.events.flags.sol7_prioritized_station, true);
 });

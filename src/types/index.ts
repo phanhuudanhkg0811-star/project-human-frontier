@@ -757,6 +757,7 @@ export interface ScienceBrief {
   readonly content: string;
   readonly contentEn?: string;
   readonly source: string;
+  readonly sourceUrl: string;
   readonly provenance: ProvenanceTag;
 }
 
@@ -924,6 +925,7 @@ export interface ForecastPoint {
   readonly oxygenKg: number;
   readonly waterL: number;
   readonly partsKg: number;
+  readonly mrePacks: number;
   readonly isLunarNight: boolean;
   readonly weatherLevel: DonkiLevel;
 }

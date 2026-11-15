@@ -356,9 +356,12 @@ function resolvePowerAndEclss(
   const activeJob = state.fabricator.activeJob;
   const recycler = systems.recycler;
   const wrsCfg = bundle.balance.eclss.wrsByLevel[String(recycler.level) as '1' | '2' | '3'];
+  const livingCrewCount = Object.values(state.crew).filter((c) => c.condition !== 'evacuated').length;
+  const newGreywater = round2(livingCrewCount * bundle.balance.eclss.wasteWaterGeneratedPerCrewPerSol);
+  const availableWasteWater = round2(state.resources.wasteWaterL + newGreywater);
   const canRunWrs =
     state.dailyPlan.wrsEnabled &&
-    state.resources.wasteWaterL > 0 &&
+    availableWasteWater > 0 &&
     recycler.integrity > 0 &&
     recycler.status !== 'offline';
 
@@ -430,7 +433,6 @@ function resolvePowerAndEclss(
     clamp(storedKWh * (1 - BATTERY_SELF_DISCHARGE_PER_SOL), 0, s.batteryKWh.max)
   );
 
-  const livingCrewCount = Object.values(state.crew).filter((c) => c.condition !== 'evacuated').length;
   const airlockLeak =
     systems.airlock.integrity < 1
       ? round2(bundle.balance.eclss.airlockDegradedLeakO2Kg * (1 - systems.airlock.integrity))
@@ -442,15 +444,14 @@ function resolvePowerAndEclss(
   const nextOxygen = clamp(round2(state.resources.oxygenKg - oxygenUse), 0, s.oxygenKg.max);
 
   const waterUse = round2(livingCrewCount * bundle.balance.eclss.waterLPerCrewPerSol);
-  const processedWaste = wrsRan ? Math.min(state.resources.wasteWaterL, wrsCfg.maxBatchL) : 0;
+  const processedWaste = wrsRan ? Math.min(availableWasteWater, wrsCfg.maxBatchL) : 0;
   const wrsRecoveredWaterL = Math.round(
     processedWaste * wrsCfg.recoveryRate * clamp(systems.recycler.integrity, 0, 1) * 10
   ) / 10;
   const nextWater = clamp(round2(state.resources.waterL - waterUse + wrsRecoveredWaterL), 0, s.waterL.max);
 
-  const newGreywater = round2(livingCrewCount * bundle.balance.eclss.wasteWaterGeneratedPerCrewPerSol);
   const nextWasteWater = clamp(
-    round2(state.resources.wasteWaterL - processedWaste + newGreywater),
+    round2(availableWasteWater - processedWaste),
     0,
     s.wasteWaterL.max
   );

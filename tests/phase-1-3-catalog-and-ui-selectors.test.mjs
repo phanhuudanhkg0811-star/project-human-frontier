@@ -16,6 +16,7 @@ const compiled = await esbuild.build({
     export * from './src/domain/eventSelectors.ts';
     export * from './src/domain/selectors.ts';
     export * from './src/domain/endSolResolver.ts';
+    export * from './src/config/releaseMeta.ts';
     export * from './src/components/EventPriorityBanner.tsx';
     export * from './src/components/eventPresentation.ts';
     export * from './src/components/DynamicSTEMBrief.tsx';
@@ -23,6 +24,7 @@ const compiled = await esbuild.build({
     export * from './src/components/modals/StarlogModal.tsx';
     export * from './src/components/modals/EndOfDayModal.tsx';
     export * from './src/components/modals/NightCutsceneModal.tsx';
+    export * from './src/components/modals/AboutCreditsModal.tsx';
     export * from './src/store/gameStore.ts';
     export { createElement } from 'react';
     export { renderToStaticMarkup } from 'react-dom/server';
@@ -257,8 +259,11 @@ test('Dynamic debrief selects context brief, preserves metrics, and handles empt
   assert.match(html, /Completed Sol 1 Report/);
   assert.match(html, /Simulation Output/);
   assert.match(html, /Observed Data/);
-  assert.match(html, /Nước sạch/);
+  assert.match(html, /Clean Water/);
+  assert.doesNotMatch(html, /Nước sạch/);
   assert.match(html, /\+9/);
+  assert.match(html, new RegExp(`href="${view.scienceBrief.sourceUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+  assert.match(html, /target="_blank" rel="noopener noreferrer"/);
   assert.ok(html.includes(bundle.events[0].choices[0].labelEn ?? bundle.events[0].choices[0].label));
   assert.match(render(core.DynamicSTEMBrief, { view: { summary: null }, bundle }), /No End-Sol report yet/);
 });
@@ -299,6 +304,15 @@ test('EndOfDay distinguishes completed reports from the current resource forecas
   assert.match(html, /End Sol 2/);
   assert.match(html, /Completed Sol 1 Report/);
   assert.match(html, /End-Sol 2 Forecast/);
+  assert.match(html, /MRE\d+/);
+});
+
+test('About renders NASA attribution URLs as safe external links', () => {
+  const html = render(core.AboutCreditsModal, { onClose() {} });
+  for (const item of core.NASA_DATA_SOURCES) {
+    assert.match(html, new RegExp(`href="${item.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`));
+  }
+  assert.match(html, /target="_blank" rel="noopener noreferrer"/);
 });
 
 test('Post End-Sol screen renders Dynamic STEM Brief from context rather than the old summary brief', () => {
@@ -316,7 +330,8 @@ test('Post End-Sol screen renders Dynamic STEM Brief from context rather than th
   assert.ok(html.includes(brief.titleEn ?? brief.title));
   assert.match(html, /Simulation Output/);
   assert.match(html, /Choice taken:/);
-  assert.match(html, /Nước sạch/);
+  assert.match(html, /Clean Water/);
+  assert.doesNotMatch(html, /Nước sạch/);
   assert.match(html, /\+9 L/);
 });
 

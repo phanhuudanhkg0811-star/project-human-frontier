@@ -333,7 +333,7 @@ export const dictionaries: I18nDictionaries = {
     'endDay.netOxygen': 'O₂ ròng',
     'endDay.netWater': 'Nước ròng',
     'endDay.trendTitle': 'Xu hướng 5 Sol tới:',
-    'endDay.trendAssumption': 'Giả định: không có sự kiện mới và không phát thêm MRE trong 5 Sol tới.',
+    'endDay.trendAssumption': 'Giả định: không có sự kiện mới; các Sol tương lai tự phát MRE cho crew có nguy cơ rơi vào Đói.',
     'endDay.blackoutWarn': 'CẢNH BÁO: Dự báo thiếu điện thiết yếu (Blackout) vào đêm nay!',
     'endDay.submitting': 'Đang chốt Sol…',
     'endDay.endSolBtn': 'Gạt cần Chốt Sol {sol} (End-Sol)',
@@ -431,6 +431,7 @@ export const dictionaries: I18nDictionaries = {
     'stem.metric.battery': 'Pin tích trữ',
     'stem.metric.oxygen': 'Dưỡng khí O₂',
     'stem.metric.water': 'Nước dự trữ',
+    'stem.metric.parts': 'Phụ tùng',
     'stem.metric.wrsRecovered': 'Nước WRS thu hồi',
     'stem.metric.radiation': 'Bức xạ DONKI',
 
@@ -1113,7 +1114,7 @@ export const dictionaries: I18nDictionaries = {
     'endDay.netOxygen': 'Net O₂',
     'endDay.netWater': 'Net Water',
     'endDay.trendTitle': 'Next 5-Sol Projection:',
-    'endDay.trendAssumption': 'Assumes no new events and no extra MREs over the next 5 Sols.',
+    'endDay.trendAssumption': 'Assumes no new events; future Sols automatically issue MREs to crew at risk of becoming Hungry.',
     'endDay.blackoutWarn': 'WARNING: Essential power blackout projected tonight!',
     'endDay.submitting': 'Resolving Sol…',
     'endDay.endSolBtn': 'Pull End-Sol {sol} Lever',
@@ -1211,6 +1212,7 @@ export const dictionaries: I18nDictionaries = {
     'stem.metric.battery': 'Battery Reserve',
     'stem.metric.oxygen': 'Oxygen O₂',
     'stem.metric.water': 'Clean Water',
+    'stem.metric.parts': 'Spare Parts',
     'stem.metric.wrsRecovered': 'WRS Water Reclaimed',
     'stem.metric.radiation': 'DONKI Radiation',
 

@@ -772,6 +772,10 @@ export function validateScienceBriefs(input: unknown): readonly ScienceBrief[] {
     assertString(b.content, `briefs[${idx}].content`);
     if (b.contentEn !== undefined) assertString(b.contentEn, `briefs[${idx}].contentEn`);
     assertString(b.source, `briefs[${idx}].source`);
+    const sourceUrl = assertString(b.sourceUrl, `briefs[${idx}].sourceUrl`);
+    if (!sourceUrl.startsWith('https://')) {
+      throw new Error(`briefs[${idx}].sourceUrl must be an HTTPS URL`);
+    }
     assertEnum(b.provenance, PROVENANCE_TAGS, `briefs[${idx}].provenance`);
   }
   return list as unknown as readonly ScienceBrief[];
