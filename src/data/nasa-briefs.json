@@ -26,9 +26,9 @@
     "tags": ["donki-storm", "radiation"],
     "title": "Bão Mặt Trời (Flare / CME / SEP) & Nguy cơ trên Mặt Trăng",
     "titleEn": "Solar Storms (Flare / CME / SEP) & Lunar Surface Hazards",
-    "content": "Khác với Trái Đất, Mặt Trăng không có từ quyển hay khí quyển dày bảo vệ. Khi dữ liệu NASA DONKI ghi nhận Solar Flare cấp M/X hoặc sự kiện proton SEP và xung kích IPS, tỷ lệ sửa chữa thiết bị thành công giảm xuống, rủi ro hư hỏng Rover tăng lên và phi hành gia tích lũy liều bức xạ (mGy) nhanh hơn nếu Scrubber/che chắn chưa được nâng cấp.",
-    "contentEn": "Unlike Earth, the Moon has no global magnetosphere or thick atmosphere for shielding. When NASA DONKI telemetry flags an M/X-class Solar Flare, Solar Energetic Particle (SEP) event, or Interplanetary Shock (IPS), repair success drops, rover incident risk rises, and crew accumulate radiation dose (mGy) faster unless Scrubber and shielding upgrades are installed.",
-    "source": "NASA CCMC DONKI Space Weather Database (FLR / CME / SEP / IPS)",
+    "content": "Khác với Trái Đất, Mặt Trăng không có từ quyển hay khí quyển dày bảo vệ. Khi dữ liệu NASA DONKI ghi nhận Solar Flare cấp M/X hoặc sự kiện proton SEP và xung kích IPS, tỷ lệ sửa chữa thiết bị thành công giảm xuống, rủi ro hư hỏng Rover tăng lên và phi hành gia tích lũy liều bức xạ (mGy) nhanh hơn nếu che chắn bức xạ chưa được nâng cấp. Chú thích: Dữ liệu thực nghiệm quỹ đạo LRO CRaTER đo được trung bình ~0.316 mGy/ngày, trong khi mô phỏng Moon 32 sử dụng mức nền danh định 0.38 mGy/Sol trên bề mặt.",
+    "contentEn": "Unlike Earth, the Moon has no global magnetosphere or thick atmosphere for shielding. When NASA DONKI telemetry flags an M/X-class Solar Flare, Solar Energetic Particle (SEP) event, or Interplanetary Shock (IPS), repair success drops, rover incident risk rises, and crew accumulate radiation dose (mGy) faster unless radiation shielding upgrades are installed. Note: Empirical LRO CRaTER orbital measurements average ~0.316 mGy/day, distinguished from the Moon 32 nominal 0.38 mGy/Sol surface background baseline.",
+    "source": "NASA CCMC DONKI Space Weather Database & LRO CRaTER RadLab (~0.316 mGy/day orbital vs 0.38 mGy/Sol surface baseline)",
     "sourceUrl": "https://api.nasa.gov/DONKI/",
     "provenance": "observed"
   },

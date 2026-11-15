@@ -88,7 +88,7 @@
 | 3 | `intro-finite-resources` | 12s | `HAIL_EQUIPMENT.fabricatorIdle` + `HAIL_INVENTORY.*` | O₂, nước, MRE và điện đều hữu hạn | **Tài nguyên có giới hạn.** Oxy, nước sạch, đồ ăn MRE và pin đều có thể cạn. Máy lọc WRS và xưởng in 3D giúp trạm tự chủ lâu hơn. | **Finite Daily Supplies.** Oxygen, clean water, MRE packs, and battery power can all run out. Your WRS recycler and 3D Fabricator keep the base running. |
 | 4 | `intro-rover-science` | 12s | `HAIL_ROVER.active` + `HAIL_ENV.lunarCrater` / `lunarPsr` | Rover khảo sát 3 vùng để kiếm khoa học & tài nguyên | **Rover thám hiểm Nam Cực.** Cử Rover vượt miệng hố, đồng bằng bụi và vùng tối PSR để tìm băng nước cổ đại và gửi dữ liệu về Trái Đất. | **Rover Polar Expeditions.** Send your Rover across craters, dusty regolith fields, and shadowed PSRs to hunt ancient water ice and collect science data. |
 | 5 | `intro-lunar-night` | 14s | `HAIL_ENV.lunarNight` + `HAIL_EQUIPMENT.consoleDesk` | Đêm Mặt Trăng bắt đầu Sol 15 (Solar = 0) | **Đêm Mặt Trăng từ Sol 15.** Mặt Trời lặn suốt 14 ngày! Pin mặt trời tạo 0 kWh. Cả trạm phải sống nhờ lò Fission và pin tích trữ. | **Lunar Night at Sol 15.** The Sun sets for 14 full Sols! Solar panels make 0 kWh. Your crew relies on the Fission reactor and stored batteries. |
-| 6 | `intro-take-command` | 13s | `HAIL_SVG.badgeNasaStem` + full cockpit preview | Bạn nhận quyền chỉ huy 32 Sol | **Đến lượt bạn chỉ huy!** Hãy dẫn dắt trạm Artemis suốt 32 Sol, vượt bão Mặt Trời và đưa cả đội an toàn đón bình minh Sol 29. | **Your Turn to Command!** Lead Artemis Base through 32 Sols, handle solar storms, and bring the entire crew safely to the Sol 29 sunrise. |
+| 6 | `intro-take-command` | 13s | `HAIL_SVG.badgeNasaStem` + full cockpit preview | Chiến dịch khảo sát 32 Sol (không giải cứu) | **Đến lượt bạn chỉ huy!** Hãy dẫn dắt trạm Artemis suốt 32 Sol, vượt bão Mặt Trời và đưa cả đội an toàn đón bình minh Sol 29. | **Your Turn to Command!** Lead Artemis Base through 32 Sols, handle solar storms, and bring the entire crew safely to the Sol 29 sunrise. |
 
 ---
 
@@ -298,7 +298,7 @@ Khối JSON dưới đây được kiểm tra tự động bởi `tests/phase-2-
       {
         "id": "intro-take-command",
         "durationSec": 13,
-        "idea": "Player takes command for 32 Sols",
+        "idea": "Player takes command for 32-Sol survey campaign (not rescue)",
         "vi": "Đến lượt bạn chỉ huy! Hãy dẫn dắt trạm Artemis suốt 32 Sol, vượt bão Mặt Trời và đưa cả đội an toàn đón bình minh Sol 29.",
         "en": "Your Turn to Command! Lead Artemis Base through 32 Sols, handle solar storms, and bring the entire crew safely to the Sol 29 sunrise."
       }
