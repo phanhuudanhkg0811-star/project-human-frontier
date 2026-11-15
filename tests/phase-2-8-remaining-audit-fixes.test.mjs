@@ -44,3 +44,47 @@ test('Event choice previews list each resource delta exactly once (no effectsSum
     }
   }
 });
+
+const sol7State = (rover) => {
+  const base = initialState();
+  return {
+    ...base,
+    clock: { ...base.clock, sol: 7, phase: 'briefing' },
+    events: { ...base.events, activeEventId: null, activeEvent: null, pendingFollowUps: [] },
+    rover,
+  };
+};
+
+const outboundMission = {
+  expeditionId: 'regolith-field',
+  status: 'outbound',
+  scheduledSol: 6,
+  launchedSol: 6,
+  statusEnteredSol: 6,
+  expectedReturnSol: 8,
+  launchOperatorCrewId: 'geo',
+  recoveryOperatorCrewId: null,
+  equippedItems: [],
+  incidents: [],
+  signalLostSols: 0,
+  recoveryDelaySols: 0,
+  resumeStatus: null,
+};
+
+test('Sol 7 crisis adapts to Rover state instead of assuming an active expedition', () => {
+  const idle = core.selectNextSolEvent(sol7State({ activeMission: null, missionHistory: [] }), bundle).activeEvent;
+  assert.ok(idle, 'Sol 7 must always have an event');
+  const idleEvent = bundle.events.find((event) => event.id === idle.eventId);
+  assert.ok(idleEvent?.mandatory, 'Sol 7 event stays mandatory');
+  assert.ok(
+    !idleEvent.choices.some((choice) => choice.effects.some((eff) => eff.kind === 'rover-action')),
+    'station-only Sol 7 variant must not carry rover-action effects that silently no-op'
+  );
+
+  const travelling = core.selectNextSolEvent(
+    sol7State({ activeMission: outboundMission, missionHistory: [] }),
+    bundle
+  ).activeEvent;
+  assert.equal(travelling?.eventId, 'sol7-golden-comms-crisis');
+});
+

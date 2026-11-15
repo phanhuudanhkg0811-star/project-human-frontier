@@ -47,13 +47,13 @@ function createMemoryStorage() {
 
 const core = await loadCoreModules();
 
-test('Phase 1.3 catalog contains 22 VI/EN events with valid references and Deck 1-4 coverage', () => {
+test('Phase 1.3 catalog contains 23 VI/EN events with valid references and Deck 1-4 coverage', () => {
   const bundle = core.loadContentBundle();
-  assert.equal(bundle.events.length, 22);
+  assert.equal(bundle.events.length, 23);
   assert.ok(bundle.briefs.length >= 10);
 
   const eventIds = new Set(bundle.events.map((e) => e.id));
-  assert.equal(eventIds.size, 22);
+  assert.equal(eventIds.size, 23);
 
   const briefIds = new Set(bundle.briefs.map((b) => b.id));
   for (const ev of bundle.events) {
@@ -484,9 +484,14 @@ test('Deterministic 32-Sol Moon campaign replay reaches Lunar Night, Sunrise, an
   assert.deepEqual(run1.seenEvents, run2.seenEvents);
 
   const seenIds = new Set(run1.seenEvents.map((e) => e.eventId));
+  // Sol 7 fires the golden Rover crisis only when a mission is travelling; the
+  // station-only variant covers an idle Rover. Either way the crisis is mandatory.
+  assert.ok(
+    seenIds.has('sol7-golden-comms-crisis') || seenIds.has('sol7-station-crisis'),
+    'Expected a Sol 7 crisis event to trigger during 32-Sol run'
+  );
   for (const milestoneId of [
     'sol1-arrival-check',
-    'sol7-golden-comms-crisis',
     'evt-sol10-last-cargo-window',
     'evt-sol14-sunset-warning',
     'sol15-lunar-nightfall',

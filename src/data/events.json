@@ -201,7 +201,14 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-wrs-eclss",
-    "when": [{ "sol": 7 }],
+    "when": [
+      { "sol": 7, "roverStatus": "scheduled" },
+      { "sol": 7, "roverStatus": "launching" },
+      { "sol": 7, "roverStatus": "outbound" },
+      { "sol": 7, "roverStatus": "exploring" },
+      { "sol": 7, "roverStatus": "signal-lost" },
+      { "sol": 7, "roverStatus": "returning" }
+    ],
     "mandatory": true,
     "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu và Rover phát tín hiệu yếu do địa hình che khuất. Bạn chọn ưu tiên điện cho Rover hay chạy WRS tái chế nước?",
     "promptEn": "Sol 7 Alert: Clean water reserves are dropping while the Rover link weakens behind ridge terrain. Prioritize power to save the Rover link or run the WRS?",
@@ -233,6 +240,50 @@
         ],
         "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7.",
         "logEn": "Prioritized station water recycling on Sol 7."
+      }
+    ]
+  },
+  {
+    "id": "sol7-station-crisis",
+    "title": "Sol 7: Sụt nguồn & Cảnh báo kho nước sạch",
+    "titleEn": "Sol 7: Power Brownout & Water Reserve Alert",
+    "category": "crisis",
+    "art": "tech-fault",
+    "priority": 100,
+    "weight": 100,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-wrs-eclss",
+    "when": [{ "sol": 7, "roverStatus": "available" }],
+    "mandatory": true,
+    "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu trong khi lưới điện trạm gặp sụt áp. Bạn chọn ưu tiên điện cho WRS tái chế nước hay dự trữ pin cho đêm?",
+    "promptEn": "Sol 7 Alert: Clean water reserves are dropping while the habitat grid browns out. Prioritize power for the WRS or bank battery for the night?",
+    "choices": [
+      {
+        "id": "boost-wrs-now",
+        "label": "Ưu tiên bật máy lọc nước WRS 90% (Giữ điện chạy WRS)",
+        "labelEn": "Prioritize WRS 90% water recovery (Keep power for WRS)",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": true },
+          { "kind": "crew", "target": "all", "moraleDelta": -5 },
+          { "kind": "set-flag", "key": "sol7_prioritized_station", "value": true },
+          { "kind": "schedule-follow-up", "eventId": "evt-rover2-aftermath", "delaySols": 1 }
+        ],
+        "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7.",
+        "logEn": "Prioritized station water recycling on Sol 7."
+      },
+      {
+        "id": "bank-battery-tonight",
+        "label": "Dự trữ pin cho đêm (-2 kWh Pin, tắt WRS hôm nay)",
+        "labelEn": "Bank battery for the night (-2 kWh Battery, disable WRS today)",
+        "effects": [
+          { "kind": "resource", "resource": "batteryKWh", "delta": -2 },
+          { "kind": "plan-override", "wrsEnabled": false },
+          { "kind": "set-flag", "key": "sol7_saved_rover", "value": true },
+          { "kind": "schedule-follow-up", "eventId": "evt-rover2-aftermath", "delaySols": 2 }
+        ],
+        "log": "Đã giữ trữ lượng pin an toàn cho ca đêm Sol 7.",
+        "logEn": "Banked battery reserves through the Sol 7 night shift."
       }
     ]
   },
