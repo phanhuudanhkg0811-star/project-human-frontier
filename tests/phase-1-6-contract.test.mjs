@@ -28,7 +28,8 @@ async function loadPhase16ContractBundle() {
 const mod = await loadPhase16ContractBundle();
 
 test('Phase 1.6 releaseMeta preserves Save v4 compatibility and exposes bilingual attributions', () => {
-  assert.equal(mod.RELEASE_META.releaseVersion, '1.6.0-moon32');
+  assert.equal(mod.RELEASE_META.releaseVersion, mod.RELEASE_VERSION);
+  assert.ok(/^\d+\.\d+\.\d+-moon32$/.test(mod.RELEASE_VERSION));
   assert.equal(mod.RELEASE_META.schemaVersion, 4);
   assert.equal(mod.RELEASE_META.saveAppVersion, '1.4.0');
   assert.ok(mod.NASA_DATA_SOURCES.length >= 3);
