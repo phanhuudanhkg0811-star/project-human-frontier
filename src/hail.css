@@ -1320,6 +1320,17 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   scrollbar-gutter: stable;
 }
 
+.hail-dialog .hail-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #263746;
+  border-top: 1px solid #59666D;
+  padding: 12px 20px;
+  flex-shrink: 0;
+}
+
 .hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
   padding: 20px 22px 22px;
   scrollbar-gutter: stable;
@@ -1521,13 +1532,20 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 10px;
+  padding: 7px 12px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  background: rgba(48, 59, 67, 0.85);
+  border: 1px solid #59666D;
+  color: #E7E6DF;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.hail-btn:hover:not(:disabled) {
+  background: rgba(89, 102, 109, 0.45);
+  border-color: #82939c;
 }
 
 .hail-btn:disabled {
@@ -1545,14 +1563,16 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   background: rgba(197, 125, 89, 0.35);
 }
 
-.hail-btn--accent {
-  background: rgba(117, 169, 165, 0.2);
+.hail-btn--accent,
+.hail-btn--primary {
+  background: rgba(117, 169, 165, 0.22);
   border-color: #75A9A5;
   color: #E7E6DF;
 }
 
-.hail-btn--accent:hover:not(:disabled) {
-  background: rgba(117, 169, 165, 0.35);
+.hail-btn--accent:hover:not(:disabled),
+.hail-btn--primary:hover:not(:disabled) {
+  background: rgba(117, 169, 165, 0.38);
 }
 
 /* Expedition Lunar Survey Panel */

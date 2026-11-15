@@ -26,6 +26,7 @@ interface MissionDialogProps {
   dockSide?: 'left' | 'right' | 'center';
   tactileFrame?: boolean;
   onClose: () => void;
+  footer?: ReactNode;
   children: ReactNode;
 }
 
@@ -37,6 +38,7 @@ export function MissionDialog({
   dockSide = 'right',
   tactileFrame = false,
   onClose,
+  footer,
   children,
 }: MissionDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -181,6 +183,11 @@ export function MissionDialog({
           {errorBanner}
           {children}
         </div>
+        {footer && (
+          <footer className="hail-dialog-footer">
+            {footer}
+          </footer>
+        )}
       </div>
     </dialog>
   );

@@ -27,6 +27,24 @@ export function AboutCreditsModal({ onClose }: { onClose: () => void }) {
       panelType="about"
       dockSide="center"
       onClose={onClose}
+      footer={
+        <div className="flex flex-wrap items-center justify-between gap-2 w-full">
+          <button
+            type="button"
+            className="hail-btn"
+            onClick={handleExportCurrentSave}
+          >
+            {t('about.exportSaveBtn')}
+          </button>
+          <button
+            type="button"
+            className="hail-btn hail-btn--accent"
+            onClick={onClose}
+          >
+            {t('common.closeDialog')}
+          </button>
+        </div>
+      }
     >
       <div className="space-y-4 text-sm text-slate-200">
         <section className="rounded-lg border border-cyan-500/35 bg-slate-900/60 p-3">
@@ -84,23 +102,6 @@ export function AboutCreditsModal({ onClose }: { onClose: () => void }) {
         <p className="text-xs text-slate-400 leading-relaxed">
           {t('about.privacyNote')}
         </p>
-
-        <div className="sticky bottom-0 z-10 -mx-2 mt-2 flex flex-wrap justify-between gap-2 border-t border-slate-700/80 bg-[#28333b]/95 px-2 pt-2.5 pb-1 backdrop-blur-sm">
-          <button
-            type="button"
-            className="hail-btn"
-            onClick={handleExportCurrentSave}
-          >
-            {t('about.exportSaveBtn')}
-          </button>
-          <button
-            type="button"
-            className="hail-btn hail-btn--primary"
-            onClick={onClose}
-          >
-            {t('common.closeDialog')}
-          </button>
-        </div>
       </div>
     </MissionDialog>
   );
