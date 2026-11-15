@@ -34,7 +34,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
     gameState.resources.medkits > 0 &&
     medTargetCrew.condition !== 'evacuated' &&
     medTargetCrew.health < 100;
-  const canMarcusAssist =
+  const canMedicAssist =
     canUseMedkit && gameState.crew.doc.condition === 'fit' && gameState.crew.doc.assignedTask === null;
 
   const handleAssign = async (crewId: CrewId, task: 'rest' | 'emergency-response' | 'medical-care') => {
@@ -54,11 +54,11 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
     setNote(res.ok ? res.effects[0]?.message ?? t('character.unassigned') : res.error.message);
   };
 
-  const handleMedkit = async (withMarcus: boolean) => {
+  const handleMedkit = async (withMedic: boolean) => {
     const res = await dispatch({
       type: 'crew/use-medkit',
       targetCrewId: medTarget,
-      administeredByCrewId: withMarcus ? 'doc' : undefined,
+      administeredByCrewId: withMedic ? 'doc' : undefined,
     });
     if (res.ok) playSfx('repair', 0.55);
     setNote(res.ok ? res.effects[0]?.message ?? t('character.medkitUsed') : res.error.message);
@@ -73,6 +73,10 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       onClose={onClose}
     >
       <div className="flex flex-col gap-3 text-slate-200">
+        <p className="text-[11px] leading-relaxed text-slate-400 px-1">
+          {t('character.initialBaselineNote')}
+        </p>
+
         {note && (
           <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
             {localize(note, bundle)}
@@ -110,12 +114,12 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
             </button>
             <button
               type="button"
-              disabled={!canMarcusAssist}
-              title={canMarcusAssist ? undefined : canUseMedkit ? t('character.marcusHint') : t('character.medkitHint')}
+              disabled={!canMedicAssist}
+              title={canMedicAssist ? undefined : canUseMedkit ? t('character.medicHint') : t('character.medkitHint')}
               onClick={() => handleMedkit(true)}
               className="hail-btn hail-btn--accent"
             >
-              {t('character.marcusAdminister')}
+              {t('character.medicAdminister')}
             </button>
           </div>
         </div>
@@ -152,14 +156,14 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-mono">
                       <span className={`px-1.5 py-0.5 rounded border ${HUNGER_BADGE[member.hungerState]}`}>
-                        {t('character.satiety', { state: member.hungerState.toUpperCase(), pct: member.satiety })}
+                        {t('character.satiety', { state: t(`enum.hunger.${member.hungerState}`), pct: Math.round(member.satiety) })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded border ${member.condition === 'fit' ? 'text-emerald-300 border-emerald-500/40 bg-emerald-950/40' : 'text-rose-300 border-rose-500/50 bg-rose-950/50'}`}>
-                        {member.condition.toUpperCase()}
+                        {t(`enum.condition.${member.condition}`)}
                       </span>
                       {isTired && (
                         <span className="px-1.5 py-0.5 rounded border text-amber-300 border-amber-500/40 bg-amber-950/50">
-                          TIRED
+                          {t('character.tired')}
                         </span>
                       )}
                     </div>
@@ -170,11 +174,11 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                 <div className="grid grid-cols-3 gap-2 text-[11px] font-mono bg-slate-950/80 p-2 rounded">
                   <div>
                     <div className="text-slate-400">Health</div>
-                    <strong className="text-emerald-300">{member.health}/100</strong>
+                    <strong className="text-emerald-300">{Math.round(member.health)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">Morale</div>
-                    <strong className="text-sky-300">{member.morale}/100</strong>
+                    <strong className="text-sky-300">{Math.round(member.morale)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">{t('character.radiation')}</div>

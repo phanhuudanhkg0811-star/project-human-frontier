@@ -1,6 +1,6 @@
 # 🚀 Project Hail — Junior Astronaut Mission Trainer
 
-[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![React 18](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![NASA Open Data](https://img.shields.io/badge/NASA%20Open%20Data-DONKI%20API-0B3D91?logo=nasa&logoColor=white)](https://api.nasa.gov/)
@@ -129,7 +129,7 @@ flowchart LR
 
 ### 3. Crew Roster
 
-- **4 Astronauts**: *Alex Rivera* (Commander), *Elena Chen* (ECLSS Engineer), *Marcus Adebayo* (Geologist), *Aoi Tanaka* (Systems Specialist).
+- **4 Astronauts**: *Ryan Mitchell* (Commander), *Mizuki Murakami* (Engineer), *Lê Minh Trọng* (Medic), *Dmitri Romanov* (Geologist).
 - **Attributes**: `Health (0–100%)`, `Stress`, `Fatigue`, `Hunger`, `Thirst`, `Condition` (`Available`, `Busy`, `Tired`, `Injured`, `Incapacitated`).
 - **Core Rule**: Exactly **1 primary assignment per crew member per Sol**.
 
@@ -141,9 +141,9 @@ Surface exploration is conducted via uncrewed robotic rovers:
 3. **Expedition 3 (Sol 9–12) — Permanently Shadowed Region (PSR)**: Sub-zero cryogenic extremes (-240°C); targets volatile water-ice deposits.
 
 #### ⚖️ The Sol 7 Golden Crisis
-At Sol 7, a simultaneous cabin leak, solar degradation, and rover telemetry failure strike. Elena Chen is the only available astronaut remaining:
+At Sol 7, dwindling clean-water reserves and weakening rover telemetry force a power-allocation decision:
 - **Option A (Save Rover)**: Spend 2 kWh and postpone the WRS recycler to rescue rover data; Expedition 2 succeeds, leaving the station with 25.0 L water and 2 kWh battery.
-- **Option B (Protect Habitat)**: Run the WRS recycler to safeguard water reserves; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 34.0 L water and 0 kWh battery.
+- **Option B (Protect Habitat)**: Run the WRS recycler on stored and same-Sol greywater; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 41.9 L water and 0 kWh battery.
 
 ### 5. The 14-Sol Lunar Night Survival (Sol 15–28)
 
@@ -189,7 +189,7 @@ flowchart TD
         LocalStorage["Versioned LocalStorage Save (schemaVersion)"]
     end
 
-    subgraph UI ["Presentation Layer (React 19)"]
+    subgraph UI ["Presentation Layer (React 18)"]
         Cockpit["Cockpit V12 Dashboard"]
         Panels["Briefing / Crew / Comms / Rover / Rationing Panels"]
         Modals["Debrief & NASA Cadet Report Card"]
@@ -357,3 +357,9 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ---
 
 *Project Hail is developed with passion for the junior astronauts and space explorers of tomorrow.* 🛰️🌕
+
+
+## 🤖 Use of Super Intelligence (SI) Disclosure
+- **Human Artist Originals (No SI)**: Opening 4-panel intro comic (`public/assets/hail/4 khung cho cảnh mở đầụ/`) and NV1–NV4 crew illustrations/portraits (`public/assets/hail/nhân vật cho project hail/` and `characters/PH_CHAR_NV*`) are human-drawn original art (unwatermarked).
+- **SI-Generated Images (Visible Watermarks)**: All remaining raster WebP assets (`environments/`, `equipment/`, `events/`, `inventory/`, `robots/`, `ui/`, `effects/`) and `public/logo.jpg` are SI-generated and embed visible `SI-GENERATED`, `SI-GEN`, or `SI` watermarks with zero NASA logos, flags, or emblems.
+- **Audio & Code/Data Disclosure**: SI-generated `.ogg` sound effects, TypeScript engineering assistance, and synthetic vs official NASA Open Data provenance are explicitly documented in `public/assets/hail/manifest.json`, `CREDITS.md`, `index.html`, and the in-app Credits modal.

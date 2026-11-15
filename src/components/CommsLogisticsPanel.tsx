@@ -47,7 +47,7 @@ export function CommsLogisticsPanel() {
     if (!messageInput.trim()) return;
     const res = await dispatch({
       type: 'comms/send-radio',
-      id: `tx-sol${gameState.clock.sol}-${Date.now()}`,
+      id: `tx-sol${gameState.clock.sol}-${gameState.logistics.radioMessages.length + 1}`,
       message: messageInput.trim(),
       nowMs: Date.now(),
     });
@@ -173,6 +173,9 @@ export function CommsLogisticsPanel() {
                 {t('comms.launchCargo', { kg: totalSlots * 20 })}
               </button>
             </div>
+            <p className="text-[11px] leading-relaxed text-slate-400">
+              {t('comms.cargoAbstractionNote')}
+            </p>
           </>
         )}
       </section>

@@ -1,7 +1,7 @@
 {
   "phase": "2.6",
   "method": "8-Journey Moon Complete E2E via live Vite + Chrome CDP (Desktop 1440x900, Laptop 1280x720, Mobile 390x844, VI & EN, Keyboard a11y, Normal & Reduced Motion, Onboarding Recovery, Sol 7 Branches, Sol 32 Victory & Defeat).",
-  "contentHash": "e477bdcc9541777c56c1b8a81b57a54f8aa28ba6e9a266642128dd333151925e",
+  "contentHash": "6872e62d0811d41a6705471e61808b1b7c17e0cc6166065af81e46e0616118ad",
   "checks": [
     "Journey 1: Fresh boot lands on Title Screen (never skips directly to cockpit) with Continue disabled",
     "Journey 8 (Title EN): Title menu localizes cleanly to English",
@@ -60,7 +60,7 @@
   "campaigns": [
     {
       "scenario": "A",
-      "steps": 369,
+      "steps": 367,
       "status": "victory",
       "outcome": {
         "status": "victory",
@@ -81,24 +81,24 @@
           {
             "id": "positive-oxygen",
             "met": true,
-            "actual": 19.64,
+            "actual": 19.63,
             "target": 0
           },
           {
             "id": "positive-water",
             "met": true,
-            "actual": 121.8,
+            "actual": 111.6,
             "target": 0
           }
         ],
         "rank": "S",
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "327636c2f09b02730bd73c998b39e51db853cf4b0b2fa77ded3a5bb489f0c6ac"
+      "finalHash": "1ac57791ec8f6a47c4ea5558e038334cc9b8089c1a5516cb76bc4199eeb708e7"
     },
     {
       "scenario": "water",
-      "steps": 68,
+      "steps": 69,
       "status": "defeat",
       "outcome": {
         "status": "defeat",
@@ -132,7 +132,7 @@
         "rank": null,
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "837aad8f0847ad94fc0b03b457f9f4b83768f1b3c7443b73c446890e6efbff9f"
+      "finalHash": "8059cffd11ab2ffae368f77d5ba32a27a33f95642d79b5275314daa8b4d4efd3"
     }
   ]
 }

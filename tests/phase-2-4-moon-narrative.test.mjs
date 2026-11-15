@@ -70,7 +70,8 @@ test('Phase 2.4 milestone triggers read directly from campaign config and suppre
   // Sol 1 arrival shows when no tour/sandbox is active and cockpit tour is not unseen/active
   const sol1 = p24.selectPendingCockpitMilestone(base, bundle, narrative, defaultGuard);
   assert.equal(sol1?.id, 'moon-sol1-arrival');
-  assert.equal(sol1?.provenance, 'observed');
+  assert.equal(sol1?.provenance, 'simulated');
+  assert.equal(sol1?.scienceProvenance, 'inferred');
 
   // Suppressed while tour is active, cockpit tour is unseen, or tutorial sandbox is active
   assert.equal(
@@ -111,6 +112,12 @@ test('Phase 2.4 milestone triggers read directly from campaign config and suppre
     p24.selectPendingCockpitMilestone(atSol(28), customBundle, narrative, defaultGuard)?.id,
     'moon-sol29-lunar-sunrise'
   );
+
+  const sunset = p24.selectPendingCockpitMilestone(atSol(bundle.campaign.milestones.lunarNight.startSol), bundle, narrative, defaultGuard);
+  assert.equal(sunset?.provenance, 'simulated');
+  assert.equal(sunset?.scienceProvenance, bundle.catalog.environment.temperatureC.provenance);
+  assert.equal(sunset?.scienceNoteParams?.nightMin, bundle.catalog.environment.temperatureC.nightMinC.toFixed(1));
+  assert.ok(sunset?.sourceRef.includes(bundle.catalog.environment.temperatureC.fitR2.toFixed(4)));
 
   // Loading an old save at Sol 18 never backfills Sol 1 / Sol 7 / Sol 15 milestones
   assert.equal(

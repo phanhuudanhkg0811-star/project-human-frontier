@@ -143,13 +143,16 @@ export function MilestonePresentationModal({
             {milestone.chips.map((chip) => (
               <div key={chip.labelKey} className="phf-milestone-chip">
                 <dt>{t(chip.labelKey)}</dt>
-                <dd>{chip.value}</dd>
+                <dd>{chip.valueKey ? t(chip.valueKey) : chip.value}</dd>
               </div>
             ))}
           </dl>
 
           <aside className="phf-milestone-science">
-            <p>{t(milestone.scienceNoteKey)}</p>
+            <span className="hail-evidence-badge">
+              {t(`stem.evidence.${milestone.scienceProvenance}`)}
+            </span>
+            <p>{t(milestone.scienceNoteKey, milestone.scienceNoteParams)}</p>
             <small>{t('milestone.sourceLabel', { source: milestone.sourceRef })}</small>
           </aside>
 

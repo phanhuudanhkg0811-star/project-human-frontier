@@ -17,6 +17,20 @@ import type {
 export const SAVE_STORAGE_KEY = 'human-frontier:moon32:save-v1';
 export const APP_VERSION = '1.4.0';
 
+export function isCompatibleAppVersion(saveVersion: string, currentVersion: string): boolean {
+  if (saveVersion === currentVersion) return true;
+  const parseMajor = (v: string) => {
+    const match = v.match(/^v?(\d+)/);
+    return match ? parseInt(match[1], 10) : NaN;
+  };
+  const saveMajor = parseMajor(saveVersion);
+  const currentMajor = parseMajor(currentVersion);
+  if (Number.isNaN(saveMajor) || Number.isNaN(currentMajor)) return false;
+  if (saveMajor === currentMajor) return true;
+  if ((saveMajor === 1 || saveMajor === 2) && (currentMajor === 1 || currentMajor === 2)) return true;
+  return false;
+}
+
 export interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -352,7 +366,9 @@ export function loadGameState(bundle: ContentBundle, storage: StorageLike | null
       migrated = true;
     } else {
       const envelope = validateSaveEnvelopeStructure(parsed);
-      if (envelope.appVersion !== APP_VERSION) return loadError('E_CONTRACT_MISMATCH', `Phiên bản ứng dụng không khớp (Save: ${envelope.appVersion}, App: ${APP_VERSION}).`);
+      if (!isCompatibleAppVersion(envelope.appVersion, APP_VERSION)) {
+        return loadError('E_CONTRACT_MISMATCH', `Phiên bản ứng dụng không khớp (Save: ${envelope.appVersion}, App: ${APP_VERSION}).`);
+      }
       state = envelope.state;
     }
   } catch (error) {

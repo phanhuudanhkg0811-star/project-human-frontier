@@ -82,10 +82,8 @@ export function selectEventChoicePreviews(
       if (eff.kind === 'resource') {
         const nextDelta = Math.round(((resourceDeltas[eff.resource] ?? 0) + eff.delta) * 100) / 100;
         resourceDeltas[eff.resource] = nextDelta;
-        effectsSummary.push(`${eff.resource}: ${eff.delta > 0 ? `+${eff.delta}` : eff.delta}`);
       } else if (eff.kind === 'science') {
         scienceDelta += eff.delta;
-        effectsSummary.push(`Science: ${eff.delta > 0 ? `+${eff.delta}` : eff.delta}`);
       } else if (eff.kind === 'crew') {
         const targetLabel = eff.target === 'all' ? 'Toàn đội' : state.crew[eff.target].name;
         if (eff.healthDelta) {
@@ -109,7 +107,6 @@ export function selectEventChoicePreviews(
         if (eff.extraPowerCostKWh !== undefined && eff.extraPowerCostKWh !== 0) {
           const nextDelta = Math.round(((resourceDeltas.batteryKWh ?? 0) - eff.extraPowerCostKWh) * 100) / 100;
           resourceDeltas.batteryKWh = nextDelta;
-          effectsSummary.push(`batteryKWh: -${eff.extraPowerCostKWh}`);
         }
       } else if (eff.kind === 'assign-task') {
         effectsSummary.push(`Phân công ${state.crew[eff.crewId].name}: ${eff.task}`);

@@ -22,11 +22,25 @@ export function DynamicSTEMBrief({ view, bundle, content }: {
     ? bundle.events.find((event) => event.id === context.sourceEventId)
     : null;
   const sourceChoice = sourceEvent?.choices.find((choice) => choice.id === context?.sourceChoiceId);
-  const evidence = context?.evidenceType ?? scienceBrief?.provenance;
+  const evidence = context?.evidenceType ?? 'simulated';
 
   const getMetricLabel = (key: string, fallback: string) => {
-    const knownKeys = ['battery', 'oxygen', 'water', 'wrsRecovered', 'radiation'];
-    return locale === 'en' && knownKeys.includes(key) ? t(`stem.metric.${key}`) : fallback;
+    const translationKeys: Readonly<Record<string, string>> = {
+      battery: 'battery',
+      batteryKWh: 'battery',
+      oxygen: 'oxygen',
+      oxygenKg: 'oxygen',
+      water: 'water',
+      waterL: 'water',
+      parts: 'parts',
+      partsKg: 'parts',
+      wrsRecovered: 'wrsRecovered',
+      wrsRecoveredWaterL: 'wrsRecovered',
+      radiation: 'radiation',
+      radiationMgy: 'radiation',
+    };
+    const translationKey = translationKeys[key];
+    return locale === 'en' && translationKey ? t(`stem.metric.${translationKey}`) : fallback;
   };
 
   return (
@@ -57,9 +71,18 @@ export function DynamicSTEMBrief({ view, bundle, content }: {
       )}
       {scienceBrief ? (
         <>
-          <h3>{pickText(scienceBrief.title, scienceBrief.titleEn)}</h3>
+          <div className="hail-stem-heading hail-stem-heading--science">
+            <h3>{pickText(scienceBrief.title, scienceBrief.titleEn)}</h3>
+            <span className="hail-evidence-badge">
+              {t(`stem.evidence.${scienceBrief.provenance}`)}
+            </span>
+          </div>
           {content ?? <p>{pickText(scienceBrief.content, scienceBrief.contentEn)}</p>}
-          <small>{t('stem.sourcePrefix', { source: scienceBrief.source })}</small>
+          <small>
+            <a href={scienceBrief.sourceUrl} target="_blank" rel="noopener noreferrer">
+              {t('stem.sourcePrefix', { source: scienceBrief.source })}
+            </a>
+          </small>
         </>
       ) : (
         <p>{t('stem.noBrief')}</p>

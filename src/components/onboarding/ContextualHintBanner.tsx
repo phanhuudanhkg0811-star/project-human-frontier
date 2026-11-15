@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AlertTriangle, BellOff, Compass, Lightbulb, Wrench, X } from 'lucide-react';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { formatPowerLoadList } from '../eventPresentation.ts';
 import { tourSelector } from '../../onboarding/targets.ts';
 import type { ContextualHintView, HintCtaPanel, TourTargetId } from '../../onboarding/types.ts';
 
@@ -42,7 +43,7 @@ export function ContextualHintBanner({
   onDismissForever: (hintId: string) => void;
   onDisableHints: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const recordedRef = useRef<string>('');
 
   useEffect(() => {
@@ -101,15 +102,23 @@ export function ContextualHintBanner({
         </button>
       </div>
 
-      <div className="phf-hint-copy" role="status" aria-live="polite" aria-atomic="true">
-        <strong>{t(hint.titleKey, hint.params)}</strong>
-        <p>{t(hint.bodyKey, hint.params)}</p>
-        {hint.escalatedFromPrior && hint.reasonKey && (
-          <p className="phf-hint-escalation">
-            {t('hints.escalatedPrefix')} {t(hint.reasonKey, hint.params)}
-          </p>
-        )}
-      </div>
+      {(() => {
+        const displayParams =
+          hint.params && typeof hint.params.loads === 'string'
+            ? { ...hint.params, loads: formatPowerLoadList(hint.params.loads, locale) }
+            : hint.params;
+        return (
+          <div className="phf-hint-copy" role="status" aria-live="polite" aria-atomic="true">
+            <strong>{t(hint.titleKey, displayParams)}</strong>
+            <p>{t(hint.bodyKey, displayParams)}</p>
+            {hint.escalatedFromPrior && hint.reasonKey && (
+              <p className="phf-hint-escalation">
+                {t('hints.escalatedPrefix')} {t(hint.reasonKey, displayParams)}
+              </p>
+            )}
+          </div>
+        );
+      })()}
 
       <div className="phf-hint-actions">
         <button

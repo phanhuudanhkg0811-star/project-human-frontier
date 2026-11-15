@@ -217,13 +217,13 @@ test('NASA realism: hazard probabilities are capped and protection is monotone',
     assert.ok(risk.radiationDoseMgy > 0 && Number.isFinite(risk.radiationDoseMgy));
     // Even a worst storm Sol is a bad day, not a campaign-ender.
     assert.ok(risk.radiationDoseMgy < 25, 'single-Sol dose stays under the chronic threshold');
-    const rover = core.computeRoverRiskProb(extreme, balance, mult, { threatBlocked: false, isElenaOperating: false });
+    const rover = core.computeRoverRiskProb(extreme, balance, mult, { threatBlocked: false, isGeologistOperating: false });
     assert.ok(rover > 0 && rover <= 0.92, 'rover risk bounded');
-    const blocked = core.computeRoverRiskProb(extreme, balance, mult, { threatBlocked: true, isElenaOperating: true });
-    assert.ok(blocked < rover, 'mitigation + Elena strictly reduce rover risk');
+    const blocked = core.computeRoverRiskProb(extreme, balance, mult, { threatBlocked: true, isGeologistOperating: true });
+    assert.ok(blocked < rover, 'mitigation + the Geologist strictly reduce rover risk');
   }
   // Repairs never become a coin flip worse than 45% even in an extreme storm.
-  const repair = core.computeRepairSuccessProb(extreme, balance, 1.25, { isAlexAssigned: false });
+  const repair = core.computeRepairSuccessProb(extreme, balance, 1.25, { isEngineerAssigned: false });
   assert.ok(repair >= p.repairMinSuccessProb - 1e-9, 'repair floor honored');
   assert.ok(repair <= 1);
 });
@@ -313,13 +313,13 @@ test('Kid-safety: water ledger conserves mass across WRS on and off', () => {
 
   const on = resolveOneSol(prepared, { wrsEnabled: true });
   const wrs = balance.eclss.wrsByLevel['1'];
-  const processed = Math.min(30, wrs.maxBatchL);
+  const processed = Math.min(30 + grey, wrs.maxBatchL);
   const recovered = on.summary.wrsRecoveredWaterL;
   // Recycler integrity decays slightly with thermal cycling, so recovery sits at
   // or just under the nominal 90% batch recovery.
   assert.ok(recovered > 0 && recovered <= processed * wrs.recoveryRate + 1e-9);
   assert.equal(on.nextState.resources.waterL, 60 - use + recovered);
-  assert.equal(on.nextState.resources.wasteWaterL, 30 - processed + grey);
+  assert.equal(on.nextState.resources.wasteWaterL, Math.round((30 + grey - processed) * 100) / 100);
   // Recovery can never exceed the batch, even at Lv3 95%.
   assert.ok(recovered <= processed * 0.95 + 1e-9);
 });

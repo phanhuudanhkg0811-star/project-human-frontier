@@ -14,13 +14,21 @@ export interface PendingMilestonePresentation {
   readonly sol: number;
   readonly runKey: string;
   readonly kind: MilestonePresentationKind;
+  /** Provenance of state-dependent chips and campaign framing. */
   readonly provenance: ProvenanceTag;
+  /** Provenance of the separately rendered science note. */
+  readonly scienceProvenance: ProvenanceTag;
   readonly sourceRef: string;
   readonly titleKey: string;
   readonly subtitleKey: string;
   readonly bodyKey: string;
   readonly scienceNoteKey: string;
-  readonly chips: ReadonlyArray<{ readonly labelKey: string; readonly value: string }>;
+  readonly scienceNoteParams?: Readonly<Record<string, string | number>>;
+  readonly chips: ReadonlyArray<{
+    readonly labelKey: string;
+    readonly value: string;
+    readonly valueKey?: string;
+  }>;
 }
 
 export interface MilestoneVisibilityGuard {
@@ -117,7 +125,8 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'arrival',
-        provenance: 'observed',
+        provenance: 'simulated',
+        scienceProvenance: 'inferred',
         sourceRef: 'NASA Artemis South Pole Concept & HIDH',
         titleKey: 'milestone.sol1.title',
         subtitleKey: 'milestone.sol1.subtitle',
@@ -130,27 +139,37 @@ export function selectPendingCockpitMilestone(
         ],
       };
 
-    case 'moon-sol7-golden-crisis':
+    case 'moon-sol7-golden-crisis': {
+      const activeMission = state.rover.activeMission;
+      const hasRegolithMission =
+        activeMission?.expeditionId === 'regolith-field' &&
+        ['scheduled', 'outbound', 'exploring', 'signal-lost', 'recovery-pending'].includes(activeMission.status);
+      const roverStatus = activeMission?.status === 'recovery-pending'
+        ? 'returning'
+        : activeMission?.status ?? 'available';
       return {
         id: candidateId,
         sol,
         runKey,
         kind: 'golden-crisis',
-        provenance: 'inferred',
+        provenance: 'simulated',
+        scienceProvenance: 'inferred',
         sourceRef: 'NASA ECLSS & Deep Space Network Telemetry',
-        titleKey: 'milestone.sol7.title',
-        subtitleKey: 'milestone.sol7.subtitle',
-        bodyKey: 'milestone.sol7.body',
-        scienceNoteKey: 'milestone.sol7.science',
+        titleKey: hasRegolithMission ? 'milestone.sol7.title' : 'milestone.sol7.stationTitle',
+        subtitleKey: hasRegolithMission ? 'milestone.sol7.subtitle' : 'milestone.sol7.stationSubtitle',
+        bodyKey: hasRegolithMission ? 'milestone.sol7.body' : 'milestone.sol7.stationBody',
+        scienceNoteKey: hasRegolithMission ? 'milestone.sol7.science' : 'milestone.sol7.stationScience',
         chips: [
           { labelKey: 'milestone.chip.battery', value: `${state.resources.batteryKWh} kWh` },
           { labelKey: 'milestone.chip.water', value: `${state.resources.waterL} L` },
           {
             labelKey: 'milestone.chip.rover',
-            value: (state.rover.activeMission?.status ?? 'available').toUpperCase(),
+            value: roverStatus,
+            valueKey: `enum.roverStatus.${roverStatus}`,
           },
         ],
       };
+    }
 
     case 'moon-sol15-lunar-sunset':
       return {
@@ -158,12 +177,16 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'lunar-sunset',
-        provenance: 'observed',
-        sourceRef: 'NASA LRO Diviner Thermal Calibration (R² = 0.954)',
+        provenance: 'simulated',
+        scienceProvenance: bundle.catalog.environment.temperatureC.provenance,
+        sourceRef: `NASA LRO Diviner GCP polar cell (R² = ${bundle.catalog.environment.temperatureC.fitR2.toFixed(4)})`,
         titleKey: 'milestone.sol15.title',
         subtitleKey: 'milestone.sol15.subtitle',
         bodyKey: 'milestone.sol15.body',
         scienceNoteKey: 'milestone.sol15.science',
+        scienceNoteParams: {
+          nightMin: bundle.catalog.environment.temperatureC.nightMinC.toFixed(1),
+        },
         chips: [
           { labelKey: 'milestone.chip.solar', value: '0 kWh' },
           { labelKey: 'milestone.chip.fission', value: `+${bundle.balance.power.fissionKWhPerSol} kWh` },
@@ -183,7 +206,8 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'lunar-sunrise',
-        provenance: 'observed',
+        provenance: 'simulated',
+        scienceProvenance: bundle.catalog.environment.temperatureC.provenance,
         sourceRef: 'NASA LRO Polar Illumination & Diviner',
         titleKey: 'milestone.sol29.title',
         subtitleKey: 'milestone.sol29.subtitle',
@@ -311,6 +335,10 @@ export function selectCampaignInsights(
         aExp: bundle.campaign.ranking.A.minExpeditions,
       },
     });
+  }
+
+  if (state.events.flags.mission_archive_sent) {
+    causes.push({ code: 'report.cause.archiveSent', params: {} });
   }
 
   if (report.blackouts > 0) {

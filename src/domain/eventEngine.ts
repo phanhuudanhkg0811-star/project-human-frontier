@@ -1,4 +1,5 @@
 import { deriveRoll } from './prng.ts';
+import { deriveCrewCondition } from './crewCondition.ts';
 import type {
   ActiveEvent,
   ContentBundle,
@@ -304,7 +305,9 @@ export function checkEventChoiceRequirements(
   }
 
   if (choice.requiresFlag && !state.events.flags[choice.requiresFlag]) {
-    blockedReasons.push(`Yêu cầu điều kiện ${choice.requiresFlag}.`);
+    // Generic wording: the choice label already names the earlier decision, and a raw
+    // flag key here would leak an internal enum into the UI (audit 4.4).
+    blockedReasons.push('Yêu cầu một quyết định trước đó chưa được thực hiện.');
   }
 
   if (choice.requiresCrew) {
@@ -431,12 +434,12 @@ export function applyEventEffectsAtomic(
             health: nextHealth,
             morale: nextMorale,
             satiety: nextSatiety,
-            condition:
-              nextHealth <= 0
-                ? 'evacuated'
-                : nextHealth < bundle.balance.crew.injuredBelowHealth
-                  ? 'injured'
-                  : 'fit',
+            condition: deriveCrewCondition(
+              nextHealth,
+              c.condition,
+              bundle.balance.crew.fitRecoverAtHealth,
+              bundle.balance.crew.injuredBelowHealth
+            ),
             hungerState: nextSatiety <= 0 ? 'starving' : nextSatiety <= 25 ? 'hungry' : 'ok',
           };
         }
@@ -633,16 +636,13 @@ export function applyEventEffectsAtomic(
   };
 }
 
-/**
- * Check if the currently active event has reached its inclusive deadline at End-Sol (`sol >= deadlineSol`).
- * If so, expire it, apply `onExpireEffects`, and record `'expired'` in `occurrenceHistory`.
- */
-export function resolveExpiredEventAtEndSol(
+/** Apply an active event's expiration effects and record the expired occurrence. */
+export function expireActiveEvent(
   state: GameState,
   bundle: ContentBundle
 ): { readonly state: GameState; readonly expiredNote: string | null } {
   const active = state.events.activeEvent;
-  if (!active || state.clock.sol < active.deadlineSol) {
+  if (!active) {
     return { state, expiredNote: null };
   }
 
@@ -666,7 +666,7 @@ export function resolveExpiredEventAtEndSol(
     },
   ];
 
-  const expiredNote = `Sự kiện "${eventNode?.title ?? active.eventId}" đã quá hạn ở cuối Sol ${state.clock.sol}.`;
+  const expiredNote = `Sự kiện "${eventNode?.title ?? active.eventId}" đã hết thời hạn ở Sol ${state.clock.sol}.`;
 
   return {
     state: {
@@ -680,6 +680,18 @@ export function resolveExpiredEventAtEndSol(
     },
     expiredNote,
   };
+}
+
+/** Expire an event only after its inclusive End-Sol deadline has been reached. */
+export function resolveExpiredEventAtEndSol(
+  state: GameState,
+  bundle: ContentBundle
+): { readonly state: GameState; readonly expiredNote: string | null } {
+  const active = state.events.activeEvent;
+  if (!active || state.clock.sol < active.deadlineSol) {
+    return { state, expiredNote: null };
+  }
+  return expireActiveEvent(state, bundle);
 }
 
 /**
@@ -757,7 +769,9 @@ export function buildDebriefContext(
     reasonTag,
     sourceEventId,
     sourceChoiceId,
-    evidenceType: matchedBrief.provenance,
+    // Resource deltas are produced by this run's deterministic simulation.
+    // The NASA brief keeps its own provenance and is rendered separately.
+    evidenceType: 'simulated',
     metricHighlights,
   };
 }

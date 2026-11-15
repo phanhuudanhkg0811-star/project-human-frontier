@@ -104,6 +104,40 @@ test('Static catalogs validate cleanly including 3x32-day NASA DONKI samples and
   assert.notEqual(ng1.campaign.runId, ng2.campaign.runId);
 });
 
+test('P0 science content and Rover sites stay aligned with the South Polar runtime catalogs', () => {
+  const bundle = core.loadContentBundle();
+  const thermal = bundle.catalog.environment.temperatureC;
+  const lunarBrief = bundle.briefs.find((brief) => brief.id === 'brief-lunar-cycle');
+  const deepNightEvent = bundle.events.find((event) => event.id === 'evt-emergency-load-shed');
+
+  assert.ok(lunarBrief.content.includes(thermal.nightMinC.toFixed(2)));
+  assert.ok(lunarBrief.content.includes(thermal.dayMaxC.toFixed(2)));
+  assert.ok(lunarBrief.source.includes(thermal.fitR2.toFixed(4)));
+  assert.ok(deepNightEvent.title.includes(thermal.nightMinC.toFixed(1)));
+  assert.ok(deepNightEvent.prompt.includes(thermal.nightMinC.toFixed(1)));
+
+  const moonRadiusKm = 1737.4;
+  const outpost = { latitudeDeg: -89.45, longitudeDegEast: -137.3 };
+  const toRad = (degrees) => (degrees * Math.PI) / 180;
+  const distanceFromOutpostKm = (location) => {
+    const lat1 = toRad(outpost.latitudeDeg);
+    const lat2 = toRad(location.latitudeDeg);
+    const deltaLon = toRad(location.longitudeDegEast - outpost.longitudeDegEast);
+    const centralAngle = Math.acos(
+      Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(deltaLon)
+    );
+    return moonRadiusKm * centralAngle;
+  };
+
+  for (const site of bundle.lunarSites) {
+    assert.ok(site.representativeLocation.latitudeDeg < -88.5, `${site.expeditionId} must remain at the South Pole`);
+    assert.ok(distanceFromOutpostKm(site.representativeLocation) <= 50, `${site.expeditionId} must be within Rover range`);
+    assert.equal(site.representativeLocation.provenance, 'assumption');
+    assert.equal(site.mappingProvenance, 'assumption');
+    assert.doesNotMatch(site.representativeLocation.name, /Apollo 11|Apollo 15/i);
+  }
+});
+
 test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B invariants', async () => {
   const bundle = core.loadContentBundle();
   const port = new core.MockGamePort({ seed: 205001, spaceWeatherOverride: 'quiet' }, bundle);
@@ -164,7 +198,10 @@ test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B inva
   assert.equal(afterSol1.debrief.lastSummary.resourceDeltas.waterL, previewBeforeEnd.resourceDeltas.waterL);
   assert.equal(afterSol1.resources.mrePacks, 25); // 24 + 1 crafted MRE
   assert.equal(afterSol1.resources.oxygenKg, 66.6); // 70 - 3.4
-  assert.equal(afterSol1.resources.waterL, 68); // 78 (2L used by fab) - 10 (4*2.5) = 68, 0 wasteWater initially
+  assert.equal(afterSol1.debrief.lastSummary.checkpoint.wrsProcessedWasteWaterL, 8.8);
+  assert.equal(afterSol1.debrief.lastSummary.wrsRecoveredWaterL, 7.9);
+  assert.equal(afterSol1.resources.waterL, 75.9); // 78 - 10 crew use + 7.9 reclaimed from same-Sol greywater
+  assert.equal(afterSol1.resources.wasteWaterL, 0);
   assert.equal(afterSol1.crew.cmd.satiety, 75);
 
   // Dismiss debrief -> Sol 2 briefing
@@ -174,7 +211,7 @@ test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B inva
   core.assertGameState(port.getSnapshot(), bundle);
 });
 
-test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (WRS 90% ON)', () => {
+test('Golden Sol 7 matches 25.0L/2.0kWh (Save Rover) vs 41.9L/0.0kWh (same-Sol WRS ON)', () => {
   const bundle = core.loadContentBundle();
   const base = core.createInitialGameState(bundle, { seed: 777, spaceWeatherOverride: 'quiet' });
   const sol7Fixture = {
@@ -223,7 +260,9 @@ test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (W
     dailyPlan: { ...sol7Fixture.dailyPlan, wrsEnabled: true },
   };
   const outB = core.resolveSol(branchBInput, bundle, 'commit');
-  assert.equal(outB.nextState.resources.waterL, 34);
+  assert.equal(outB.summary.checkpoint.wrsProcessedWasteWaterL, 18.8);
+  assert.equal(outB.summary.wrsRecoveredWaterL, 16.9);
+  assert.equal(outB.nextState.resources.waterL, 41.9);
   assert.equal(outB.nextState.resources.batteryKWh, 0);
 });
 
@@ -268,22 +307,22 @@ test('DONKI Space Weather probabilities are 100% deterministic and scale with st
     assert.equal(h, firstHash);
   }
 
-  // Verify probability ordering: Alex > non-Alex on repair; BlockThreat/Elena lowers Rover incident risk
+  // Verify probability ordering: engineer > non-engineer on repair; BlockThreat/Dmitri (geologist) lowers Rover incident risk
   const mayWeather16 = core.getSolWeather(bundle.donki, 'may-2024-xstorm', 16);
   const quietWeather = core.getSolWeather(bundle.donki, 'may-2024-xstorm', 16, 'quiet');
-  const repairAlex = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isAlexAssigned: true });
-  const repairOther = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isAlexAssigned: false });
-  assert.ok(repairAlex > repairOther);
+  const repairEngineer = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isEngineerAssigned: true });
+  const repairOther = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isEngineerAssigned: false });
+  assert.ok(repairEngineer > repairOther);
   assert.ok(repairOther < 1.0);
-  assert.equal(core.computeRepairSuccessProb(quietWeather, bundle.balance, 1.0, { isAlexAssigned: false }), 1.0);
+  assert.equal(core.computeRepairSuccessProb(quietWeather, bundle.balance, 1.0, { isEngineerAssigned: false }), 1.0);
 
   const roverBlocked = core.computeRoverRiskProb(mayWeather16, bundle.balance, 1.0, {
     threatBlocked: true,
-    isElenaOperating: true,
+    isGeologistOperating: true,
   });
   const roverUnblocked = core.computeRoverRiskProb(mayWeather16, bundle.balance, 1.0, {
     threatBlocked: false,
-    isElenaOperating: false,
+    isGeologistOperating: false,
   });
   assert.ok(roverUnblocked > roverBlocked * 5);
 
@@ -389,13 +428,13 @@ test('Multi-task repair/upgrade, crew/unassign refund, fabricator/cancel anti-ex
   assert.equal(endOut.nextState.systems.airlock.integrity, 1);
   assert.equal(endOut.nextState.systems.recycler.level, 2);
 
-  // Unassign upgrade refunds exact Parts (3 with Alex discount, 4 without); blocked in rationing
+  // Unassign upgrade refunds exact Parts (3 with engineer discount, 4 without); blocked in rationing
   let upgSt = core.dispatchDomainCommand(
     { ...base, clock: { sol: 3, phase: 'engineering', resolutionIndex: 2 }, dailyPlan: { ...base.dailyPlan, sol: 3 }, resources: { ...base.resources, partsKg: 10 } },
     { type: 'crew/assign', crewId: 'eng', task: 'upgrade-system', targetSystemId: 'solar' },
     bundle
   ).state;
-  assert.equal(upgSt.resources.partsKg, 7); // 10 - (4 - 1 Alex discount)
+  assert.equal(upgSt.resources.partsKg, 7); // 10 - (4 - 1 engineer discount)
   const blockedUnassign = core.dispatchDomainCommand(
     { ...upgSt, clock: { ...upgSt.clock, phase: 'rationing' } },
     { type: 'crew/unassign', crewId: 'eng' },
@@ -930,13 +969,28 @@ test('WRS recovery is proportional to recycler integrity', () => {
     );
 
   const healthy = sol7(1.0);
-  assert.equal(healthy.summary.wrsRecoveredWaterL, 9, '10 L greywater * 90% at full integrity');
-  assert.equal(healthy.summary.resourceDeltas.waterL, -1);
+  assert.equal(healthy.summary.checkpoint.wrsProcessedWasteWaterL, 18.8);
+  assert.equal(healthy.summary.wrsRecoveredWaterL, 16.9, 'existing and same-Sol greywater recover at 90%');
+  assert.equal(healthy.summary.resourceDeltas.waterL, 6.9);
+  assert.equal(healthy.nextState.resources.wasteWaterL, 0);
 
   const half = sol7(0.5);
-  assert.equal(half.summary.wrsRecoveredWaterL, 4.5, 'half the recovery rate at half integrity');
-  assert.equal(half.summary.resourceDeltas.waterL, -5.5);
+  assert.equal(half.summary.wrsRecoveredWaterL, 8.4, 'half integrity halves same-batch recovery');
+  assert.equal(half.summary.resourceDeltas.waterL, -1.6);
   assert.ok(half.nextState.resources.waterL < healthy.nextState.resources.waterL);
+});
+
+test('Five-Sol forecast auto-issues MREs before crew would become hungry and exposes remaining stock', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 15, spaceWeatherOverride: 'quiet' });
+  const state = variant(base, {
+    clock: { sol: 1, phase: 'rationing', resolutionIndex: 0 },
+    dailyPlan: committedPlan(1),
+  });
+
+  const trend = core.selectFiveSolResourceTrend(state, bundle, 5);
+  assert.deepEqual(trend.map((point) => point.mrePacks), [24, 24, 20, 20, 16]);
+  assert.equal(trend.length, 5);
 });
 
 test('Continuous wear degrades systems every Sol and storm hardware stress accelerates it', () => {
@@ -1132,6 +1186,59 @@ test('Fabricator refuses to run below minimum integrity', () => {
   assert.equal(broken.nextState.fabricator.activeJob.solsRemaining, 2, 'no progress while fabricator is unreliable');
 });
 
+test('Recycling and re-crafting upgraded equipment resets it to level 1', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 1818, spaceWeatherOverride: 'quiet' });
+  const upgradedDrill = { ...base.equipment.core_drill, level: 2 };
+  const jobFor = (action) => ({
+    action,
+    itemId: 'core_drill',
+    startedSol: 3,
+    solsRemaining: 1,
+    partsSpent: 0,
+    waterSpent: 0,
+    batteryReserved: 0,
+  });
+  const run = (action, equipment) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+        dailyPlan: committedPlan(3),
+        equipment: { core_drill: equipment },
+        fabricator: { usedThisSol: false, activeJob: jobFor(action) },
+      }),
+      bundle,
+      'preview'
+    ).nextState.equipment.core_drill;
+
+  const recycled = run('recycle', upgradedDrill);
+  assert.equal(recycled.owned, false);
+  assert.equal(recycled.level, 1);
+
+  const crafted = run('craft', { ...recycled, level: 2 });
+  assert.equal(crafted.owned, true);
+  assert.equal(crafted.level, 1);
+  assert.equal(crafted.durability, 100);
+});
+
+test('Medkit healing respects the 65 Health recovery threshold', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 1919 });
+  const injured = {
+    ...base,
+    clock: { sol: 1, phase: 'engineering', resolutionIndex: 0 },
+    crew: { ...base.crew, cmd: { ...base.crew.cmd, health: 20, condition: 'injured' } },
+  };
+  const healed = core.dispatchDomainCommand(
+    injured,
+    { type: 'crew/use-medkit', targetCrewId: 'cmd' },
+    bundle
+  );
+  assert.equal(healed.ok, true);
+  assert.equal(healed.state.crew.cmd.health, 50);
+  assert.equal(healed.state.crew.cmd.condition, 'injured');
+});
+
 test('Preview and commit remain byte-identical under the new physics', () => {
   const bundle = core.loadContentBundle();
   const base = core.createInitialGameState(bundle, { seed: 19, spaceWeatherOverride: 'quiet' });
@@ -1163,4 +1270,14 @@ test('Preview and commit remain byte-identical under the new physics', () => {
     core.sha256Hex(core.canonicalStringify({ summary: preview.summary, resources: preview.nextState.resources })),
     core.sha256Hex(core.canonicalStringify({ summary: commit.summary, resources: commit.nextState.resources }))
   );
+});
+
+test('selectStormTargets distributes storm stress across all 5 station systems including fabricator', () => {
+  const hit = new Set();
+  for (let sol = 1; sol <= 40; sol += 1) {
+    hit.add(core.selectStormTargets(205001, sol));
+  }
+  for (const sys of ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator']) {
+    assert.ok(hit.has(sys), `Expected storm target candidate "${sys}" to be reachable`);
+  }
 });

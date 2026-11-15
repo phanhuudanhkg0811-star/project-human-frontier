@@ -1,4 +1,5 @@
 import { buildDebriefContext, resolveExpiredEventAtEndSol } from './eventEngine.ts';
+import { deriveCrewCondition } from './crewCondition.ts';
 import { deriveRoll } from './prng.ts';
 import { campaignReasonText, evaluateCampaign } from './campaignEvaluator.ts';
 import {
@@ -12,7 +13,6 @@ import {
 import type {
   CampaignConfig,
   ContentBundle,
-  CrewCondition,
   CrewId,
   CrewMemberState,
   DonkiSolEntry,
@@ -92,6 +92,14 @@ function computeSurfaceTempC(sol: number, bundle: ContentBundle): number {
   return round2(surface);
 }
 
+const SOLAR_PANEL_SUNLIT_DELTA_C = 35; // illuminated polar PV array radiative heating above cold regolith
+
+function computeSolarPanelTempC(ambientSurfaceTempC: number, isNight: boolean): number {
+  // South Polar tracking PV cells intercept direct 1 AU sunlight (+35 C above cold polar ground) while
+  // still radiating to 2.7 K space, keeping array temperature below equatorial +120 C heat stress.
+  return isNight ? ambientSurfaceTempC : round2(ambientSurfaceTempC + SOLAR_PANEL_SUNLIT_DELTA_C);
+}
+
 function deriveSystemStatus(integrity: number): StationSystemState['status'] {
   if (integrity >= 0.85) return 'nominal';
   if (integrity > 0) return 'degraded';
@@ -108,13 +116,6 @@ function deriveHungerState(satiety: number): HungerState {
   if (satiety <= 0) return 'starving';
   if (satiety <= 25) return 'hungry';
   return 'ok';
-}
-
-function deriveCrewCondition(health: number, prev: CrewCondition, fitThreshold: number, injuredThreshold: number): CrewCondition {
-  if (health <= 0) return 'evacuated';
-  if (health < injuredThreshold) return 'injured';
-  if (prev === 'injured' && health < fitThreshold) return 'injured';
-  return 'fit';
 }
 
 function applyCargoArrival(state: GameState, bundle: ContentBundle): { state: GameState; note: string | null } {
@@ -177,7 +178,7 @@ function resolveRepairAndUpgradeTasks(
   const upgradeWorkers = crewList.filter((c) => c.assignedTask?.type === 'upgrade-system' && c.assignedTask.targetSystemId);
 
   const baselineRepairProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
-    isAlexAssigned: repairWorkers.some((w) => w.id === 'eng'),
+    isEngineerAssigned: repairWorkers.some((w) => w.id === 'eng'),
   });
 
   const systems: Record<SystemId, StationSystemState> = { ...state.systems };
@@ -207,7 +208,7 @@ function resolveRepairAndUpgradeTasks(
         1
       );
       const baseProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
-        isAlexAssigned: worker.id === 'eng',
+        isEngineerAssigned: worker.id === 'eng',
       });
       // Health degrades the *storm penalty*, not the quiet-Sol baseline, so a
       // healthy crew still completes routine repairs deterministically.
@@ -287,7 +288,9 @@ function finalizeFabricatorJob(
 
   const eqId = job.itemId;
   const current = equipment[eqId];
-  if (job.action === 'craft' || job.action === 'repair') {
+  if (job.action === 'craft') {
+    equipment[eqId] = { ...current, owned: true, level: 1, durability: 100, state: 'good' };
+  } else if (job.action === 'repair') {
     equipment[eqId] = { ...current, owned: true, durability: 100, state: 'good' };
   } else if (job.action === 'upgrade') {
     equipment[eqId] = { ...current, owned: true, level: 2 };
@@ -298,7 +301,14 @@ function finalizeFabricatorJob(
       ...resources,
       partsKg: clamp(round2(resources.partsKg + refund), 0, bundle.balance.storages.partsKg.max),
     };
-    equipment[eqId] = { ...current, owned: false, durability: 0, state: 'damaged', reservedForRover: false };
+    equipment[eqId] = {
+      ...current,
+      owned: false,
+      level: 1,
+      durability: 0,
+      state: 'damaged',
+      reservedForRover: false,
+    };
     note = `Đã tái chế ${eqId}, thu hồi +${refund} kg Phụ tùng.`;
   }
 
@@ -331,8 +341,9 @@ function resolvePowerAndEclss(
   const solarSys = systems.solar;
   const baseSolar = bundle.balance.power.solarByLevelKWh[String(solarSys.level) as '1' | '2' | '3'];
   const ambientTempC = computeSurfaceTempC(sol, bundle);
+  const panelTempC = computeSolarPanelTempC(ambientTempC, isNight);
   const thermalDerate = clamp(
-    1 - SOLAR_TEMP_DERATE_PER_C * (ambientTempC - 25),
+    1 - SOLAR_TEMP_DERATE_PER_C * (panelTempC - 25),
     SOLAR_TEMP_DERATE_MIN,
     SOLAR_TEMP_DERATE_MAX
   );
@@ -354,9 +365,12 @@ function resolvePowerAndEclss(
   const activeJob = state.fabricator.activeJob;
   const recycler = systems.recycler;
   const wrsCfg = bundle.balance.eclss.wrsByLevel[String(recycler.level) as '1' | '2' | '3'];
+  const livingCrewCount = Object.values(state.crew).filter((c) => c.condition !== 'evacuated').length;
+  const newGreywater = round2(livingCrewCount * bundle.balance.eclss.wasteWaterGeneratedPerCrewPerSol);
+  const availableWasteWater = round2(state.resources.wasteWaterL + newGreywater);
   const canRunWrs =
     state.dailyPlan.wrsEnabled &&
-    state.resources.wasteWaterL > 0 &&
+    availableWasteWater > 0 &&
     recycler.integrity > 0 &&
     recycler.status !== 'offline';
 
@@ -428,7 +442,6 @@ function resolvePowerAndEclss(
     clamp(storedKWh * (1 - BATTERY_SELF_DISCHARGE_PER_SOL), 0, s.batteryKWh.max)
   );
 
-  const livingCrewCount = Object.values(state.crew).filter((c) => c.condition !== 'evacuated').length;
   const airlockLeak =
     systems.airlock.integrity < 1
       ? round2(bundle.balance.eclss.airlockDegradedLeakO2Kg * (1 - systems.airlock.integrity))
@@ -440,15 +453,14 @@ function resolvePowerAndEclss(
   const nextOxygen = clamp(round2(state.resources.oxygenKg - oxygenUse), 0, s.oxygenKg.max);
 
   const waterUse = round2(livingCrewCount * bundle.balance.eclss.waterLPerCrewPerSol);
-  const processedWaste = wrsRan ? Math.min(state.resources.wasteWaterL, wrsCfg.maxBatchL) : 0;
+  const processedWaste = wrsRan ? Math.min(availableWasteWater, wrsCfg.maxBatchL) : 0;
   const wrsRecoveredWaterL = Math.round(
     processedWaste * wrsCfg.recoveryRate * clamp(systems.recycler.integrity, 0, 1) * 10
   ) / 10;
   const nextWater = clamp(round2(state.resources.waterL - waterUse + wrsRecoveredWaterL), 0, s.waterL.max);
 
-  const newGreywater = round2(livingCrewCount * bundle.balance.eclss.wasteWaterGeneratedPerCrewPerSol);
   const nextWasteWater = clamp(
-    round2(state.resources.wasteWaterL - processedWaste + newGreywater),
+    round2(availableWasteWater - processedWaste),
     0,
     s.wasteWaterL.max
   );
@@ -502,7 +514,8 @@ function resolveCrewAndWeather(
     diffMult,
     nextSystems.airlock.level,
     nextSystems.airlock.integrity,
-    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0
+    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0,
+    bundle.crewPhysiology
   );
 
   const nextCrew: Record<CrewId, CrewMemberState> = { ...state.crew };
@@ -760,14 +773,15 @@ function resolveRoverTick(
           failedMission
         );
       }
+      releaseEquipment(0);
       return {
-        rover: { ...state.rover, activeMission: { ...mission, incidents } },
+        rover: { ...state.rover, activeMission: null },
         equipment,
         resources,
         sciencePoints: state.campaign.sciencePoints,
         roverIncidentProb: 0,
         roverIncidentTriggered: false,
-        note: 'Thiếu điện hoặc người trực: lịch phóng Rover được giữ sang Sol kế tiếp.',
+        note: 'Thiếu điện hoặc người trực sẵn sàng: lịch phóng Rover được hủy, thiết bị trả về kho để lập lịch lại.',
       };
     }
 
@@ -852,12 +866,14 @@ function resolveRoverTick(
       (crew.assignedTask === null || crew.assignedTask.type === 'rover-operate')
     );
   };
+  const fallbackRecoveryOrder: readonly CrewId[] = ['geo', 'eng', 'cmd', 'doc'];
+  const resolveRecoveryCrewId = (selected: CrewId | null): CrewId | null => {
+    if (selected && isEligibleRecoveryCrew(selected)) return selected;
+    return fallbackRecoveryOrder.find(isEligibleRecoveryCrew) ?? null;
+  };
 
   if (mission.status === 'recovery-pending') {
-    const selected = mission.recoveryOperatorCrewId;
-    const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
-      ? selected
-      : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+    const recoveryCrewId = resolveRecoveryCrewId(mission.recoveryOperatorCrewId);
     if (recoveryCrewId) {
       const recoveryMission = { ...mission, recoveryOperatorCrewId: recoveryCrewId };
       const wear = recoveryCrewId === 'geo' ? 25 : 50;
@@ -924,7 +940,7 @@ function resolveRoverTick(
         clamp(
           computeRoverRiskProb(weather, bundle.balance, diffMult, {
             threatBlocked,
-            isElenaOperating:
+            isGeologistOperating:
               mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
           }) * operatorRiskFactor,
           0.005,
@@ -977,10 +993,7 @@ function resolveRoverTick(
     };
   }
 
-  const selected = mission.recoveryOperatorCrewId;
-  const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
-    ? selected
-    : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+  const recoveryCrewId = resolveRecoveryCrewId(mission.recoveryOperatorCrewId);
   if (!recoveryCrewId) {
     return {
       rover: {

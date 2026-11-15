@@ -1,6 +1,7 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { useGameStore } from '../../store/gameStore.ts';
 import { useUiStore } from '../../store/uiStore.ts';
 
 export type MissionDialogType =
@@ -25,6 +26,7 @@ interface MissionDialogProps {
   dockSide?: 'left' | 'right' | 'center';
   tactileFrame?: boolean;
   onClose: () => void;
+  footer?: ReactNode;
   children: ReactNode;
 }
 
@@ -36,12 +38,27 @@ export function MissionDialog({
   dockSide = 'right',
   tactileFrame = false,
   onClose,
+  footer,
   children,
 }: MissionDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const titleId = useId();
   const tourActive = useUiStore((s) => s.onboarding.activeTour !== null);
-  const { t } = useI18n();
+  const lastError = useGameStore((s) => s.lastError);
+  const dismissError = useGameStore((s) => s.dismissError);
+  const bundle = useGameStore((s) => s.bundle);
+  const { t, localize } = useI18n();
+
+  const errorBanner = lastError ? (
+    <div
+      role="alert"
+      onClick={dismissError}
+      className="mb-3 rounded-lg border border-amber-400/70 bg-amber-950/95 px-3 py-2 text-xs text-amber-100 cursor-pointer shadow"
+    >
+      <strong>[{lastError.code}]</strong> {localize(lastError.message, bundle)} ({t('cockpit.tapToClose')})
+    </div>
+  ) : null;
 
   useEffect(() => {
     const dialog = ref.current;
@@ -104,7 +121,10 @@ export function MissionDialog({
           onClose();
         }}
       >
-        <div className="hail-tactile-dialog-shell">{children}</div>
+        <div className="hail-tactile-dialog-shell">
+          {errorBanner}
+          {children}
+        </div>
       </dialog>
     );
   }
@@ -117,7 +137,7 @@ export function MissionDialog({
       tabIndex={-1}
       aria-modal="true"
       className={`mission-dialog hail-dialog hail-dialog--dock-${dockSide} mission-dialog--${panelType} ${tourActive ? 'is-tour-modeless' : ''} ${allowModalInteraction ? 'driver-allowed-element' : ''}`.trim()}
-      aria-labelledby="mission-dialog-title"
+      aria-labelledby={titleId}
       onCancel={e => {
         e.preventDefault();
         onClose();
@@ -140,7 +160,7 @@ export function MissionDialog({
           )}
           <div className="mission-dialog-titles">
             <p className="mission-dialog-eyebrow">{eyebrow}</p>
-            <h2 id="mission-dialog-title" className="mission-dialog-title">
+            <h2 id={titleId} className="mission-dialog-title">
               {title}
             </h2>
           </div>
@@ -160,8 +180,14 @@ export function MissionDialog({
         </header>
 
         <div className="mission-dialog-body custom-parsecs-scroll">
+          {errorBanner}
           {children}
         </div>
+        {footer && (
+          <footer className="hail-dialog-footer">
+            {footer}
+          </footer>
+        )}
       </div>
     </dialog>
   );

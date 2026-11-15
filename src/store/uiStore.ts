@@ -41,7 +41,7 @@ interface PersistedUiPrefs {
 }
 
 const DEFAULT_PERSISTED_PREFS: PersistedUiPrefs = {
-  locale: 'vi',
+  locale: 'en',
   reducedMotion: false,
   audioMuted: false,
   tutorialCompleted: false,
@@ -57,7 +57,7 @@ function readPersistedUiPrefs(): PersistedUiPrefs {
     const parsed = JSON.parse(raw) as Partial<PersistedUiPrefs> | null;
     if (!parsed || typeof parsed !== 'object') return DEFAULT_PERSISTED_PREFS;
     return {
-      locale: parsed.locale === 'en' ? 'en' : 'vi',
+      locale: parsed.locale === 'vi' ? 'vi' : 'en',
       reducedMotion: typeof parsed.reducedMotion === 'boolean' ? parsed.reducedMotion : false,
       audioMuted: typeof parsed.audioMuted === 'boolean' ? parsed.audioMuted : false,
       tutorialCompleted: typeof parsed.tutorialCompleted === 'boolean' ? parsed.tutorialCompleted : false,

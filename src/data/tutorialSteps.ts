@@ -157,8 +157,8 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
       en: 'Campaign Arc: Sol 12 Training Checkpoint → Lunar Night → Sol 29 Sunrise → Sol 32 Victory',
     },
     summary: {
-      vi: 'Từ Sol 15 đến Sol 28, Mặt Trời lặn hoàn toàn: Pin Mặt Trời tạo 0 kWh và nhiệt độ bề mặt xuống -171°C. Trạm sống nhờ lò Fission (+8 kWh/Sol), pin tích trữ và dự trữ O₂/Nước.',
-      en: 'From Sol 15 through Sol 28, the Sun sets completely: Solar arrays generate 0 kWh and surface temperatures plunge to -171°C. Survival depends on your Fission reactor (+8 kWh/Sol), battery reserve, and stocked water/O₂.',
+      vi: 'Từ Sol 15 đến Sol 28, Mặt Trời lặn hoàn toàn: Pin Mặt Trời tạo 0 kWh và nhiệt độ bề mặt xuống cực tiểu mô hình -185.6°C. Trạm sống nhờ lò Fission (+8 kWh/Sol), pin tích trữ và dự trữ O₂/Nước.',
+      en: 'From Sol 15 through Sol 28, the Sun sets completely: Solar arrays generate 0 kWh and surface temperatures plunge to a modeled minimum of -185.6°C. Survival depends on your Fission reactor (+8 kWh/Sol), battery reserve, and stocked water/O₂.',
     },
     checklist: {
       vi: [

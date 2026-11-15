@@ -69,10 +69,10 @@ Engine tự xử lý ngầm `wasteWaterL` nội bộ cho WRS. Mọi thao tác ch
 ### 3.1. Hồ sơ 4 Nhà khoa học (`Role Tag`)
 | Nhân vật | Vai trò (`Role`) | Khả năng đặc biệt |
 | :--- | :--- | :--- |
-| **Sarah Chen** (`cmd`) | `Commander` | Miễn nhiễm tụt `Morale` khi trực xử lý khủng hoảng / CAPCOM. |
-| **Alex Rivera** (`eng`) | `Engineer` | Sửa hệ thống về `100%`, giảm `1 kg Parts` khi nâng cấp hệ thống trên Console (`solar / recycler / scrubber / airlock`, tối thiểu `1 kg`). |
-| **Marcus Vance** (`doc`) | `Medic` | Dùng `Medkit` hồi thêm `+20 Health`; trực `medical-care` hồi `+15 Morale` cho đồng đội. |
-| **Elena Rostova** (`geo`) | `Geologist` | Trực Rover tăng hiệu quả khai thác và giảm `50%` hao mòn độ bền thiết bị gắn theo Rover. |
+| **Ryan Mitchell** (`cmd`) | `Commander` | Miễn nhiễm tụt `Morale` khi trực xử lý khủng hoảng / CAPCOM. |
+| **Mizuki Murakami** (`eng`) | `Engineer` | Sửa hệ thống về `100%`, giảm `1 kg Parts` khi nâng cấp hệ thống trên Console (`solar / recycler / scrubber / airlock`, tối thiểu `1 kg`). |
+| **Lê Minh Trọng** (`doc`) | `Medic` | Dùng `Medkit` hồi thêm `+20 Health`; trực `medical-care` hồi `+15 Morale` cho đồng đội. |
+| **Dmitri Romanov** (`geo`) | `Geologist` | Trực Rover tăng hiệu quả khai thác và giảm `50%` hao mòn độ bền thiết bị gắn theo Rover. |
 
 ### 3.2. Chỉ số & Máy trạng thái (`FSM`)
 1. **`Health` (`0–100`, khởi đầu `80`):** `< 50` → **`Injured`** (hồi khi `>= 65` hoặc dùng `Medkit`; cấm sửa nặng & trực Rover); `<= 0` → **`Evacuated`**.
@@ -142,11 +142,11 @@ Cargo **chỉ cung cấp nguyên liệu & vật tư sinh tồn** (không gửi s
 
 | Chuyến (`Cửa sổ`) | Địa điểm | Hiểm họa (`Threat`) | Điều kiện `BlockThreat` An toàn `100%` | Thưởng (`LR Sample` + Vật tư) |
 | :--- | :--- | :--- | :--- | :--- |
-| **1 (`Sol 1–4`)** | `Lunar Crater` | Địa hình dốc | Mang **`Core Drill`** (hoặc `Elena` trực) | `Sample #1` + `+20 Science` |
+| **1 (`Sol 1–4`)** | `Lunar Crater` | Địa hình dốc | Mang **`Core Drill`** (hoặc `Dmitri` trực) | `Sample #1` + `+20 Science` |
 | **2 (`Sol 5–8`)** | `Regolith Field` | Bụi tĩnh điện + Mất sóng Sol 7 | Mang **`Dust Shield`** hoặc **`Radio Repeater`** | `Sample #2` + `+4 Parts` |
 | **3 (`Sol 9–12`)** | `PSR (Vùng tối)` | Nhiệt độ cực lạnh `-173°C` | Mang **`Cryo Thermal Rig`** (hoặc `Solar Lantern` + Pin `>= 20 kWh`) | `Sample #3` + **`+20 L Nước`** |
 
-*(Mỗi thiết bị tham gia chuyến đi sẽ giảm `50%` độ bền: `Good → Worn → Damaged`; nếu `Elena` trực giảm còn `-25%` hoặc miễn giảm lần đầu khi đồ đã nâng cấp Lv2.)*
+*(Mỗi thiết bị tham gia chuyến đi sẽ giảm `50%` độ bền: `Good → Worn → Damaged`; nếu `Dmitri` trực giảm còn `-25%` hoặc miễn giảm lần đầu khi đồ đã nâng cấp Lv2.)*
 
 ---
 

@@ -99,16 +99,17 @@
   "donkiProbability": {
     "repairBaseSuccessProb": 0.96,
     "repairHardwareStressWeight": 0.35,
-    "repairAlexBonus": 0.12,
+    "repairEngineerBonus": 0.12,
     "repairMinSuccessProb": 0.45,
     "roverBaseIncidentProb": 0.10,
     "roverStressWeight": 0.45,
     "roverBlockedMultiplier": 0.12,
-    "roverElenaMultiplier": 0.65,
+    "roverGeologistMultiplier": 0.65,
     "crewHighRadiationThreshold": 0.45,
     "crewShelterProtectionByLevel": { "1": 0.20, "2": 0.55, "3": 0.90 },
     "dustShieldRadiationBonus": 0.10,
     "backgroundMgyPerSol": 0.38,
+    "radlabSurfaceScaleFactor": 1.20228,
     "stormPeakExtraMgy": 4.5,
     "stormSystemDegradeChance": 0.35
   }

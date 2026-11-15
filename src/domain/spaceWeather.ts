@@ -1,6 +1,7 @@
 import { deriveRoll } from './prng.ts';
 import type {
   BalanceConfig,
+  CrewPhysiologyDataset,
   DonkiCatalog,
   DonkiLevel,
   DonkiSolEntry,
@@ -48,33 +49,33 @@ export function getSolWeather(
 /**
  * Compute probability in [repairMinSuccessProb, 0.99] that a repair task succeeds cleanly.
  * Interplanetary shocks (IPS), fast CMEs, and high flare stress degrade success probability;
- * assigning Engineer Alex grants an expertise bonus.
+ * assigning Engineer Mizuki grants an expertise bonus.
  */
 export function computeRepairSuccessProb(
   weather: DonkiSolEntry,
   balance: BalanceConfig,
   difficultyRiskMult: number,
-  options: { readonly isAlexAssigned: boolean }
+  options: { readonly isEngineerAssigned: boolean }
 ): number {
   if (weather.level === 'quiet' && weather.hardwareStressIndex === 0) {
     return 1.0;
   }
   const p = balance.donkiProbability;
   const penalty = weather.hardwareStressIndex * p.repairHardwareStressWeight * difficultyRiskMult;
-  const alexBonus = options.isAlexAssigned ? p.repairAlexBonus : 0;
+  const alexBonus = options.isEngineerAssigned ? p.repairEngineerBonus : 0;
   return round4(clamp(p.repairBaseSuccessProb - penalty + alexBonus, p.repairMinSuccessProb, 0.99));
 }
 
 /**
  * Compute probability of a Rover telemetry/hardware incident on the current Sol.
  * Unblocked rover hazards keep baseline risk, while fast CME / IPS storms amplify incident odds.
- * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Elena cuts risk further.
+ * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Dmitri cuts risk further.
  */
 export function computeRoverRiskProb(
   weather: DonkiSolEntry,
   balance: BalanceConfig,
   difficultyRiskMult: number,
-  options: { readonly threatBlocked: boolean; readonly isElenaOperating: boolean }
+  options: { readonly threatBlocked: boolean; readonly isGeologistOperating: boolean }
 ): number {
   if (weather.level === 'quiet' && weather.hardwareStressIndex === 0 && weather.commsNoiseIndex === 0) {
     return 0;
@@ -85,8 +86,8 @@ export function computeRoverRiskProb(
   if (options.threatBlocked) {
     prob *= p.roverBlockedMultiplier;
   }
-  if (options.isElenaOperating) {
-    prob *= p.roverElenaMultiplier;
+  if (options.isGeologistOperating) {
+    prob *= p.roverGeologistMultiplier;
   }
   return round4(clamp(prob, 0.005, 0.92));
 }
@@ -98,13 +99,28 @@ export interface CrewWeatherRisk {
   readonly stormSystemDegradeProb: number;
 }
 
+export const DEFAULT_RADLAB_SURFACE_SCALE_FACTOR = 1.20228;
+
+/**
+ * Derive lunar surface quiet-day GCR background dose (mGy/Sol) directly from the loaded
+ * NASA OSDR RadLab CRaTER orbital dataset (`convertedMeanMgyPerDay`) multiplied by the
+ * surface-albedo/duration calibration factor (~1.20228 => 0.3161 * 1.20228 = 0.38 mGy/Sol).
+ */
+export function computeRadLabSurfaceBaselineMgy(
+  crewPhysiology: CrewPhysiologyDataset,
+  surfaceScaleFactor = DEFAULT_RADLAB_SURFACE_SCALE_FACTOR
+): number {
+  return round4(crewPhysiology.convertedMeanMgyPerDay * surfaceScaleFactor);
+}
+
 /**
  * Compute expected daily crew radiation dose (mGy), acute flare injury risk, and equipment/system stress
- * driven by NASA DONKI SEP/FLR/IPS indices.
+ * driven by NASA DONKI SEP/FLR/IPS indices and grounded by NASA OSDR RadLab baseline data.
  *
  * @assumption Airlock/Storm-Shelter bulkhead level (`systems.airlock`) + operational `dust_shield` equipment
  * proxy habitat storm shielding attenuation rather than CO2 scrubber filtration.
- * Constant galactic cosmic ray (GCR) background (`backgroundMgyPerSol`) always applies even on quiet Sols.
+ * Constant galactic cosmic ray (GCR) background (driven by RadLab when supplied, else `backgroundMgyPerSol`)
+ * always applies even on quiet Sols.
  */
 export function computeCrewWeatherRisk(
   weather: DonkiSolEntry,
@@ -112,7 +128,8 @@ export function computeCrewWeatherRisk(
   difficultyRiskMult: number,
   shelterLevel: 1 | 2 | 3,
   shelterIntegrity: number,
-  hasDustShield = false
+  hasDustShield = false,
+  crewPhysiology?: CrewPhysiologyDataset
 ): CrewWeatherRisk {
   const p = balance.donkiProbability;
   const shieldFromHull =
@@ -123,7 +140,10 @@ export function computeCrewWeatherRisk(
     0,
     0.95
   );
-  const quietBackgroundMgy = round4(p.backgroundMgyPerSol * (1 - baseShield * 0.25));
+  const effectiveBackgroundMgy = crewPhysiology
+    ? computeRadLabSurfaceBaselineMgy(crewPhysiology, p.radlabSurfaceScaleFactor)
+    : p.backgroundMgyPerSol;
+  const quietBackgroundMgy = round4(effectiveBackgroundMgy * (1 - baseShield * 0.25));
 
   if (
     weather.level === 'quiet' &&
@@ -163,7 +183,11 @@ export function computeCrewWeatherRisk(
   };
 }
 
-/** Compute effective daytime solar derating factor from DONKI storm intensity (0 during lunar night). */
+/**
+ * Compute effective daytime solar derating factor (`solarPenaltyPct`) during DONKI geomagnetic/SEP/CME storms
+ * (0 during lunar night). Models protective PV shunt throttling and solar-proton cell degradation—NOT lunar
+ * dust clouds, since the atmosphere-free Moon cannot suspend windborne dust.
+ */
 export function computeWeatherPowerPenalty(weather: DonkiSolEntry, isLunarNight: boolean): number {
   if (isLunarNight) return 0;
   return round4(clamp(weather.solarPenaltyPct, 0, 0.3));
@@ -176,12 +200,13 @@ export interface WeatherOutlook {
   readonly repairSuccessProb: number;
   readonly roverIncidentProb: number;
   readonly crewWeatherRisk: CrewWeatherRisk;
+  readonly radlabBaselineMgyPerSol?: number;
   readonly solarPenaltyPct: number;
   readonly headline: string | null;
 }
 
 export function selectStormTargets(seed: number, sol: number): SystemId {
-  const candidates: readonly SystemId[] = ['solar', 'recycler', 'scrubber', 'airlock'];
+  const candidates: readonly SystemId[] = ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'];
   const roll = deriveRoll(seed, sol, 'storm-target');
   const idx = Math.min(candidates.length - 1, Math.floor(roll * candidates.length));
   return candidates[idx];

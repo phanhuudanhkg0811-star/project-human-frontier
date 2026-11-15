@@ -507,16 +507,17 @@ export interface BalanceConfig {
   readonly donkiProbability: {
     readonly repairBaseSuccessProb: number;
     readonly repairHardwareStressWeight: number;
-    readonly repairAlexBonus: number;
+    readonly repairEngineerBonus: number;
     readonly repairMinSuccessProb: number;
     readonly roverBaseIncidentProb: number;
     readonly roverStressWeight: number;
     readonly roverBlockedMultiplier: number;
-    readonly roverElenaMultiplier: number;
+    readonly roverGeologistMultiplier: number;
     readonly crewHighRadiationThreshold: number;
     readonly crewShelterProtectionByLevel: Readonly<Record<'1' | '2' | '3', number>>;
     readonly dustShieldRadiationBonus: number;
     readonly backgroundMgyPerSol: number;
+    readonly radlabSurfaceScaleFactor?: number;
     readonly stormPeakExtraMgy: number;
     readonly stormSystemDegradeChance: number;
   };
@@ -757,6 +758,7 @@ export interface ScienceBrief {
   readonly content: string;
   readonly contentEn?: string;
   readonly source: string;
+  readonly sourceUrl: string;
   readonly provenance: ProvenanceTag;
 }
 
@@ -850,6 +852,7 @@ export type GameCommand =
   | { readonly type: 'rover/cancel-schedule' }
   | { readonly type: 'rover/recover-signal' }
   | { readonly type: 'rover/set-recovery-operator'; readonly crewId: CrewId }
+  | { readonly type: 'rover/clear-recovery-operator' }
   | { readonly type: 'crew/use-medkit'; readonly targetCrewId: CrewId; readonly administeredByCrewId?: CrewId }
   | { readonly type: 'rationing/set-wrs'; readonly enabled: boolean }
   | { readonly type: 'rationing/set-power-priority'; readonly order: readonly PowerConsumerId[] }
@@ -924,6 +927,7 @@ export interface ForecastPoint {
   readonly oxygenKg: number;
   readonly waterL: number;
   readonly partsKg: number;
+  readonly mrePacks: number;
   readonly isLunarNight: boolean;
   readonly weatherLevel: DonkiLevel;
 }

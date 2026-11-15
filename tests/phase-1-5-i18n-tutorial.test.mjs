@@ -68,6 +68,7 @@ test('Phase 1.5 NASA science briefs include bilingual titleEn and contentEn for 
   for (const brief of bundle.briefs) {
     assert.ok(typeof brief.titleEn === 'string' && brief.titleEn.trim().length > 0, `${brief.id} missing titleEn`);
     assert.ok(typeof brief.contentEn === 'string' && brief.contentEn.trim().length > 0, `${brief.id} missing contentEn`);
+    assert.match(brief.sourceUrl, /^https:\/\//, `${brief.id} missing HTTPS sourceUrl`);
   }
 });
 
@@ -110,16 +111,16 @@ test('Phase 1.5 tutorialSteps covers 5 complete bilingual onboarding steps', () 
 
 test('Phase 1.5 useUiStore works safely under Node without window and preserves prefs across resetCampaignUi', () => {
   const store = mod.useUiStore;
-  assert.equal(store.getState().locale, 'vi');
+  assert.equal(store.getState().locale, 'en');
   assert.equal(store.getState().audioMuted, false);
   assert.equal(store.getState().tutorialCompleted, false);
 
-  store.getState().setLocale('en');
+  store.getState().setLocale('vi');
   store.getState().toggleAudioMute();
   store.getState().setTutorialStep(3);
   store.getState().openModal('tutorial');
 
-  assert.equal(store.getState().locale, 'en');
+  assert.equal(store.getState().locale, 'vi');
   assert.equal(store.getState().audioMuted, true);
   assert.equal(store.getState().tutorialStep, 3);
   assert.equal(store.getState().activeModal, 'tutorial');
@@ -135,12 +136,12 @@ test('Phase 1.5 useUiStore works safely under Node without window and preserves 
   store.getState().openModal('starlog');
   store.getState().resetCampaignUi();
   assert.equal(store.getState().activeModal, null);
-  assert.equal(store.getState().locale, 'en');
+  assert.equal(store.getState().locale, 'vi');
   assert.equal(store.getState().audioMuted, true);
   assert.equal(store.getState().tutorialCompleted, true);
 
   store.getState().resetTutorial();
-  store.getState().setLocale('vi');
+  store.getState().setLocale('en');
   store.getState().setAudioMuted(false);
   assert.equal(store.getState().tutorialCompleted, false);
 });
@@ -156,11 +157,11 @@ test('Phase 1.5 procedural audio contract is a safe no-op without browser Web Au
 
 test('Phase 1.5 localizeDomainText translates engine errors, Sol logs, CAPCOM replies, and event logs in EN mode', () => {
   const bundle = mod.loadContentBundle();
-  const sampleErr = 'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.';
+  const sampleErr = 'Trọng phải Fit và rảnh để trực tiếp dùng Medkit.';
   assert.equal(mod.localizeDomainText(sampleErr, 'vi', bundle), sampleErr);
   assert.equal(
     mod.localizeDomainText(sampleErr, 'en', bundle),
-    'Marcus must be Fit and idle to directly administer a Medkit.'
+    'Trọng must be Fit and idle to directly administer a Medkit.'
   );
 
   const solLog = 'Kết thúc Sol 1: Pin 60 kWh, O₂ 66.6 kg, Nước 70 L.';

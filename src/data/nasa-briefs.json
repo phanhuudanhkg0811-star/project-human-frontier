@@ -4,9 +4,10 @@
     "tags": ["baseline", "lunar-night"],
     "title": "Chu kỳ Ngày & Đêm 29.5 ngày trên Mặt Trăng",
     "titleEn": "The 29.5-Day Lunar Day-Night Cycle",
-    "content": "Một ngày-đêm trên Mặt Trăng dài khoảng 708.7 giờ (~29.5 ngày Trái Đất). Trong 14 Sol Đêm Trăng (Sol 15-28), nhiệt độ bề mặt đo từ tàu LRO Diviner giảm xuống tới -171.7°C và tấm pin Solar không nhận được ánh sáng — toàn trạm phải dựa vào lò hạt nhân nhỏ Fission (+8 kWh/Sol) và pin tích trữ.",
-    "contentEn": "One full lunar day-night cycle lasts about 708.7 hours (~29.5 Earth days). During the 14-Sol Lunar Night (Sol 15-28), surface temperatures measured by LRO Diviner plunge to -171.7°C and solar arrays receive zero sunlight — the entire habitat must rely on its compact Fission reactor (+8 kWh/Sol) and stored battery power.",
-    "source": "NASA LRO Diviner Thermal Calibration (Observed, R² = 0.954)",
+    "content": "Chu kỳ pha Mặt Trời của Mặt Trăng dài khoảng 708.7 giờ (~29.5 ngày Trái Đất). Mô hình nhiệt dùng ô dữ liệu LRO Diviner GCP cực Nam gần Connecting Ridge: cực đại ban ngày -27.16°C, cực tiểu ban đêm -185.62°C; đường khớp theo giờ địa phương có R² = 0.9268. Chiến dịch ánh xạ profile này vào chu kỳ gameplay 28 Sol.",
+    "contentEn": "The Moon's solar phase cycle lasts about 708.7 hours (~29.5 Earth days). The thermal model uses a South Polar LRO Diviner GCP cell near Connecting Ridge: -27.16°C daytime maximum and -185.62°C nighttime minimum, with a local-time fit of R² = 0.9268. The campaign maps this profile onto a 28-Sol gameplay cycle.",
+    "source": "NASA LRO Diviner GCP polar cell (Observed; -89.25°, 222.75°E; R² = 0.9268)",
+    "sourceUrl": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab",
     "provenance": "observed"
   },
   {
@@ -17,6 +18,7 @@
     "content": "Mỗi phi hành gia cần khoảng 2.5 L nước sạch/Sol và thải ra ~2.2 L nước xám. Hệ thống WRS thực tế trên trạm vũ trụ có thể thu hồi 90% đến 95% lượng nước này bằng chưng cất chân không và lọc màng, giúp kéo dài thời gian sống sót mà không phụ thuộc hoàn toàn vào tàu tiếp tế.",
     "contentEn": "Each astronaut needs about 2.5 L of clean water per Sol and produces ~2.2 L of greywater. An actual space station Water Recovery System reclaims 90% to 95% of this wastewater via vacuum distillation and membrane filtration, extending survival without full reliance on cargo resupply.",
     "source": "NASA ECLSS Baseline (Observed / Adapted for Moon 32)",
+    "sourceUrl": "https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/",
     "provenance": "observed"
   },
   {
@@ -24,9 +26,10 @@
     "tags": ["donki-storm", "radiation"],
     "title": "Bão Mặt Trời (Flare / CME / SEP) & Nguy cơ trên Mặt Trăng",
     "titleEn": "Solar Storms (Flare / CME / SEP) & Lunar Surface Hazards",
-    "content": "Khác với Trái Đất, Mặt Trăng không có từ quyển hay khí quyển dày bảo vệ. Khi dữ liệu NASA DONKI ghi nhận Solar Flare cấp M/X hoặc sự kiện proton SEP và xung kích IPS, tỷ lệ sửa chữa thiết bị thành công giảm xuống, rủi ro hư hỏng Rover tăng lên và phi hành gia tích lũy liều bức xạ (mGy) nhanh hơn nếu Scrubber/che chắn chưa được nâng cấp.",
-    "contentEn": "Unlike Earth, the Moon has no global magnetosphere or thick atmosphere for shielding. When NASA DONKI telemetry flags an M/X-class Solar Flare, Solar Energetic Particle (SEP) event, or Interplanetary Shock (IPS), repair success drops, rover incident risk rises, and crew accumulate radiation dose (mGy) faster unless Scrubber and shielding upgrades are installed.",
-    "source": "NASA CCMC DONKI Space Weather Database (FLR / CME / SEP / IPS)",
+    "content": "Khác với Trái Đất, Mặt Trăng không có từ quyển hay khí quyển dày bảo vệ. Khi dữ liệu NASA DONKI ghi nhận Solar Flare cấp M/X hoặc sự kiện proton SEP và xung kích IPS, tỷ lệ sửa chữa thiết bị thành công giảm xuống, rủi ro hư hỏng Rover tăng lên, hệ thống pin Mặt Trời tự giảm tải bảo vệ & suy giảm nhẹ hiệu suất cell (solarPenaltyPct, không phải do bão bụi che nắng), và phi hành gia tích lũy liều bức xạ (mGy) nhanh hơn nếu che chắn bức xạ chưa được nâng cấp. Chú thích: Dữ liệu thực nghiệm quỹ đạo LRO CRaTER đo được trung bình ~0.316 mGy/ngày, nhân với hệ số quy đổi bề mặt 1.20228 để điều khiển trực tiếp mức nền 0.38 mGy/Sol trong runtime Moon 32.",
+    "contentEn": "Unlike Earth, the Moon has no global magnetosphere or thick atmosphere for shielding. When NASA DONKI telemetry flags an M/X-class Solar Flare, Solar Energetic Particle (SEP) event, or Interplanetary Shock (IPS), repair success drops, rover incident risk rises, solar arrays undergo protective shunt derating and proton cell degradation (solarPenaltyPct, not dust clouds), and crew accumulate radiation dose (mGy) faster unless radiation shielding upgrades are installed. Note: Empirical LRO CRaTER orbital measurements average ~0.316 mGy/day and scale by 1.20228 directly in the Moon 32 runtime to produce the 0.38 mGy/Sol surface background baseline.",
+    "source": "NASA CCMC DONKI Space Weather Database & LRO CRaTER RadLab (0.316 mGy/day × 1.20228 = 0.38 mGy/Sol runtime baseline)",
+    "sourceUrl": "https://api.nasa.gov/DONKI/",
     "provenance": "observed"
   },
   {
@@ -37,6 +40,7 @@
     "content": "Một phi hành gia trưởng thành tiêu thụ trung bình 0.85 kg khí Oxy tinh khiết mỗi ngày để trao đổi chất. Chỉ cần Airlock rò rỉ hoặc kho Oxy tụt về 0 kg trong 1 Sol, toàn bộ trạm sẽ rơi vào tình trạng mất áp và nguy kịch ngay lập tức.",
     "contentEn": "An adult astronaut consumes an average of 0.85 kg of pure oxygen per day for normal metabolism. If the Airlock develops a leak or oxygen reserves hit 0 kg within a single Sol, the entire habitat immediately enters a life-threatening depressurization emergency.",
     "source": "NASA Human Integration Design Handbook (HIDH)",
+    "sourceUrl": "https://www.nasa.gov/reference/vehicle-systems-interfaces-structure-environmental-design/",
     "provenance": "observed"
   },
   {
@@ -47,6 +51,7 @@
     "content": "Ánh sáng và sóng vô tuyến truyền đi ở vận tốc ~299,792 km/giây. Với khoảng cách trung bình ~384,400 km, tín hiệu từ trạm Artemis mất khoảng 1.28 giây để tới Houston (khoảng 2.6 giây khứ hồi) — cho phép hội thoại gần như thời gian thực nhưng tàu tiếp tế Cargo cần tới 4 Sol để bay tới bãi đáp.",
     "contentEn": "Light and radio waves travel at ~299,792 km/s. Across the average ~384,400 km Earth–Moon distance, telemetry from an Artemis base takes ~1.28 seconds to reach Houston (~2.6 seconds round-trip) — fast enough for voice coordination, while physical cargo landers still require 4 Sols to arrive at the landing pad.",
     "source": "NASA Deep Space Network Lunar Telemetry",
+    "sourceUrl": "https://www.nasa.gov/communicating-with-missions/dsn/",
     "provenance": "observed"
   },
   {
@@ -54,9 +59,10 @@
     "tags": ["regolith", "isru", "dust"],
     "title": "Bụi Tĩnh điện Regolith & Khai thác Tài nguyên tại chỗ (ISRU)",
     "titleEn": "Electrostatic Lunar Dust & In-Situ Resource Utilization (ISRU)",
-    "content": "Hạt bụi regolith trên Mặt Trăng sắc nhọn như mảnh thủy tinh vì không bị gió nước bào mòn và dễ nhiễm điện tích dưới bức xạ tử ngoại/plasma. Chúng bám chặt vào gioăng Airlock và bộ tản nhiệt, nhưng đồng thời chứa tới ~40% khối lượng là Oxy liên kết trong khoáng vật ilmenit và silicat có thể tách chiết làm vật liệu in 3D.",
-    "contentEn": "Unweathered by wind or water, lunar regolith grains are jagged like crushed glass and become electrostatically charged by UV and plasma exposure. This abrasive dust clings to Airlock seals and radiators, yet ilmenite and silicate minerals hold ~40% oxygen by mass that ISRU plants can extract alongside 3D-printing feedstock.",
+    "content": "Hạt bụi regolith trên Mặt Trăng sắc nhọn như mảnh thủy tinh vì không bị gió nước bào mòn và dễ nhiễm điện tích dưới bức xạ tử ngoại/plasma. Chúng bám chặt vào gioăng Airlock và theo bộ đồ EVA lọt vào làm nghẽn bộ lọc CO₂ Scrubber trong khoang, nhưng đồng thời chứa tới ~40% khối lượng là Oxy liên kết trong khoáng vật ilmenit và silicat có thể tách chiết làm vật liệu in 3D.",
+    "contentEn": "Unweathered by wind or water, lunar regolith grains are jagged like crushed glass and become electrostatically charged by UV and plasma exposure. This abrasive dust clings to Airlock seals and gets tracked indoors on EVA suits to foul cabin CO₂ Scrubber filters, yet ilmenite and silicate minerals hold ~40% oxygen by mass that ISRU plants can extract alongside 3D-printing feedstock.",
     "source": "NASA Artemis ISRU & Lunar Dust Mitigation Project",
+    "sourceUrl": "https://www.nasa.gov/mission/in-situ-resource-utilization-isru/",
     "provenance": "observed"
   },
   {
@@ -67,6 +73,7 @@
     "content": "Do trục nghiêng của Mặt Trăng chỉ khoảng 1.54°, đáy các miệng hố sâu vùng Nam Cực như Shackleton và Haworth chưa từng thấy ánh nắng suốt hàng tỷ năm. Nhiệt độ cực thấp (-170°C đến -230°C) biến nơi đây thành bẫy lạnh giữ lại băng nước từ sao chổi, cung cấp nguồn nước sống còn cho căn cứ Artemis.",
     "contentEn": "Because the Moon's axial tilt is only ~1.54°, the floors of deep South Polar craters like Shackleton and Haworth have seen zero sunlight for billions of years. Cryogenic temperatures (-170°C to -230°C) act as cold traps preserving ancient cometary water ice — a vital resource for Artemis habitats.",
     "source": "NASA LCROSS Impact Plume & LRO Diviner Polar Observations",
+    "sourceUrl": "https://science.nasa.gov/mission/lcross/",
     "provenance": "observed"
   },
   {
@@ -77,6 +84,7 @@
     "content": "Để vượt qua 14 ngày Đêm Trăng không có nắng, NASA và DOE phát triển lò phản ứng phân hạch nhỏ dùng ống dẫn nhiệt Natri-Kali (NaK) và động cơ Stirling. Lò cung cấp dòng điện nền ổn định bất chấp bão bụi hay đêm tối dài 336 giờ.",
     "contentEn": "To power lunar outposts through 14 sunless days, NASA and DOE designed compact fission surface power systems using NaK heat pipes and Stirling engines. They deliver steady baseload electricity regardless of electrostatic dust storms or a 336-hour polar night.",
     "source": "NASA Glenn Research Center / DOE Kilopower KRUSTY Test",
+    "sourceUrl": "https://www.nasa.gov/exploration-systems-development-mission-directorate/fission-surface-power/",
     "provenance": "inferred"
   },
   {
@@ -87,6 +95,7 @@
     "content": "Sống trong không gian kín suốt 14 ngày đêm tối liên tục dễ gây rối loạn giấc ngủ, suy giảm melatonin và mệt mỏi nhận thức. NASA ứng dụng hệ thống chiếu sáng quang phổ biến thiên (Solid-State Lighting) mô phỏng ánh nắng ban ngày để đồng bộ đồng hồ sinh học 24 giờ cho phi hành đoàn.",
     "contentEn": "Living in an enclosed habitat during 14 consecutive days of darkness can disrupt sleep cycles, suppress melatonin regulation, and cause cognitive fatigue. NASA uses tunable Solid-State Lighting that mimics Earth daylight spectra to keep astronauts' 24-hour circadian clocks synchronized.",
     "source": "NASA Human Research Program (HRP) Behavioral Health & Circadian Lighting",
+    "sourceUrl": "https://www.nasa.gov/reference/jsc-lighting/",
     "provenance": "observed"
   },
   {
@@ -94,9 +103,10 @@
     "tags": ["fabricator", "parts", "engineering"],
     "title": "Chế tạo In 3D tại chỗ trong Không gian (In-Space Manufacturing)",
     "titleEn": "In-Space 3D Manufacturing & On-Demand Spare Parts",
-    "content": "Thay vì mang theo hàng trăm phụ tùng dự phòng từ Trái Đất với chi phí phóng đắt đỏ, máy in 3D Fabricator trên trạm cho phép đùn sợi polymer-hợp kim để chế tạo gioăng kín, tấm chắn bụi và linh kiện sửa chữa ngay khi phát sinh sự cố.",
-    "contentEn": "Instead of launching hundreds of costly spare parts from Earth, an onboard 3D Fabricator extrudes aerospace polymers and metal alloys to print gaskets, dust shields, and precision repair tools right when hardware failures strike.",
+    "content": "Thay vì mang theo hàng trăm phụ tùng dự phòng từ Trái Đất với chi phí phóng đắt đỏ, máy in 3D Fabricator trên trạm cho phép đùn sợi polymer-hợp kim để chế tạo gioăng kín, tấm chắn bụi và linh kiện sửa chữa ngay khi phát sinh sự cố. Trong cơ chế mô phỏng (gameplay abstraction), việc chế tạo MRE/Medkit từ Phụ tùng + Nước đại diện cho tổng hợp khẩu phần đóng gói và vật tư y tế tiêu chuẩn.",
+    "contentEn": "Instead of launching hundreds of costly spare parts from Earth, an onboard 3D Fabricator extrudes aerospace polymers and metal alloys to print gaskets, dust shields, and precision repair tools right when hardware failures strike. As a gameplay abstraction in Moon 32, crafting MREs or Medkits from Parts and Water represents standardized galley packaging and medical kit assembly.",
     "source": "NASA In-Space Manufacturing (ISM) & ISS 3D Printer Tech Demo",
+    "sourceUrl": "https://www.nasa.gov/stem-content/stemonstration-3d-printing/",
     "provenance": "inferred"
   }
 ]
