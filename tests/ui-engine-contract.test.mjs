@@ -124,6 +124,15 @@ test('engine: radio ticks are a no-op until the reply is actually due', () => {
   assert.equal(due.state.revision, sent.state.revision + 1);
 });
 
+test('balance: HUD warning thresholds are declared in balance.json, not hardcoded', () => {
+  for (const [key, storage] of Object.entries(bundle.balance.storages)) {
+    assert.ok(storage.warnBelow > 0, `${key}.warnBelow must be positive`);
+    assert.ok(storage.warnBelow < storage.max, `${key}.warnBelow must sit below the cap`);
+  }
+  const mre = bundle.balance.consumables.mrePacks;
+  assert.ok(mre.warnBelow > 0 && mre.warnBelow < mre.max);
+});
+
 test('selectors: selectCanAssignTask mirrors the crew/assign gate', () => {
   const base = engineeringState();
   const crewWith = (patch) => ({ ...base, crew: { ...base.crew, eng: { ...base.crew.eng, ...patch } } });
