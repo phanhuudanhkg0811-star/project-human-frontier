@@ -199,10 +199,10 @@ const EXACT_VI_TO_EN: Record<string, string> = {
     'No Medkits remaining in stock.',
   'Không thể điều trị phi hành gia đã evacuated.':
     'Cannot treat an evacuated astronaut.',
-  'Chỉ Marcus Vance có bonus khi trực tiếp dùng Medkit.':
-    'Only Marcus Vance provides a bonus when directly administering a Medkit.',
-  'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.':
-    'Marcus must be Fit and idle to directly administer a Medkit.',
+  'Chỉ Mizuki Murakami có bonus khi trực tiếp dùng Medkit.':
+    'Only Mizuki Murakami provides a bonus when directly administering a Medkit.',
+  'Mizuki phải Fit và rảnh để trực tiếp dùng Medkit.':
+    'Mizuki must be Fit and idle to directly administer a Medkit.',
   'Chỉ bật/tắt WRS trong pha Kỹ thuật hoặc Phân phối.':
     'WRS can only be toggled in Engineering or Rationing.',
   'Chỉ chỉnh thứ tự ưu tiên điện trong pha Phân phối.':

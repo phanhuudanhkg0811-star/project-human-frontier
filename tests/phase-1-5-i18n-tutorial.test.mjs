@@ -157,11 +157,11 @@ test('Phase 1.5 procedural audio contract is a safe no-op without browser Web Au
 
 test('Phase 1.5 localizeDomainText translates engine errors, Sol logs, CAPCOM replies, and event logs in EN mode', () => {
   const bundle = mod.loadContentBundle();
-  const sampleErr = 'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.';
+  const sampleErr = 'Mizuki phải Fit và rảnh để trực tiếp dùng Medkit.';
   assert.equal(mod.localizeDomainText(sampleErr, 'vi', bundle), sampleErr);
   assert.equal(
     mod.localizeDomainText(sampleErr, 'en', bundle),
-    'Marcus must be Fit and idle to directly administer a Medkit.'
+    'Mizuki must be Fit and idle to directly administer a Medkit.'
   );
 
   const solLog = 'Kết thúc Sol 1: Pin 60 kWh, O₂ 66.6 kg, Nước 70 L.';

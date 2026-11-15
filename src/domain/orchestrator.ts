@@ -858,14 +858,14 @@ export function dispatchDomainCommand(
       const crew = { ...state.crew };
       if (command.administeredByCrewId !== undefined) {
         if (command.administeredByCrewId !== 'doc') {
-          return fail(state, 'E_PLAN_INVALID', 'Chỉ Marcus Vance có bonus khi trực tiếp dùng Medkit.');
+          return fail(state, 'E_PLAN_INVALID', 'Chỉ Mizuki Murakami có bonus khi trực tiếp dùng Medkit.');
         }
         const medic = state.crew.doc;
         if (medic.condition !== 'fit' || medic.assignedTask !== null) {
-          return fail(state, 'E_PLAN_INVALID', 'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.');
+          return fail(state, 'E_PLAN_INVALID', 'Mizuki phải Fit và rảnh để trực tiếp dùng Medkit.');
         }
         medicBonus = bundle.balance.consumables.medkits.medicBonus;
-        // Occupies Marcus's task slot, but must not also apply the separate End-Sol medical-care heal.
+        // Occupies Mizuki's task slot, but must not also apply the separate End-Sol medical-care heal.
         crew.doc = { ...medic, assignedTask: { type: 'medical-care' } };
       }
       const baseHeal = state.resources.medkitLevel === 2

@@ -507,12 +507,12 @@ export interface BalanceConfig {
   readonly donkiProbability: {
     readonly repairBaseSuccessProb: number;
     readonly repairHardwareStressWeight: number;
-    readonly repairAlexBonus: number;
+    readonly repairEngineerBonus: number;
     readonly repairMinSuccessProb: number;
     readonly roverBaseIncidentProb: number;
     readonly roverStressWeight: number;
     readonly roverBlockedMultiplier: number;
-    readonly roverElenaMultiplier: number;
+    readonly roverGeologistMultiplier: number;
     readonly crewHighRadiationThreshold: number;
     readonly crewShelterProtectionByLevel: Readonly<Record<'1' | '2' | '3', number>>;
     readonly dustShieldRadiationBonus: number;

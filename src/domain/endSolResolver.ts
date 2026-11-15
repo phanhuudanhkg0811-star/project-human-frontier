@@ -170,7 +170,7 @@ function resolveRepairAndUpgradeTasks(
   const upgradeWorkers = crewList.filter((c) => c.assignedTask?.type === 'upgrade-system' && c.assignedTask.targetSystemId);
 
   const baselineRepairProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
-    isAlexAssigned: repairWorkers.some((w) => w.id === 'eng'),
+    isEngineerAssigned: repairWorkers.some((w) => w.id === 'eng'),
   });
 
   const systems: Record<SystemId, StationSystemState> = { ...state.systems };
@@ -200,7 +200,7 @@ function resolveRepairAndUpgradeTasks(
         1
       );
       const baseProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
-        isAlexAssigned: worker.id === 'eng',
+        isEngineerAssigned: worker.id === 'eng',
       });
       // Health degrades the *storm penalty*, not the quiet-Sol baseline, so a
       // healthy crew still completes routine repairs deterministically.
@@ -930,7 +930,7 @@ function resolveRoverTick(
         clamp(
           computeRoverRiskProb(weather, bundle.balance, diffMult, {
             threatBlocked,
-            isElenaOperating:
+            isGeologistOperating:
               mission.launchOperatorCrewId === 'geo' || mission.recoveryOperatorCrewId === 'geo',
           }) * operatorRiskFactor,
           0.005,

@@ -35,7 +35,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
     gameState.resources.medkits > 0 &&
     medTargetCrew.condition !== 'evacuated' &&
     medTargetCrew.health < 100;
-  const canMarcusAssist =
+  const canMedicAssist =
     canUseMedkit && gameState.crew.doc.condition === 'fit' && gameState.crew.doc.assignedTask === null;
 
   const handleAssign = async (crewId: CrewId, task: 'rest' | 'emergency-response' | 'medical-care') => {
@@ -55,11 +55,11 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
     setNote(res.ok ? res.effects[0]?.message ?? t('character.unassigned') : res.error.message);
   };
 
-  const handleMedkit = async (withMarcus: boolean) => {
+  const handleMedkit = async (withMedic: boolean) => {
     const res = await dispatch({
       type: 'crew/use-medkit',
       targetCrewId: medTarget,
-      administeredByCrewId: withMarcus ? 'doc' : undefined,
+      administeredByCrewId: withMedic ? 'doc' : undefined,
     });
     if (res.ok) playSfx('repair', 0.55);
     setNote(res.ok ? res.effects[0]?.message ?? t('character.medkitUsed') : res.error.message);
@@ -111,12 +111,12 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
             </button>
             <button
               type="button"
-              disabled={!canMarcusAssist}
-              title={canMarcusAssist ? undefined : canUseMedkit ? t('character.marcusHint') : t('character.medkitHint')}
+              disabled={!canMedicAssist}
+              title={canMedicAssist ? undefined : canUseMedkit ? t('character.medicHint') : t('character.medkitHint')}
               onClick={() => handleMedkit(true)}
               className="hail-btn hail-btn--accent"
             >
-              {t('character.marcusAdminister')}
+              {t('character.medicAdminister')}
             </button>
           </div>
         </div>

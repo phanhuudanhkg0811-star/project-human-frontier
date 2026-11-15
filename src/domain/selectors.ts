@@ -273,13 +273,13 @@ export function selectWeatherOutlook(state: GameState, bundle: ContentBundle, cr
   const diffMult = bundle.campaign.difficultyProfiles[state.campaign.difficulty].weatherRiskMultiplier;
   const isNight = sol >= bundle.campaign.milestones.lunarNight.startSol && sol <= bundle.campaign.milestones.lunarNight.endSol;
   const repairSuccessProb = computeRepairSuccessProb(weather, bundle.balance, diffMult, {
-    isAlexAssigned: crewId === 'eng' || state.crew.eng.assignedTask?.type === 'repair-system',
+    isEngineerAssigned: crewId === 'eng' || state.crew.eng.assignedTask?.type === 'repair-system',
   });
   const roverIncidentProb = computeRoverRiskProb(weather, bundle.balance, diffMult, {
     threatBlocked: state.rover.activeMission
       ? selectMitigationSatisfied(state, bundle, state.rover.activeMission.expeditionId, state.rover.activeMission.equippedItems)
       : false,
-    isElenaOperating: crewId === 'geo' || state.crew.geo.assignedTask?.type === 'rover-operate',
+    isGeologistOperating: crewId === 'geo' || state.crew.geo.assignedTask?.type === 'rover-operate',
   });
   const crewWeatherRisk = computeCrewWeatherRisk(
     weather,

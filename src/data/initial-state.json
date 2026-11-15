@@ -44,7 +44,7 @@
   "crew": {
     "cmd": {
       "id": "cmd",
-      "name": "Sarah Chen",
+      "name": "Ryan Mitchell",
       "roleTag": "Commander",
       "health": 80,
       "morale": 80,
@@ -56,7 +56,7 @@
     },
     "eng": {
       "id": "eng",
-      "name": "Alex Rivera",
+      "name": "Dmitri Romanov",
       "roleTag": "Engineer",
       "health": 80,
       "morale": 80,
@@ -68,7 +68,7 @@
     },
     "doc": {
       "id": "doc",
-      "name": "Marcus Vance",
+      "name": "Mizuki Murakami",
       "roleTag": "Medic",
       "health": 80,
       "morale": 80,
@@ -80,7 +80,7 @@
     },
     "geo": {
       "id": "geo",
-      "name": "Elena Rostova",
+      "name": "Lê Minh Trọng",
       "roleTag": "Geologist",
       "health": 80,
       "morale": 80,
