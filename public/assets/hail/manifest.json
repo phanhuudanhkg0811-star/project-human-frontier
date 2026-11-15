@@ -6,105 +6,13 @@
     "policy": "NASA Space Apps Challenge - Use of Super Intelligence (SI)",
     "summary": "Artist-drawn comic & crew illustrations are non-SI originals (no SI watermark); all SI-generated WebP images carry visible SI watermarks, and SI-generated OGG audio plus SI-assisted code/telemetry helpers are disclosed in metadata and Credits.",
     "originCounts": {
-      "artist-human": 28,
-      "si-generated": 87,
+      "artist-human": 24,
+      "si-generated": 95,
       "procedural-vector": 24
     }
   },
-  "assetCount": 139,
+  "assetCount": 143,
   "assets": [
-    {
-      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic",
-      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic.webp",
-      "mediaType": "image/webp",
-      "bytes": 443258,
-      "dimensions": {
-        "width": 8598,
-        "height": 6071
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "misc",
-      "state": "default",
-      "origin": "artist-human",
-      "siGenerated": false,
-      "watermarkApplied": false,
-      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
-      "license": "Project-owned human artwork; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "cbd709e9e1a9b0348d3ae11a6a5f57f1d6bfe23ca47fd96bc7af4d419f9d1ab5"
-    },
-    {
-      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic2",
-      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic2.webp",
-      "mediaType": "image/webp",
-      "bytes": 135134,
-      "dimensions": {
-        "width": 6071,
-        "height": 8598
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "misc",
-      "state": "default",
-      "origin": "artist-human",
-      "siGenerated": false,
-      "watermarkApplied": false,
-      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
-      "license": "Project-owned human artwork; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "fe576f30d07bb157023ee18973ccb226a5f25ab1a6c5385dbf62b851ad7f11dd"
-    },
-    {
-      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic3",
-      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic3.webp",
-      "mediaType": "image/webp",
-      "bytes": 179996,
-      "dimensions": {
-        "width": 8598,
-        "height": 6071
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "misc",
-      "state": "default",
-      "origin": "artist-human",
-      "siGenerated": false,
-      "watermarkApplied": false,
-      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
-      "license": "Project-owned human artwork; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "27377b5c50c9195a32a1f480158895dd7006d8630469ecb3e9e803933baa5ac2"
-    },
-    {
-      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic4",
-      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic4.webp",
-      "mediaType": "image/webp",
-      "bytes": 46722,
-      "dimensions": {
-        "width": 8598,
-        "height": 6071
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "misc",
-      "state": "default",
-      "origin": "artist-human",
-      "siGenerated": false,
-      "watermarkApplied": false,
-      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
-      "license": "Project-owned human artwork; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "efbbedae11e1eb5d33d4330f6cad628b774151516c28ab7beaae9e68c3805cca"
-    },
     {
       "id": "audio:PH_MUS_LUNAR_BASE_LOOP_V01",
       "path": "/assets/hail/audio/PH_MUS_LUNAR_BASE_LOOP_V01.ogg",
@@ -274,6 +182,144 @@
       "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "76d9e58781beffe1e83111b292336fc46c54a62f310d6e59e686d6f7a6865bb1"
+    },
+    {
+      "id": "characters:PH_CHAR_ALEX_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ALEX_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 78490,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "0f3381bb2e2fb19b4f872944c5f6ef719628fa77f5786ddcb119c569d4a0bbb0"
+    },
+    {
+      "id": "characters:PH_CHAR_ALEX_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ALEX_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 68472,
+      "dimensions": {
+        "width": 230,
+        "height": 410
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "9ee13a53d4b2325816ef3ccad7bc32e4289f68948706c67e5a8b02552ceebd7c"
+    },
+    {
+      "id": "characters:PH_CHAR_ELENA_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ELENA_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 97434,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "f2ec1ebe8e7a1c41893a935fae1ecc274a191300a632ff09db1e53159605bd22"
+    },
+    {
+      "id": "characters:PH_CHAR_ELENA_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_ELENA_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 114238,
+      "dimensions": {
+        "width": 307,
+        "height": 616
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "27fce953e2136388b335ff19025351c226b53f7e5f1f153cc93cd8ecaed4cb1a"
+    },
+    {
+      "id": "characters:PH_CHAR_MARCUS_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_MARCUS_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 75422,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "af68bb8fa42d9a8e26a1f71c1783598824dcc8287a2e3d22e390bdb14c9439dc"
+    },
+    {
+      "id": "characters:PH_CHAR_MARCUS_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_MARCUS_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 64458,
+      "dimensions": {
+        "width": 230,
+        "height": 410
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "d035813703453a3e90b9e2794848c28e8b3a8d4fea27e3d4fd709f6b4620e930"
     },
     {
       "id": "characters:PH_CHAR_NV1_PORTRAIT_HUNGRY_V02",
@@ -550,6 +596,52 @@
       "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "f8d6420320716762af282ff7a0c93ae6e77e69140531231dc6e4b32c0ca20c75"
+    },
+    {
+      "id": "characters:PH_CHAR_SARAH_PORTRAIT_V01",
+      "path": "/assets/hail/characters/PH_CHAR_SARAH_PORTRAIT_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 68844,
+      "dimensions": {
+        "width": 840,
+        "height": 768
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "64de7b69194026af782bd383c315c4b1449703930bf79781328afc52cb627e73"
+    },
+    {
+      "id": "characters:PH_CHAR_SARAH_SEATED_BASE_V01",
+      "path": "/assets/hail/characters/PH_CHAR_SARAH_SEATED_BASE_V01.webp",
+      "mediaType": "image/webp",
+      "bytes": 117992,
+      "dimensions": {
+        "width": 307,
+        "height": 616
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "crew",
+      "state": "default",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "3b4c5c4787b102b91131c41dcffb4a88b4cf04b15ad37025650e4f683213757c"
     },
     {
       "id": "effects:PH_FX_OVERLAY_BROKEN_V01",
