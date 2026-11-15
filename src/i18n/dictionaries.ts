@@ -256,6 +256,7 @@ export const dictionaries: I18nDictionaries = {
     'expedition.recoveryOperator': 'Người trực thu hồi',
     'expedition.assignRecovery': 'Phân công thu hồi',
     'expedition.clearRecovery': 'Gỡ phân công',
+    'expedition.currentSol': '(Sol hiện tại: {sol})',
     'expedition.recoveryCleared': 'Đã gỡ phân công thu hồi.',
 
     // Tutorial Modal
@@ -1041,6 +1042,7 @@ export const dictionaries: I18nDictionaries = {
     'expedition.recoveryOperator': 'Recovery operator',
     'expedition.assignRecovery': 'Assign Recovery',
     'expedition.clearRecovery': 'Clear Assignment',
+    'expedition.currentSol': '(Current Sol: {sol})',
     'expedition.recoveryCleared': 'Recovery assignment cleared.',
 
     // Tutorial Modal

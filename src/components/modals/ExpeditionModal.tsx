@@ -268,7 +268,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <Rocket className="w-4 h-4" aria-hidden="true" />
           {inComms ? t('expedition.schedule', { site: expedition.name }) : t('expedition.phaseLock')}
         </button>
-        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)} (Sol hiện tại / current: {gameState.clock.sol})</p>}
+        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)} {t('expedition.currentSol', { sol: gameState.clock.sol })}</p>}
 
         {activeMission?.status === 'scheduled' && (
           <button type="button" onClick={handleCancel} className="hail-btn">{t('expedition.cancel')}</button>
