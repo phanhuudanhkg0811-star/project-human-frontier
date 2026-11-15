@@ -349,8 +349,13 @@ test('Core integration: preview explains rover, assignment, follow-up and extra-
     { kind: 'schedule-follow-up', eventId: 'later', delaySols: 1 },
     { kind: 'plan-override', extraPowerCostKWh: 2 },
   ];
-  for (const effect of effects) {
+  for (const effect of effects.slice(0, 3)) {
     const fixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effect] })] }));
     assert.ok(core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0].effectsSummary.length > 0, `Missing preview for ${effect.kind}`);
   }
+  // Extra power cost is explained once, as a battery resource delta (not echoed in effectsSummary).
+  const powerFixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effects[3]] })] }));
+  const powerPreview = core.selectEventChoicePreviews(powerFixture.state, 'qa-event', powerFixture.content)[0];
+  assert.equal(powerPreview.resourceDeltas.batteryKWh, -2);
+  assert.equal(powerPreview.effectsSummary.length, 0);
 });
