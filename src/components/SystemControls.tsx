@@ -38,6 +38,9 @@ export function SystemControls() {
           <p className="text-xs text-slate-300">
             {t('systems.repairOdds', { level: t(`enum.donki.${weather.level}`), pct: Math.round(weather.repairSuccessProb * 100) })}
           </p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {t('systems.modelNote')}
+          </p>
         </div>
         <span className={`hail-phase-tag ${canEdit ? 'is-ready' : ''}`}>
           {canEdit ? t('systems.engineeringOpen') : t('systems.currentPhase', { phase: t(`phase.${gameState.clock.phase}`) })}

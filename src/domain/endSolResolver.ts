@@ -92,6 +92,14 @@ function computeSurfaceTempC(sol: number, bundle: ContentBundle): number {
   return round2(surface);
 }
 
+const SOLAR_PANEL_SUNLIT_DELTA_C = 35; // illuminated polar PV array radiative heating above cold regolith
+
+function computeSolarPanelTempC(ambientSurfaceTempC: number, isNight: boolean): number {
+  // South Polar tracking PV cells intercept direct 1 AU sunlight (+35 C above cold polar ground) while
+  // still radiating to 2.7 K space, keeping array temperature below equatorial +120 C heat stress.
+  return isNight ? ambientSurfaceTempC : round2(ambientSurfaceTempC + SOLAR_PANEL_SUNLIT_DELTA_C);
+}
+
 function deriveSystemStatus(integrity: number): StationSystemState['status'] {
   if (integrity >= 0.85) return 'nominal';
   if (integrity > 0) return 'degraded';
@@ -333,8 +341,9 @@ function resolvePowerAndEclss(
   const solarSys = systems.solar;
   const baseSolar = bundle.balance.power.solarByLevelKWh[String(solarSys.level) as '1' | '2' | '3'];
   const ambientTempC = computeSurfaceTempC(sol, bundle);
+  const panelTempC = computeSolarPanelTempC(ambientTempC, isNight);
   const thermalDerate = clamp(
-    1 - SOLAR_TEMP_DERATE_PER_C * (ambientTempC - 25),
+    1 - SOLAR_TEMP_DERATE_PER_C * (panelTempC - 25),
     SOLAR_TEMP_DERATE_MIN,
     SOLAR_TEMP_DERATE_MAX
   );
@@ -505,7 +514,8 @@ function resolveCrewAndWeather(
     diffMult,
     nextSystems.airlock.level,
     nextSystems.airlock.integrity,
-    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0
+    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0,
+    bundle.crewPhysiology
   );
 
   const nextCrew: Record<CrewId, CrewMemberState> = { ...state.crew };

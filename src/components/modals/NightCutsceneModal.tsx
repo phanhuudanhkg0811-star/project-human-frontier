@@ -272,7 +272,7 @@ function DebriefDialogBody({
                 params.loads = formatPowerLoadList(params.loads, locale);
               } else if (alert.labelKey === 'night.alert.stormDamage' && typeof params.system === 'string') {
                 const sysId = params.system.trim().toLowerCase();
-                if (['solar', 'recycler', 'scrubber', 'airlock'].includes(sysId)) {
+                if (['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'].includes(sysId)) {
                   params.system = t(`system.${sysId}`);
                 }
               } else if (

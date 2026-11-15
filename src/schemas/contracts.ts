@@ -319,6 +319,9 @@ export function validateBalanceConfig(input: unknown): BalanceConfig {
   for (const k of ['1', '2', '3']) assertFiniteNum(shelterLv[k], `crewShelterProtectionByLevel.${k}`, 0, 1);
   assertFiniteNum(dp.dustShieldRadiationBonus, 'donkiProbability.dustShieldRadiationBonus', 0, 0.5);
   assertFiniteNum(dp.backgroundMgyPerSol, 'donkiProbability.backgroundMgyPerSol', 0);
+  if (dp.radlabSurfaceScaleFactor !== undefined) {
+    assertFiniteNum(dp.radlabSurfaceScaleFactor, 'donkiProbability.radlabSurfaceScaleFactor', 0.1, 10);
+  }
   assertFiniteNum(dp.stormPeakExtraMgy, 'donkiProbability.stormPeakExtraMgy', 0);
   assertFiniteNum(dp.stormSystemDegradeChance, 'donkiProbability.stormSystemDegradeChance', 0, 1);
 

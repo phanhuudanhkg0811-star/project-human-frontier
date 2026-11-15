@@ -73,6 +73,10 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       onClose={onClose}
     >
       <div className="flex flex-col gap-3 text-slate-200">
+        <p className="text-[11px] leading-relaxed text-slate-400 px-1">
+          {t('character.initialBaselineNote')}
+        </p>
+
         {note && (
           <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
             {localize(note, bundle)}

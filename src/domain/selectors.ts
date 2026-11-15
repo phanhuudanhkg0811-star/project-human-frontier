@@ -2,6 +2,7 @@ import eventsCatalogJson from '../data/events.json' with { type: 'json' };
 import { resolveSol } from './endSolResolver.ts';
 import {
   computeCrewWeatherRisk,
+  computeRadLabSurfaceBaselineMgy,
   computeRepairSuccessProb,
   computeRoverRiskProb,
   computeWeatherPowerPenalty,
@@ -287,7 +288,12 @@ export function selectWeatherOutlook(state: GameState, bundle: ContentBundle, cr
     diffMult,
     state.systems.airlock.level,
     state.systems.airlock.integrity,
-    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0
+    state.equipment.dust_shield.owned && state.equipment.dust_shield.durability > 0,
+    bundle.crewPhysiology
+  );
+  const radlabBaselineMgyPerSol = computeRadLabSurfaceBaselineMgy(
+    bundle.crewPhysiology,
+    bundle.balance.donkiProbability.radlabSurfaceScaleFactor
   );
   return {
     sol,
@@ -296,6 +302,7 @@ export function selectWeatherOutlook(state: GameState, bundle: ContentBundle, cr
     repairSuccessProb,
     roverIncidentProb,
     crewWeatherRisk,
+    radlabBaselineMgyPerSol,
     solarPenaltyPct: computeWeatherPowerPenalty(weather, isNight),
     headline: weather.notifications.headline,
   };

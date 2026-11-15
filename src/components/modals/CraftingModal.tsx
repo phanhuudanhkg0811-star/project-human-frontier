@@ -73,6 +73,10 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
           )}
         </div>
 
+        <p className="text-[11px] leading-relaxed text-slate-400 px-1">
+          {t('crafting.abstractionNote')}
+        </p>
+
         {activeJob && (
           <div className="p-3 rounded-lg bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-between gap-2 text-xs">
             <div>

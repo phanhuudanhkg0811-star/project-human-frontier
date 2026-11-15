@@ -335,3 +335,44 @@ test('CAPCOM replies dynamically by phase and isCompatibleAppVersion accepts com
   assert.equal(mod.isCompatibleAppVersion('2.0.0', '1.4.0'), true);
   assert.equal(mod.isCompatibleAppVersion('0.1.0', '1.4.0'), false);
 });
+
+test('P2 #1 RadLab CRaTER dataset drives runtime surface radiation baseline (0.316 * 1.20228 = 0.38 mGy/Sol)', () => {
+  const defaultState = mod.createInitialGameState(bundle, {
+    runId: 'test-radlab-default',
+    seed: 205001,
+    difficulty: 'standard',
+    donkiProfileId: 'may-2024-extreme',
+  });
+  const doubledPhysiology = {
+    ...bundle.crewPhysiology,
+    convertedMeanMgyPerDay: bundle.crewPhysiology.convertedMeanMgyPerDay * 2,
+  };
+  const doubledBundle = { ...bundle, crewPhysiology: doubledPhysiology };
+
+  const defaultRes = mod.resolveSol(defaultState, bundle);
+  const doubledRes = mod.resolveSol(defaultState, doubledBundle);
+  const defaultSol1 = defaultRes.summary;
+  const doubledSol1 = doubledRes.summary;
+
+  assert.ok(defaultSol1 && doubledSol1);
+  assert.ok(
+    doubledSol1.weather.radiationDoseMgy > defaultSol1.weather.radiationDoseMgy,
+    `Expected RadLab orbital dose increase to raise runtime dose (${doubledSol1.weather.radiationDoseMgy} vs ${defaultSol1.weather.radiationDoseMgy})`
+  );
+  assert.ok(
+    doubledRes.nextState.crew.cmd.radiationMgy > defaultRes.nextState.crew.cmd.radiationMgy,
+    'Expected crew cumulative radiationMgy to reflect updated RadLab baseline'
+  );
+});
+
+test('P2 #2 & #3 NASA briefs explain solarPenaltyPct shunt derating, indoor scrubber dust, and MRE/Medkit abstraction', () => {
+  const briefs = JSON.parse(fs.readFileSync(path.join(simulationRoot, 'src/data/nasa-briefs.json'), 'utf-8'));
+  const radBrief = briefs.find((b) => b.id === 'brief-donki-sep-flare');
+  const dustBrief = briefs.find((b) => b.id === 'brief-regolith-isru');
+  const mfgBrief = briefs.find((b) => b.id === 'brief-in-space-mfg');
+
+  assert.ok(radBrief && dustBrief && mfgBrief);
+  assert.match(radBrief.contentEn, /solarPenaltyPct, not dust clouds/i);
+  assert.match(dustBrief.contentEn, /tracked indoors on EVA suits/i);
+  assert.match(mfgBrief.contentEn, /gameplay abstraction/i);
+});

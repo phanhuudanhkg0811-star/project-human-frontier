@@ -1271,3 +1271,13 @@ test('Preview and commit remain byte-identical under the new physics', () => {
     core.sha256Hex(core.canonicalStringify({ summary: commit.summary, resources: commit.nextState.resources }))
   );
 });
+
+test('selectStormTargets distributes storm stress across all 5 station systems including fabricator', () => {
+  const hit = new Set();
+  for (let sol = 1; sol <= 40; sol += 1) {
+    hit.add(core.selectStormTargets(205001, sol));
+  }
+  for (const sys of ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator']) {
+    assert.ok(hit.has(sys), `Expected storm target candidate "${sys}" to be reachable`);
+  }
+});

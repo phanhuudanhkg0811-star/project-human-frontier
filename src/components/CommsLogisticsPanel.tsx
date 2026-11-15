@@ -173,6 +173,9 @@ export function CommsLogisticsPanel() {
                 {t('comms.launchCargo', { kg: totalSlots * 20 })}
               </button>
             </div>
+            <p className="text-[11px] leading-relaxed text-slate-400">
+              {t('comms.cargoAbstractionNote')}
+            </p>
           </>
         )}
       </section>
