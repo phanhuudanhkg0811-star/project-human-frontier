@@ -444,14 +444,14 @@ export interface BalanceConfig {
   readonly modelVersion: string;
   readonly catalogVersion: string;
   readonly storages: {
-    readonly batteryKWh: { readonly initial: number; readonly max: number };
-    readonly oxygenKg: { readonly initial: number; readonly max: number };
-    readonly waterL: { readonly initial: number; readonly max: number };
-    readonly partsKg: { readonly initial: number; readonly max: number };
-    readonly wasteWaterL: { readonly initial: number; readonly max: number };
+    readonly batteryKWh: { readonly initial: number; readonly max: number; readonly warnBelow: number };
+    readonly oxygenKg: { readonly initial: number; readonly max: number; readonly warnBelow: number };
+    readonly waterL: { readonly initial: number; readonly max: number; readonly warnBelow: number };
+    readonly partsKg: { readonly initial: number; readonly max: number; readonly warnBelow: number };
+    readonly wasteWaterL: { readonly initial: number; readonly max: number; readonly warnBelow: number };
   };
   readonly consumables: {
-    readonly mrePacks: { readonly initial: number; readonly max: number; readonly satietyRestore: number; readonly massKgApprox: number };
+    readonly mrePacks: { readonly initial: number; readonly max: number; readonly satietyRestore: number; readonly massKgApprox: number; readonly warnBelow: number };
     readonly medkits: { readonly initial: number; readonly max: number; readonly healLv1: number; readonly healLv2: number; readonly medicBonus: number };
   };
   readonly power: {

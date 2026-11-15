@@ -147,8 +147,8 @@ const EXACT_VI_TO_EN: Record<string, string> = {
     'CAPCOM messages can only be transmitted during Comms.',
   'ID tin nhắn radio đã tồn tại.':
     'Radio message ID already exists.',
-  'Đã phát tín hiệu vô tuyến tới Houston (độ trễ ~1.3s chiều đi).':
-    'Radio transmission sent to Houston (~1.3s one-way signal delay).',
+  'Đã phát tín hiệu vô tuyến tới Houston (1,3 s/chiều, phản hồi ~3,8 s).':
+    'Radio transmission sent to Houston (1.3 s one-way, reply in ~3.8 s).',
   'CAPCOM Houston xác nhận: Đã ghi nhận dữ liệu telemetry trạm Artemis. Khuyến nghị theo dõi pin trước Đêm Trăng Sol 15.':
     'CAPCOM Houston confirms: Artemis station telemetry logged. Monitor battery reserves ahead of Sol 15 Lunar Night.',
   'Chỉ đặt tàu tiếp tế trong pha Liên lạc.':

@@ -105,15 +105,15 @@ Thứ tự dependency: `2.0 → 2.1 → (2.2 + 2.4) → 2.3 → 2.5 → 2.6`. Ph
 
 ## 8. Definition of Done
 
-- [ ] Toàn bộ P0 hoàn tất.
-- [ ] Không còn vào thẳng cockpit ở first launch nếu chưa có lựa chọn của người chơi.
-- [ ] Intro và tutorial là hai flow độc lập, có thể replay riêng.
-- [ ] Guided Sol 1 dạy qua hành động thật và không thay đổi deterministic outcome ngoài command của người chơi.
-- [ ] Mọi target động có wait/fallback; không hiện popover vô nghĩa giữa màn hình.
-- [ ] Sol 7, Lunar Night, sunrise và terminal outcome có narrative presentation riêng.
-- [ ] Onboarding state có version/migration và không làm hỏng save PHASE 1.
-- [ ] A11y, responsive, persistence và E2E gates đạt ở VI/EN.
-- [ ] Docs, README và roadmap khớp release.
+- [x] Toàn bộ P0 hoàn tất.
+- [x] Không còn vào thẳng cockpit ở first launch nếu chưa có lựa chọn của người chơi.
+- [x] Intro và tutorial là hai flow độc lập, có thể replay riêng.
+- [x] Guided Sol 1 dạy qua hành động thật và không thay đổi deterministic outcome ngoài command của người chơi.
+- [x] Mọi target động có wait/fallback; không hiện popover vô nghĩa giữa màn hình.
+- [x] Sol 7, Lunar Night, sunrise và terminal outcome có narrative presentation riêng.
+- [x] Onboarding state có version/migration và không làm hỏng save PHASE 1.
+- [x] A11y, responsive, persistence và E2E gates đạt ở VI/EN.
+- [x] Docs, README và roadmap khớp release.
 
 ## 9. Ngoài phạm vi
 

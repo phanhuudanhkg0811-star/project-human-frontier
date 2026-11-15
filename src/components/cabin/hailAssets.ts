@@ -255,8 +255,10 @@ export function getHailSystemSprite(id: SystemId, integrity: number): {
   overlay: string | null;
   state: 'ok' | 'degraded' | 'broken';
 } {
+  // Match the engine's deriveSystemStatus (nominal >= 0.85, degraded > 0, offline = 0)
+  // so the sprite never calls a still-working system "broken".
   const state: 'ok' | 'degraded' | 'broken' =
-    integrity < 0.45 ? 'broken' : integrity < 0.85 ? 'degraded' : 'ok';
+    integrity <= 0 ? 'broken' : integrity < 0.85 ? 'degraded' : 'ok';
 
   if (id === 'scrubber') {
     return {

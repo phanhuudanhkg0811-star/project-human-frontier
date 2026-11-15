@@ -237,6 +237,7 @@ project-human-frontier/
 │   ├── features/                # UI feature modules (briefing, crew, comms, rover, etc.)
 │   ├── domain/                  # Commands, resolver, PRNG, invariants, selectors
 │   ├── data/                    # Static balance, campaign, NASA DONKI/Diviner catalogs
+│   ├── onboarding/              # Versioned onboarding, tours, hints, Driver.js adapter
 │   ├── persistence/             # Versioned SaveEnvelope and recovery adapter
 │   ├── schemas/                 # Runtime validation for content, commands, and saves
 │   ├── store/                   # Zustand GamePort and non-persisted UI store
@@ -279,10 +280,12 @@ project-human-frontier/
 
 4. **Code verification scripts**:
    ```bash
-   npm run lint        # Code linting via Oxlint / ESLint
-   npm run typecheck   # Strict TypeScript typechecking
-   npm test            # Automated engine & resolver unit tests
-   npm run build       # Production bundle build
+   npm run lint          # Code linting via Oxlint
+   npm run typecheck     # Strict TypeScript typechecking
+   npm test              # Automated engine, onboarding & hardening unit tests
+   npm run build         # Production bundle build
+   npm run budget:check  # JS/CSS bundle size budget gate
+   npm run verify:e2e:p2 # Phase 2.6 live Chrome CDP E2E suite (8 Critical Journeys)
    ```
 
 ---
@@ -299,12 +302,12 @@ project-human-frontier/
 - [x] Phase 1.5: Tactile Cockpit UI, 2D ambient canvas, Web Audio, asset manifest, and bilingual VI/EN copy.
 - [x] Phase 1.6: Bundle/asset budget, `ErrorBoundary`, accessibility polish, campaign E2E gate & release candidate.
 
-### Phase 2: Moon Complete (Current Scope)
-- [ ] Title/Continue/Recovery entry flow and 60–90 second narrative intro.
-- [ ] Versioned onboarding foundation and Driver.js adapter.
-- [ ] Action-driven Guided Sol 1 with skip/resume/replay.
-- [ ] Sol 7, Lunar Night, sunrise and ending narrative presentation.
-- [ ] Contextual hints, accessibility, persistence and E2E hardening.
+### Phase 2: Moon Complete (`2.0.0-moon32`)
+- [x] Title/Continue/Recovery entry flow and 60–90 second narrative intro.
+- [x] Versioned onboarding foundation (`phf_onboarding_v1`, `phf_narrative_v1`) and Driver.js adapter.
+- [x] Action-driven Cockpit Discovery & Guided Sol 1 with skip/resume/replay.
+- [x] Sol 1, Sol 7, Lunar Night (Sol 15), Sunrise (Sol 29) and terminal outcome narrative presentation + Conditional Debrief.
+- [x] Contextual hints, accessibility (`44×44px` mobile targets, keyboard/focus restore), persistence and E2E gates (`npm run verify:e2e:p2`).
 
 See [PHASE 2 Moon Complete master plan](docs/plan/second-phase/PHASE_2_MOON_COMPLETE_MASTER_PLAN.md).
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Rocket } from 'lucide-react';
+import { ChevronDown, ChevronUp, Info, Rocket } from 'lucide-react';
 import { playSfx } from '../../audio/sfx.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import { useUiStore } from '../../store/uiStore.ts';
@@ -10,6 +10,12 @@ import { MissionDialog } from './MissionDialog.tsx';
 import { ArtifactExportButtons, TrainingReport } from '../CampaignReportCard.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
 
+const PROFILE_TONE_CLASS: Readonly<Record<string, string>> = {
+  'may-2024-xstorm': 'is-extreme',
+  'oct-2024-x9storm': 'is-balanced',
+  'dec-2024-jan-2025-mixed': 'is-starter',
+};
+
 interface MissionLaunchModalProps {
   onClose: () => void;
 }
@@ -19,6 +25,7 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
   const appScreen = useUiStore((s) => s.appScreen);
   const enterCockpit = useUiStore((s) => s.enterCockpit);
   const [selectedProfile, setSelectedProfile] = useState(gameState.campaign.donkiProfileId);
+  const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<DifficultyId>(gameState.campaign.difficulty);
   const [seed, setSeed] = useState(gameState.campaign.seed);
   const { t, pickText } = useI18n();
@@ -58,34 +65,96 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
         <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70 flex flex-col gap-3 text-xs">
           <h3 className="font-bold text-cyan-300">{t('launch.newCampaign')}</h3>
 
-          <div className="grid grid-cols-1 gap-2">
-            {bundle.donki.samples.map((sample) => (
-              <label
-                key={sample.id}
-                className={`p-2.5 rounded border cursor-pointer flex items-start gap-2.5 ${
-                  selectedProfile === sample.id
-                    ? 'border-cyan-400 bg-cyan-950/40'
-                    : 'border-slate-800 bg-slate-950/70'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="donki-profile"
-                  checked={selectedProfile === sample.id}
-                  onChange={() => setSelectedProfile(sample.id)}
-                  className="mt-1"
-                />
-                <div className="flex-1">
-                  <div className="font-semibold text-white">
-                    {sample.name} <span className="font-mono text-[10px] text-cyan-300">({sample.startDate} → {sample.endDate})</span>
+          <div className="phf-launch-profile-list">
+            {bundle.donki.samples.map((sample) => {
+              const isSelected = selectedProfile === sample.id;
+              const isExpanded = expandedProfileId === sample.id;
+              const knownProfile = sample.id in PROFILE_TONE_CLASS;
+              const toneClass = PROFILE_TONE_CLASS[sample.id] ?? 'is-balanced';
+              const friendlyTitle = knownProfile
+                ? t(`launch.profile.${sample.id}.title`)
+                : sample.name;
+              const badgeText = knownProfile
+                ? t(`launch.profile.${sample.id}.badge`)
+                : sample.startDate;
+              const summaryText = knownProfile
+                ? t(`launch.profile.${sample.id}.summary`)
+                : sample.description;
+              const detailPanelId = `donki-detail-${sample.id}`;
+
+              return (
+                <div
+                  key={sample.id}
+                  className={`phf-launch-profile-card ${isSelected ? 'is-selected' : ''}`.trim()}
+                >
+                  <div className="phf-launch-profile-row">
+                    <label className="phf-launch-profile-select">
+                      <input
+                        type="radio"
+                        name="donki-profile"
+                        checked={isSelected}
+                        onChange={() => setSelectedProfile(sample.id)}
+                        className="phf-launch-radio"
+                      />
+                      <div className="phf-launch-profile-main">
+                        <div className="phf-launch-profile-head">
+                          <span className="phf-launch-profile-title">{friendlyTitle}</span>
+                          <span className={`phf-launch-pill ${toneClass}`}>{badgeText}</span>
+                          <span className="phf-launch-storm-count">
+                            {t('launch.stormDaysCount', {
+                              count: sample.summary.stormOrExtremeSols.length,
+                            })}
+                          </span>
+                        </div>
+                        <p className="phf-launch-profile-summary">{summaryText}</p>
+                      </div>
+                    </label>
+
+                    <button
+                      type="button"
+                      className="phf-launch-detail-btn"
+                      aria-expanded={isExpanded}
+                      aria-controls={detailPanelId}
+                      aria-label={t('launch.detailsAria', { name: friendlyTitle })}
+                      onClick={() =>
+                        setExpandedProfileId((prev) => (prev === sample.id ? null : sample.id))
+                      }
+                    >
+                      <Info className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      <span>{isExpanded ? t('launch.hideDetails') : t('launch.viewDetails')}</span>
+                      {isExpanded ? (
+                        <ChevronUp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      ) : (
+                        <ChevronDown className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                      )}
+                    </button>
                   </div>
-                  <p className="text-slate-400 mt-0.5">{sample.description}</p>
-                  <p className="font-mono text-[10px] text-amber-300 mt-1">
-                    FLR: {sample.summary.totalFlares} (X={sample.summary.xClassFlares}, M={sample.summary.mClassFlares}) · CME: {sample.summary.totalCmes} · SEP: {sample.summary.totalSeps} · IPS: {sample.summary.totalIps}
-                  </p>
+
+                  {isExpanded && (
+                    <div id={detailPanelId} className="phf-launch-detail-drawer">
+                      <div className="phf-launch-detail-meta">
+                        <strong>{sample.name}</strong>
+                        <span>
+                          {t('launch.dateWindow', {
+                            start: sample.startDate,
+                            end: sample.endDate,
+                          })}
+                        </span>
+                      </div>
+                      <p className="phf-launch-detail-desc">{sample.description}</p>
+                      <p className="phf-launch-detail-metrics">
+                        FLR: {sample.summary.totalFlares} (X={sample.summary.xClassFlares}, M=
+                        {sample.summary.mClassFlares}) · CME: {sample.summary.totalCmes} · SEP:{' '}
+                        {sample.summary.totalSeps} · IPS: {sample.summary.totalIps}
+                      </p>
+                      <small className="phf-launch-detail-glossary">
+                        {t('launch.telemetryGlossary')}
+                      </small>
+                    </div>
+                  )}
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

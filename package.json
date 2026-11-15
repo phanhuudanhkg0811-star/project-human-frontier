@@ -13,7 +13,8 @@
     "assets:manifest": "node scripts/build-hail-asset-manifest.mjs",
     "budget:check": "node scripts/check-bundle-budget.mjs",
     "simulate": "node scripts/simulate.mjs",
-    "replay": "node scripts/replay.mjs"
+    "replay": "node scripts/replay.mjs",
+    "verify:e2e:p2": "node scripts/verify-phase-2-6-e2e.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

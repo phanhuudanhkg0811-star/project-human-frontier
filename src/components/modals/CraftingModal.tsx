@@ -28,6 +28,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
   const [feedback, setFeedback] = useState<string | null>(null);
   const inEngineering = gameState.clock.phase === 'engineering';
   const fabSys = gameState.systems.fabricator;
+  const fabOffline = fabSys.status === 'offline';
   const activeJob = gameState.fabricator.activeJob;
   const isBusy = gameState.fabricator.usedThisSol || activeJob !== null;
 
@@ -62,6 +63,9 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
           {!inEngineering && (
             <span className="text-amber-300 font-mono">{t('crafting.phaseLock')}</span>
           )}
+          {fabOffline && (
+            <span className="text-rose-300 font-mono">{t('crafting.offline')}</span>
+          )}
         </div>
 
         {activeJob && (
@@ -92,6 +96,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
             const lockedByLevel = fabSys.level < recipe.requiredFabricatorLevel;
             const canCraft =
               inEngineering &&
+              !fabOffline &&
               !isBusy &&
               !lockedByLevel &&
               (!isEq || !eq?.owned) &&
@@ -100,6 +105,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
 
             const canUpgrade =
               inEngineering &&
+              !fabOffline &&
               !isBusy &&
               recipe.upgradeCost !== null &&
               (recipe.id === 'medkit' ? gameState.resources.medkitLevel < 2 : Boolean(eq?.owned && eq.level < 2)) &&
@@ -107,12 +113,13 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
 
             const canRepair =
               inEngineering &&
+              !fabOffline &&
               !isBusy &&
               isEq &&
               Boolean(eq?.owned && eq.durability < 100) &&
               gameState.resources.partsKg >= bundle.recipes.rules.repairCost.partsKg;
 
-            const canRecycle = inEngineering && !isBusy && isEq && Boolean(eq?.owned && !eq.reservedForRover);
+            const canRecycle = inEngineering && !fabOffline && !isBusy && isEq && Boolean(eq?.owned && !eq.reservedForRover);
 
             return (
               <div key={recipe.id} className="p-3 rounded-lg bg-slate-900/75 border border-slate-800 flex flex-col gap-2.5">

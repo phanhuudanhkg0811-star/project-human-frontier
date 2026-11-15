@@ -26,11 +26,11 @@ export function TelemetryTopBar() {
   };
 
   const metrics = [
-    { key: 'pwr', label: t('telemetry.battery'), value: r.batteryKWh, cap: bundle.balance.storages.batteryKWh.max, unit: 'kWh', icon: HAIL_SVG.resPower, warn: r.batteryKWh < 14 },
-    { key: 'o2', label: 'O₂', value: r.oxygenKg, cap: bundle.balance.storages.oxygenKg.max, unit: 'kg', icon: HAIL_SVG.resOxygen, warn: r.oxygenKg < 18 },
-    { key: 'h2o', label: t('telemetry.water'), value: r.waterL, cap: bundle.balance.storages.waterL.max, unit: 'L', icon: HAIL_SVG.resWater, warn: r.waterL < 22 },
-    { key: 'parts', label: t('telemetry.parts'), value: r.partsKg, cap: bundle.balance.storages.partsKg.max, unit: 'kg', icon: HAIL_SVG.resParts, warn: r.partsKg < 4 },
-    { key: 'mre', label: 'MRE', value: r.mrePacks, cap: bundle.balance.consumables.mrePacks.max, unit: t('telemetry.packUnit'), icon: HAIL_SVG.resFood, warn: r.mrePacks < 6 },
+    { key: 'pwr', label: t('telemetry.battery'), value: r.batteryKWh, cap: bundle.balance.storages.batteryKWh.max, unit: 'kWh', icon: HAIL_SVG.resPower, warn: r.batteryKWh < bundle.balance.storages.batteryKWh.warnBelow },
+    { key: 'o2', label: 'O₂', value: r.oxygenKg, cap: bundle.balance.storages.oxygenKg.max, unit: 'kg', icon: HAIL_SVG.resOxygen, warn: r.oxygenKg < bundle.balance.storages.oxygenKg.warnBelow },
+    { key: 'h2o', label: t('telemetry.water'), value: r.waterL, cap: bundle.balance.storages.waterL.max, unit: 'L', icon: HAIL_SVG.resWater, warn: r.waterL < bundle.balance.storages.waterL.warnBelow },
+    { key: 'parts', label: t('telemetry.parts'), value: r.partsKg, cap: bundle.balance.storages.partsKg.max, unit: 'kg', icon: HAIL_SVG.resParts, warn: r.partsKg < bundle.balance.storages.partsKg.warnBelow },
+    { key: 'mre', label: 'MRE', value: r.mrePacks, cap: bundle.balance.consumables.mrePacks.max, unit: t('telemetry.packUnit'), icon: HAIL_SVG.resFood, warn: r.mrePacks < bundle.balance.consumables.mrePacks.warnBelow },
   ];
 
   return (
