@@ -196,6 +196,18 @@ test('rover/clear-recovery-operator frees the assigned operator', () => {
   assert.equal(noop.ok, false);
 });
 
+test('DONKI storms can degrade the 3D Fabricator like any other system (P2)', () => {
+  const targets = new Set();
+  for (let seed = 0; seed < 40; seed++) {
+    for (let sol = 1; sol <= 32; sol++) {
+      targets.add(core.selectStormTargets(seed, sol));
+    }
+  }
+  for (const systemId of ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator']) {
+    assert.ok(targets.has(systemId), `storm targets never hit ${systemId}`);
+  }
+});
+
 const sol7State = (rover) => {
   const base = initialState();
   return {

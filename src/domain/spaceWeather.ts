@@ -181,7 +181,7 @@ export interface WeatherOutlook {
 }
 
 export function selectStormTargets(seed: number, sol: number): SystemId {
-  const candidates: readonly SystemId[] = ['solar', 'recycler', 'scrubber', 'airlock'];
+  const candidates: readonly SystemId[] = ['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'];
   const roll = deriveRoll(seed, sol, 'storm-target');
   const idx = Math.min(candidates.length - 1, Math.floor(roll * candidates.length));
   return candidates[idx];
