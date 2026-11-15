@@ -76,7 +76,7 @@ test('Phase 1.4 system UI quotes the next queued upgrade level, including engine
   const queued = { ...state, clock: { ...state.clock, phase: 'engineering' }, crew: { ...state.crew,
     cmd: { ...state.crew.cmd, assignedTask: { type: 'upgrade-system', targetSystemId: 'solar', partsSpent: 4 } } } };
   const html = renderWithState(core.SystemControls, { state: queued, content: bundle });
-  assert.match(html, /Nâng \(7P\)/);
+  assert.match(html, /Upgrade \(7P\)/);
 });
 
 test('Catalog QA: bundled schema, references and actual event art files pass', () => {
@@ -253,12 +253,12 @@ test('Dynamic debrief selects context brief, preserves metrics, and handles empt
   assert.equal(core.selectDynamicDebrief(fallbackState, bundle).scienceBrief.id, bundle.briefs[0].id);
   assert.equal(core.selectDynamicDebrief(fallbackState, { ...bundle, briefs: [] }).scienceBrief, null);
   const html = render(core.DynamicSTEMBrief, { view, bundle });
-  assert.match(html, /Báo cáo đã hoàn thành Sol 1/);
-  assert.match(html, /Kết quả mô phỏng/);
+  assert.match(html, /Completed Sol 1 Report/);
+  assert.match(html, /Simulation Output/);
   assert.match(html, /Nước sạch/);
   assert.match(html, /\+9/);
-  assert.ok(html.includes(bundle.events[0].choices[0].label));
-  assert.match(render(core.DynamicSTEMBrief, { view: { summary: null }, bundle }), /Chưa có báo cáo/);
+  assert.ok(html.includes(bundle.events[0].choices[0].labelEn ?? bundle.events[0].choices[0].label));
+  assert.match(render(core.DynamicSTEMBrief, { view: { summary: null }, bundle }), /No End-Sol report yet/);
 });
 
 test('Banner renders category, priority, inclusive deadline and a keyboard-operable button', () => {
@@ -267,9 +267,9 @@ test('Banner renders category, priority, inclusive deadline and a keyboard-opera
   const view = core.selectActiveEventView(fixture.state, fixture.content);
   const html = render(core.EventPriorityBanner, { view, currentSol: 1, onOpen() {} });
   assert.match(html, /hail-event-priority--crisis/);
-  assert.match(html, /Ưu tiên 100/);
-  assert.match(html, /Bắt buộc/);
-  assert.match(html, /Hạn hôm nay/);
+  assert.match(html, /Priority 100/);
+  assert.match(html, /Mandatory/);
+  assert.match(html, /Due today/);
   assert.match(html, /<button type="button"/);
 });
 
@@ -279,13 +279,13 @@ test('Starlog uses event.art and permits optional choices in engineering while s
   fixture.state.clock = { ...fixture.state.clock, phase: 'engineering' };
   const html = renderWithState(core.StarlogModal, fixture);
   assert.match(html, /PH_EVT_SOLAR_PARTICLE_BASE_V01.webp/);
-  assert.match(html, /Tùy chọn/);
-  assert.match(html, /Yêu cầu điều kiện missing/);
-  assert.match(html, /<button type="button" class="hail-btn hail-choice-card">Chọn: Lựa chọn kiểm tra<\/button>/);
+  assert.match(html, /Optional/);
+  assert.match(html, /Requires condition: missing/);
+  assert.match(html, /<button type="button" class="hail-btn hail-choice-card">Select: Lựa chọn kiểm tra<\/button>/);
   assert.match(html, /disabled="" aria-describedby="event-choice-blocked-reasons"/);
   fixture.state.clock = { ...fixture.state.clock, phase: 'debrief' };
   const closedHtml = renderWithState(core.StarlogModal, fixture);
-  assert.match(closedHtml, /không còn nhận lựa chọn/);
+  assert.match(closedHtml, /no longer accepting choices/);
 });
 
 test('EndOfDay distinguishes completed reports from the current resource forecast', () => {
@@ -294,9 +294,9 @@ test('EndOfDay distinguishes completed reports from the current resource forecas
   const fixture = { state: { ...state, clock: { ...state.clock, sol: 2, phase: 'rationing' },
     dailyPlan: { ...state.dailyPlan, sol: 2 }, debrief: { pendingDismiss: false, lastSummary: summary } }, content: bundle };
   const html = renderWithState(core.EndOfDayModal, fixture);
-  assert.match(html, /Chốt Sol 2/);
-  assert.match(html, /Báo cáo đã hoàn thành Sol 1/);
-  assert.match(html, /Dự báo Cuối Sol/);
+  assert.match(html, /End Sol 2/);
+  assert.match(html, /Completed Sol 1 Report/);
+  assert.match(html, /End-Sol 2 Forecast/);
 });
 
 test('Post End-Sol screen renders Dynamic STEM Brief from context rather than the old summary brief', () => {
@@ -311,9 +311,9 @@ test('Post End-Sol screen renders Dynamic STEM Brief from context rather than th
     } },
   } }, content: bundle };
   const html = renderWithState(core.NightCutsceneModal, fixture);
-  assert.ok(html.includes(brief.title));
-  assert.match(html, /Kết quả mô phỏng/);
-  assert.match(html, /Bạn đã chọn:/);
+  assert.ok(html.includes(brief.titleEn ?? brief.title));
+  assert.match(html, /Simulation Output/);
+  assert.match(html, /Choice taken:/);
   assert.match(html, /Nước sạch/);
   assert.match(html, /\+9 L/);
 });

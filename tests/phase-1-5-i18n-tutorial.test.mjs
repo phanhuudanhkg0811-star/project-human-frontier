@@ -110,16 +110,16 @@ test('Phase 1.5 tutorialSteps covers 5 complete bilingual onboarding steps', () 
 
 test('Phase 1.5 useUiStore works safely under Node without window and preserves prefs across resetCampaignUi', () => {
   const store = mod.useUiStore;
-  assert.equal(store.getState().locale, 'vi');
+  assert.equal(store.getState().locale, 'en');
   assert.equal(store.getState().audioMuted, false);
   assert.equal(store.getState().tutorialCompleted, false);
 
-  store.getState().setLocale('en');
+  store.getState().setLocale('vi');
   store.getState().toggleAudioMute();
   store.getState().setTutorialStep(3);
   store.getState().openModal('tutorial');
 
-  assert.equal(store.getState().locale, 'en');
+  assert.equal(store.getState().locale, 'vi');
   assert.equal(store.getState().audioMuted, true);
   assert.equal(store.getState().tutorialStep, 3);
   assert.equal(store.getState().activeModal, 'tutorial');
@@ -135,12 +135,12 @@ test('Phase 1.5 useUiStore works safely under Node without window and preserves 
   store.getState().openModal('starlog');
   store.getState().resetCampaignUi();
   assert.equal(store.getState().activeModal, null);
-  assert.equal(store.getState().locale, 'en');
+  assert.equal(store.getState().locale, 'vi');
   assert.equal(store.getState().audioMuted, true);
   assert.equal(store.getState().tutorialCompleted, true);
 
   store.getState().resetTutorial();
-  store.getState().setLocale('vi');
+  store.getState().setLocale('en');
   store.getState().setAudioMuted(false);
   assert.equal(store.getState().tutorialCompleted, false);
 });
