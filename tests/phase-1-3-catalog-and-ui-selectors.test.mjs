@@ -243,6 +243,7 @@ test('Dynamic debrief selects context brief, preserves metrics, and handles empt
   const state = initialState();
   assert.deepEqual(core.selectDynamicDebrief(state, bundle), { summary: null, context: null, scienceBrief: null });
   const summary = core.resolveSol(state, bundle, 'preview').summary;
+  assert.equal(summary.debriefContext.evidenceType, 'simulated');
   const context = { briefId: bundle.briefs[1].id, reasonTag: 'water-tradeoff', sourceEventId: bundle.events[0].id,
     sourceChoiceId: bundle.events[0].choices[0].id, evidenceType: 'simulated', metricHighlights: [{ key: 'waterL', label: 'Nước sạch', delta: 9, unit: 'L' }] };
   const resolvedState = { ...state, debrief: { pendingDismiss: true, lastSummary: { ...summary, debriefContext: context } } };
@@ -255,6 +256,7 @@ test('Dynamic debrief selects context brief, preserves metrics, and handles empt
   const html = render(core.DynamicSTEMBrief, { view, bundle });
   assert.match(html, /Completed Sol 1 Report/);
   assert.match(html, /Simulation Output/);
+  assert.match(html, /Observed Data/);
   assert.match(html, /Nước sạch/);
   assert.match(html, /\+9/);
   assert.ok(html.includes(bundle.events[0].choices[0].labelEn ?? bundle.events[0].choices[0].label));

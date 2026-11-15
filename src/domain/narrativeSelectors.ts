@@ -14,12 +14,16 @@ export interface PendingMilestonePresentation {
   readonly sol: number;
   readonly runKey: string;
   readonly kind: MilestonePresentationKind;
+  /** Provenance of state-dependent chips and campaign framing. */
   readonly provenance: ProvenanceTag;
+  /** Provenance of the separately rendered science note. */
+  readonly scienceProvenance: ProvenanceTag;
   readonly sourceRef: string;
   readonly titleKey: string;
   readonly subtitleKey: string;
   readonly bodyKey: string;
   readonly scienceNoteKey: string;
+  readonly scienceNoteParams?: Readonly<Record<string, string | number>>;
   readonly chips: ReadonlyArray<{ readonly labelKey: string; readonly value: string }>;
 }
 
@@ -117,7 +121,8 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'arrival',
-        provenance: 'observed',
+        provenance: 'simulated',
+        scienceProvenance: 'inferred',
         sourceRef: 'NASA Artemis South Pole Concept & HIDH',
         titleKey: 'milestone.sol1.title',
         subtitleKey: 'milestone.sol1.subtitle',
@@ -136,7 +141,8 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'golden-crisis',
-        provenance: 'inferred',
+        provenance: 'simulated',
+        scienceProvenance: 'inferred',
         sourceRef: 'NASA ECLSS & Deep Space Network Telemetry',
         titleKey: 'milestone.sol7.title',
         subtitleKey: 'milestone.sol7.subtitle',
@@ -158,12 +164,16 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'lunar-sunset',
-        provenance: 'observed',
-        sourceRef: 'NASA LRO Diviner Thermal Calibration (R² = 0.954)',
+        provenance: 'simulated',
+        scienceProvenance: bundle.catalog.environment.temperatureC.provenance,
+        sourceRef: `NASA LRO Diviner GCP polar cell (R² = ${bundle.catalog.environment.temperatureC.fitR2.toFixed(4)})`,
         titleKey: 'milestone.sol15.title',
         subtitleKey: 'milestone.sol15.subtitle',
         bodyKey: 'milestone.sol15.body',
         scienceNoteKey: 'milestone.sol15.science',
+        scienceNoteParams: {
+          nightMin: bundle.catalog.environment.temperatureC.nightMinC.toFixed(1),
+        },
         chips: [
           { labelKey: 'milestone.chip.solar', value: '0 kWh' },
           { labelKey: 'milestone.chip.fission', value: `+${bundle.balance.power.fissionKWhPerSol} kWh` },
@@ -183,7 +193,8 @@ export function selectPendingCockpitMilestone(
         sol,
         runKey,
         kind: 'lunar-sunrise',
-        provenance: 'observed',
+        provenance: 'simulated',
+        scienceProvenance: bundle.catalog.environment.temperatureC.provenance,
         sourceRef: 'NASA LRO Polar Illumination & Diviner',
         titleKey: 'milestone.sol29.title',
         subtitleKey: 'milestone.sol29.subtitle',

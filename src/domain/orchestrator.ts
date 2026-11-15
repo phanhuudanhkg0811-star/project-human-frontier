@@ -3,8 +3,11 @@ import { resolveSol } from './endSolResolver.ts';
 import {
   applyEventEffectsAtomic,
   checkEventChoiceRequirements,
+  expireActiveEvent,
+  isEventEligible,
   selectNextSolEvent,
 } from './eventEngine.ts';
+import { deriveCrewCondition } from './crewCondition.ts';
 import { validateStateInvariants } from './invariants.ts';
 import type {
   ContentBundle,
@@ -781,7 +784,12 @@ export function dispatchDomainCommand(
       crew[target.id] = {
         ...crew[target.id],
         health: nextHealth,
-        condition: nextHealth >= bundle.balance.crew.injuredBelowHealth ? 'fit' : 'injured',
+        condition: deriveCrewCondition(
+          nextHealth,
+          target.condition,
+          bundle.balance.crew.fitRecoverAtHealth,
+          bundle.balance.crew.injuredBelowHealth
+        ),
       };
       candidate = {
         ...state,
@@ -870,11 +878,20 @@ export function dispatchDomainCommand(
         state.rover.activeMission?.status === 'completed' || state.rover.activeMission?.status === 'failed'
           ? { ...state.rover, activeMission: null }
           : state.rover;
-      const previewNextState: GameState = {
+      let previewNextState: GameState = {
         ...state,
         clock: { ...state.clock, sol: nextSol, phase: 'briefing' },
         rover: clearedRover,
       };
+      const activeEventNode = previewNextState.events.activeEvent
+        ? bundle.events.find((event) => event.id === previewNextState.events.activeEvent!.eventId)
+        : null;
+      const mandatoryEventWaiting = bundle.events.some(
+        (event) => event.mandatory && isEventEligible(previewNextState, event, bundle)
+      );
+      if (activeEventNode && !activeEventNode.mandatory && mandatoryEventWaiting) {
+        previewNextState = expireActiveEvent(previewNextState, bundle).state;
+      }
       const nextEventSelection = selectNextSolEvent(previewNextState, bundle);
       const nextActiveEvent = nextEventSelection.activeEvent;
       candidate = {
@@ -888,7 +905,7 @@ export function dispatchDomainCommand(
           mreTargets: [],
         },
         events: {
-          ...state.events,
+          ...previewNextState.events,
           activeEventId: nextActiveEvent ? nextActiveEvent.eventId : null,
           activeEvent: nextActiveEvent,
           pendingFollowUps: nextEventSelection.pendingFollowUps,

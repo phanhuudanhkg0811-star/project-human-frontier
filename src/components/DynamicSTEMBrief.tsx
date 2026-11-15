@@ -22,7 +22,7 @@ export function DynamicSTEMBrief({ view, bundle, content }: {
     ? bundle.events.find((event) => event.id === context.sourceEventId)
     : null;
   const sourceChoice = sourceEvent?.choices.find((choice) => choice.id === context?.sourceChoiceId);
-  const evidence = context?.evidenceType ?? scienceBrief?.provenance;
+  const evidence = context?.evidenceType ?? 'simulated';
 
   const getMetricLabel = (key: string, fallback: string) => {
     const knownKeys = ['battery', 'oxygen', 'water', 'wrsRecovered', 'radiation'];
@@ -57,7 +57,12 @@ export function DynamicSTEMBrief({ view, bundle, content }: {
       )}
       {scienceBrief ? (
         <>
-          <h3>{pickText(scienceBrief.title, scienceBrief.titleEn)}</h3>
+          <div className="hail-stem-heading hail-stem-heading--science">
+            <h3>{pickText(scienceBrief.title, scienceBrief.titleEn)}</h3>
+            <span className="hail-evidence-badge">
+              {t(`stem.evidence.${scienceBrief.provenance}`)}
+            </span>
+          </div>
           {content ?? <p>{pickText(scienceBrief.content, scienceBrief.contentEn)}</p>}
           <small>{t('stem.sourcePrefix', { source: scienceBrief.source })}</small>
         </>
