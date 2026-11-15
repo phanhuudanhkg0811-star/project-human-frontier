@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="body2" cx="36%" cy="32%" r="78%">
+      <stop offset="0" stop-color="#f6f3e6"/>
+      <stop offset="0.5" stop-color="#d2cdba"/>
+      <stop offset="0.85" stop-color="#8e9496"/>
+      <stop offset="1" stop-color="#4a5560"/>
+    </radialGradient>
+    <radialGradient id="shade" cx="30%" cy="28%" r="85%">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#050a14" stop-opacity="0.78"/>
+    </radialGradient>
+    <radialGradient id="crater" cx="40%" cy="38%" r="70%">
+      <stop offset="0" stop-color="#8f9091" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#b9b6a6" stop-opacity="0.25"/>
+    </radialGradient>
+    <clipPath id="disc"><circle cx="256" cy="256" r="240"/></clipPath>
+  </defs>
+  <circle cx="256" cy="256" r="240" fill="url(#body2)"/>
+  <g clip-path="url(#disc)">
+    <ellipse cx="170" cy="190" rx="92" ry="78" fill="#8c8e90" opacity="0.38"/>
+    <ellipse cx="330" cy="150" rx="70" ry="54" fill="#8c8e90" opacity="0.3"/>
+    <ellipse cx="330" cy="340" rx="110" ry="92" fill="#8c8e90" opacity="0.32"/>
+    <circle cx="150" cy="330" r="42" fill="url(#crater)"/>
+    <circle cx="150" cy="330" r="42" fill="none" stroke="#f5f1e0" stroke-opacity="0.45" stroke-width="3"/>
+    <circle cx="260" cy="250" r="26" fill="url(#crater)"/>
+    <circle cx="260" cy="250" r="26" fill="none" stroke="#f5f1e0" stroke-opacity="0.5" stroke-width="2.5"/>
+    <circle cx="390" cy="260" r="34" fill="url(#crater)"/>
+    <circle cx="390" cy="260" r="34" fill="none" stroke="#f5f1e0" stroke-opacity="0.45" stroke-width="3"/>
+    <circle cx="210" cy="108" r="22" fill="url(#crater)"/>
+    <circle cx="210" cy="108" r="22" fill="none" stroke="#f5f1e0" stroke-opacity="0.5" stroke-width="2"/>
+    <circle cx="300" cy="420" r="18" fill="url(#crater)"/>
+    <circle cx="105" cy="230" r="15" fill="url(#crater)"/>
+    <circle cx="350" cy="80" r="12" fill="url(#crater)"/>
+    <circle cx="430" cy="360" r="14" fill="url(#crater)"/>
+    <circle cx="200" cy="410" r="11" fill="url(#crater)"/>
+    <circle cx="256" cy="256" r="240" fill="url(#shade)"/>
+  </g>
+  <circle cx="256" cy="256" r="239" fill="none" stroke="#fff6dc" stroke-opacity="0.25" stroke-width="2"/>
+</svg>

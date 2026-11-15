@@ -1,4 +1,5 @@
 import type { OnboardingNoticeCode, OnboardingState } from '../onboarding/types.ts';
+import type { NarrativeState } from '../onboarding/narrativePersistence.ts';
 
 export type CampaignId = 'moon-32';
 export type CampaignStatus = 'not-started' | 'active' | 'victory' | 'defeat';
@@ -940,6 +941,9 @@ export interface ToastMessage {
   readonly text: string;
 }
 
+export type AppScreen = 'title' | 'intro' | 'cockpit';
+export type IntroMode = 'first-run' | 'replay';
+
 export type ActiveModalType =
   | null
   | 'journal'
@@ -955,6 +959,10 @@ export type ActiveModalType =
   | 'about';
 
 export interface UiState {
+  readonly appScreen: AppScreen;
+  readonly introMode: IntroMode;
+  readonly introReturnScreen: 'title' | 'cockpit';
+  readonly introSceneIndex: number;
   readonly activeModal: ActiveModalType;
   readonly selectedCrewId: CrewId | null;
   readonly selectedSystemId: SystemId | null;
@@ -967,5 +975,6 @@ export interface UiState {
   readonly tutorialStep: number;
   readonly onboarding: OnboardingState;
   readonly onboardingNoticeCode: OnboardingNoticeCode;
+  readonly narrative: NarrativeState;
   readonly toasts: readonly ToastMessage[];
 }

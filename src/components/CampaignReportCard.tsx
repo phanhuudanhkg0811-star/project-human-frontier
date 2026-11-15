@@ -1,9 +1,11 @@
 import { selectCampaignReport, selectTrainingReport } from '../domain/campaignSelectors.ts';
+import { selectCampaignInsights } from '../domain/narrativeSelectors.ts';
 import { useI18n } from '../i18n/useI18n.ts';
 import { buildSaveEnvelope } from '../persistence/saveAdapter.ts';
 import { downloadArtifact } from '../persistence/downloadArtifact.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import type { ContentBundle, GameState } from '../types/index.ts';
+import { NightReadinessChecklist } from './NightReadinessChecklist.tsx';
 
 export function ArtifactExportButtons() {
   const { gameState, replayTrace } = useGameStore();
@@ -39,23 +41,24 @@ export function ArtifactExportButtons() {
 }
 
 export function TrainingReport({ state, bundle }: { state: GameState; bundle: ContentBundle }) {
-  const { locale, t } = useI18n();
+  const { t } = useI18n();
   const report = selectTrainingReport(state, bundle);
   if (!report) return null;
 
-  const localizedChecks =
-    locale === 'en'
-      ? [
-        {
-          label: t('report.trainingCheckCrew', { min: bundle.campaign.training.minActiveCrew }),
-          met: report.checks[0]?.met ?? null,
-        },
-        {
-          label: t('report.trainingCheckExpedition', { min: bundle.campaign.training.minExpeditions }),
-          met: report.checks[1]?.met ?? null,
-        },
-      ]
-      : report.checks;
+  const localizedChecks = [
+    {
+      label: t('report.trainingCheckCrew', { min: bundle.campaign.training.minActiveCrew }),
+      met: report.checks[0]?.met ?? null,
+    },
+    {
+      label: t('report.trainingCheckExpedition', { min: bundle.campaign.training.minExpeditions }),
+      met: report.checks[1]?.met ?? null,
+    },
+  ];
+
+  const showReadinessGap =
+    state.campaign.status === 'active' &&
+    state.clock.sol < bundle.campaign.milestones.lunarNight.startSol;
 
   return (
     <section className="campaign-report" aria-label="Training Report">
@@ -69,6 +72,13 @@ export function TrainingReport({ state, bundle }: { state: GameState; bundle: Co
           </li>
         ))}
       </ul>
+      {showReadinessGap && (
+        <div className="phf-training-readiness-gap">
+          <h4>{t('report.trainingGapTitle', { nightStart: bundle.campaign.milestones.lunarNight.startSol })}</h4>
+          <p className="text-xs text-slate-300 mb-2">{t('report.trainingGapSubtitle')}</p>
+          <NightReadinessChecklist state={state} bundle={bundle} />
+        </div>
+      )}
     </section>
   );
 }
@@ -76,6 +86,7 @@ export function TrainingReport({ state, bundle }: { state: GameState; bundle: Co
 export function CampaignReportCard({ state, bundle }: { state: GameState; bundle: ContentBundle }) {
   const { locale, t, pickText, localize } = useI18n();
   const report = selectCampaignReport(state, bundle);
+  const insights = selectCampaignInsights(state, bundle);
   const outcome = report.outcome;
 
   const requirementLabels: Record<string, string> = {
@@ -110,7 +121,10 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
 
   return (
     <section className="campaign-report" aria-label="NASA Cadet Report Card">
-      <h3>{t('report.cardTitle', { status: statusText })}</h3>
+      <div className="phf-report-header">
+        <h3>{t('report.cardTitle', { status: statusText })}</h3>
+        <span className="hail-evidence-badge">{t(`stem.evidence.${insights.provenance}`)}</span>
+      </div>
       <p className="campaign-rank">
         {outcome?.rank ? t('report.rankValue', { rank: outcome.rank }) : t('report.unranked')}
       </p>
@@ -118,6 +132,27 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
       <p>
         {t('common.seed')} {report.seed} · {report.difficulty} · {report.profile}
       </p>
+
+      <div className="phf-report-insights">
+        <div className="phf-report-insight-col">
+          <h4>{t('report.causesTitle')}</h4>
+          <ul>
+            {insights.causes.map((cause) => (
+              <li key={cause.code}>{t(cause.code, cause.params)}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="phf-report-insight-col">
+          <h4>{t('report.recommendationsTitle')}</h4>
+          <ul>
+            {insights.recommendations.map((rec) => (
+              <li key={rec.code}>{t(rec.code, rec.params)}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <p className="text-xs text-slate-400">{t('report.simulatedNote')}</p>
+
       <ul>
         {outcome?.requirements.map((requirement) => (
           <li key={requirement.id}>
@@ -131,17 +166,22 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
       </ul>
       <p>
         {t('report.expeditionLine', {
-          completed: report.expeditions.filter((mission) => mission.outcome === 'completed').length,
-          total: bundle.campaign.expeditions.length,
-          science: report.sciencePoints,
-          blackouts: report.blackouts,
+          completed: insights.completedExpeditions,
+          total: insights.totalExpeditions,
+          science: insights.sciencePoints,
+          blackouts: insights.blackouts,
         })}
       </p>
       <ul>
         {report.crew.map((crew) => (
           <li key={crew.id}>
-            {crew.name}: {crew.condition} · Health {crew.health} · Morale {crew.morale} · Satiety{' '}
-            {crew.satiety}
+            {t('report.crewLine', {
+              name: crew.name,
+              condition: t(`report.crewCondition.${crew.condition}`),
+              health: crew.health,
+              morale: crew.morale,
+              satiety: crew.satiety,
+            })}
           </li>
         ))}
       </ul>
@@ -159,8 +199,12 @@ export function CampaignReportCard({ state, bundle }: { state: GameState; bundle
         <ul>
           {report.systems.map((system) => (
             <li key={system.id}>
-              {system.id}: Lv{system.level} · Integrity {(system.integrity * 100).toFixed(0)}% ·{' '}
-              {system.status}
+              {t('report.systemLine', {
+                name: t(`system.${system.id}`),
+                level: system.level,
+                pct: (system.integrity * 100).toFixed(0),
+                status: t(`report.systemStatus.${system.status}`),
+              })}
             </li>
           ))}
         </ul>

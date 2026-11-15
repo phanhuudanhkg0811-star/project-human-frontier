@@ -1,6 +1,9 @@
-import { Compass, Cpu, Moon, Radio, Utensils } from 'lucide-react';
+import { Compass, Cpu, Film, Map, Moon, Radio, Utensils } from 'lucide-react';
+import { startMusic, syncMusicMuted } from '../../audio/sfx.ts';
+import { playSfx as playSynthSfx } from '../../audio/soundEngine.ts';
 import { TUTORIAL_STEPS } from '../../data/tutorialSteps.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { useGameStore } from '../../store/gameStore.ts';
 import { useUiStore } from '../../store/uiStore.ts';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
@@ -22,11 +25,19 @@ function StepIcon({ icon }: { icon: (typeof TUTORIAL_STEPS)[number]['icon'] }) {
 
 export function TutorialModal({ onClose }: { onClose: () => void }) {
   const { locale, t } = useI18n();
+  const appScreen = useUiStore((s) => s.appScreen);
+  const audioMuted = useUiStore((s) => s.audioMuted);
+  const contextualHintsEnabled = useUiStore((s) => s.onboarding.contextualHintsEnabled);
   const tutorialStep = useUiStore((s) => s.tutorialStep);
   const tutorialCompleted = useUiStore((s) => s.tutorialCompleted);
   const setTutorialStep = useUiStore((s) => s.setTutorialStep);
   const completeTutorial = useUiStore((s) => s.completeTutorial);
   const resetTutorial = useUiStore((s) => s.resetTutorial);
+  const openIntro = useUiStore((s) => s.openIntro);
+  const enterCockpit = useUiStore((s) => s.enterCockpit);
+  const startCockpitTour = useUiStore((s) => s.startCockpitTour);
+  const setContextualHintsEnabled = useUiStore((s) => s.setContextualHintsEnabled);
+  const enterSol1Sandbox = useGameStore((s) => s.enterSol1Sandbox);
 
   const totalSteps = TUTORIAL_STEPS.length;
   const safeIndex = Math.min(Math.max(0, tutorialStep), totalSteps - 1);
@@ -104,8 +115,8 @@ export function TutorialModal({ onClose }: { onClose: () => void }) {
         </article>
 
         {/* Footer Controls */}
-        <div className="flex items-center justify-between gap-2 pt-1">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               disabled={isFirst}
@@ -123,6 +134,51 @@ export function TutorialModal({ onClose }: { onClose: () => void }) {
                 {t('tutorial.replayStep')}
               </button>
             )}
+            <button
+              type="button"
+              onClick={() => {
+                playSynthSfx('click');
+                syncMusicMuted(audioMuted);
+                if (!audioMuted) startMusic(0.28);
+                openIntro('replay', appScreen === 'cockpit' ? 'cockpit' : 'title', 0);
+              }}
+              className="hail-btn text-xs flex items-center gap-1.5"
+            >
+              <Film className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{t('tutorial.replayIntro')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                playSynthSfx('click');
+                const origin = appScreen === 'title' ? 'title' : 'cockpit';
+                enterSol1Sandbox(origin);
+                if (appScreen !== 'cockpit') {
+                  enterCockpit();
+                }
+                startCockpitTour(undefined, {
+                  returnToTutorialOrigin: origin,
+                });
+                onClose();
+              }}
+              className="hail-btn text-xs flex items-center gap-1.5"
+            >
+              <Map className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>{t('onboarding.cockpit.replayCockpit')}</span>
+            </button>
+            <button
+              type="button"
+              aria-pressed={contextualHintsEnabled}
+              onClick={() => {
+                playSynthSfx('click');
+                setContextualHintsEnabled(!contextualHintsEnabled);
+              }}
+              className="hail-btn text-xs"
+            >
+              {contextualHintsEnabled
+                ? t('onboarding.controls.hintsOn')
+                : t('onboarding.controls.hintsOff')}
+            </button>
           </div>
 
           {!isLast ? (

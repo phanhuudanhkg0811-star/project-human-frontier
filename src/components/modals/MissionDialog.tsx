@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { useUiStore } from '../../store/uiStore.ts';
 
 export type MissionDialogType =
   | 'journal'
@@ -38,12 +39,13 @@ export function MissionDialog({
   children,
 }: MissionDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const tourActive = useUiStore((s) => s.onboarding.activeTour !== null);
   const { t } = useI18n();
 
   useEffect(() => {
     const dialog = ref.current;
-    const previous = document.activeElement as HTMLElement | null;
-    dialog?.showModal();
+    previousFocusRef.current = document.activeElement as HTMLElement | null;
 
     const focusTimer = window.requestAnimationFrame(() => {
       if (!dialog) return;
@@ -63,12 +65,26 @@ export function MissionDialog({
 
     return () => {
       window.cancelAnimationFrame(focusTimer);
-      dialog?.close();
-      if (previous?.isConnected) {
-        previous.focus();
+      if (dialog?.open) dialog.close();
+      const prev = previousFocusRef.current;
+      if (prev?.isConnected) {
+        prev.focus();
       }
     };
   }, []);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (dialog.open) {
+      dialog.close();
+    }
+    if (tourActive) {
+      dialog.show();
+    } else {
+      dialog.showModal();
+    }
+  }, [tourActive]);
 
   if (tactileFrame) {
     return (
@@ -76,7 +92,7 @@ export function MissionDialog({
         ref={ref}
         tabIndex={-1}
         aria-modal="true"
-        className={`mission-dialog hail-dialog hail-dialog--tactile mission-dialog--${panelType}`}
+        className={`mission-dialog hail-dialog hail-dialog--tactile mission-dialog--${panelType} ${tourActive ? 'is-tour-modeless' : ''}`.trim()}
         aria-label={title}
         onClick={(e) => {
           if (e.target === ref.current) {
@@ -93,19 +109,24 @@ export function MissionDialog({
     );
   }
 
+  const allowModalInteraction = tourActive && (panelType === 'comms' || panelType === 'expedition');
+
   return (
     <dialog
       ref={ref}
       tabIndex={-1}
       aria-modal="true"
-      className={`mission-dialog hail-dialog hail-dialog--dock-${dockSide} mission-dialog--${panelType}`}
+      className={`mission-dialog hail-dialog hail-dialog--dock-${dockSide} mission-dialog--${panelType} ${tourActive ? 'is-tour-modeless' : ''} ${allowModalInteraction ? 'driver-allowed-element' : ''}`.trim()}
       aria-labelledby="mission-dialog-title"
       onCancel={e => {
         e.preventDefault();
         onClose();
       }}
     >
-      <div className="mission-dialog-frame hail-dialog-frame">
+      <div
+        className="mission-dialog-frame hail-dialog-frame"
+        data-tour-modal-frame={panelType}
+      >
         <header className="mission-dialog-header hail-dialog-header">
           {art && (
             <div className="mission-dialog-art-wrap hail-dialog-art-wrap" aria-hidden="true">

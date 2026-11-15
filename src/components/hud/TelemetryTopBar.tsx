@@ -13,7 +13,7 @@ const DONKI_COLOR: Record<DonkiLevel, string> = {
 };
 
 export function TelemetryTopBar() {
-  const { gameState, bundle } = useGameStore();
+  const { gameState, bundle, tutorialSandboxActive } = useGameStore();
   const r = gameState.resources;
   const sol = gameState.clock.sol;
   const targetSol = gameState.campaign.targetSol;
@@ -34,7 +34,11 @@ export function TelemetryTopBar() {
   ];
 
   return (
-    <header className="hail-telemetry" aria-label={t('telemetry.aria')}>
+    <header
+      className="hail-telemetry"
+      aria-label={t('telemetry.aria')}
+      data-tour={TOUR_TARGET_IDS.TELEMETRY_BAR}
+    >
       <div className="hail-mission-id">
         <img src={HAIL_SVG.badgeNasaStem} alt="NASA STEM" className="hail-emblem-icon" />
         <div className="hail-mission-titles">
@@ -51,6 +55,11 @@ export function TelemetryTopBar() {
             </span>
           </div>
           <span className="hail-sub-row">
+            {tutorialSandboxActive ? (
+              <span className="text-amber-300 font-semibold mr-1.5">
+                [{t('onboarding.sol1.sandboxTag')}]
+              </span>
+            ) : null}
             {`MOON SURVIVAL 32 SOL · ${t(phaseKey[gameState.clock.phase])}`}
           </span>
         </div>

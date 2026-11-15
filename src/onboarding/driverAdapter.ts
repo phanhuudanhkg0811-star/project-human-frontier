@@ -11,10 +11,27 @@ import type {
   TourTargetId,
 } from './types.ts';
 
+function normalizeDriverProgressTemplate(template: string | undefined): string {
+  const raw = template?.trim() || '{{current}} / {{total}}';
+  return raw.replace(/\{+(current|total)\}+/g, '{{$1}}');
+}
+
+function isReducedMotionEffective(explicitReduced: boolean): boolean {
+  if (explicitReduced) return true;
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
 function isElementUsable(element: Element | null): element is Element {
   if (!element) return false;
   if (!element.isConnected) return false;
-  if (element instanceof HTMLElement) {
+  if (typeof HTMLElement !== 'undefined' && element instanceof HTMLElement) {
     if (element.hasAttribute('hidden')) return false;
     const rect = element.getBoundingClientRect();
     // In JSDOM/test environments getBoundingClientRect() returns 0x0; only reject explicit display:none.
@@ -68,23 +85,26 @@ export function toDriverJsConfig(config: DriverBackendConfig): DriverJsConfig {
       focus: step.focus,
       popover: step.popover
         ? {
-            title: step.popover.title,
-            description: step.popover.description,
-            side: step.popover.side,
-            align: step.popover.align,
-            showButtons: step.popover.showButtons ? [...step.popover.showButtons] : undefined,
-            popoverClass: step.popover.popoverClass,
-            nextBtnText: step.popover.nextBtnText,
-            prevBtnText: step.popover.prevBtnText,
-            doneBtnText: step.popover.doneBtnText,
-            closeBtnLabel: step.popover.closeBtnLabel,
-            onNextClick: step.popover.onNextClick,
-            onPrevClick: step.popover.onPrevClick,
-            onCloseClick: step.popover.onCloseClick,
-          }
+          title: step.popover.title,
+          description: step.popover.description,
+          side: step.popover.side,
+          align: step.popover.align,
+          showButtons: step.popover.showButtons ? [...step.popover.showButtons] : undefined,
+          popoverClass: step.popover.popoverClass,
+          nextBtnText: step.popover.nextBtnText,
+          prevBtnText: step.popover.prevBtnText,
+          doneBtnText: step.popover.doneBtnText,
+          closeBtnLabel: step.popover.closeBtnLabel,
+          onNextClick: step.popover.onNextClick,
+          onPrevClick: step.popover.onPrevClick,
+          onCloseClick: step.popover.onCloseClick,
+        }
         : undefined,
       onHighlightStarted: step.onHighlightStarted
         ? (el) => step.onHighlightStarted?.(el)
+        : undefined,
+      onHighlighted: step.onHighlighted
+        ? (el) => step.onHighlighted?.(el)
         : undefined,
     })),
     onDestroyStarted: config.onDestroyStarted
@@ -135,6 +155,7 @@ export function createDriverAdapter(
   let pendingReason: DriverDestroyReason | null = null;
   let waitAbort: AbortController | null = null;
   let previousFocus: HTMLElement | null = null;
+  let moveToStepIndex: ((index: number) => void) | null = null;
   let runToken = 0;
 
   const abortWaits = () => {
@@ -149,6 +170,9 @@ export function createDriverAdapter(
     const immediate = document.querySelector(selector);
     if (isElementUsable(immediate)) {
       return Promise.resolve(immediate);
+    }
+    if (timeoutMs <= 0) {
+      return Promise.resolve(null);
     }
 
     abortWaits();
@@ -194,15 +218,29 @@ export function createDriverAdapter(
   };
 
   const resolveStepTarget = async (
-    step: TourStepDefinition
+    step: TourStepDefinition,
+    opts?: DriverStartOptions | null
   ): Promise<{ element: Element; targetId: TourTargetId } | null> => {
-    const primary = await waitForElement(tourSelector(step.targetId), step.waitForElementMs ?? 1200);
+    const override = opts?.resolveElementOverride?.(step) ?? null;
+    if (isElementUsable(override)) {
+      return { element: override, targetId: step.targetId };
+    }
+    const shouldWait = opts?.shouldWaitForTarget ? opts.shouldWaitForTarget(step) : true;
+    const waitMs = shouldWait ? (step.waitForElementMs ?? 1200) : 0;
+    const overrideSelector = opts?.resolveSelectorOverride?.(step) ?? null;
+    if (overrideSelector) {
+      const overrideEl = await waitForElement(overrideSelector, step.waitForElementMs ?? 1500);
+      if (overrideEl) {
+        return { element: overrideEl, targetId: step.targetId };
+      }
+    }
+    const primary = await waitForElement(tourSelector(step.targetId), waitMs);
     if (primary) {
       return { element: primary, targetId: step.targetId };
     }
     if (step.fallbackTargetId && typeof document !== 'undefined') {
-      const fallback = document.querySelector(tourSelector(step.fallbackTargetId));
-      if (isElementUsable(fallback)) {
+      const fallback = await waitForElement(tourSelector(step.fallbackTargetId), 400);
+      if (fallback) {
         return { element: fallback, targetId: step.fallbackTargetId };
       }
     }
@@ -224,6 +262,7 @@ export function createDriverAdapter(
     currentOptions = null;
     activeStepId = null;
     previousFocus = null;
+    moveToStepIndex = null;
 
     if (currentBackend) {
       try {
@@ -254,17 +293,18 @@ export function createDriverAdapter(
 
   const findNextAvailableStep = async (
     steps: readonly TourStepDefinition[],
-    startIndex: number
+    startIndex: number,
+    opts?: DriverStartOptions | null
   ): Promise<{ index: number; targetId: TourTargetId; element: Element } | null> => {
     for (let i = Math.max(0, startIndex); i < steps.length; i += 1) {
       const candidate = steps[i];
-      const resolved = await resolveStepTarget(candidate);
+      await opts?.onBeforeStepMove?.(candidate);
+      const resolved = await resolveStepTarget(candidate, opts);
       if (resolved) {
         return { index: i, ...resolved };
       }
       console.warn(
-        `[onboarding] Skipping step "${candidate.stepId}": target "${candidate.targetId}"${
-          candidate.fallbackTargetId ? ` and fallback "${candidate.fallbackTargetId}"` : ''
+        `[onboarding] Skipping step "${candidate.stepId}": target "${candidate.targetId}"${candidate.fallbackTargetId ? ` and fallback "${candidate.fallbackTargetId}"` : ''
         } not found.`
       );
     }
@@ -280,59 +320,103 @@ export function createDriverAdapter(
 
     const token = ++runToken;
     currentOptions = options;
-    if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+    if (
+      typeof document !== 'undefined' &&
+      typeof HTMLElement !== 'undefined' &&
+      document.activeElement instanceof HTMLElement
+    ) {
       previousFocus = document.activeElement;
     }
 
     const requestedIndex = options.startStepId
       ? Math.max(
-          0,
-          options.steps.findIndex((step) => step.stepId === options.startStepId)
-        )
+        0,
+        options.steps.findIndex((step) => step.stepId === options.startStepId)
+      )
       : 0;
 
-    const firstAvailable = await findNextAvailableStep(options.steps, requestedIndex);
+    const firstAvailable = await findNextAvailableStep(options.steps, requestedIndex, options);
     if (token !== runToken) return false;
 
     if (!firstAvailable) {
       console.warn(
-        `[onboarding] Stopping tour "${options.tourId}": no matching DOM target found from step "${
-          options.startStepId ?? options.steps[0].stepId
+        `[onboarding] Stopping tour "${options.tourId}": no matching DOM target found from step "${options.startStepId ?? options.steps[0].stepId
         }".`
       );
       destroy('missing-target');
       return false;
     }
 
+    let moveToken = 0;
     const moveToIndex = (index: number) => {
       if (!backend || !currentOptions) return;
       const clamped = Math.max(0, Math.min(currentOptions.steps.length - 1, index));
       const targetStep = currentOptions.steps[clamped];
-      void resolveStepTarget(targetStep).then((resolved) => {
-        if (token !== runToken || !backend) return;
+      const localMoveToken = ++moveToken;
+      // Set activeStepId synchronously before async modal cleanup so React effects never double-evaluate the prior step.
+      activeStepId = targetStep.stepId;
+      void (async () => {
+        await currentOptions?.onBeforeStepMove?.(targetStep);
+        if (token !== runToken || localMoveToken !== moveToken || !backend || !currentOptions) return;
+        const resolved = await resolveStepTarget(targetStep, currentOptions);
+        if (token !== runToken || localMoveToken !== moveToken || !backend || !currentOptions) return;
         if (!resolved) {
-          console.warn(`[onboarding] Missing target for "${targetStep.stepId}", searching next step.`);
-          void findNextAvailableStep(currentOptions!.steps, clamped + 1).then((nextAvailable) => {
-            if (token !== runToken || !backend) return;
-            if (!nextAvailable) {
-              destroy('missing-target');
-              return;
-            }
-            activeStepId = currentOptions!.steps[nextAvailable.index].stepId;
-            backend.moveTo(nextAvailable.index);
-          });
+          console.warn(`[onboarding] Missing target for "${targetStep.stepId}".`);
+          if (targetStep.allowContinueWithoutAction === false) {
+            // Never silently skip a required interactive Sol 1 step; stay anchored on it safely.
+            activeStepId = targetStep.stepId;
+            backend.moveTo(clamped);
+            return;
+          }
+          const nextAvailable = await findNextAvailableStep(
+            currentOptions.steps,
+            clamped + 1,
+            currentOptions
+          );
+          if (token !== runToken || localMoveToken !== moveToken || !backend || !currentOptions) return;
+          if (!nextAvailable) {
+            destroy('missing-target');
+            return;
+          }
+          activeStepId = currentOptions.steps[nextAvailable.index].stepId;
+          backend.moveTo(nextAvailable.index);
           return;
         }
         activeStepId = targetStep.stepId;
         backend.moveTo(clamped);
-      });
+      })();
+    };
+    moveToStepIndex = moveToIndex;
+
+    const effectiveReducedMotion = isReducedMotionEffective(options.reducedMotion);
+
+    const getShowButtonsForStep = (
+      step: TourStepDefinition,
+      index: number
+    ): Array<'previous' | 'next' | 'close'> => {
+      const canClickNext =
+        step.allowContinueWithoutAction || (options.canAdvanceStep?.(step) ?? false);
+      const buttons: Array<'previous' | 'next' | 'close'> = [];
+      if (index > 0) buttons.push('previous');
+      if (canClickNext) buttons.push('next');
+      buttons.push('close');
+      return buttons;
     };
 
     const stepConfigs: DriverBackendConfig['steps'] = options.steps.map((step, index) => {
       const copy = options.resolveText(step);
       const isLast = index === options.steps.length - 1;
+      const showButtons = getShowButtonsForStep(step, index);
+
       return {
         element: () => {
+          const override = options.resolveElementOverride?.(step) ?? null;
+          if (isElementUsable(override)) return override;
+          const overrideSelector = options.resolveSelectorOverride?.(step) ?? null;
+          if (overrideSelector && typeof document !== 'undefined') {
+            const matchedOverride = document.querySelector(overrideSelector);
+            if (isElementUsable(matchedOverride)) return matchedOverride;
+          }
           if (typeof document !== 'undefined') {
             const primary = document.querySelector(tourSelector(step.targetId));
             if (isElementUsable(primary)) return primary;
@@ -343,15 +427,15 @@ export function createDriverAdapter(
           }
           return document.body;
         },
-        allowPageInteraction: true,
-        disableActiveInteraction: false,
+        allowPageInteraction: false,
+        disableActiveInteraction: options.tourId === 'cockpit',
         focus: MODAL_INTERIOR_TARGETS.has(step.targetId) ? 'none' : 'popover',
         popover: {
           title: copy.title,
           description: copy.description,
           side: step.side ?? 'bottom',
           align: 'center',
-          showButtons: index === 0 ? ['next', 'close'] : ['previous', 'next', 'close'],
+          showButtons,
           popoverClass: 'phf-driver-popover',
           nextBtnText: isLast ? copy.doneBtnText ?? copy.nextBtnText : copy.nextBtnText,
           prevBtnText: copy.prevBtnText,
@@ -373,8 +457,24 @@ export function createDriverAdapter(
             destroy('skip');
           },
         },
-        onHighlightStarted: () => {
+        onHighlightStarted: (highlightedEl) => {
           activeStepId = step.stepId;
+          if (
+            options.tourId !== 'cockpit' &&
+            typeof HTMLElement !== 'undefined' &&
+            highlightedEl instanceof HTMLElement &&
+            typeof highlightedEl.scrollIntoView === 'function'
+          ) {
+            try {
+              highlightedEl.scrollIntoView({
+                block: 'nearest',
+                inline: 'nearest',
+                behavior: effectiveReducedMotion ? 'auto' : 'smooth',
+              });
+            } catch {
+              // Ignore JSDOM/unsupported scroll options cleanly.
+            }
+          }
           const usedTarget =
             typeof document !== 'undefined' && isElementUsable(document.querySelector(tourSelector(step.targetId)))
               ? step.targetId
@@ -382,12 +482,15 @@ export function createDriverAdapter(
           options.onStepChange?.(step.stepId, usedTarget);
           emitTestEvent(step.testEvent, step.stepId, usedTarget);
         },
+        onHighlighted: () => {
+          backend?.updatePopover?.({ showButtons: getShowButtonsForStep(step, index) });
+        },
       };
     });
 
     const instance = await backendFactory({
-      animate: !options.reducedMotion,
-      smoothScroll: !options.reducedMotion,
+      animate: options.tourId === 'cockpit' ? false : !effectiveReducedMotion,
+      smoothScroll: options.tourId === 'cockpit' ? false : !effectiveReducedMotion,
       allowKeyboardControl: true,
       allowClose: true,
       overlayClickBehavior: 'none',
@@ -395,7 +498,7 @@ export function createDriverAdapter(
       stageRadius: 10,
       popoverClass: 'phf-driver-popover',
       showProgress: true,
-      progressText: options.progressText ?? '{{current}} / {{total}}',
+      progressText: normalizeDriverProgressTemplate(options.progressText),
       steps: stepConfigs,
       onDestroyStarted: (_el, _step, opts) => {
         if (pendingReason !== null) return;
@@ -436,8 +539,25 @@ export function createDriverAdapter(
       if (!backend || !currentOptions) return false;
       const index = currentOptions.steps.findIndex((step) => step.stepId === stepId);
       if (index < 0) return false;
+      const step = currentOptions.steps[index];
       activeStepId = stepId;
-      backend.moveTo(index);
+      const overrideNow = currentOptions.resolveElementOverride?.(step) ?? null;
+      const overrideSelector = currentOptions.resolveSelectorOverride?.(step) ?? null;
+      const overrideSelectorEl =
+        overrideSelector && typeof document !== 'undefined'
+          ? document.querySelector(overrideSelector)
+          : null;
+      const primaryNow =
+        typeof document !== 'undefined' ? document.querySelector(tourSelector(step.targetId)) : null;
+      if (
+        isElementUsable(overrideNow) ||
+        (overrideSelector ? isElementUsable(overrideSelectorEl) : isElementUsable(primaryNow)) ||
+        !moveToStepIndex
+      ) {
+        backend.moveTo(index);
+      } else {
+        moveToStepIndex(index);
+      }
       return true;
     },
     destroy,

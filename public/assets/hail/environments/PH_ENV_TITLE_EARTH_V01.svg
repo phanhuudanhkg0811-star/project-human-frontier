@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="ocean" cx="35%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#6cc4ff"/>
+      <stop offset="0.55" stop-color="#2468c4"/>
+      <stop offset="1" stop-color="#0a2150"/>
+    </radialGradient>
+    <radialGradient id="night" cx="28%" cy="26%" r="90%">
+      <stop offset="0.5" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#020611" stop-opacity="0.85"/>
+    </radialGradient>
+    <radialGradient id="atmo" cx="50%" cy="50%" r="50%">
+      <stop offset="0.9" stop-color="#7fd4ff" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#7fd4ff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="d"><circle cx="128" cy="128" r="104"/></clipPath>
+  </defs>
+  <circle cx="128" cy="128" r="124" fill="url(#atmo)"/>
+  <circle cx="128" cy="128" r="104" fill="url(#ocean)"/>
+  <g clip-path="url(#d)">
+    <path d="M70 60c20-14 44-10 52 6 6 14-8 22-6 38 2 16-14 22-22 38-8 16-30 6-34-12-4-18-24-24-18-44 4-12 14-18 28-26z" fill="#4c9a58"/>
+    <path d="M150 120c16-8 34 0 44 12 10 14 4 36-10 50-12 12-24 20-30 4-6-14 4-22-4-34-6-10-10-24 0-32z" fill="#58a862"/>
+    <path d="M168 54c14-6 30 2 36 14-14 4-26 2-36-14z" fill="#8fc98f"/>
+    <path d="M60 150c-20 6-28 24-18 40 8 6 14 0 18-10 4-10 8-22 0-30z" fill="#3f8a50"/>
+    <g fill="#fff" opacity="0.8">
+      <ellipse cx="100" cy="90" rx="38" ry="7"/>
+      <ellipse cx="160" cy="150" rx="46" ry="8"/>
+      <ellipse cx="78" cy="170" rx="30" ry="6"/>
+      <ellipse cx="170" cy="70" rx="28" ry="5"/>
+    </g>
+    <circle cx="128" cy="128" r="104" fill="url(#night)"/>
+  </g>
+</svg>
