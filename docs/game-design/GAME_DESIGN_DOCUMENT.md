@@ -66,7 +66,7 @@ Chỉ còn **Elena Chen** là thành viên duy nhất chưa nhận nhiệm vụ:
 * **Phương án B — Bảo vệ sinh mệnh Trạm**:
   - Chạy máy tái chế WRS để bảo toàn nguồn nước sạch cho căn cứ.
   - Buộc phải hy sinh dữ liệu của chuyến rover 2.
-  - *Hậu quả*: Expedition 2 thất bại (nhưng rover vẫn bảo toàn cho chuyến 3); kết thúc Sol 7 trạm có 34.0 L nước và 0 kWh pin.
+  - *Hậu quả*: Expedition 2 thất bại (nhưng rover vẫn bảo toàn cho chuyến 3); WRS xử lý cả 10.0 L tồn và 8.8 L nước xám phát sinh trong Sol, nên kết thúc Sol 7 trạm có 41.9 L nước và 0 kWh pin.
 
 ---
 

@@ -54,7 +54,13 @@ export function AboutCreditsModal({ onClose }: { onClose: () => void }) {
           <ul className="space-y-2 text-xs">
             {NASA_DATA_SOURCES.map((item) => (
               <li key={item.id} className="leading-relaxed">
-                <strong className="text-slate-100">{item.name}</strong>
+                <strong className="text-slate-100">
+                  {item.url ? (
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="underline decoration-dotted underline-offset-2">
+                      {item.name}
+                    </a>
+                  ) : item.name}
+                </strong>
                 <p className="text-slate-300">{locale === 'en' ? item.detailEn : item.detailVi}</p>
               </li>
             ))}

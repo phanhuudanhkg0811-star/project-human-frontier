@@ -198,7 +198,10 @@ test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B inva
   assert.equal(afterSol1.debrief.lastSummary.resourceDeltas.waterL, previewBeforeEnd.resourceDeltas.waterL);
   assert.equal(afterSol1.resources.mrePacks, 25); // 24 + 1 crafted MRE
   assert.equal(afterSol1.resources.oxygenKg, 66.6); // 70 - 3.4
-  assert.equal(afterSol1.resources.waterL, 68); // 78 (2L used by fab) - 10 (4*2.5) = 68, 0 wasteWater initially
+  assert.equal(afterSol1.debrief.lastSummary.checkpoint.wrsProcessedWasteWaterL, 8.8);
+  assert.equal(afterSol1.debrief.lastSummary.wrsRecoveredWaterL, 7.9);
+  assert.equal(afterSol1.resources.waterL, 75.9); // 78 - 10 crew use + 7.9 reclaimed from same-Sol greywater
+  assert.equal(afterSol1.resources.wasteWaterL, 0);
   assert.equal(afterSol1.crew.cmd.satiety, 75);
 
   // Dismiss debrief -> Sol 2 briefing
@@ -208,7 +211,7 @@ test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B inva
   core.assertGameState(port.getSnapshot(), bundle);
 });
 
-test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (WRS 90% ON)', () => {
+test('Golden Sol 7 matches 25.0L/2.0kWh (Save Rover) vs 41.9L/0.0kWh (same-Sol WRS ON)', () => {
   const bundle = core.loadContentBundle();
   const base = core.createInitialGameState(bundle, { seed: 777, spaceWeatherOverride: 'quiet' });
   const sol7Fixture = {
@@ -257,7 +260,9 @@ test('Golden Sol 7 Option A matches 25.0L/2.0kWh (Save Rover) vs 34.0L/0.0kWh (W
     dailyPlan: { ...sol7Fixture.dailyPlan, wrsEnabled: true },
   };
   const outB = core.resolveSol(branchBInput, bundle, 'commit');
-  assert.equal(outB.nextState.resources.waterL, 34);
+  assert.equal(outB.summary.checkpoint.wrsProcessedWasteWaterL, 18.8);
+  assert.equal(outB.summary.wrsRecoveredWaterL, 16.9);
+  assert.equal(outB.nextState.resources.waterL, 41.9);
   assert.equal(outB.nextState.resources.batteryKWh, 0);
 });
 
@@ -964,13 +969,28 @@ test('WRS recovery is proportional to recycler integrity', () => {
     );
 
   const healthy = sol7(1.0);
-  assert.equal(healthy.summary.wrsRecoveredWaterL, 9, '10 L greywater * 90% at full integrity');
-  assert.equal(healthy.summary.resourceDeltas.waterL, -1);
+  assert.equal(healthy.summary.checkpoint.wrsProcessedWasteWaterL, 18.8);
+  assert.equal(healthy.summary.wrsRecoveredWaterL, 16.9, 'existing and same-Sol greywater recover at 90%');
+  assert.equal(healthy.summary.resourceDeltas.waterL, 6.9);
+  assert.equal(healthy.nextState.resources.wasteWaterL, 0);
 
   const half = sol7(0.5);
-  assert.equal(half.summary.wrsRecoveredWaterL, 4.5, 'half the recovery rate at half integrity');
-  assert.equal(half.summary.resourceDeltas.waterL, -5.5);
+  assert.equal(half.summary.wrsRecoveredWaterL, 8.4, 'half integrity halves same-batch recovery');
+  assert.equal(half.summary.resourceDeltas.waterL, -1.6);
   assert.ok(half.nextState.resources.waterL < healthy.nextState.resources.waterL);
+});
+
+test('Five-Sol forecast auto-issues MREs before crew would become hungry and exposes remaining stock', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 15, spaceWeatherOverride: 'quiet' });
+  const state = variant(base, {
+    clock: { sol: 1, phase: 'rationing', resolutionIndex: 0 },
+    dailyPlan: committedPlan(1),
+  });
+
+  const trend = core.selectFiveSolResourceTrend(state, bundle, 5);
+  assert.deepEqual(trend.map((point) => point.mrePacks), [24, 24, 20, 20, 16]);
+  assert.equal(trend.length, 5);
 });
 
 test('Continuous wear degrades systems every Sol and storm hardware stress accelerates it', () => {

@@ -313,13 +313,13 @@ test('Kid-safety: water ledger conserves mass across WRS on and off', () => {
 
   const on = resolveOneSol(prepared, { wrsEnabled: true });
   const wrs = balance.eclss.wrsByLevel['1'];
-  const processed = Math.min(30, wrs.maxBatchL);
+  const processed = Math.min(30 + grey, wrs.maxBatchL);
   const recovered = on.summary.wrsRecoveredWaterL;
   // Recycler integrity decays slightly with thermal cycling, so recovery sits at
   // or just under the nominal 90% batch recovery.
   assert.ok(recovered > 0 && recovered <= processed * wrs.recoveryRate + 1e-9);
   assert.equal(on.nextState.resources.waterL, 60 - use + recovered);
-  assert.equal(on.nextState.resources.wasteWaterL, 30 - processed + grey);
+  assert.equal(on.nextState.resources.wasteWaterL, Math.round((30 + grey - processed) * 100) / 100);
   // Recovery can never exceed the batch, even at Lv3 95%.
   assert.ok(recovered <= processed * 0.95 + 1e-9);
 });

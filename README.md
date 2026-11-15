@@ -143,7 +143,7 @@ Surface exploration is conducted via uncrewed robotic rovers:
 #### ⚖️ The Sol 7 Golden Crisis
 At Sol 7, a simultaneous cabin leak, solar degradation, and rover telemetry failure strike. Elena Chen is the only available astronaut remaining:
 - **Option A (Save Rover)**: Spend 2 kWh and postpone the WRS recycler to rescue rover data; Expedition 2 succeeds, leaving the station with 25.0 L water and 2 kWh battery.
-- **Option B (Protect Habitat)**: Run the WRS recycler to safeguard water reserves; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 34.0 L water and 0 kWh battery.
+- **Option B (Protect Habitat)**: Run the WRS recycler on stored and same-Sol greywater; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 41.9 L water and 0 kWh battery.
 
 ### 5. The 14-Sol Lunar Night Survival (Sol 15–28)
 

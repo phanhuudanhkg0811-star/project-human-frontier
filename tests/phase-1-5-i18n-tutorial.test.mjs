@@ -68,6 +68,7 @@ test('Phase 1.5 NASA science briefs include bilingual titleEn and contentEn for 
   for (const brief of bundle.briefs) {
     assert.ok(typeof brief.titleEn === 'string' && brief.titleEn.trim().length > 0, `${brief.id} missing titleEn`);
     assert.ok(typeof brief.contentEn === 'string' && brief.contentEn.trim().length > 0, `${brief.id} missing contentEn`);
+    assert.match(brief.sourceUrl, /^https:\/\//, `${brief.id} missing HTTPS sourceUrl`);
   }
 });
 

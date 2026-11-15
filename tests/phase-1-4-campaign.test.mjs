@@ -40,8 +40,9 @@ test('Preview and commit share outcome, WRS denominator and Lunar Night solar le
     const commit = core.resolveSol(state, bundle, 'commit');
     assert.deepEqual(preview.nextState.campaign.outcome, commit.nextState.campaign.outcome);
     assert.deepEqual(preview.summary, commit.summary);
-    assert.equal(commit.summary.checkpoint.wrsProcessedWasteWaterL, 7);
-    assert.equal(commit.summary.wrsRecoveredWaterL, 6.3);
+    assert.equal(commit.summary.checkpoint.wrsProcessedWasteWaterL, 15.8);
+    const recyclerIntegrity = commit.summary.checkpoint.systems.recycler.integrity;
+    assert.equal(commit.summary.wrsRecoveredWaterL, Math.round(15.8 * 0.9 * recyclerIntegrity * 10) / 10);
     assert.equal(commit.summary.checkpoint.fissionGeneratedKWh, 8);
     assert.equal(commit.summary.checkpoint.solarGeneratedKWh === 0, sol >= 15 && sol <= 28);
   }

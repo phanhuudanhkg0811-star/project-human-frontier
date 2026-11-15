@@ -40,6 +40,9 @@ test('Phase 1.6 releaseMeta preserves Save v4 compatibility and exposes bilingua
     assert.ok(item.detailVi.trim().length > 0);
     assert.ok(item.detailEn.trim().length > 0);
   }
+  for (const item of mod.NASA_DATA_SOURCES) {
+    assert.match(item.url, /^https:\/\//);
+  }
 });
 
 test('Phase 1.6 contract components and about modal state work safely under Node', () => {
