@@ -1,7 +1,7 @@
 {
   "phase": "2.6",
   "method": "8-Journey Moon Complete E2E via live Vite + Chrome CDP (Desktop 1440x900, Laptop 1280x720, Mobile 390x844, VI & EN, Keyboard a11y, Normal & Reduced Motion, Onboarding Recovery, Sol 7 Branches, Sol 32 Victory & Defeat).",
-  "contentHash": "6bc987da6a70ef357b9dcced943f4748c4d91eb67e32e9c02ff64d4e4e393a7f",
+  "contentHash": "e477bdcc9541777c56c1b8a81b57a54f8aa28ba6e9a266642128dd333151925e",
   "checks": [
     "Journey 1: Fresh boot lands on Title Screen (never skips directly to cockpit) with Continue disabled",
     "Journey 8 (Title EN): Title menu localizes cleanly to English",
@@ -94,7 +94,7 @@
         "rank": "S",
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "ca9ec3544d2d77f822f8d5470d2881aa38b358709c2b0b82fd58964242003ff2"
+      "finalHash": "327636c2f09b02730bd73c998b39e51db853cf4b0b2fa77ded3a5bb489f0c6ac"
     },
     {
       "scenario": "water",
@@ -132,7 +132,7 @@
         "rank": null,
         "rankingVersion": "1.4.0-moon32"
       },
-      "finalHash": "d361be78f122089ec498f6fa8cdc2891e0179e4144497b8c74fcbc3f21a5370c"
+      "finalHash": "837aad8f0847ad94fc0b03b457f9f4b83768f1b3c7443b73c446890e6efbff9f"
     }
   ]
 }
