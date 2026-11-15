@@ -12,6 +12,7 @@ import type {
   ContentBundle,
   CrewId,
   CrewMemberState,
+  CrewTaskType,
   EquipmentId,
   ExpeditionId,
   ForecastPoint,
@@ -25,6 +26,50 @@ import type {
 /** List crew members eligible for tasks today (excludes evacuated). */
 export function selectAvailableCrew(state: GameState): readonly CrewMemberState[] {
   return Object.values(state.crew).filter((c) => c.condition !== 'evacuated' && c.assignedTask === null);
+}
+
+/**
+ * Mirror of the `crew/assign` reducer gate so the cockpit can disable a task
+ * before a child clicks it and gets an error toast.
+ */
+export function selectCanAssignTask(
+  state: GameState,
+  crewId: CrewId,
+  task: CrewTaskType,
+  bundle: ContentBundle
+): Permission {
+  if (state.clock.phase !== 'engineering' && state.clock.phase !== 'comms') {
+    return { allowed: false, code: 'E_PHASE_INVALID', message: 'Chỉ phân công trong pha Kỹ thuật hoặc Liên lạc.' };
+  }
+  const member = state.crew[crewId];
+  if (member.condition === 'evacuated') {
+    return { allowed: false, code: 'E_PLAN_INVALID', message: `${member.name} đã rời trạm.` };
+  }
+  if (member.assignedTask !== null) {
+    return { allowed: false, code: 'E_PLAN_INVALID', message: `${member.name} đã nhận nhiệm vụ trong Sol này.` };
+  }
+  if (member.condition === 'injured' && task !== 'rest' && task !== 'medical-care') {
+    return { allowed: false, code: 'E_PLAN_INVALID', message: `${member.name} đang bị thương, chỉ có thể Rest hoặc Medical Care.` };
+  }
+  const isTired = member.morale < bundle.balance.crew.tiredBelowMorale;
+  if (isTired && (task === 'rover-operate' || task === 'emergency-response')) {
+    return { allowed: false, code: 'E_PLAN_INVALID', message: `${member.name} đang mệt, không thể trực Rover hoặc xử lý khẩn cấp.` };
+  }
+  if (member.hungerState === 'starving' && task === 'rover-operate') {
+    return { allowed: false, code: 'E_PLAN_INVALID', message: `${member.name} đang đói lả, bị cấm vận hành Rover.` };
+  }
+  return { allowed: true };
+}
+
+/** Mirror of the private `canOperateRover` engine rule used by schedule / recovery. */
+export function selectCanOperateRover(state: GameState, crewId: CrewId, bundle: ContentBundle): boolean {
+  const crew = state.crew[crewId];
+  return (
+    crew.condition === 'fit' &&
+    crew.hungerState !== 'starving' &&
+    crew.morale >= bundle.balance.crew.tiredBelowMorale &&
+    crew.assignedTask === null
+  );
 }
 
 export function selectCompletedExpeditions(state: GameState): readonly ExpeditionId[] {

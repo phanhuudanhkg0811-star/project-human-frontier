@@ -123,3 +123,35 @@ test('engine: radio ticks are a no-op until the reply is actually due', () => {
   assert.equal(due.state.logistics.radioMessages[0].status, 'reply-received');
   assert.equal(due.state.revision, sent.state.revision + 1);
 });
+
+test('selectors: selectCanAssignTask mirrors the crew/assign gate', () => {
+  const base = engineeringState();
+  const crewWith = (patch) => ({ ...base, crew: { ...base.crew, eng: { ...base.crew.eng, ...patch } } });
+
+  const injured = crewWith({ condition: 'injured' });
+  assert.equal(core.selectCanAssignTask(injured, 'eng', 'repair-system', bundle).allowed, false);
+  assert.equal(core.selectCanAssignTask(injured, 'eng', 'rest', bundle).allowed, true);
+
+  const busy = crewWith({ assignedTask: { type: 'rest' } });
+  assert.equal(core.selectCanAssignTask(busy, 'eng', 'repair-system', bundle).allowed, false);
+
+  const starving = crewWith({ hungerState: 'starving' });
+  assert.equal(core.selectCanAssignTask(starving, 'eng', 'rover-operate', bundle).allowed, false);
+  assert.equal(core.selectCanAssignTask(starving, 'eng', 'repair-system', bundle).allowed, true);
+
+  const tired = crewWith({ morale: bundle.balance.crew.tiredBelowMorale - 1 });
+  assert.equal(core.selectCanAssignTask(tired, 'eng', 'rover-operate', bundle).allowed, false);
+  assert.equal(core.selectCanAssignTask(tired, 'eng', 'emergency-response', bundle).allowed, false);
+  assert.equal(core.selectCanAssignTask(tired, 'eng', 'repair-system', bundle).allowed, true);
+
+  const briefing = { ...base, clock: { ...base.clock, phase: 'briefing' } };
+  assert.equal(core.selectCanAssignTask(briefing, 'eng', 'repair-system', bundle).allowed, false);
+
+  const evacuated = crewWith({ condition: 'evacuated' });
+  assert.equal(core.selectCanAssignTask(evacuated, 'eng', 'rest', bundle).allowed, false);
+
+  // selectCanOperateRover mirrors the engine's private rule (no phase gate).
+  assert.equal(core.selectCanOperateRover(base, 'eng', bundle), true);
+  assert.equal(core.selectCanOperateRover(starving, 'eng', bundle), false);
+  assert.equal(core.selectCanOperateRover(busy, 'eng', bundle), false);
+});
