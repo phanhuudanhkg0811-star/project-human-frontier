@@ -77,7 +77,14 @@ export function JournalModal({
     : null;
 
   const repairCost = bundle.balance.systems.repairPartsCost;
-  const targetLvl = selectedSys.level < 3 ? (String(selectedSys.level + 1) as '2' | '3') : null;
+  const pendingUpgrades = Object.values(gameState.crew).filter(
+    (crew) => crew.condition !== 'evacuated'
+      && crew.assignedTask?.type === 'upgrade-system'
+      && crew.assignedTask.targetSystemId === selectedSysId
+  ).length;
+  const targetLvl = selectedSys.level + pendingUpgrades < bundle.balance.systems.maxLevel
+    ? (String(selectedSys.level + pendingUpgrades + 1) as '2' | '3')
+    : null;
   const baseUpCost = targetLvl ? bundle.balance.systems.upgradePartsByTargetLevel[targetLvl] : 0;
 
   const findFitWorker = () =>

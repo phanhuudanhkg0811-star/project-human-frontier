@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { playSfx } from '../audio/sfx.ts';
-import { selectAvailableCrew, selectCanRepair, selectWeatherOutlook } from '../domain/selectors.ts';
+import { selectCanAssignTask, selectCanRepair, selectWeatherOutlook } from '../domain/selectors.ts';
 import { useGameStore } from '../store/gameStore.ts';
 import type { CrewId, SystemId } from '../types/index.ts';
 import { HAIL_SVG, getHailSystemSprite } from './cabin/hailAssets.ts';
@@ -14,7 +14,7 @@ export function SystemControls() {
   const { gameState, bundle, dispatch } = useGameStore();
   const [selectedWorker, setSelectedWorker] = useState<CrewId>('eng');
   const [feedback, setFeedback] = useState<string | null>(null);
-  const availableCrew = selectAvailableCrew(gameState);
+  const workerPerm = selectCanAssignTask(gameState, selectedWorker, 'repair-system', bundle);
   const weather = selectWeatherOutlook(gameState, bundle, selectedWorker);
   const canEdit = gameState.clock.phase === 'engineering';
   const { t, localize } = useI18n();
@@ -71,7 +71,7 @@ export function SystemControls() {
             value: c.id,
             label: c.name,
             meta: `${c.roleTag}${c.assignedTask ? ` · ${t('systems.busy')}` : ''}`,
-            disabled: c.condition === 'evacuated',
+            disabled: !selectCanAssignTask(gameState, c.id, 'repair-system', bundle).allowed,
           }))}
         />
       </div>
@@ -94,7 +94,6 @@ export function SystemControls() {
           const baseUpCost = targetLvl ? bundle.balance.systems.upgradePartsByTargetLevel[targetLvl] : 0;
           const discount = selectedWorker === 'eng' && systemId !== 'fabricator' ? 1 : 0;
           const upCost = targetLvl ? Math.max(1, baseUpCost - discount) : 0;
-          const workerBusy = !availableCrew.some((c) => c.id === selectedWorker);
 
           return (
             <div key={systemId} className={`hail-sys-card ${sys.integrity < 0.85 ? 'is-damaged' : ''}`}>
@@ -114,8 +113,14 @@ export function SystemControls() {
               <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-700/60">
                 <button
                   type="button"
-                  disabled={!canEdit || !repairPerm.allowed || workerBusy}
-                  title={repairPerm.allowed ? t('systems.repairTitle') : localize(repairPerm.message ?? '', bundle)}
+                  disabled={!canEdit || !repairPerm.allowed || !workerPerm.allowed}
+                  title={
+                    !repairPerm.allowed
+                      ? localize(repairPerm.message ?? '', bundle)
+                      : workerPerm.allowed
+                        ? t('systems.repairTitle')
+                        : localize(workerPerm.message ?? '', bundle)
+                  }
                   onClick={() => handleAssignTask('repair-system', systemId)}
                   className="hail-btn hail-btn--warn w-full"
                 >
@@ -124,7 +129,8 @@ export function SystemControls() {
                 </button>
                 <button
                   type="button"
-                  disabled={!canEdit || !targetLvl || gameState.resources.partsKg < upCost || workerBusy}
+                  disabled={!canEdit || !targetLvl || gameState.resources.partsKg < upCost || !workerPerm.allowed}
+                  title={workerPerm.allowed ? undefined : localize(workerPerm.message ?? '', bundle)}
                   onClick={() => handleAssignTask('upgrade-system', systemId)}
                   className="hail-btn hail-btn--accent w-full"
                 >

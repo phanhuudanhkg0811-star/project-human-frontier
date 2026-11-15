@@ -3,14 +3,14 @@
   "modelVersion": "1.4.2-ts-polar",
   "catalogVersion": "1.2.0-moon32-polar",
   "storages": {
-    "batteryKWh": { "initial": 40, "max": 60 },
-    "oxygenKg": { "initial": 70, "max": 120 },
-    "waterL": { "initial": 80, "max": 160 },
-    "partsKg": { "initial": 16, "max": 60 },
-    "wasteWaterL": { "initial": 0, "max": 80 }
+    "batteryKWh": { "initial": 40, "max": 60, "warnBelow": 14 },
+    "oxygenKg": { "initial": 70, "max": 120, "warnBelow": 18 },
+    "waterL": { "initial": 80, "max": 160, "warnBelow": 22 },
+    "partsKg": { "initial": 16, "max": 60, "warnBelow": 4 },
+    "wasteWaterL": { "initial": 0, "max": 80, "warnBelow": 5 }
   },
   "consumables": {
-    "mrePacks": { "initial": 24, "max": 60, "satietyRestore": 75, "massKgApprox": 0.62 },
+    "mrePacks": { "initial": 24, "max": 60, "satietyRestore": 75, "massKgApprox": 0.62, "warnBelow": 6 },
     "medkits": { "initial": 2, "max": 6, "healLv1": 30, "healLv2": 50, "medicBonus": 20 }
   },
   "power": {
