@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { CheckCircle2, Rocket, ShieldAlert } from 'lucide-react';
 import { playSfx } from '../../audio/sfx.ts';
 import {
+  selectCanOperateRover,
   selectCanScheduleExpedition,
   selectCompletedExpeditions,
   selectMitigationSatisfied,
@@ -60,15 +61,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
     (eq) => eq.owned && eq.state !== 'damaged' && !eq.reservedForRover
   );
 
-  const canOperate = (id: CrewId) => {
-    const c = gameState.crew[id];
-    return (
-      c.condition === 'fit' &&
-      c.hungerState !== 'starving' &&
-      c.morale >= bundle.balance.crew.tiredBelowMorale &&
-      c.assignedTask === null
-    );
-  };
+  const canOperate = (id: CrewId) => selectCanOperateRover(gameState, id, bundle);
   const crewIds = Object.keys(gameState.crew) as CrewId[];
   // Default to an eligible operator instead of a hard-coded one that may be busy/tired.
   const launchOperator: CrewId =
@@ -76,6 +69,9 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
       ? pickedOperator
       : (crewIds.find(canOperate) ?? pickedOperator ?? crewIds[0]);
   const noOperatorAvailable = !activeMission && !crewIds.some(canOperate);
+  const recoveryOperatorId: CrewId =
+    canOperate(recoveryOperator) ? recoveryOperator : (crewIds.find(canOperate) ?? recoveryOperator);
+  const noRecoveryOperator = !crewIds.some(canOperate);
 
   const handleSchedule = async () => {
     const res = await dispatch({
@@ -114,7 +110,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   };
 
   const handleRecoveryOperator = async () => {
-    const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperator });
+    const res = await dispatch({ type: 'rover/set-recovery-operator', crewId: recoveryOperatorId });
     if (res.ok) playSfx('click', 0.45);
     setFeedback(
       res.ok
@@ -272,17 +268,17 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
             <div className="flex-1 min-w-[200px]">
               <HailSelect
                 label={t('expedition.recoveryOperator')}
-                value={recoveryOperator}
+                value={recoveryOperatorId}
                 onChange={(val) => setRecoveryOperator(val as CrewId)}
                 options={(Object.keys(gameState.crew) as CrewId[]).map((id) => ({
                   value: id,
                   label: gameState.crew[id].name,
                   meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ` · ${t('expedition.busy')}` : ''}`,
-                  disabled: gameState.crew[id].condition === 'evacuated',
+                  disabled: !canOperate(id),
                 }))}
               />
             </div>
-            <button type="button" onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent shrink-0">{t('expedition.assignRecovery')}</button>
+            <button type="button" disabled={noRecoveryOperator} onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent shrink-0">{t('expedition.assignRecovery')}</button>
           </div>
         )}
       </div>

@@ -48,6 +48,7 @@ export function EndOfDayModal({
     : null;
   const mustResolveEvent = Boolean(pendingEvent?.mandatory && gameState.clock.phase === 'briefing');
   const inRationing = gameState.clock.phase === 'rationing' && !ended;
+  const mreRemaining = gameState.resources.mrePacks - gameState.dailyPlan.mreTargets.length;
   const canPullLever = inRationing && !mustResolveEvent && !leverPulled && !isSubmitting;
 
   const preview = selectResourceForecast(gameState, bundle);
@@ -233,7 +234,7 @@ export function EndOfDayModal({
                       aria-checked={giveMre}
                       aria-label={t('endDay.issueMreAria', { name: member.name })}
                       className="hail-alloc-check-btn"
-                      disabled={!inRationing || evacuated || isSubmitting}
+                      disabled={!inRationing || evacuated || isSubmitting || (!giveMre && mreRemaining <= 0)}
                       onClick={() => handleToggleMre(crewId)}
                     >
                       <img
@@ -316,12 +317,13 @@ export function EndOfDayModal({
                 })}
                 {preview.blackout ? t('endDay.blackoutTag') : ''}
               </p>
-              <div className="hail-alloc-trend-chips">
+              <div className="hail-alloc-trend-chips" title={t('endDay.trendAssumption')} aria-label={t('endDay.trendAssumption')}>
                 {fiveSolTrend.slice(0, 4).map((pt) => (
                   <span key={pt.sol}>
                     S{pt.sol}:⚡{pt.batteryKWh.toFixed(0)}/💧{pt.waterL.toFixed(0)}
                   </span>
                 ))}
+                <span className="w-full text-[10px] text-slate-400">{t('endDay.trendAssumption')}</span>
               </div>
             </div>
 

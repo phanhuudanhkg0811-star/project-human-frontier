@@ -199,7 +199,8 @@ function assertStringArray(v: unknown, label: string): string[] {
 function assertStorageCap(v: unknown, label: string): void {
   const obj = assertRecord(v, label);
   const initial = assertFiniteNum(obj.initial, `${label}.initial`, 0);
-  assertFiniteNum(obj.max, `${label}.max`, initial);
+  const max = assertFiniteNum(obj.max, `${label}.max`, initial);
+  assertFiniteNum(obj.warnBelow, `${label}.warnBelow`, 0, max);
 }
 
 function addOneDayUtc(isoDate: string): string {
@@ -225,6 +226,7 @@ export function validateBalanceConfig(input: unknown): BalanceConfig {
   assertInt(mre.max, 'mrePacks.max', mre.initial as number);
   assertFiniteNum(mre.satietyRestore, 'mrePacks.satietyRestore', 1, 100);
   assertFiniteNum(mre.massKgApprox, 'mrePacks.massKgApprox', 0.01);
+  assertFiniteNum(mre.warnBelow, 'mrePacks.warnBelow', 0, mre.max as number);
 
   const med = assertRecord(cons.medkits, 'balance.consumables.medkits');
   assertInt(med.initial, 'medkits.initial', 0);
