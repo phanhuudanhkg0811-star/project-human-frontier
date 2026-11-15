@@ -287,7 +287,7 @@ test('Starlog uses event.art and permits optional choices in engineering while s
   const html = renderWithState(core.StarlogModal, fixture);
   assert.match(html, /PH_EVT_SOLAR_PARTICLE_BASE_V01.webp/);
   assert.match(html, /Optional/);
-  assert.match(html, /Requires condition: missing/);
+  assert.match(html, /Requires an earlier decision that was not made\./);
   assert.match(html, /<button type="button" class="hail-btn hail-choice-card">Select: Lựa chọn kiểm tra<\/button>/);
   assert.match(html, /disabled="" aria-describedby="event-choice-blocked-reasons"/);
   fixture.state.clock = { ...fixture.state.clock, phase: 'debrief' };

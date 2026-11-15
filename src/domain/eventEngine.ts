@@ -305,7 +305,9 @@ export function checkEventChoiceRequirements(
   }
 
   if (choice.requiresFlag && !state.events.flags[choice.requiresFlag]) {
-    blockedReasons.push(`Yêu cầu điều kiện ${choice.requiresFlag}.`);
+    // Generic wording: the choice label already names the earlier decision, and a raw
+    // flag key here would leak an internal enum into the UI (audit 4.4).
+    blockedReasons.push('Yêu cầu một quyết định trước đó chưa được thực hiện.');
   }
 
   if (choice.requiresCrew) {

@@ -711,6 +711,7 @@ export const dictionaries: I18nDictionaries = {
     'report.cause.crewHealth': 'Tình trạng đội cuối chiến dịch: {fit} Fit, {injured} bị thương, {evacuated} sơ tán.',
     'report.cause.expeditionsPartial': 'Hoàn thành {completed}/{total} chuyến Rover ({science} điểm khoa học); vẫn còn dư địa tăng hạng.',
     'report.cause.expeditionsAll': 'Hoàn thành trọn vẹn {completed}/{total} chuyến Rover vùng Nam Cực với {science} điểm khoa học.',
+    'report.cause.archiveSent': 'Kho lưu trữ mẫu khoa học đã được truyền về Houston qua mạng sâu trước khi kết thúc sứ mệnh.',
 
     'report.rec.oxygenCargo': 'Theo dõi Airlock và đặt gói Cargo O₂ trước mốc Sol {lastCargoSol} để tàu kịp hạ cánh trước Đêm Trăng.',
     'report.rec.waterWrs': 'Giữ WRS hoạt động đều, nâng cấp máy lọc khi đủ phụ tùng và dự trữ nước sạch trước Sol {nightSol}.',
@@ -1493,6 +1494,7 @@ export const dictionaries: I18nDictionaries = {
     'report.cause.crewHealth': 'Final crew status: {fit} Fit, {injured} injured, {evacuated} evacuated.',
     'report.cause.expeditionsPartial': 'Completed {completed}/{total} Rover expeditions ({science} science points), leaving room for a higher rank.',
     'report.cause.expeditionsAll': 'Completed all {completed}/{total} South Pole Rover expeditions with {science} science points.',
+    'report.cause.archiveSent': 'The science sample archive was transmitted to Houston over the Deep Space Network before mission end.',
 
     'report.rec.oxygenCargo': 'Watch Airlock integrity and order an O₂ cargo lander before Sol {lastCargoSol} so it lands before Lunar Night.',
     'report.rec.waterWrs': 'Keep WRS running regularly, upgrade the recycler when parts allow, and stockpile water before Sol {nightSol}.',

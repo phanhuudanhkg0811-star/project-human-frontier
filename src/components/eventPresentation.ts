@@ -82,7 +82,7 @@ export function formatEventEffectSummary(text: string, locale: Locale = 'vi'): s
   if (locale === 'en') {
     formatted = formatted
       .replace(/^Yêu cầu thiết bị (.+?) còn tốt\.$/, 'Requires functional $1.')
-      .replace(/^Yêu cầu điều kiện (.+)\.$/, 'Requires condition: $1.')
+      .replace(/^Yêu cầu một quyết định trước đó chưa được thực hiện\.$/, 'Requires an earlier decision that was not made.')
       .replace(/ đã rời trạm\.$/, ' has evacuated.')
       .replace(/ cần ở trạng thái Fit\.$/, ' must be Fit.')
       .replace(/ đang bận nhiệm vụ khác\.$/, ' is busy with another task.')

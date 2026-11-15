@@ -21,8 +21,7 @@
         "labelEn": "Calibrate now (-2 kg Parts, +5 Crew Morale)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "sensors_calibrated", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis.",
         "logEn": "Calibrated Artemis station sensors."
@@ -77,6 +76,17 @@
         "logEn": "Dr. Marcus audited dosimeters and administered radioprotective supplements."
       },
       {
+        "id": "calibrated-sep-forecast",
+        "label": "Dùng cảm biến đã hiệu chỉnh Sol 1 để bù trừ chùm hạt (+5 Science, 0 kWh Pin)",
+        "labelEn": "Use the Sol 1 calibrated sensors to compensate the SEP flux (+5 Science, 0 kWh Battery)",
+        "requiresFlag": "sensors_calibrated",
+        "effects": [
+          { "kind": "science", "delta": 5 }
+        ],
+        "log": "Cảm biến đã hiệu chỉnh cho dự báo SEP chính xác; đội chỉnh ăng-ten mà không tốn thêm điện.",
+        "logEn": "The calibrated sensor baseline delivered an accurate SEP forecast; the crew trimmed the antenna with no extra power."
+      },
+      {
         "id": "ride-out-sep",
         "label": "Chấp nhận phơi nhiễm nền trong trạm (-5 Health, -5 Morale)",
         "labelEn": "Ride out baseline exposure (-5 Health, -5 Morale)",
@@ -113,8 +123,7 @@
         "labelEn": "Apply Sealant Tape (Mitigates leak, 0 Parts)",
         "requiresEquipment": "sealant_tape",
         "effects": [
-          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 },
-          { "kind": "set-flag", "key": "airlock_sealed", "value": true }
+          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 }
         ],
         "log": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng.",
         "logEn": "Sealed the airlock gasket with Sealant Tape without spending spare parts."
@@ -124,8 +133,7 @@
         "label": "Thay gioăng dự phòng (-2 kg Phụ tùng)",
         "labelEn": "Replace gasket with spare parts (-2 kg Parts)",
         "effects": [
-          { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "set-flag", "key": "airlock_sealed", "value": true }
+          { "kind": "resource", "resource": "partsKg", "delta": -2 }
         ],
         "log": "Đã thay gioăng Airlock bằng 2 kg Phụ tùng.",
         "logEn": "Replaced the airlock gasket using 2 kg of spare parts."
@@ -373,8 +381,7 @@
         "labelEn": "Power landing radar beacon & salvage crate (-2 kWh Battery, +4 kg Parts)",
         "effects": [
           { "kind": "resource", "resource": "batteryKWh", "delta": -2 },
-          { "kind": "resource", "resource": "partsKg", "delta": 4 },
-          { "kind": "set-flag", "key": "cargo_beacon_ready", "value": true }
+          { "kind": "resource", "resource": "partsKg", "delta": 4 }
         ],
         "log": "Đã kích hoạt đèn hiệu dẫn đường bãi đáp và thu hồi 4 kg phụ tùng từ kho ngoại vi.",
         "logEn": "Activated landing pad radar beacon and recovered 4 kg of spare parts."
@@ -510,8 +517,7 @@
         "labelEn": "Wire auxiliary capacitors to top up Battery bank (-2 kg Parts, +6 kWh Battery)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "resource", "resource": "batteryKWh", "delta": 6 },
-          { "kind": "set-flag", "key": "sunset_battery_boosted", "value": true }
+          { "kind": "resource", "resource": "batteryKWh", "delta": 6 }
         ],
         "log": "Đã tích thêm +6 kWh điện năng quý giá từ những tia nắng cuối cùng của Sol 14.",
         "logEn": "Captured an extra +6 kWh from the final rays of Sol 14 sunlight."
@@ -521,8 +527,7 @@
         "label": "Gia cố lớp cách nhiệt đường ống nước & khoang ngủ (+5 Morale toàn đội)",
         "labelEn": "Reinforce thermal insulation on water lines & bunks (+5 Crew Morale)",
         "effects": [
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "pipes_insulated", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Đã bọc kín đường ống ECLSS sẵn sàng đón nhiệt độ âm sâu Đêm Trăng.",
         "logEn": "Insulated ECLSS plumbing for the cryogenic Lunar Night."
@@ -581,7 +586,7 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 1,
     "scienceBriefId": "brief-fission-kilopower",
-    "when": [{ "solMin": 16, "solMax": 17, "isLunarNight": true }],
+    "when": [{ "solMin": 16, "solMax": 17, "isLunarNight": true, "flagSet": "lunar_night_started" }],
     "mandatory": false,
     "prompt": "Chênh lệch nhiệt độ giữa lõi phản ứng và môi trường -162°C bên ngoài làm áp suất hợp kim lỏng Natri-Kali (NaK) dao động bất thường.",
     "promptEn": "Extreme thermal gradients between the reactor core and the -162°C exterior cause pressure oscillations in the liquid NaK coolant loop.",
@@ -756,6 +761,30 @@
         ],
         "log": "Đã xả 4 kWh Pin dự phòng để duy trì sưởi ấm và WRS qua đỉnh lạnh Sol 22.",
         "logEn": "Drew 4 kWh from battery reserves to keep heaters and WRS running through Sol 22 thermal minimum."
+      },
+      {
+        "id": "draw-boosted-reserve",
+        "label": "Xả pin đã nạp kịch trần từ Sol 14 cho cả sưởi lẫn WRS (-2 kWh Pin)",
+        "labelEn": "Draw the Sol 14 topped-up reserve for heaters and WRS (-2 kWh Battery)",
+        "requiresFlag": "sunset_battery_boosted",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": true },
+          { "kind": "resource", "resource": "batteryKWh", "delta": -2 }
+        ],
+        "log": "Trữ lượng pin nạp thêm từ Sol 14 hấp thụ một nửa tải sưởi; chỉ xả 2 kWh qua đỉnh lạnh.",
+        "logEn": "The extra battery bank wired on Sol 14 absorbed half the heater load; only 2 kWh drawn through the thermal minimum."
+      },
+      {
+        "id": "rely-on-insulated-lines",
+        "label": "Tin vào lớp cách nhiệt đã gia cố Sol 14, giữ WRS chạy không tốn Pin (+5 Morale)",
+        "labelEn": "Rely on the Sol 14 insulated lines and keep WRS running at no battery cost (+5 Morale)",
+        "requiresFlag": "pipes_insulated",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": true },
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
+        ],
+        "log": "Đường ống ECLSS đã bọc cách nhiệt từ Sol 14 giữ nước không đóng băng; cả đội yên tâm duy trì WRS.",
+        "logEn": "The ECLSS lines insulated on Sol 14 kept water from freezing; the crew kept the WRS running with confidence."
       }
     ]
   },
@@ -798,6 +827,18 @@
         ],
         "log": "Chỉ huy Sarah thu hồi được 4 kg Phụ tùng nhưng bị lạnh cóng nhẹ.",
         "logEn": "Commander Sarah recovered 4 kg of parts with minor cold stress."
+      },
+      {
+        "id": "sealed-airlock-eva",
+        "label": "EVA qua khoang đệm đã dán kín gioăng (+4 kg Phụ tùng, +2 gói MRE, không mài mòn Dust Shield)",
+        "labelEn": "EVA through the sealed airlock gasket (+4 kg Parts, +2 MRE Packs, no Dust Shield wear)",
+        "requiresFlag": "airlock_sealed",
+        "effects": [
+          { "kind": "resource", "resource": "partsKg", "delta": 4 },
+          { "kind": "resource", "resource": "mrePacks", "delta": 2 }
+        ],
+        "log": "Gioăng Airlock đã dán kín từ Sol 3 giữ khoang đệm sạch bụi; đội thu hồi an toàn 4 kg Phụ tùng và 2 gói MRE.",
+        "logEn": "The airlock gasket sealed on Sol 3 kept the vestibule dust-free; the crew safely recovered 4 kg of parts and 2 MRE packs."
       },
       {
         "id": "skip-eva",
@@ -1020,7 +1061,7 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-wrs-eclss",
-    "when": [{ "sol": 31 }],
+    "when": [{ "sol": 31, "flagSet": "sunrise_recovered" }],
     "mandatory": false,
     "prompt": "Chỉ còn 1 Sol trước khi hoàn tất chiến dịch 32 Sol. Houston yêu cầu niêm phong các hộp mẫu địa chất và kiểm tra chỉ số sinh tồn phi hành đoàn.",
     "promptEn": "With one Sol remaining in the 32-Sol campaign, Houston requests final curation of lunar samples and crew medical clearance.",
@@ -1036,6 +1077,17 @@
         ],
         "log": "Hoàn tất hồ sơ khoa học chuẩn NASA cho toàn bộ mẫu vật Nam Cực Mặt Trăng.",
         "logEn": "Completed NASA-grade scientific curation for all South Pole samples."
+      },
+      {
+        "id": "beacon-supply-log",
+        "label": "Trích log đèn hiệu bãi đáp đã bật từ Sol 10 để xác nhận chuỗi cung ứng (+10 Science)",
+        "labelEn": "Extract landing-beacon logs powered since Sol 10 to certify the supply chain (+10 Science)",
+        "requiresFlag": "cargo_beacon_ready",
+        "effects": [
+          { "kind": "science", "delta": 10 }
+        ],
+        "log": "Log radar đèn hiệu bãi đáp xác nhận mọi chuyến tiếp tế hạ cánh đúng vị trí; hồ sơ chuỗi cung ứng đạt chuẩn NASA.",
+        "logEn": "Landing-pad beacon radar logs confirm every resupply touched down on target; the supply-chain record is NASA-grade."
       },
       {
         "id": "crew-recovery-rest",

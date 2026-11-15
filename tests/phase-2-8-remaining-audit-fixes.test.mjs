@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -43,6 +44,72 @@ test('Event choice previews list each resource delta exactly once (no effectsSum
       );
     }
   }
+});
+
+test('Every set-flag in the event catalog has a consumer (flagSet/flagNotSet/flagEquals/requiresFlag)', () => {
+  const events = JSON.parse(fs.readFileSync(path.join(root, 'src/data/events.json'), 'utf8'));
+  const written = new Map();
+  const read = new Set();
+  for (const event of events) {
+    for (const cond of event.when ?? []) {
+      for (const key of ['flagSet', 'flagNotSet']) if (cond[key]) read.add(cond[key]);
+      if (cond.flagEquals) read.add(cond.flagEquals.key);
+    }
+    for (const choice of event.choices ?? []) {
+      if (choice.requiresFlag) read.add(choice.requiresFlag);
+      for (const eff of choice.effects ?? []) {
+        if (eff.kind === 'set-flag') written.set(`${event.id}/${choice.id}`, eff.key);
+      }
+    }
+  }
+  // Flags may also be consumed in code (evaluators/reports), e.g. narrativeSelectors reads
+  // state.events.flags.<key> — scan domain/simulation sources for those references.
+  for (const dir of ['src/domain', 'src/simulation']) {
+    for (const name of fs.readdirSync(path.join(root, dir))) {
+      if (!name.endsWith('.ts')) continue;
+      const text = fs.readFileSync(path.join(root, dir, name), 'utf8');
+      for (const match of text.matchAll(/flags(?:\.([A-Za-z_]\w*)|\[['"]([^'"]+)['"]\])/g)) {
+        read.add(match[1] ?? match[2]);
+      }
+    }
+  }
+  for (const [site, key] of written) {
+    assert.ok(read.has(key), `set-flag "${key}" at ${site} is write-only: give it a consumer or delete it`);
+  }
+});
+
+test('Earlier decisions unlock later event choices (flag consumers are playable)', () => {
+  const base = initialState();
+  const withFlags = (flags) => ({
+    ...base,
+    events: { ...base.events, flags: { ...base.events.flags, ...flags } },
+  });
+  const allowedIds = (state, eventId) =>
+    core.selectEventChoicePreviews(state, eventId, bundle)
+      .filter((pv) => pv.allowed)
+      .map((pv) => pv.choice.id);
+
+  for (const [flag, eventId] of [
+    ['sensors_calibrated', 'sol2-solar-particles'],
+    ['airlock_sealed', 'evt-mid-night-resupply'],
+    ['cargo_beacon_ready', 'evt-sol31-final-inspection'],
+    ['sunset_battery_boosted', 'evt-emergency-load-shed'],
+    ['pipes_insulated', 'evt-emergency-load-shed'],
+  ]) {
+    const without = allowedIds(base, eventId);
+    const with_ = allowedIds(withFlags({ [flag]: true }), eventId);
+    const unlocked = with_.filter((id) => !without.includes(id));
+    assert.equal(
+      unlocked.length, 1,
+      `${flag} must unlock exactly one additional choice in ${eventId} (unlocked: ${unlocked.join(',') || 'none'})`
+    );
+  }
+
+  // Sol 14's two branches are mutually exclusive, so Sol 22 offers exactly one bonus path.
+  const boosted = allowedIds(withFlags({ sunset_battery_boosted: true }), 'evt-emergency-load-shed');
+  const insulated = allowedIds(withFlags({ pipes_insulated: true }), 'evt-emergency-load-shed');
+  const overlap = boosted.filter((id) => insulated.includes(id));
+  assert.equal(overlap.length, 2, 'only the two baseline Sol 22 choices are shared');
 });
 
 const sol7State = (rover) => {

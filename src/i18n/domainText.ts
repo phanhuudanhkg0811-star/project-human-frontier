@@ -463,8 +463,8 @@ export function localizeDomainText(text: string, locale: Locale, bundle?: Conten
   if ((m = text.match(/^Yêu cầu thiết bị (\S+) còn tốt\.$/))) {
     return `Requires functional ${eqName(m[1])}.`;
   }
-  if ((m = text.match(/^Yêu cầu điều kiện (\S+)\.$/))) {
-    return `Requires condition: ${m[1]}.`;
+  if ((m = text.match(/^Yêu cầu một quyết định trước đó chưa được thực hiện\.$/))) {
+    return 'Requires an earlier decision that was not made.';
   }
   if ((m = text.match(/^(.+?) cần ở trạng thái Fit\.$/))) {
     return `${m[1]} must be Fit.`;
