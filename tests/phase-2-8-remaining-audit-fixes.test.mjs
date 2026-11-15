@@ -112,6 +112,90 @@ test('Earlier decisions unlock later event choices (flag consumers are playable)
   assert.equal(overlap.length, 2, 'only the two baseline Sol 22 choices are shared');
 });
 
+const signalLostState = () => {
+  const base = initialState();
+  return {
+    ...base,
+    clock: { ...base.clock, sol: 3, phase: 'engineering' },
+    dailyPlan: { ...base.dailyPlan, sol: 3 },
+    rover: {
+      ...base.rover,
+      activeMission: {
+        expeditionId: 'lunar-crater',
+        status: 'signal-lost',
+        scheduledSol: 1,
+        launchedSol: 1,
+        statusEnteredSol: 2,
+        expectedReturnSol: 3,
+        launchOperatorCrewId: 'geo',
+        recoveryOperatorCrewId: null,
+        equippedItems: [],
+        travelTicksCompleted: 1,
+        signalLostSols: 1,
+        resumeStatus: 'outbound',
+        recoveryDelaySols: 0,
+        incidents: [],
+      },
+    },
+  };
+};
+
+test('rover/recover-signal costs 2 kWh battery and refuses without enough battery', () => {
+  const charged = signalLostState();
+  const ok = core.dispatchDomainCommand(
+    { ...charged, resources: { ...charged.resources, batteryKWh: 10 } },
+    { type: 'rover/recover-signal' },
+    bundle
+  );
+  assert.equal(ok.ok, true);
+  assert.equal(ok.state.resources.batteryKWh, 8);
+
+  const poor = signalLostState();
+  const denied = core.dispatchDomainCommand(
+    { ...poor, resources: { ...poor.resources, batteryKWh: 1 } },
+    { type: 'rover/recover-signal' },
+    bundle
+  );
+  assert.equal(denied.ok, false);
+  assert.equal(denied.error.code, 'E_INSUFFICIENT_RESOURCE');
+  assert.equal(denied.state.resources.batteryKWh, 1);
+});
+
+test('rover/clear-recovery-operator frees the assigned operator', () => {
+  const base = initialState();
+  const mission = {
+    expeditionId: 'lunar-crater',
+    status: 'exploring',
+    scheduledSol: 1,
+    launchedSol: 1,
+    statusEnteredSol: 3,
+    expectedReturnSol: 5,
+    launchOperatorCrewId: 'geo',
+    recoveryOperatorCrewId: 'eng',
+    equippedItems: [],
+    travelTicksCompleted: 2,
+    signalLostSols: 0,
+    resumeStatus: null,
+    recoveryDelaySols: 0,
+    incidents: [],
+  };
+  const busy = {
+    ...base,
+    clock: { ...base.clock, sol: 5, phase: 'engineering' },
+    dailyPlan: { ...base.dailyPlan, sol: 5 },
+    crew: { ...base.crew, eng: { ...base.crew.eng, assignedTask: { type: 'rover-operate' } } },
+    rover: { ...base.rover, activeMission: mission },
+  };
+  const cleared = core.dispatchDomainCommand(busy, { type: 'rover/clear-recovery-operator' }, bundle);
+  assert.equal(cleared.ok, true);
+  assert.equal(cleared.state.rover.activeMission.recoveryOperatorCrewId, null);
+  assert.equal(cleared.state.crew.eng.assignedTask, null);
+
+  const unassigned = { ...busy, rover: { ...busy.rover, activeMission: { ...mission, recoveryOperatorCrewId: null } } };
+  const noop = core.dispatchDomainCommand(unassigned, { type: 'rover/clear-recovery-operator' }, bundle);
+  assert.equal(noop.ok, false);
+});
+
 const sol7State = (rover) => {
   const base = initialState();
   return {

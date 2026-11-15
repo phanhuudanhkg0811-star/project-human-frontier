@@ -1173,6 +1173,9 @@ export function validateGameCommand(input: unknown): GameCommand {
       assertEnum(cmd.crewId, CREW_IDS, 'command.crewId');
       return cmd as unknown as GameCommand;
 
+    case 'rover/clear-recovery-operator':
+      return cmd as unknown as GameCommand;
+
     case 'crew/use-medkit':
       assertEnum(cmd.targetCrewId, CREW_IDS, 'command.targetCrewId');
       if (cmd.administeredByCrewId !== undefined) assertEnum(cmd.administeredByCrewId, CREW_IDS, 'command.administeredByCrewId');

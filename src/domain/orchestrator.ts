@@ -84,6 +84,9 @@ const NEXT_PHASE: Partial<Record<SolPhase, SolPhase>> = {
   comms: 'rationing',
 };
 
+/** Battery cost (kWh) to re-acquire a signal-lost Rover via the Deep Space Network. */
+const RECOVER_SIGNAL_BATTERY_KWH = 2;
+
 /** Pure TypeScript command reducer implementing all Phase 1.1 state transitions and constitutional guards. */
 export function dispatchDomainCommand(
   state: GameState,
@@ -734,9 +737,22 @@ export function dispatchDomainCommand(
       if (!mission || mission.status !== 'signal-lost' || mission.resumeStatus === null) {
         return fail(state, 'E_PLAN_INVALID', 'Rover hiện không ở trạng thái mất tín hiệu.');
       }
+      // Deep Space Network re-acquisition burns transponder power; report 9.8 calls for a
+      // modest cost, not a repeater prerequisite.
+      if (state.resources.batteryKWh < RECOVER_SIGNAL_BATTERY_KWH) {
+        return fail(
+          state,
+          'E_INSUFFICIENT_RESOURCE',
+          `Khôi phục tín hiệu Rover cần ${RECOVER_SIGNAL_BATTERY_KWH} kWh Pin.`
+        );
+      }
       candidate = {
         ...state,
         revision: state.revision + 1,
+        resources: {
+          ...state.resources,
+          batteryKWh: round2(state.resources.batteryKWh - RECOVER_SIGNAL_BATTERY_KWH),
+        },
         rover: {
           ...state.rover,
           activeMission: {
@@ -751,7 +767,49 @@ export function dispatchDomainCommand(
       };
       const invErr = validateStateInvariants(candidate, bundle);
       if (invErr) return fail(state, invErr.code, invErr.message, false);
-      return { ok: true, state: candidate, effects: [{ type: 'rover-signal-recovered', message: 'Đã khôi phục liên lạc với Rover.' }] };
+      return {
+        ok: true,
+        state: candidate,
+        effects: [{
+          type: 'rover-signal-recovered',
+          message: `Đã khôi phục liên lạc với Rover (tốn ${RECOVER_SIGNAL_BATTERY_KWH} kWh Pin).`,
+        }],
+      };
+    }
+
+    case 'rover/clear-recovery-operator': {
+      if (state.clock.phase !== 'engineering' && state.clock.phase !== 'comms') {
+        return fail(state, 'E_PHASE_INVALID', 'Chỉ gỡ phân công thu hồi Rover trong pha Kỹ thuật hoặc Liên lạc.');
+      }
+      const mission = state.rover.activeMission;
+      if (!mission || (mission.status !== 'exploring' && mission.status !== 'recovery-pending')) {
+        return fail(state, 'E_PLAN_INVALID', 'Rover chưa đến thời điểm phân công thu hồi.');
+      }
+      if (mission.recoveryOperatorCrewId === null) {
+        return fail(state, 'E_PLAN_INVALID', 'Chưa có người thu hồi Rover nào được phân công.');
+      }
+      const operatorId = mission.recoveryOperatorCrewId;
+      const operator = state.crew[operatorId];
+      candidate = {
+        ...state,
+        revision: state.revision + 1,
+        crew: {
+          ...state.crew,
+          [operatorId]:
+            operator.assignedTask?.type === 'rover-operate' ? { ...operator, assignedTask: null } : operator,
+        },
+        rover: {
+          ...state.rover,
+          activeMission: { ...mission, recoveryOperatorCrewId: null },
+        },
+      };
+      const invErr = validateStateInvariants(candidate, bundle);
+      if (invErr) return fail(state, invErr.code, invErr.message, false);
+      return {
+        ok: true,
+        state: candidate,
+        effects: [{ type: 'rover-recovery-assigned', message: 'Đã gỡ phân công thu hồi Rover.' }],
+      };
     }
 
     case 'rover/set-recovery-operator': {

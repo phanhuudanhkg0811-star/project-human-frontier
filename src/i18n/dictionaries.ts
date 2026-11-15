@@ -252,9 +252,11 @@ export const dictionaries: I18nDictionaries = {
     'expedition.schedule': 'Lập lịch Rover tới {site} (4 kWh tại End-Sol)',
     'expedition.phaseLock': 'Cần ở Pha 3 (Liên lạc) để lập lịch Rover',
     'expedition.cancel': 'Hủy lịch Rover',
-    'expedition.recoverSignal': 'Khôi phục tín hiệu',
+    'expedition.recoverSignal': 'Khôi phục tín hiệu (-2 kWh Pin)',
     'expedition.recoveryOperator': 'Người trực thu hồi',
     'expedition.assignRecovery': 'Phân công thu hồi',
+    'expedition.clearRecovery': 'Gỡ phân công',
+    'expedition.recoveryCleared': 'Đã gỡ phân công thu hồi.',
 
     // Tutorial Modal
     'tutorial.title': 'Hướng dẫn Vận hành Căn cứ Mặt Trăng',
@@ -1035,9 +1037,11 @@ export const dictionaries: I18nDictionaries = {
     'expedition.schedule': 'Schedule Rover to {site} (4 kWh at End-Sol)',
     'expedition.phaseLock': 'Advance to Phase 3 (Comms) to schedule the Rover',
     'expedition.cancel': 'Cancel Rover Schedule',
-    'expedition.recoverSignal': 'Recover Signal',
+    'expedition.recoverSignal': 'Recover Signal (-2 kWh)',
     'expedition.recoveryOperator': 'Recovery operator',
     'expedition.assignRecovery': 'Assign Recovery',
+    'expedition.clearRecovery': 'Clear Assignment',
+    'expedition.recoveryCleared': 'Recovery assignment cleared.',
 
     // Tutorial Modal
     'tutorial.title': 'Lunar Habitat Operations Guide',
