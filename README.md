@@ -1,6 +1,6 @@
 # 🚀 Project Hail — Junior Astronaut Mission Trainer
 
-[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![React 18](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.0+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![NASA Open Data](https://img.shields.io/badge/NASA%20Open%20Data-DONKI%20API-0B3D91?logo=nasa&logoColor=white)](https://api.nasa.gov/)
@@ -189,7 +189,7 @@ flowchart TD
         LocalStorage["Versioned LocalStorage Save (schemaVersion)"]
     end
 
-    subgraph UI ["Presentation Layer (React 19)"]
+    subgraph UI ["Presentation Layer (React 18)"]
         Cockpit["Cockpit V12 Dashboard"]
         Panels["Briefing / Crew / Comms / Rover / Rationing Panels"]
         Modals["Debrief & NASA Cadet Report Card"]

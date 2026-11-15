@@ -92,7 +92,7 @@ Use one of our recognized module scopes to clarify where the change occurred:
 feat(rover): add battery drain check during shadowed region expedition
 fix(resolver): prevent negative oxygen values when generator is broken
 balance(nasa): calibrate solar flare radiation tier multipliers
-docs(readme): add React 19 architecture diagram and installation steps
+docs(readme): add React 18 architecture diagram and installation steps
 refactor(engine): migrate daily state reducer to pure functional actions
 ```
 
@@ -118,7 +118,7 @@ Follow the commit format for the PR title:
 ### 3.2. PR Checklist Before Submitting
 Make sure you have:
 - [ ] Branched off the latest `dev` branch.
-- [ ] Followed the React 19 & TypeScript clean coding standards.
+- [ ] Followed the React 18 & TypeScript clean coding standards.
 - [ ] Run `npm run lint` and resolved all warnings/errors.
 - [ ] Run `npm test` and ensured all engine tests pass.
 - [ ] Checked that UI changes work on 16:9 ratio and responsive screens.
@@ -186,8 +186,8 @@ git push -u origin feat/crew-assignment-validation
 
 ## 5. Code Quality & Testing Standards
 
-### 5.1. React 19 Guidelines
-- Prefer React 19 hooks (`useActionState`, `useOptimistic`, `useTransition`) for asynchronous player interactions and state updates.
+### 5.1. React 18 Guidelines
+- Prefer React 18 hooks (`useTransition`, `useDeferredValue`, `useMemo`, `useCallback`) for responsive player interactions and state updates.
 - Keep UI components presentational; delegate game rules and mutations to engine action dispatchers.
 - Memoize heavy 2D canvas calculations appropriately.
 
