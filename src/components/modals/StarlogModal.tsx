@@ -180,8 +180,8 @@ export function StarlogModal({
     ? pickText(event.prompt, event.promptEn)
     : weather.headline
       ? pickText(
-          `Thời tiết DONKI (${weather.level.toUpperCase()}): "${weather.headline}". Không còn sự kiện bắt buộc chờ xử lý.`,
-          `DONKI Weather (${weather.level.toUpperCase()}): "${weather.headline}". No mandatory events awaiting response.`
+          `Thời tiết DONKI (${t(`donki.${weather.level}`)}): "${weather.headline}". Không còn sự kiện bắt buộc chờ xử lý.`,
+          `DONKI Weather (${t(`donki.${weather.level}`)}): "${weather.headline}". No mandatory events awaiting response.`
         )
       : pickText(
           'Không phát hiện sự cố khẩn cấp. Máy tính sẵn sàng chuyển pha kỹ thuật hoặc đóng terminal.',

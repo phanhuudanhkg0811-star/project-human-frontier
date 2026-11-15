@@ -8,6 +8,7 @@ import { getHailCrewVisual } from '../cabin/hailAssets.ts';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { localizeEnumLabel } from '../../i18n/domainText.ts';
 import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 interface CharacterSheetModalProps {
@@ -152,10 +153,10 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-mono">
                       <span className={`px-1.5 py-0.5 rounded border ${HUNGER_BADGE[member.hungerState]}`}>
-                        {t('character.satiety', { state: member.hungerState.toUpperCase(), pct: member.satiety })}
+                        {t('character.satiety', { state: localizeEnumLabel('hunger', member.hungerState, locale), pct: member.satiety })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded border ${member.condition === 'fit' ? 'text-emerald-300 border-emerald-500/40 bg-emerald-950/40' : 'text-rose-300 border-rose-500/50 bg-rose-950/50'}`}>
-                        {member.condition.toUpperCase()}
+                        {localizeEnumLabel('condition', member.condition, locale)}
                       </span>
                       {isTired && (
                         <span className="px-1.5 py-0.5 rounded border text-amber-300 border-amber-500/40 bg-amber-950/50">
@@ -170,7 +171,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                 <div className="grid grid-cols-3 gap-2 text-[11px] font-mono bg-slate-950/80 p-2 rounded">
                   <div>
                     <div className="text-slate-400">Health</div>
-                    <strong className="text-emerald-300">{member.health}/100</strong>
+                    <strong className="text-emerald-300">{Math.round(member.health)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">Morale</div>

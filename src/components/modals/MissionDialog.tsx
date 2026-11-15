@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { HAIL_SVG } from '../cabin/hailAssets.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
 import { useUiStore } from '../../store/uiStore.ts';
@@ -39,6 +39,7 @@ export function MissionDialog({
   children,
 }: MissionDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const tourActive = useUiStore((s) => s.onboarding.activeTour !== null);
   const { t } = useI18n();
@@ -117,7 +118,7 @@ export function MissionDialog({
       tabIndex={-1}
       aria-modal="true"
       className={`mission-dialog hail-dialog hail-dialog--dock-${dockSide} mission-dialog--${panelType} ${tourActive ? 'is-tour-modeless' : ''} ${allowModalInteraction ? 'driver-allowed-element' : ''}`.trim()}
-      aria-labelledby="mission-dialog-title"
+      aria-labelledby={titleId}
       onCancel={e => {
         e.preventDefault();
         onClose();
@@ -140,7 +141,7 @@ export function MissionDialog({
           )}
           <div className="mission-dialog-titles">
             <p className="mission-dialog-eyebrow">{eyebrow}</p>
-            <h2 id="mission-dialog-title" className="mission-dialog-title">
+            <h2 id={titleId} className="mission-dialog-title">
               {title}
             </h2>
           </div>

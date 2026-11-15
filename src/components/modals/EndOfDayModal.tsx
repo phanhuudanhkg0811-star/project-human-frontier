@@ -3,6 +3,7 @@ import { playSfx } from '../../audio/sfx.ts';
 import { selectFiveSolResourceTrend, selectResourceForecast } from '../../domain/selectors.ts';
 import { selectDynamicDebrief } from '../../domain/eventSelectors.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { localizeEnumLabel } from '../../i18n/domainText.ts';
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { NightReadinessChecklist } from '../NightReadinessChecklist.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
@@ -253,7 +254,7 @@ export function EndOfDayModal({
                     <div className="hail-alloc-crew-statline">
                       <span>{t('endDay.satietyLabel', { satiety: member.satiety })}</span>
                       <span className={member.hungerState === 'starving' ? 'is-crit' : ''}>
-                        {member.hungerState.toUpperCase()}
+                        {localizeEnumLabel('hunger', member.hungerState, locale)}
                       </span>
                     </div>
                   </div>

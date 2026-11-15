@@ -18,6 +18,7 @@ import { HAIL_ENV, HAIL_ROVER } from '../cabin/hailAssets.ts';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { localizeEnumLabel } from '../../i18n/domainText.ts';
 
 interface ExpeditionModalProps {
   onClose: () => void;
@@ -30,8 +31,10 @@ const SITE_ART: Record<ExpeditionId, string> = {
 };
 
 export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
-  const { t, localize } = useI18n();
+  const { t, localize, locale } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
+  const expeditionName = (id: string) => bundle.campaign.expeditions.find((exp) => exp.id === id)?.name ?? id;
+  const equipmentName = (id: string) => bundle.recipes.items.find((recipe) => recipe.id === id)?.name ?? id;
   const { selectedEquipmentIds, toggleRoverEquipment, clearRoverEquipment } = useUiStore();
   const [selectedSite, setSelectedSite] = useState<ExpeditionId>(() => {
     const { gameState: s, bundle: b } = useGameStore.getState();
@@ -151,10 +154,10 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
         <div className="hail-rover-status-card">
           <div>
-            <strong>{t('expedition.status', { status: roverStatus.toUpperCase() })}</strong>
+            <strong>{t('expedition.status', { status: localizeEnumLabel('roverStatus', roverStatus, locale) })}</strong>
             <p className="text-xs text-slate-300 mt-0.5">
               {activeMission
-                ? t('expedition.activeMission', { mission: activeMission.expeditionId, sols: selectRoverRemainingSols(gameState) })
+                ? t('expedition.activeMission', { mission: expeditionName(activeMission.expeditionId), sols: selectRoverRemainingSols(gameState) })
                 : t('expedition.ready')}
             </p>
           </div>
@@ -187,10 +190,10 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <div className="hail-site-meta">
             <div className="hail-site-badges">
               <span className="hail-tag-pill">{t('expedition.window', { start: expedition.windowStartSol, end: expedition.windowEndSol })}</span>
-              <span className="hail-tag-pill">{t('expedition.threat', { threat: expedition.threat })}</span>
+              <span className="hail-tag-pill">{t('expedition.threat', { threat: localizeEnumLabel('threat', expedition.threat, locale) })}</span>
             </div>
             <p className="text-xs text-slate-300">
-              {t('expedition.mitigation')} <strong>{expedition.mitigationOptions.map((option) => `${option.allOf.join(' + ')}${option.requirements?.minBatteryKWh ? ` + ${t('expedition.batteryAtLeast', { amount: option.requirements.minBatteryKWh })}` : ''}`).join(` ${t('expedition.or')} `)}</strong> →{' '}
+              {t('expedition.mitigation')} <strong>{expedition.mitigationOptions.map((option) => `${option.allOf.map((eqId) => equipmentName(eqId)).join(' + ')}${option.requirements?.minBatteryKWh ? ` + ${t('expedition.batteryAtLeast', { amount: option.requirements.minBatteryKWh })}` : ''}`).join(` ${t('expedition.or')} `)}</strong> →{' '}
               {threatBlocked ? (
                 <span className="text-emerald-300 font-semibold inline-flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> {t('expedition.blockedThreat')}
@@ -202,7 +205,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               )}
             </p>
             <p className="text-xs text-cyan-200">
-              {t('expedition.reward', { sample: expedition.rewardSample, science: expedition.rewards.science, parts: expedition.rewards.partsKg, water: expedition.rewards.waterL })}
+              {t('expedition.reward', { sample: localizeEnumLabel('sample', expedition.rewardSample, locale), science: expedition.rewards.science, parts: expedition.rewards.partsKg, water: expedition.rewards.waterL })}
             </p>
             {siteData && (
               <p className="text-[11px] text-slate-400">
@@ -227,7 +230,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
                   onClick={() => toggleRoverEquipment(eq.id as EquipmentId)}
                   className={`hail-btn text-xs ${selected ? 'hail-btn--accent' : ''}`}
                 >
-                  {selected ? '✓ ' : ''}{eq.id} ({eq.durability}%)
+                  {selected ? '✓ ' : ''}{equipmentName(eq.id)} ({eq.durability}%)
                 </button>
               );
             })}

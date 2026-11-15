@@ -4,6 +4,7 @@ import { selectRichDebriefBreakdown } from '../../domain/debriefSelectors.ts';
 import { selectDynamicDebrief, type DynamicDebriefView } from '../../domain/eventSelectors.ts';
 import { selectCampaignInsights, selectSol7DebriefBranch } from '../../domain/narrativeSelectors.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
+import { localizeEnumLabel } from '../../i18n/domainText.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { Locale } from '../../i18n/types.ts';
 import { useUiStore } from '../../store/uiStore.ts';
@@ -250,7 +251,7 @@ function DebriefDialogBody({
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span>
                   {t('night.alert.loadShed', {
-                    loads: breakdown.power.unmetLoads.map((id) => id.toUpperCase()).join(', '),
+                    loads: breakdown.power.unmetLoads.map((id) => localizeEnumLabel('powerConsumer', id, locale)).join(', '),
                   })}
                 </span>
               </span>
