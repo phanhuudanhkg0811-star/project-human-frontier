@@ -3532,6 +3532,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 }
 
 .driver-popover.phf-driver-popover {
+  box-sizing: border-box;
   background: #0b1628;
   background-color: #0b1628;
   color: #f8fafc;
@@ -3539,7 +3540,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   border-radius: 14px;
   box-shadow: 0 20px 48px rgba(2, 6, 23, 0.88), 0 0 0 1px rgba(15, 23, 42, 0.9);
   padding: 16px 18px;
-  min-width: 300px;
+  min-width: min(300px, calc(100vw - 24px));
   max-width: min(400px, calc(100vw - 24px));
   width: auto;
   z-index: 100020;
@@ -5646,6 +5647,28 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 }
 
 @media (max-width: 680px) {
+  .driver-popover.phf-driver-popover .driver-popover-title {
+    padding-right: 52px;
+  }
+
+  .driver-popover.phf-driver-popover .driver-popover-footer .driver-popover-footer-btn,
+  .driver-popover.phf-driver-popover .driver-popover-close-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .driver-popover.phf-driver-popover .driver-popover-close-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .phf-title-notice .hail-btn,
+  .phf-intro-resume-bar .hail-btn,
+  .phf-overwrite-box .hail-btn,
+  .phf-recovery-actions .hail-btn {
+    min-height: 44px;
+  }
+
   .phf-hint-banner {
     right: 12px;
     left: 12px;
@@ -5658,7 +5681,8 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
     min-height: 44px;
   }
 
-  .phf-hint-cta {
+  .phf-hint-cta,
+  .phf-hint-link {
     min-height: 44px;
   }
 }

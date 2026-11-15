@@ -1,7 +1,7 @@
 import balanceData from '../data/balance.json';
 import { APP_VERSION } from '../persistence/saveAdapter.ts';
 
-export const RELEASE_VERSION = '1.6.0-moon32';
+export const RELEASE_VERSION = '2.0.0-moon32';
 export const SAVE_SCHEMA_VERSION = 4 as const;
 
 export interface AttributionEntry {

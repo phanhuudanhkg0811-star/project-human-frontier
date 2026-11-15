@@ -1,0 +1,138 @@
+{
+  "phase": "2.6",
+  "method": "8-Journey Moon Complete E2E via live Vite + Chrome CDP (Desktop 1440x900, Laptop 1280x720, Mobile 390x844, VI & EN, Keyboard a11y, Normal & Reduced Motion, Onboarding Recovery, Sol 7 Branches, Sol 32 Victory & Defeat).",
+  "contentHash": "6bc987da6a70ef357b9dcced943f4748c4d91eb67e32e9c02ff64d4e4e393a7f",
+  "checks": [
+    "Journey 1: Fresh boot lands on Title Screen (never skips directly to cockpit) with Continue disabled",
+    "Journey 8 (Title EN): Title menu localizes cleanly to English",
+    "Journey 1: First-run New Mission opens Intro Cinematic at Scene 1/6",
+    "Journey 2 & 8 (Intro Keyboard): ArrowRight advances Intro to Scene 2/6 and stores session",
+    "Journey 2: Reload mid-Intro offers gesture-gated Resume Intro banner on Title Screen",
+    "Journey 1: Skipping/finishing Intro hands off to Mission Setup with compact DONKI selector",
+    "Journey 1 (DONKI Compact UI): Detail button expands telemetry drawer cleanly",
+    "Journey 2: Reload mid-Cockpit Tour resumes directly at persisted tour step via Continue",
+    "Journey 1 & 6: Cockpit Discovery completion reveals Sol 1 Arrival milestone dialog",
+    "Journey 1: Completing Guided Sol 1 flow via real cockpit actions reaches Sol 2 with completed tour state & clean DOM",
+    "Journey 3: Replaying Intro from Cockpit returns safely without mutating Sol 2 state",
+    "Journey 3: Ephemeral Cockpit Tour replay exits cleanly via Escape and restores Sol 2 campaign hash",
+    "Journey 4: Phase 1 Save v4 Sol 15 recognized on Title Screen with Continue enabled",
+    "Journey 5: Corrupt phf_onboarding_v1 + phf_narrative_v1 show warning notice while preserving Continue campaign save",
+    "Journey 4: Existing Sol 15 player enters Cockpit without forced Intro/Sol-1 tour and sees only Sol 15 Sunset milestone",
+    "Journey 8 (A11y): Escape dismisses Milestone presentation dialog cleanly",
+    "Journey 8 (A11y): Escape closes Title overwrite alertdialog and restores focus to New Mission button",
+    "Journey 5: Corrupt campaign save shows fail-closed E_SAVE_CORRUPTED gate without erasing raw save",
+    "Journey 6: Sol 7 Golden Crisis Milestone presented",
+    "Journey 6: Sol 7 Debrief dual-branch framing card presented",
+    "Journey 6: Sol 15 Sunset Milestone presented",
+    "Journey 6: Sol 29 Sunrise Milestone presented",
+    "Journey 6: Sol 32 Victory Finale + NASA Cadet Report Card presented & Driver cleaned up",
+    "Journey 6 (Determinism): Exported Victory replay trace matches live UI stateHash",
+    "Journey 7: Snoozing hint \"hint-mandatory-event-deadline\" hides it for remainder of Sol",
+    "Journey 7: Hint banner appeared & snoozed cleanly during Defeat precursor",
+    "Journey 6: Defeat Finale summary renders causes & recommendations accurately",
+    "Laptop 1280x720 Cockpit: zero horizontal overflow",
+    "Mobile 390x844 Cockpit: zero horizontal overflow",
+    "Mobile 390x844 Primary CTA: >= 44px touch target (1 checked, small=[])",
+    "Journey 8 (Cockpit EN): Action bar switches cleanly to English",
+    "Mobile 390x844 Driver Popover: zero horizontal overflow",
+    "Mobile 390x844 Driver Popover Buttons: >= 44px touch target (2 checked, small=[])",
+    "Mobile 390x844 Title Screen: zero horizontal overflow",
+    "Mobile 390x844 Title Screen Buttons: >= 44px touch target (7 checked, small=[])",
+    "Journey 8 (Reduced Motion): Title shell reflects reduced-motion accessibility preference",
+    "Journey 8 (Keyboard): Tab moves focus within visible Title controls",
+    "No uncaught browser runtime exceptions",
+    "No browser console.error logs emitted"
+  ],
+  "errors": [],
+  "consoleErrors": [],
+  "screenshots": [
+    "journey1-title-desktop.png",
+    "journey1-setup-donki.png",
+    "journey6-sol7-milestone.png",
+    "journey6-sol7-debrief-branch.png",
+    "journey6-victory-desktop.png",
+    "journey7-hint-banner.png",
+    "journey6-defeat-desktop.png",
+    "journey8-cockpit-mobile-390.png",
+    "journey8-driver-mobile-390.png",
+    "journey8-title-mobile-390.png"
+  ],
+  "campaigns": [
+    {
+      "scenario": "A",
+      "steps": 369,
+      "status": "victory",
+      "outcome": {
+        "status": "victory",
+        "reasonCode": "moon-victory",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": true,
+            "actual": 32,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 19.64,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": true,
+            "actual": 121.8,
+            "target": 0
+          }
+        ],
+        "rank": "S",
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "ca9ec3544d2d77f822f8d5470d2881aa38b358709c2b0b82fd58964242003ff2"
+    },
+    {
+      "scenario": "water",
+      "steps": 68,
+      "status": "defeat",
+      "outcome": {
+        "status": "defeat",
+        "reasonCode": "water-depleted",
+        "requirements": [
+          {
+            "id": "end-sol",
+            "met": false,
+            "actual": 9,
+            "target": 32
+          },
+          {
+            "id": "active-crew",
+            "met": true,
+            "actual": 4,
+            "target": 2
+          },
+          {
+            "id": "positive-oxygen",
+            "met": true,
+            "actual": 79.11,
+            "target": 0
+          },
+          {
+            "id": "positive-water",
+            "met": false,
+            "actual": 0,
+            "target": 0
+          }
+        ],
+        "rank": null,
+        "rankingVersion": "1.4.0-moon32"
+      },
+      "finalHash": "d361be78f122089ec498f6fa8cdc2891e0179e4144497b8c74fcbc3f21a5370c"
+    }
+  ]
+}

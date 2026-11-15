@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   BookOpen,
@@ -96,6 +96,49 @@ export function TitleScreen() {
   const [introSession, setIntroSession] = useState<IntroSessionState | null>(() =>
     readIntroSessionScene()
   );
+  const newMissionBtnRef = useRef<HTMLButtonElement>(null);
+  const cancelOverwriteBtnRef = useRef<HTMLButtonElement>(null);
+  const focusRestoreRafRef = useRef<number | null>(null);
+
+  const closeOverwritePrompt = useCallback((restoreFocus: boolean) => {
+    setConfirmOverwrite(false);
+    if (!restoreFocus) return;
+    if (focusRestoreRafRef.current !== null) {
+      window.cancelAnimationFrame(focusRestoreRafRef.current);
+    }
+    focusRestoreRafRef.current = window.requestAnimationFrame(() => {
+      focusRestoreRafRef.current = null;
+      if (newMissionBtnRef.current?.isConnected) {
+        newMissionBtnRef.current.focus();
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (focusRestoreRafRef.current !== null) {
+        window.cancelAnimationFrame(focusRestoreRafRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!confirmOverwrite) return;
+    const raf = window.requestAnimationFrame(() => {
+      cancelOverwriteBtnRef.current?.focus();
+    });
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeOverwritePrompt(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [confirmOverwrite, closeOverwritePrompt]);
 
   const canContinue = hasSavedCampaign && !saveRecoveryError;
   const difficultyMeta = bundle.campaign.difficultyProfiles[gameState.campaign.difficulty];
@@ -348,6 +391,7 @@ export function TitleScreen() {
           </button>
 
           <button
+            ref={newMissionBtnRef}
             type="button"
             className={`phf-title-btn ${!canContinue && !saveRecoveryError ? 'is-primary' : ''}`}
             data-tour={TOUR_TARGET_IDS.TITLE_NEW_MISSION}
@@ -380,9 +424,10 @@ export function TitleScreen() {
                   {t('title.confirmOverwrite')}
                 </button>
                 <button
+                  ref={cancelOverwriteBtnRef}
                   type="button"
                   className="hail-btn text-xs"
-                  onClick={() => setConfirmOverwrite(false)}
+                  onClick={() => closeOverwritePrompt(true)}
                 >
                   {t('title.cancelOverwrite')}
                 </button>
