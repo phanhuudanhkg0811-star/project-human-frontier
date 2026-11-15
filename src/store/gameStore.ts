@@ -141,9 +141,19 @@ export const useGameStore = create<GameStoreModel>((set, get) => ({
     }
 
     const res = dispatchDomainCommand(current.gameState, command, current.bundle);
-    const replayTrace = recordCommand(current.replayTrace, command, res, current.bundle);
-    saveRecording(replayTrace, recordingStorage);
+    // Rejected commands stay in the recording (audit trail), but a successful
+    // no-op tick must not rewrite localStorage or inflate the replay trace.
+    const stateChanged = !res.ok || res.state !== current.gameState;
+    const replayTrace = stateChanged ? recordCommand(current.replayTrace, command, res, current.bundle) : current.replayTrace;
+    if (stateChanged) saveRecording(replayTrace, recordingStorage);
     if (res.ok) {
+      if (!stateChanged) {
+        set({
+          lastError: null,
+          runtime: { ...current.runtime, status: 'ready', error: null },
+        });
+        return res;
+      }
       if (command.type === 'game/start') useUiStore.getState().resetCampaignUi();
       playEffectSfx(command, current.gameState, res.state, res.effects);
       const saveRes = saveGameState(res.state);

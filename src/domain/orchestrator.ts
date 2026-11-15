@@ -252,11 +252,20 @@ export function dispatchDomainCommand(
       if (member.hungerState === 'starving' && command.task === 'rover-operate') {
         return fail(state, 'E_PLAN_INVALID', `${member.name} đang đói lả (Starving), bị cấm vận hành Rover.`);
       }
+      if (command.task === 'medical-care') {
+        if (!command.targetCrewId) return fail(state, 'E_PLAN_INVALID', 'Thiếu targetCrewId để chăm sóc y tế.');
+        if (state.crew[command.targetCrewId].condition === 'evacuated') {
+          return fail(state, 'E_PLAN_INVALID', 'Không thể chăm sóc phi hành gia đã evacuated.');
+        }
+      }
 
       let resources = { ...state.resources };
       let partsSpent = 0;
       if (command.task === 'repair-system') {
         if (!command.targetSystemId) return fail(state, 'E_PLAN_INVALID', 'Thiếu targetSystemId để sửa chữa.');
+        if (state.systems[command.targetSystemId].integrity >= 1.0) {
+          return fail(state, 'E_PLAN_INVALID', `${command.targetSystemId} đang hoạt động 100%, không cần sửa.`);
+        }
         const cost = bundle.balance.systems.repairPartsCost;
         if (resources.partsKg < cost) {
           return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần ${cost} kg Phụ tùng để sửa hệ thống.`);
@@ -542,6 +551,10 @@ export function dispatchDomainCommand(
     }
 
     case 'comms/tick-radio': {
+      const anyDue = state.logistics.radioMessages.some(
+        (msg) => msg.status === 'transmitting' && command.nowMs >= msg.replyReadyAtMs
+      );
+      if (!anyDue) return { ok: true, state, effects: [] };
       const updated = state.logistics.radioMessages.map((msg) =>
         msg.status === 'transmitting' && command.nowMs >= msg.replyReadyAtMs
           ? {
