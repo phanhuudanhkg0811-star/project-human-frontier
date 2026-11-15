@@ -2,8 +2,109 @@
   "schemaVersion": 1,
   "generatedBy": "scripts/build-hail-asset-manifest.mjs",
   "assetRoot": "/assets/hail/",
-  "assetCount": 143,
+  "siDisclosure": {
+    "policy": "NASA Space Apps Challenge - Use of Super Intelligence (SI)",
+    "summary": "Artist-drawn comic & crew illustrations are non-SI originals (no SI watermark); all SI-generated WebP images carry visible SI watermarks, and SI-generated OGG audio plus SI-assisted code/telemetry helpers are disclosed in metadata and Credits.",
+    "originCounts": {
+      "artist-human": 28,
+      "si-generated": 87,
+      "procedural-vector": 24
+    }
+  },
+  "assetCount": 139,
   "assets": [
+    {
+      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic",
+      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic.webp",
+      "mediaType": "image/webp",
+      "bytes": 443258,
+      "dimensions": {
+        "width": 8598,
+        "height": 6071
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "cbd709e9e1a9b0348d3ae11a6a5f57f1d6bfe23ca47fd96bc7af4d419f9d1ab5"
+    },
+    {
+      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic2",
+      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic2.webp",
+      "mediaType": "image/webp",
+      "bytes": 135134,
+      "dimensions": {
+        "width": 6071,
+        "height": 8598
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "fe576f30d07bb157023ee18973ccb226a5f25ab1a6c5385dbf62b851ad7f11dd"
+    },
+    {
+      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic3",
+      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic3.webp",
+      "mediaType": "image/webp",
+      "bytes": 179996,
+      "dimensions": {
+        "width": 8598,
+        "height": 6071
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "27377b5c50c9195a32a1f480158895dd7006d8630469ecb3e9e803933baa5ac2"
+    },
+    {
+      "id": "4 khung cho cảnh mở đầụ:4 khung cho cảnh mở đầu:Comic4",
+      "path": "/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/Comic4.webp",
+      "mediaType": "image/webp",
+      "bytes": 46722,
+      "dimensions": {
+        "width": 8598,
+        "height": 6071
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "efbbedae11e1eb5d33d4330f6cad628b774151516c28ab7beaae9e68c3805cca"
+    },
     {
       "id": "audio:PH_MUS_LUNAR_BASE_LOOP_V01",
       "path": "/assets/hail/audio/PH_MUS_LUNAR_BASE_LOOP_V01.ogg",
@@ -13,8 +114,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "91d50fa09b0252a4306bc4a07d32560ee01bbdf2c839ac80d84d40dc71496344"
     },
@@ -27,8 +131,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "8ae9b00dc3717aab92a140f6b298ab69461765e6426ce2571f5947ab7cd89076"
     },
@@ -41,8 +148,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "391ada6d9d882f6cfd2b148b5364f1b4ce61d072de987221ad5e51409050b714"
     },
@@ -55,8 +165,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "efca223c79aae0ad747fdf7ba012a5e19e72bd7c5256087c19c3084e501c2eef"
     },
@@ -69,8 +182,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "a2be2027362e273b85d3031dbbc9f6b452552ea85f93264ce97a0af9b51f00b5"
     },
@@ -83,8 +199,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "627ac0ed62d57e599eee9eea5898be53858b123241e7b1c35f5f1935dc9dd9b1"
     },
@@ -97,8 +216,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "d8f3067cf7c510c794f5f1550736a39a969fcf03556151ef4b9099ba177c6ffc"
     },
@@ -111,8 +233,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "dbd25968c5b4716b6481305377a727d5dfc6da50f92f89449b779274616e38c7"
     },
@@ -125,8 +250,11 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "005071b1139ea0c084128de8a268bf0c29b6da8ad95e295ba4d95698738cc1ee"
     },
@@ -139,130 +267,13 @@
       "anchor": null,
       "layer": "audio",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)",
+      "license": "Project-owned SI-generated audio; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "76d9e58781beffe1e83111b292336fc46c54a62f310d6e59e686d6f7a6865bb1"
-    },
-    {
-      "id": "characters:PH_CHAR_ALEX_PORTRAIT_V01",
-      "path": "/assets/hail/characters/PH_CHAR_ALEX_PORTRAIT_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 78490,
-      "dimensions": {
-        "width": 840,
-        "height": 768
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "0f3381bb2e2fb19b4f872944c5f6ef719628fa77f5786ddcb119c569d4a0bbb0"
-    },
-    {
-      "id": "characters:PH_CHAR_ALEX_SEATED_BASE_V01",
-      "path": "/assets/hail/characters/PH_CHAR_ALEX_SEATED_BASE_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 68472,
-      "dimensions": {
-        "width": 230,
-        "height": 410
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "9ee13a53d4b2325816ef3ccad7bc32e4289f68948706c67e5a8b02552ceebd7c"
-    },
-    {
-      "id": "characters:PH_CHAR_ELENA_PORTRAIT_V01",
-      "path": "/assets/hail/characters/PH_CHAR_ELENA_PORTRAIT_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 97434,
-      "dimensions": {
-        "width": 840,
-        "height": 768
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "f2ec1ebe8e7a1c41893a935fae1ecc274a191300a632ff09db1e53159605bd22"
-    },
-    {
-      "id": "characters:PH_CHAR_ELENA_SEATED_BASE_V01",
-      "path": "/assets/hail/characters/PH_CHAR_ELENA_SEATED_BASE_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 114238,
-      "dimensions": {
-        "width": 307,
-        "height": 616
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "27fce953e2136388b335ff19025351c226b53f7e5f1f153cc93cd8ecaed4cb1a"
-    },
-    {
-      "id": "characters:PH_CHAR_MARCUS_PORTRAIT_V01",
-      "path": "/assets/hail/characters/PH_CHAR_MARCUS_PORTRAIT_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 75422,
-      "dimensions": {
-        "width": 840,
-        "height": 768
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "af68bb8fa42d9a8e26a1f71c1783598824dcc8287a2e3d22e390bdb14c9439dc"
-    },
-    {
-      "id": "characters:PH_CHAR_MARCUS_SEATED_BASE_V01",
-      "path": "/assets/hail/characters/PH_CHAR_MARCUS_SEATED_BASE_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 64458,
-      "dimensions": {
-        "width": 230,
-        "height": 410
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "d035813703453a3e90b9e2794848c28e8b3a8d4fea27e3d4fd709f6b4620e930"
     },
     {
       "id": "characters:PH_CHAR_NV1_PORTRAIT_HUNGRY_V02",
@@ -279,8 +290,11 @@
       },
       "layer": "crew",
       "state": "hungry",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "d7292570780531e9a107e13757a58e82655d5c2e8e1c6e97191d1756198b4f59"
     },
@@ -299,8 +313,11 @@
       },
       "layer": "crew",
       "state": "normal",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "5dbf991ca1cf81b118ae70a6b7a60cd1fd6110f4dc3377b5d14f65c2526a0f5f"
     },
@@ -319,8 +336,11 @@
       },
       "layer": "crew",
       "state": "sick",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "602447f585647566a79a872d36a8b1758781b3d70bc0ec55091dd57df5592bbd"
     },
@@ -339,8 +359,11 @@
       },
       "layer": "crew",
       "state": "hungry",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "aefce14f84bdcb0e69ac4e9187bc0cdfa5cffeead61fe8408c35cf156143c500"
     },
@@ -359,8 +382,11 @@
       },
       "layer": "crew",
       "state": "normal",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "5a395c4f7ac3e775d44a951d02c86cdd53987cc254012d78445761e78d4ec5fb"
     },
@@ -379,8 +405,11 @@
       },
       "layer": "crew",
       "state": "sick",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "ab5e1621d0aee9e553e25ff058f5a16cec3cfbf4935bf084a1ea3686113a8b32"
     },
@@ -399,8 +428,11 @@
       },
       "layer": "crew",
       "state": "hungry",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "fbc46ed4a7115afec5c93a8dc4c6f59ac5a629f3fda4d06c8f80ee436048f279"
     },
@@ -419,8 +451,11 @@
       },
       "layer": "crew",
       "state": "normal",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "3aee6d4dee6df6085ff0b508317914354956f253254e6eb1bde11404752e15d8"
     },
@@ -439,8 +474,11 @@
       },
       "layer": "crew",
       "state": "sick",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "4aa540af7914a00f104dd0ff808f33fad9c20d541d7577af565335a53d58ac51"
     },
@@ -459,8 +497,11 @@
       },
       "layer": "crew",
       "state": "hungry",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "f40d8000c6819184e99058545247640c9168c73c4f53904578b208c8adbc7cf2"
     },
@@ -479,8 +520,11 @@
       },
       "layer": "crew",
       "state": "normal",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "0d337e37fade81c7820a69e5af4524ecf2247f4acf40348e7fa4e4997d8fdf39"
     },
@@ -499,56 +543,19 @@
       },
       "layer": "crew",
       "state": "sick",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 2,
       "sha256": "f8d6420320716762af282ff7a0c93ae6e77e69140531231dc6e4b32c0ca20c75"
-    },
-    {
-      "id": "characters:PH_CHAR_SARAH_PORTRAIT_V01",
-      "path": "/assets/hail/characters/PH_CHAR_SARAH_PORTRAIT_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 68844,
-      "dimensions": {
-        "width": 840,
-        "height": 768
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "64de7b69194026af782bd383c315c4b1449703930bf79781328afc52cb627e73"
-    },
-    {
-      "id": "characters:PH_CHAR_SARAH_SEATED_BASE_V01",
-      "path": "/assets/hail/characters/PH_CHAR_SARAH_SEATED_BASE_V01.webp",
-      "mediaType": "image/webp",
-      "bytes": 117992,
-      "dimensions": {
-        "width": 307,
-        "height": 616
-      },
-      "anchor": {
-        "x": 0.5,
-        "y": 0.5
-      },
-      "layer": "crew",
-      "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
-      "version": 1,
-      "sha256": "3b4c5c4787b102b91131c41dcffb4a88b4cf04b15ad37025650e4f683213757c"
     },
     {
       "id": "effects:PH_FX_OVERLAY_BROKEN_V01",
       "path": "/assets/hail/effects/PH_FX_OVERLAY_BROKEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 2008,
+      "bytes": 1958,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -559,16 +566,19 @@
       },
       "layer": "misc",
       "state": "broken",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "79f2569cd5ca1a5c3248e926008a65735284d3a7f78f2aa38407d7af8efc2719"
+      "sha256": "913793bf4791c192f993ce1e19b57b5206c2016874988c574c1274ffc87ea8f0"
     },
     {
       "id": "effects:PH_FX_OVERLAY_DEGRADED_V01",
       "path": "/assets/hail/effects/PH_FX_OVERLAY_DEGRADED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 3382,
+      "bytes": 3072,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -579,16 +589,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "764b7bb899cbd23540c898ec4c1f57407aa8a77b063790d9af7bb61b47aa278b"
+      "sha256": "75762c40df71f2fafcdb96c1346d76ac84252700c3feffd8a4bf4c6ac8c15e0f"
     },
     {
       "id": "environments:PH_ENV_COCKPIT_SHELL_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_COCKPIT_SHELL_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 157364,
+      "bytes": 145704,
       "dimensions": {
         "width": 1920,
         "height": 1080
@@ -599,16 +612,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "d8f1723cbac966087583ac57778644c6638d099c0c451417c5c65a64bdeb4ce5"
+      "sha256": "8c5dbda28a0156658a147b6664efdca4345f7001495245bed73907a582f9deba"
     },
     {
       "id": "environments:PH_ENV_LUNAR_CRATER_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_LUNAR_CRATER_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 138702,
+      "bytes": 111262,
       "dimensions": {
         "width": 1376,
         "height": 768
@@ -619,16 +635,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "a8610d01c0d0c8f0149bc77a7d75ad08967b552c3b41f97c20d837f9b74a4203"
+      "sha256": "12c6add6191d09eab54ca1d108f3f94532498dfaceab274803ead67fe774e7be"
     },
     {
       "id": "environments:PH_ENV_LUNAR_EXTERIOR_DAY_V01",
       "path": "/assets/hail/environments/PH_ENV_LUNAR_EXTERIOR_DAY_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 91428,
+      "bytes": 73060,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -639,16 +658,19 @@
       },
       "layer": "misc",
       "state": "day",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "72afa7f933e8fc3cfe15579819afcc6eb6537e7f1470a04a937c225ef937a02e"
+      "sha256": "af5ff7be7b69e102352671187cf8080bd94e8446141211d5fa71abbf717669b2"
     },
     {
       "id": "environments:PH_ENV_LUNAR_EXTERIOR_NIGHT_V01",
       "path": "/assets/hail/environments/PH_ENV_LUNAR_EXTERIOR_NIGHT_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 78270,
+      "bytes": 63054,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -659,16 +681,19 @@
       },
       "layer": "misc",
       "state": "night",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "8649f8f0b9a22777b1efad389d23501825666edc9942b8da9d27f02714ea8830"
+      "sha256": "5f67b2adf804529ebad212683ef0aa479914bfdc0174a59554cf2ffe637bd5e6"
     },
     {
       "id": "environments:PH_ENV_LUNAR_MAP_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_LUNAR_MAP_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 297592,
+      "bytes": 232598,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -679,16 +704,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "3721d871cad20521c216c55b292af819e9d6a066426d10ab1c78d15b6931b0b0"
+      "sha256": "b34eeac40da280628ad4541ea6b3db2843a72c51de4fb0d59b4dc985f21da302"
     },
     {
       "id": "environments:PH_ENV_LUNAR_PSR_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_LUNAR_PSR_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 165830,
+      "bytes": 121566,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -699,16 +727,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "42f6cd0e741747bbb7551ba8ce5bb6ca2e1cf52bbac1544537239e121319e8ec"
+      "sha256": "0ca8070905ba698e709bda5288783940c6d285f22b84d8a8d80b64683a98a10a"
     },
     {
       "id": "environments:PH_ENV_REGOLITH_FIELD_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_REGOLITH_FIELD_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 149324,
+      "bytes": 113322,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -719,16 +750,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "f4a18eb29cd04df83cc474a6ffc4e3b82f08311bf4068b05e23d08e5c60f7957"
+      "sha256": "62d924e0b81ee080bd58f191bf0a8b37ecac39ea6cb353e7a7b4dc1229097ce6"
     },
     {
       "id": "environments:PH_ENV_SPACE_DEEP_BASE_V01",
       "path": "/assets/hail/environments/PH_ENV_SPACE_DEEP_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 5908,
+      "bytes": 5622,
       "dimensions": {
         "width": 1376,
         "height": 768
@@ -739,10 +773,13 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "8cd0af6f9a1b3e42f059842e011a223b59f078e732638da78e74a7181c739cbf"
+      "sha256": "456c170f9e22a34e48bbfc203a6e5dcf83cb44c46978219b63c36dd2d7289a8a"
     },
     {
       "id": "environments:PH_ENV_TITLE_EARTH_V01",
@@ -759,8 +796,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "620b949d8f08595b74d52a7bf901c76dbe87e764c6c7c3907b382a1eb033ab8d"
     },
@@ -779,8 +819,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "afe5d0c88c61f29de9f05c9c0d721b62aa2014130b8fe9cc60c5c1d3dbd135e8"
     },
@@ -788,7 +831,7 @@
       "id": "equipment:PH_EQP_COMMS_TERMINAL_BASE_V03",
       "path": "/assets/hail/equipment/PH_EQP_COMMS_TERMINAL_BASE_V03.webp",
       "mediaType": "image/webp",
-      "bytes": 67438,
+      "bytes": 50496,
       "dimensions": {
         "width": 798,
         "height": 888
@@ -799,16 +842,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 3,
-      "sha256": "fc4a7cef4ffd86e5ff530cd648b3934796ebf0c05b9b8519e5c221385c27613d"
+      "sha256": "992931698ee55506d4c5f2c3bf3b5754efea897bd9cb3527f0eb57aa22bbbd30"
     },
     {
       "id": "equipment:PH_EQP_CONSOLE_DESK_BASE_V02",
       "path": "/assets/hail/equipment/PH_EQP_CONSOLE_DESK_BASE_V02.webp",
       "mediaType": "image/webp",
-      "bytes": 124974,
+      "bytes": 91026,
       "dimensions": {
         "width": 1266,
         "height": 659
@@ -819,16 +865,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 2,
-      "sha256": "9a963599091ce14d34a7eea7f248750db13524cd4ef79dc1ee1b65a1e97d0c49"
+      "sha256": "5e2c3cce72b18f0217c42ce87ab58811132de0682712003204932048b9ae9a61"
     },
     {
       "id": "equipment:PH_EQP_CREW_SEAT_BASE_V01",
       "path": "/assets/hail/equipment/PH_EQP_CREW_SEAT_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 69982,
+      "bytes": 56162,
       "dimensions": {
         "width": 560,
         "height": 840
@@ -839,16 +888,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "765e58750c1151814674773285c9325812e04ba907f8a5b0def7a95be0aaf384"
+      "sha256": "e5d3392594013ddb604bbccb610d7070074875d56c8a293b4ea4f15c482ba8dd"
     },
     {
       "id": "equipment:PH_EQP_CREW_SEAT_CAPTAIN_V01",
       "path": "/assets/hail/equipment/PH_EQP_CREW_SEAT_CAPTAIN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 97168,
+      "bytes": 81714,
       "dimensions": {
         "width": 680,
         "height": 840
@@ -859,16 +911,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "2e61d74f10474edbad72c26b8861f2bf0306709fd9036fef43386dc9f227c5e9"
+      "sha256": "545976fd240dc69f10b2df9a7b4755bb05bda51ce59071229d5d91469a64b142"
     },
     {
       "id": "equipment:PH_EQP_ENDDAY_CONSOLE_BASE_V01",
       "path": "/assets/hail/equipment/PH_EQP_ENDDAY_CONSOLE_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 83202,
+      "bytes": 69774,
       "dimensions": {
         "width": 840,
         "height": 766
@@ -879,16 +934,19 @@
       },
       "layer": "equipment",
       "state": "day",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "6362d37e6fafa9c9c0efcb3b1eee9f1287f0d5b0cd111510c5df138a89ddec2e"
+      "sha256": "8442b6097c566e80ee0fb51a35b646f4326a5caf67a4a412dc27cbd3b84d7457"
     },
     {
       "id": "equipment:PH_EQP_FABRICATOR_DAMAGED_V02",
       "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_DAMAGED_V02.webp",
       "mediaType": "image/webp",
-      "bytes": 74926,
+      "bytes": 54466,
       "dimensions": {
         "width": 813,
         "height": 879
@@ -899,16 +957,19 @@
       },
       "layer": "equipment",
       "state": "damaged",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 2,
-      "sha256": "d0de92f59333613913df073e66fa6293085048c9d877fb6b67acd0490a3316d7"
+      "sha256": "011d380ef53965aa438b65033b730b091b1acc708aac1c3e85e987509a62af12"
     },
     {
       "id": "equipment:PH_EQP_FABRICATOR_IDLE_V02",
       "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_IDLE_V02.webp",
       "mediaType": "image/webp",
-      "bytes": 65764,
+      "bytes": 47960,
       "dimensions": {
         "width": 813,
         "height": 879
@@ -919,16 +980,19 @@
       },
       "layer": "equipment",
       "state": "idle",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 2,
-      "sha256": "a60d92ac150b5eb7cd20945c18dc05244ce336b3a4a7b37f25442f38ee935ddc"
+      "sha256": "48aaaceb495dd708ce2a6bfdaa40efc8939216feb1f26b3bfcb5fe16f5c534af"
     },
     {
       "id": "equipment:PH_EQP_FABRICATOR_WORKING_V02",
       "path": "/assets/hail/equipment/PH_EQP_FABRICATOR_WORKING_V02.webp",
       "mediaType": "image/webp",
-      "bytes": 73722,
+      "bytes": 53070,
       "dimensions": {
         "width": 813,
         "height": 879
@@ -939,16 +1003,19 @@
       },
       "layer": "equipment",
       "state": "working",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 2,
-      "sha256": "a73df2f0d51124f90bd418e0b79ce3a9c56015bb6f6c75b5cc0b2fd99bfd96d3"
+      "sha256": "20a96742770c754a40c5790b237a214d22a4adf704dac950097e1a05f2a295b5"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_DOOR_LEFT_BOT_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_LEFT_BOT_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 12072,
+      "bytes": 1334,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -959,16 +1026,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "cf902a6d07fb1e55429575eddeeb13e4ba5087db5ed4b6cffe72875fa3476071"
+      "sha256": "c494ab7df16641998089bfe1a08c526372a6be92e220580b902c051fb10d254d"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_DOOR_LEFT_TOP_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_LEFT_TOP_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 13094,
+      "bytes": 1504,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -979,16 +1049,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "73da0b1a4a31e81e26a3a0fa28c8c95fd27dfaef3cece54eabc0045335b62fbb"
+      "sha256": "7e63fcddc2b1f09bbf6d915d950e6aa536fc20b29f6679befd481566939198c2"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_DOOR_RIGHT_BOT_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_RIGHT_BOT_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 11884,
+      "bytes": 1328,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -999,16 +1072,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "40523b22c4a1e371cc9e5793c2be8fd8769c4421889a524057659781a18de5fd"
+      "sha256": "6389757cf7fef199858d78f10cb3cf52c0ccbaa384a9a4d5753b87c0f8376632"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_DOOR_RIGHT_TOP_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_DOOR_RIGHT_TOP_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 13474,
+      "bytes": 1832,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -1019,16 +1095,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ce11066164039bdce0969d846171e982809c451793d9a8fcee965e6cb4477578"
+      "sha256": "62e23a324f60717ccb8f438f2e4240418a318e0c00261f6f6c53ad2ee6998959"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_LEFT_OPEN_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_LEFT_OPEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 37130,
+      "bytes": 2900,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -1039,16 +1118,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "6bf0fde1fdcd6a477ec37a492731a67c7179aaf22cefa7db6bd173d40af95711"
+      "sha256": "edcde51ebc5adfd27c6c3dfd9b554f85307d15862fa9d3a9984ff8c73d42ba80"
     },
     {
       "id": "equipment:PH_EQP_LOCKER_RIGHT_OPEN_V01",
       "path": "/assets/hail/equipment/PH_EQP_LOCKER_RIGHT_OPEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 37276,
+      "bytes": 3598,
       "dimensions": {
         "width": 307,
         "height": 265
@@ -1059,16 +1141,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "1b2301090221f1c38220a259d9cdc6f8723f59fa936f14790323350cf8c11dd3"
+      "sha256": "a0cc7fb984de5d6543397b77ca8a5320c9ee3b465723b8e40a406cba9e669843"
     },
     {
       "id": "equipment:PH_EQP_MEDICAL_STATION_BASE_V01",
       "path": "/assets/hail/equipment/PH_EQP_MEDICAL_STATION_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 73416,
+      "bytes": 60980,
       "dimensions": {
         "width": 560,
         "height": 840
@@ -1079,16 +1164,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "51b9f3d50b018ba56d9430f6301bf220cdb1f758510ec7b9f455a76b7253ac9e"
+      "sha256": "7bc36f47a5b4d88e618bbea86922eca8c2e982063c3d170187c2bf9e2c3ba5ef"
     },
     {
       "id": "equipment:PH_EQP_OXYGEN_GENERATOR_BASE_V12",
       "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_BASE_V12.webp",
       "mediaType": "image/webp",
-      "bytes": 63310,
+      "bytes": 13650,
       "dimensions": {
         "width": 266,
         "height": 296
@@ -1099,16 +1187,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 12,
-      "sha256": "a57ccc01b39de682854a7d70cdc2a5b576e20cef2ccd2a47b3994f07c73ebe4e"
+      "sha256": "5ea914818c949f61ac72589b65c77ce3d6c88a9ada66a90f8661f5cbed2e1fe7"
     },
     {
       "id": "equipment:PH_EQP_OXYGEN_GENERATOR_BROKEN_V01",
       "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_BROKEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 62956,
+      "bytes": 10794,
       "dimensions": {
         "width": 307,
         "height": 346
@@ -1119,16 +1210,19 @@
       },
       "layer": "equipment",
       "state": "broken",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ab6a3fafb246835fa5b0ec7979c9dfee025f38583d8046ad517c1fddde5eb93a"
+      "sha256": "6db48462eadd129e6bb6efdbdb6b55c076799d7630698ac6efe67a04918d388d"
     },
     {
       "id": "equipment:PH_EQP_OXYGEN_GENERATOR_DEGRADED_V01",
       "path": "/assets/hail/equipment/PH_EQP_OXYGEN_GENERATOR_DEGRADED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 63952,
+      "bytes": 10522,
       "dimensions": {
         "width": 307,
         "height": 346
@@ -1139,16 +1233,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "33c5f26556d061f67c9e79825f52f281b0bf2b498d486ae8f45346b240fa5a63"
+      "sha256": "df89a2086254c58b0ce8de2a3287f46f6c9f5fda0018f8be3b5dfa4658303c2c"
     },
     {
       "id": "equipment:PH_EQP_POWER_MODULE_BASE_V12",
       "path": "/assets/hail/equipment/PH_EQP_POWER_MODULE_BASE_V12.webp",
       "mediaType": "image/webp",
-      "bytes": 59046,
+      "bytes": 8314,
       "dimensions": {
         "width": 271,
         "height": 293
@@ -1159,16 +1256,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 12,
-      "sha256": "5a1fd782086863e5a4870b0880763e987218b6bd73f1ad8c5accd574800f2a84"
+      "sha256": "ec172efd47f1ee99d3c0f4dd24571fe2d777246f1cbd395fda4830e54e6859e8"
     },
     {
       "id": "equipment:PH_EQP_POWER_MODULE_BROKEN_V01",
       "path": "/assets/hail/equipment/PH_EQP_POWER_MODULE_BROKEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 71926,
+      "bytes": 14020,
       "dimensions": {
         "width": 326,
         "height": 292
@@ -1179,16 +1279,19 @@
       },
       "layer": "equipment",
       "state": "broken",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "dfe4f0486351d6f4f1ea912eb4538e7923a37442aedbe9c4d4ef7e2b690b1087"
+      "sha256": "f2f80e98abb93fa3174ece53c78aa99d3e4b726daf44eadcfbeb1df3620221bb"
     },
     {
       "id": "equipment:PH_EQP_ROBOT_STATION_BASE_V01",
       "path": "/assets/hail/equipment/PH_EQP_ROBOT_STATION_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 92056,
+      "bytes": 77778,
       "dimensions": {
         "width": 840,
         "height": 469
@@ -1199,16 +1302,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "c85cbdbb01715c69d3007f871be0caf1741ce258e1daae376a7c7e1b15ce5b86"
+      "sha256": "d6caf3c600d9d4a3e96e946462c24beac6edee5f175cd9007bc317f4bcbf8b71"
     },
     {
       "id": "equipment:PH_EQP_WATER_RECYCLER_BASE_V12",
       "path": "/assets/hail/equipment/PH_EQP_WATER_RECYCLER_BASE_V12.webp",
       "mediaType": "image/webp",
-      "bytes": 72370,
+      "bytes": 14102,
       "dimensions": {
         "width": 271,
         "height": 293
@@ -1219,16 +1325,19 @@
       },
       "layer": "equipment",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 12,
-      "sha256": "0e73d124c7034abb948f9fedee958e7aad4f6f4be098e3ec73d7cd4b379d917e"
+      "sha256": "586343b911dc2e8db5df26de0ee7bf81baa3e801f8c7d1f678b8bfa314b50a52"
     },
     {
       "id": "equipment:PH_EQP_WATER_RECYCLER_BROKEN_V01",
       "path": "/assets/hail/equipment/PH_EQP_WATER_RECYCLER_BROKEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 67416,
+      "bytes": 11710,
       "dimensions": {
         "width": 326,
         "height": 292
@@ -1239,16 +1348,19 @@
       },
       "layer": "equipment",
       "state": "broken",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ac536cd991cf07c8145f8f46a53e1d7f97f9e66473de6d8e1e4609fe5c6091b5"
+      "sha256": "499bccf05952ba627816fa9d9ecc2e764d3b611d4d399575501ccedc5ccb064b"
     },
     {
       "id": "events:PH_EVT_AIRLOCK_LEAK_BASE_V01",
       "path": "/assets/hail/events/PH_EVT_AIRLOCK_LEAK_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 266816,
+      "bytes": 209926,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -1259,16 +1371,19 @@
       },
       "layer": "event",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "35a00a071490fe495a250980d31494a5fb79733864450d210410edf47a98ce6f"
+      "sha256": "4fd178dea7615d61c2a242727edd99bf0aa1cc5083ed1b767f620c55325eec16"
     },
     {
       "id": "events:PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01",
       "path": "/assets/hail/events/PH_EVT_ROBOT_SIGNAL_LOSS_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 266044,
+      "bytes": 199016,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -1279,16 +1394,19 @@
       },
       "layer": "event",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "386aaa901a0a3b2914e466c92d5f12ef428973b3568929b2a779abc0b3fa6f08"
+      "sha256": "4f8ef8805b9d27009e17264e67c529f1a4c5e78a73f16f4e6701e9e0327b98eb"
     },
     {
       "id": "events:PH_EVT_SOLAR_PARTICLE_BASE_V01",
       "path": "/assets/hail/events/PH_EVT_SOLAR_PARTICLE_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 277418,
+      "bytes": 206240,
       "dimensions": {
         "width": 1600,
         "height": 900
@@ -1299,16 +1417,19 @@
       },
       "layer": "event",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "5640edba092a4eb808857883cb39db82ae0a61b72c2c15af56bb3e4ab6dae961"
+      "sha256": "82db68a1d937ebbdc883cb11847e9422022cce59d5048add59a3b0688e551b55"
     },
     {
       "id": "events:PH_EVT_TECHNICAL_FAULT_BASE_V01",
       "path": "/assets/hail/events/PH_EVT_TECHNICAL_FAULT_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 192794,
+      "bytes": 154566,
       "dimensions": {
         "width": 1376,
         "height": 768
@@ -1319,16 +1440,19 @@
       },
       "layer": "event",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ca263dfaba30c51bfe47e44ba06b059a86f1e0e3a100eeb6787f391191f1a7cf"
+      "sha256": "8bfc2b87b4721081b019101ad6888e8d9228c7cbcabb5ed8747e4ad768581c29"
     },
     {
       "id": "inventory:PH_ITEM_CRYO_THERMAL_RIG_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_CRYO_THERMAL_RIG_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 38118,
+      "bytes": 28172,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -1339,16 +1463,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "3ad3d16eec34a4bc47e937fe916b1d257c96cf5fbfa6be1450857eadcf79eada"
+      "sha256": "8e08f1fa62e288533ae1506d9fc2c89874d8a91465ea8fab62e5297ad4390953"
     },
     {
       "id": "inventory:PH_ITEM_DUST_SHIELD_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_DUST_SHIELD_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 59238,
+      "bytes": 46148,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -1359,16 +1486,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "96cda9be8873a40c82e033dd804299d89dcc48a3c02b9e157bb2560787c6ad54"
+      "sha256": "23eb30fb4a6483b5e9c3b8508db17b0bc18ca1e7bf0d045f2e26b3476e7ade86"
     },
     {
       "id": "inventory:PH_ITEM_FILTER_SEAL_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_FILTER_SEAL_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 64614,
+      "bytes": 18696,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1379,16 +1509,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "32aa60101c5b00d677b0b29232380e98e9014b9b8430f9ea2080dd9db7794719"
+      "sha256": "637edd6199b6f0565c5c30c6f843c994c90995e48c2e51bf4925dc8dd0c426a0"
     },
     {
       "id": "inventory:PH_ITEM_LUNAR_SAMPLE_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_LUNAR_SAMPLE_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 27828,
+      "bytes": 5388,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1399,16 +1532,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "e4bffba72b2e782082c6c7ded492a06c4da33f5fc6d9a32ba8a314f13fc6369d"
+      "sha256": "5f4d1365afe33b322a16b7611170d61b240f97a17c8df09a1b0c7d7fb5ac6159"
     },
     {
       "id": "inventory:PH_ITEM_MEDICAL_KIT_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_MEDICAL_KIT_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 33966,
+      "bytes": 8150,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1419,16 +1555,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ba5304eae67dcf7adea74c6b2ee692009dbcd21bf205a164a3d7fb037eec7bfb"
+      "sha256": "7aa2a5926e41034ac35f91e4c3c26d22bb345144b056652828caf8e672363f20"
     },
     {
       "id": "inventory:PH_ITEM_MRE_PACK_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_MRE_PACK_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 25644,
+      "bytes": 4548,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1439,16 +1578,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "47cfa348f453d1114f7fc31fc8850a9497dfa92f53abba57927c38de5b4b26f2"
+      "sha256": "df4ed275230951bd94b6742bcf89f8907b51fe9d419fe04e4210e080a7dcddf9"
     },
     {
       "id": "inventory:PH_ITEM_OXYGEN_CELL_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_OXYGEN_CELL_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 23542,
+      "bytes": 4838,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1459,16 +1601,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "500db53ebe7606cd3e128a2166ff195b629b448f866a2740029c59afe2bcd5d8"
+      "sha256": "924a9414bc1c6fff3e742e41b37bfff8019b883fe1824a2d99a54df23ad94056"
     },
     {
       "id": "inventory:PH_ITEM_RADIO_REPEATER_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_RADIO_REPEATER_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 29842,
+      "bytes": 23310,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -1479,16 +1624,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "8c79bc637c6cb59424154d00dd3c1d9f0bb678bb1763182a4e9cf05de317bad8"
+      "sha256": "bd076a12dc57dcf5dcb8fdac6926c9db1b254e9aa2e387f3fb32cc5533ffd448"
     },
     {
       "id": "inventory:PH_ITEM_SAMPLE_DRILL_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_SAMPLE_DRILL_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 34938,
+      "bytes": 13344,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1499,16 +1647,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "12753e53759b466a35a5feaf43a556548b3249bc8b830fabf563c40724d72c0a"
+      "sha256": "d76d54f024f310c60b513989509cd4581de5bc6f891a78bca346ba1982594166"
     },
     {
       "id": "inventory:PH_ITEM_SEALANT_TAPE_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_SEALANT_TAPE_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 44116,
+      "bytes": 33172,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -1519,16 +1670,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "71e6313a4fa2c9860e4987c15623da8eda435167a857e457e2e7a9a83b8d3159"
+      "sha256": "283eb502f53c013f1b85788e47b1ff971ee86d477c7ef19b89a8a31eff05c839"
     },
     {
       "id": "inventory:PH_ITEM_SOLAR_LANTERN_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_SOLAR_LANTERN_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 23294,
+      "bytes": 18144,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -1539,16 +1693,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "b1f210874d518c79c94526a53a65417415e610bf5bfa2e6a3200e4fa3b42383c"
+      "sha256": "c9dcfe16b425b99ea6784188f841b736ce2919ebe3439a4de22b12d60681a60d"
     },
     {
       "id": "inventory:PH_ITEM_SPARE_PARTS_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_SPARE_PARTS_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 62048,
+      "bytes": 15076,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1559,16 +1716,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "56b85048faff579ed47dcd6e822f4d7d7cf5da229f171cf9077d900f5699dfb4"
+      "sha256": "5825e363db73aaadb09be6165a3807a5377e562f1bd7f1b06c4a1496902f3b2f"
     },
     {
       "id": "inventory:PH_ITEM_SPECIAL_BEACON_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_SPECIAL_BEACON_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 22220,
+      "bytes": 4782,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1579,16 +1739,19 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "afb08c15dcf4511c93ac31f7612a855e435ae108f8ad8f8ceac845935ee0f715"
+      "sha256": "3cdbbb71b444dde3c0c76a943edebe464ad6f4d88404e5e14ed1198f5670a946"
     },
     {
       "id": "inventory:PH_ITEM_WATER_PACK_BASE_V01",
       "path": "/assets/hail/inventory/PH_ITEM_WATER_PACK_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 19460,
+      "bytes": 4196,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -1599,10 +1762,13 @@
       },
       "layer": "inventory",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "aa5df477104f905e56c7c378b664dd97886d07692c1a357edc310b00853f9d6a"
+      "sha256": "b3030a3a43c97f38edba4f76be3bcdfed4e6c2af00085271f690c33dbacbc3c5"
     },
     {
       "id": "nhân vật cho project hail:trạng thái bệnh:nv 1",
@@ -1619,8 +1785,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "dfbfc1c526c0fbc798c839c74bb5c41e0194c94d4bd27547100b1e4004f7f638"
     },
@@ -1639,8 +1808,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "7ba43e9aabbf42d88513828ee97cddb40f0f428adaf5f5c1da9b3017523be27a"
     },
@@ -1659,8 +1831,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "372c77e0e5abd4ed3a59b7350d9c6c4f96704b11fc951c8ad098e0282ee55f83"
     },
@@ -1679,8 +1854,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "f65013c097e82eb249c75156b3d2f1fcdbc6c1fe91a7102a4bfaf2ee63597b32"
     },
@@ -1699,8 +1877,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "c6465befc1177f7d4e3b4fd3bfa9a5a09bbdbf70188b9dab563778317add470e"
     },
@@ -1719,8 +1900,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "473e6b88173be3f368d3b7d23018667428bb4d97d2aaecbf49cae74dfe3d4008"
     },
@@ -1739,8 +1923,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "092d6b6dc111c16e1047c6837fc132600e5a8febecf4a56a6bf205bc9b79fb18"
     },
@@ -1759,8 +1946,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "f289c16bfa8d2af64771bfc9d017efd33cb1df76d460629d236d3a778d3184b5"
     },
@@ -1779,8 +1969,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "0d8b3ab0353062ad121b4e184ce446d74b2081370afbba7db2a63240dbef609d"
     },
@@ -1799,8 +1992,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "a97f7a4fd21e90fe398a053d7f350b90cf9391ea36de1857ffc9be548c2e390e"
     },
@@ -1819,8 +2015,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "918de965c9280473d8490e8ee81eb70fd8cab0ada21d418d3da19ea71921a0f5"
     },
@@ -1839,8 +2038,11 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "artist-human",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier human artist original illustration (non-SI artwork)",
+      "license": "Project-owned human artwork; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "6af62d2cfa26dd835e31713e96a6e5e91e576035e0325518894c3e2047b28618"
     },
@@ -1859,8 +2061,11 @@
       },
       "layer": "hud",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "791f2b648571023887ed6789b64ac49be36deba434873ae33edefd97bf6b04af"
     },
@@ -1879,8 +2084,11 @@
       },
       "layer": "hud",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "18255eb5e7926716d5677215d76977f6832f35c78314a2e74c5af52b4a572f77"
     },
@@ -1899,8 +2107,11 @@
       },
       "layer": "hud",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "265df745e5b24a98906a411bf233b672b3d39c20b9b02281a9c9b29df7263bac"
     },
@@ -1919,8 +2130,11 @@
       },
       "layer": "hud",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "218df5ce367d613dcabc7890b9021f52eb36191986d726270ccf8af13f5aeb87"
     },
@@ -1939,8 +2153,11 @@
       },
       "layer": "hud",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "f9c74531ac4178ee0f699b8815ece1b7a962cb773211fe656f3c01822bdbf0c8"
     },
@@ -1948,7 +2165,7 @@
       "id": "robots:PH_BOT_SURVEY_ROVER_ACTIVE_V01",
       "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_ACTIVE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 125554,
+      "bytes": 104592,
       "dimensions": {
         "width": 840,
         "height": 729
@@ -1959,16 +2176,19 @@
       },
       "layer": "misc",
       "state": "active",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "8e8f6b6dba722987d6b4ee4b32da6c4eff4a5310a4aa74dc5a3cb22fee7b1a35"
+      "sha256": "13cabf82090238a8db3be0d41a89f8d0ffdfd1e2b32c792d86ceda4cb2c4a546"
     },
     {
       "id": "robots:PH_BOT_SURVEY_ROVER_BASE_V01",
       "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_BASE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 116526,
+      "bytes": 100026,
       "dimensions": {
         "width": 840,
         "height": 729
@@ -1979,16 +2199,19 @@
       },
       "layer": "misc",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "31ee3a929ab488f289e2dc8a1a2c5af6d9cd929808bc40382a1794bd924919d6"
+      "sha256": "8b29b8d75b17b722aa685c2b55b66700ef833090e54bd626860b6b19186665e4"
     },
     {
       "id": "robots:PH_BOT_SURVEY_ROVER_BROKEN_V01",
       "path": "/assets/hail/robots/PH_BOT_SURVEY_ROVER_BROKEN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 115762,
+      "bytes": 98732,
       "dimensions": {
         "width": 840,
         "height": 729
@@ -1999,10 +2222,13 @@
       },
       "layer": "misc",
       "state": "broken",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "e8ce7a56574b8e280f1d7574558943159262ec211b988411bb595b77725d10c8"
+      "sha256": "6a513e67c02d3983e2d5bb99ea3cf587535b20a97b5ce71770b1407d980b394e"
     },
     {
       "id": "ui:PH_UI_ACT_ENDDAY_V01",
@@ -2019,8 +2245,11 @@
       },
       "layer": "ui",
       "state": "day",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "9c2bec16ab006622ae8794b37bb8069732ada210e0b822e2f17b5646ec2cc978"
     },
@@ -2039,8 +2268,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "621f40bcd25613dee0d3312617f69bb137910621ff66430e425b7c6d7ca82415"
     },
@@ -2059,8 +2291,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "651c83503a7dbebdf97cb6d65a72124a2899eeb571c51367633c1593ba60ecd4"
     },
@@ -2079,8 +2314,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "5f0d688fc1e8129880e506bc4581150c2662cba5260d59772003c02cb0c26035"
     },
@@ -2088,7 +2326,7 @@
       "id": "ui:PH_UI_ALLOCATION_FRAME_V01",
       "path": "/assets/hail/ui/PH_UI_ALLOCATION_FRAME_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 84400,
+      "bytes": 60586,
       "dimensions": {
         "width": 1920,
         "height": 992
@@ -2099,10 +2337,13 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "b4012c611322a3ce3dfd2cf6643fc5a998df7fd6812d3d7800fa6d3b4b9b5592"
+      "sha256": "47416f0d5a5bd786d94f139994eb3d1c8c23161ac5dc556213636d8fd3815f3a"
     },
     {
       "id": "ui:PH_UI_BADGE_NASA_STEM_V01",
@@ -2119,8 +2360,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "c7cc0d895f8fcc32194db7c369e435452fa4f56d4595683f8600900ae9c1f029"
     },
@@ -2128,7 +2372,7 @@
       "id": "ui:PH_UI_BTN_CLOSE_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_CLOSE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 1890,
+      "bytes": 1474,
       "dimensions": {
         "width": 96,
         "height": 96
@@ -2139,16 +2383,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "44897c17dc107bd16baf236dc35bb359f767d4a295ba61046daa0f76ec16d759"
+      "sha256": "a6e9ed27a496840865f381b8b7f952b8320386c0251bcef271a57865d5b2b383"
     },
     {
       "id": "ui:PH_UI_BTN_CONFIRM_IDLE_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_CONFIRM_IDLE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 3894,
+      "bytes": 3156,
       "dimensions": {
         "width": 264,
         "height": 144
@@ -2159,16 +2406,19 @@
       },
       "layer": "ui",
       "state": "idle",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "2cad6cfc870236ae3ab3b7ca2014d96d76d5329ec14004996799cdd37ded310c"
+      "sha256": "52fc0e05123d3ca9a437f7efa0660dc3b86049d987b7c12dd8294b6ae5aabb94"
     },
     {
       "id": "ui:PH_UI_BTN_CONFIRM_PRESSED_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_CONFIRM_PRESSED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 4272,
+      "bytes": 3444,
       "dimensions": {
         "width": 264,
         "height": 144
@@ -2179,16 +2429,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "6a2ba0263fa31866523d36fd82fa319232fb41c5fb6801ca160ad3ec6bf51ecc"
+      "sha256": "f0e83dbde084bee8560068df409e6783dd2aed22adb2c018b5dccf58258a0e1b"
     },
     {
       "id": "ui:PH_UI_BTN_SQ_GREEN_IDLE_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_SQ_GREEN_IDLE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 2072,
+      "bytes": 1686,
       "dimensions": {
         "width": 176,
         "height": 176
@@ -2199,16 +2452,19 @@
       },
       "layer": "ui",
       "state": "idle",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "a9b4fb0cd809be4f17da7cd4ff01259fd5532f91a55d34aa4e106efe5fdff32c"
+      "sha256": "102153815e7a875cc143bd03438160ec4d10ec15cc1b9692b5c9f7f779391542"
     },
     {
       "id": "ui:PH_UI_BTN_SQ_GREEN_PRESSED_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_SQ_GREEN_PRESSED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 2442,
+      "bytes": 1882,
       "dimensions": {
         "width": 176,
         "height": 176
@@ -2219,16 +2475,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ea6ff57dc962e87557d9197c3a59c2c62d3d1c1f40536ef320eb4d773c12b31a"
+      "sha256": "3874943d1899c41606301e37bfa03fb9dfcfc01fb8a2f725c8ec704b7c6f3508"
     },
     {
       "id": "ui:PH_UI_BTN_SQ_RED_IDLE_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_SQ_RED_IDLE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 2970,
+      "bytes": 2310,
       "dimensions": {
         "width": 176,
         "height": 176
@@ -2239,16 +2498,19 @@
       },
       "layer": "ui",
       "state": "idle",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "2435fe37bb738a7473cf4b789a5965e3640f65eb17f95b0bbcbd23180ec8d5b1"
+      "sha256": "914778f9121936a7cd12c95f69dc76be0c865f7e418d77b2e0429ed41901ee46"
     },
     {
       "id": "ui:PH_UI_BTN_SQ_RED_PRESSED_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_SQ_RED_PRESSED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 3204,
+      "bytes": 2408,
       "dimensions": {
         "width": 176,
         "height": 176
@@ -2259,16 +2521,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "79e523661ebf17a9af5d07dc061afa0d058989010fc3d2d4e1de72a8dbcb7d8d"
+      "sha256": "c0931704e7a939a28f72fb939399aca1df83dda443b209177c4d6ae036a3fc20"
     },
     {
       "id": "ui:PH_UI_BTN_TACTILE_IDLE_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_TACTILE_IDLE_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 7362,
+      "bytes": 5684,
       "dimensions": {
         "width": 640,
         "height": 320
@@ -2279,16 +2544,19 @@
       },
       "layer": "ui",
       "state": "idle",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "96f20c0aff69b55efe51cbc3e3ddaafdff3e51b20a42d1a6ebecabf0bb662ce1"
+      "sha256": "7e517ef201928c670553c04469b390aa4d7fb450f7289b2d4457bba2ae4fa150"
     },
     {
       "id": "ui:PH_UI_BTN_TACTILE_PRESSED_V01",
       "path": "/assets/hail/ui/PH_UI_BTN_TACTILE_PRESSED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 8482,
+      "bytes": 6234,
       "dimensions": {
         "width": 640,
         "height": 320
@@ -2299,16 +2567,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "ef51fea88ea116f1f2921ed5a14ca4b4cc5a31eccf93d2172c2826ab17f9bf1f"
+      "sha256": "d595f55e7b960a6a446ba608bff0ed8d42ff6a08ca8add509a819e0ea8f98d90"
     },
     {
       "id": "ui:PH_UI_CHECKBOX_CHECKED_V01",
       "path": "/assets/hail/ui/PH_UI_CHECKBOX_CHECKED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 2608,
+      "bytes": 1984,
       "dimensions": {
         "width": 96,
         "height": 96
@@ -2319,16 +2590,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "098d1113667d11183bf2412d84ae5f0d21ed2357a1fb85bd8e6be5cdbf0c0e1e"
+      "sha256": "53459191d93bd8c97fb0e487b34fb0eab22b17e638b1164d9e0b6640bea5e1b6"
     },
     {
       "id": "ui:PH_UI_CHECKBOX_UNCHECKED_V01",
       "path": "/assets/hail/ui/PH_UI_CHECKBOX_UNCHECKED_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 1990,
+      "bytes": 1556,
       "dimensions": {
         "width": 96,
         "height": 96
@@ -2339,16 +2613,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "d05d0b8f078d193c115f75927c3a99204e37b7074528f0848e983e27d5c27023"
+      "sha256": "76fa1f18bc1e697b21d1974e345a7340583da541578f58231390dff2903cc66e"
     },
     {
       "id": "ui:PH_UI_CONSOLE_POPUP_FRAME_V01",
       "path": "/assets/hail/ui/PH_UI_CONSOLE_POPUP_FRAME_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 51802,
+      "bytes": 37452,
       "dimensions": {
         "width": 1408,
         "height": 896
@@ -2359,16 +2636,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "f40bb1a1897f8dee6ffd6fe7d1313cc2813174102d7d38e434c7814e3eabc6bd"
+      "sha256": "499bee5c17f963b7e3547a305191b9abb5c8e4aae6849ececce1c390e23bde8f"
     },
     {
       "id": "ui:PH_UI_DECISION_FRAME_V01",
       "path": "/assets/hail/ui/PH_UI_DECISION_FRAME_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 105430,
+      "bytes": 74012,
       "dimensions": {
         "width": 1904,
         "height": 1424
@@ -2379,10 +2659,13 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "a4ff05b26efca96010372b7171ea904b41f174e69d1689559270a4e615224b01"
+      "sha256": "c01064146cc28e5efb7e9405cfa2031fd46ca7ba923a6193205c369cc724bfbf"
     },
     {
       "id": "ui:PH_UI_FRAME_CORNER_V01",
@@ -2399,8 +2682,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "b9bb4c128bd33b84ea491c649f5a22457882e299ae96f1321aaaf695c752d2fc"
     },
@@ -2408,7 +2694,7 @@
       "id": "ui:PH_UI_JOURNAL_FRAME_V01",
       "path": "/assets/hail/ui/PH_UI_JOURNAL_FRAME_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 101610,
+      "bytes": 71482,
       "dimensions": {
         "width": 1920,
         "height": 1240
@@ -2419,16 +2705,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "c3790d25e4cf71f5c5e07d954ec32f06c38f425e1b0540682d5088c840036064"
+      "sha256": "fe63af2b40a57c591f63079574a009f51389960631894ace25427a9c9dc39f0c"
     },
     {
       "id": "ui:PH_UI_JOURNAL_TAB_OFF_V01",
       "path": "/assets/hail/ui/PH_UI_JOURNAL_TAB_OFF_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 1682,
+      "bytes": 1430,
       "dimensions": {
         "width": 144,
         "height": 144
@@ -2439,16 +2728,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "55223a434b8fd8e62207146fe5e1ca963195c621aaa3b877b7dc00303cddfaa7"
+      "sha256": "6c12a5bc2f3918e432d417bd70b7f36f3a091c965b4a17f2b6a9c25007b14132"
     },
     {
       "id": "ui:PH_UI_JOURNAL_TAB_ON_V01",
       "path": "/assets/hail/ui/PH_UI_JOURNAL_TAB_ON_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 1778,
+      "bytes": 1492,
       "dimensions": {
         "width": 144,
         "height": 144
@@ -2459,16 +2751,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "87da07741b4b51c5c072b7251244ed4e70f72cd6b4ec55a9732da46fc29f5a8f"
+      "sha256": "2ae724caea6c102f86086cf5d3f18f973188757abeaf1b2110a396cb68ea485f"
     },
     {
       "id": "ui:PH_UI_KEYCAP_ARROW_V01",
       "path": "/assets/hail/ui/PH_UI_KEYCAP_ARROW_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 1952,
+      "bytes": 1584,
       "dimensions": {
         "width": 96,
         "height": 96
@@ -2479,16 +2774,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "64b3f461c988c740d9f3ae3aa7db8797a66f4be42b9f52e636908895f0942a1c"
+      "sha256": "93691511ed7618168ea963f175b374b9e2c4278e1e98dc292e85542a1cef9324"
     },
     {
       "id": "ui:PH_UI_LEVER_ENDSOL_DOWN_V01",
       "path": "/assets/hail/ui/PH_UI_LEVER_ENDSOL_DOWN_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 9472,
+      "bytes": 7380,
       "dimensions": {
         "width": 300,
         "height": 540
@@ -2499,16 +2797,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "8eda18c56ee71018477b43facd481a976271995270f3ffbb47aa09b542c7fdef"
+      "sha256": "915693fc95104b19de32ddabbf9b55c4ef54059863aeed2d08ad14b8ef470d98"
     },
     {
       "id": "ui:PH_UI_LEVER_ENDSOL_UP_V01",
       "path": "/assets/hail/ui/PH_UI_LEVER_ENDSOL_UP_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 10444,
+      "bytes": 8044,
       "dimensions": {
         "width": 300,
         "height": 540
@@ -2519,10 +2820,13 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "493a11862d48db5f32a5fc3f2cce4f5dc825f61ff10dd8f9fd3ba3450dc0cbec"
+      "sha256": "d91f649c7900a33679dfd1a1399b4583c8e03206b2474c01500874ce15d04938"
     },
     {
       "id": "ui:PH_UI_NAV_BACK_V01",
@@ -2539,8 +2843,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "39e87ffc988ebab019b3a1b846873221c749f505e7c9c0f6aa896bccb556af17"
     },
@@ -2559,8 +2866,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "7b1372b63a42149b62c7ae892e3015c2b922cf238fc2f1e2490e761a607fb32a"
     },
@@ -2579,8 +2889,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "b45de75e37218e4d6f28cd7dfc9d997ed7849ce1786df335e79e11cf1cf9d14c"
     },
@@ -2599,8 +2912,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "f1f07ed0ef92762e6d93ab43ab72347ab2178a3f957f7a8511302798e2fd965b"
     },
@@ -2619,8 +2935,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "cd1fb0f17dbbc6d3dcf1077e93b2871e80fbcbdca29f444399560ab8e84afb1b"
     },
@@ -2628,7 +2947,7 @@
       "id": "ui:PH_UI_STENCIL_REJECT_X_V01",
       "path": "/assets/hail/ui/PH_UI_STENCIL_REJECT_X_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 4954,
+      "bytes": 4156,
       "dimensions": {
         "width": 256,
         "height": 256
@@ -2639,16 +2958,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "4cbd0056f8ebdb7b6873d72d26c52fc0066fd962194adb1b5e8af338821e2a60"
+      "sha256": "07a42bc35429aa77c5bca36a20dd2309e32ffd7a1a95381bac5b551b9372172c"
     },
     {
       "id": "ui:PH_UI_SWITCH_TOGGLE_OFF_V01",
       "path": "/assets/hail/ui/PH_UI_SWITCH_TOGGLE_OFF_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 20084,
+      "bytes": 15280,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -2659,16 +2981,19 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "87b42a7c3b1bdbd39cc3f7c831ce681f03130e804308a294d445c5819e20a8a0"
+      "sha256": "bf6f88f63d4b7b3d9da4047fe05575d98ad42eb2760c7c97caf8a6fd5ce1c40b"
     },
     {
       "id": "ui:PH_UI_SWITCH_TOGGLE_ON_V01",
       "path": "/assets/hail/ui/PH_UI_SWITCH_TOGGLE_ON_V01.webp",
       "mediaType": "image/webp",
-      "bytes": 19938,
+      "bytes": 15552,
       "dimensions": {
         "width": 512,
         "height": 512
@@ -2679,10 +3004,13 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "si-generated",
+      "siGenerated": true,
+      "watermarkApplied": true,
+      "source": "Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)",
+      "license": "Project-owned SI-generated asset; approved for Project Human Frontier use",
       "version": 1,
-      "sha256": "fe893bd4f37e63c38743b2b0cdc8aa3d2fcda586823c787c292367ce1b793a54"
+      "sha256": "b25546180d57eac88bf14843fbf8d469848c0167fa3ca3160b0204a77213f714"
     },
     {
       "id": "ui:PH_UI_SYS_COMMS_V01",
@@ -2699,8 +3027,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "422dc9f2e51e2a712d714954d1083728b4bca9cf5741e960ab942e8f497dfd8e"
     },
@@ -2719,8 +3050,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "445635f9a6e3fbd837ff0acb3f29fc55f587165fc9e7b0ef32a02dc5a9c9a9b9"
     },
@@ -2739,8 +3073,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "00cc0814a5e059ba14339935a51c9959e05bcd645175cb5b368697190332955a"
     },
@@ -2759,8 +3096,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "2811d5a7f01f57381604fdd8995c10769d18d80402bd141ccbc1da56a1848e57"
     },
@@ -2779,8 +3119,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "6e497ae46d3cd28783008a618cf251c9b8de924090a044df06dc4555139d8cd1"
     },
@@ -2799,8 +3142,11 @@
       },
       "layer": "ui",
       "state": "default",
-      "source": "Project Human Frontier internal AeroMatte 2050 production",
-      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "origin": "procedural-vector",
+      "siGenerated": false,
+      "watermarkApplied": false,
+      "source": "Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)",
+      "license": "Project-owned vector asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "a0e74ed848b72380f388ea35f48d1fbe737ca6eb14555371e480e1957abbff7a"
     }

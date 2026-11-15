@@ -357,3 +357,9 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ---
 
 *Project Hail is developed with passion for the junior astronauts and space explorers of tomorrow.* 🛰️🌕
+
+
+## 🤖 Use of Super Intelligence (SI) Disclosure
+- **Human Artist Originals (No SI)**: Opening 4-panel intro comic (`public/assets/hail/4 khung cho cảnh mở đầụ/`) and NV1–NV4 crew illustrations/portraits (`public/assets/hail/nhân vật cho project hail/` and `characters/PH_CHAR_NV*`) are human-drawn original art (unwatermarked).
+- **SI-Generated Images (Visible Watermarks)**: All remaining raster WebP assets (`environments/`, `equipment/`, `events/`, `inventory/`, `robots/`, `ui/`, `effects/`) and `public/logo.jpg` are SI-generated and embed visible `SI-GENERATED`, `SI-GEN`, or `SI` watermarks with zero NASA logos, flags, or emblems.
+- **Audio & Code/Data Disclosure**: SI-generated `.ogg` sound effects, TypeScript engineering assistance, and synthetic vs official NASA Open Data provenance are explicitly documented in `public/assets/hail/manifest.json`, `CREDITS.md`, `index.html`, and the in-app Credits modal.

@@ -11,9 +11,20 @@
 - **Lucide Icons** (`lucide-react`) — ISC License.
 - **Chakra Petch** & **JetBrains Mono** — served via Google Fonts (SIL Open Font License 1.1).
 
-## 3. Custom Visual & Audio Assets
-- **Project Hail AeroMatte 2050 Artwork & Audio (`public/assets/hail/`)**: Tracked and checksum-verified in `public/assets/hail/manifest.json` (`141` assets, custom project originals) alongside Web Audio procedural synthesis in `src/audio/soundEngine.ts`.
+## 3. Visual & Audio Assets (Human Artist & SI Transparency)
+- **Human Artist Originals (Non-SI Artwork, No SI Watermark)**:
+  - Opening 4-panel mission comic (`public/assets/hail/4 khung cho cảnh mở đầụ/4 khung cho cảnh mở đầu/`) and PNG/WebP panels drawn by our team's 2D artist.
+  - Crew full-body illustrations & expression portraits (`public/assets/hail/nhân vật cho project hail/` and `public/assets/hail/characters/PH_CHAR_NV{1..4}_PORTRAIT_*`) drawn and cropped by our team's 2D artist.
+- **SI-Generated Images (Visible Watermarks Embedded)**:
+  - All other WebP raster artwork (`environments/`, `equipment/`, `events/`, `inventory/`, `robots/`, `ui/`, `effects/`) plus `public/logo.jpg` are SI-generated and include visible `SI-GENERATED`, `SI-GEN`, or `SI` watermarks with zero NASA logos, flags, or mission emblems.
+- **Audio Assets (SI Disclosure in Metadata & Text)**:
+  - Ten `.ogg` hardware/UI SFX files (`public/assets/hail/audio/*.ogg`) are SI-generated audio assets (disclosed in `public/assets/hail/manifest.json`), complemented by procedural Web Audio API synthesis in `src/audio/soundEngine.ts` and `src/audio/sfx.ts`.
 
-## 4. Privacy & Student Safety
+## 4. Use of Super Intelligence (SI) — Code & Data Disclosure
+- **Code**: TypeScript simulation engine modules, React cockpit views, build tooling, and tests were authored with Super Intelligence (SI) coding assistance under human review and verification.
+- **Data**: Authentic planetary and life-support baselines (Diviner, LOLA, GRAIL, RadLab, ECLSS BVAD) originate from official NASA Open Data sources listed in Section 1; synthetic/simulated gameplay rules and outcomes are tagged `simulated` or `estimated` rather than observed NASA data.
+- **Machine-Readable Inventory**: Full per-asset classification (`origin`, `siGenerated`, `watermarkApplied`, `source`, `sha256`) is tracked in `public/assets/hail/manifest.json`.
+
+## 5. Privacy & Student Safety
 - This application runs 100% client-side in the browser using `localStorage` (`human-frontier:moon32:save-v1` and `phf_ui_prefs_v1`).
 - No telemetry, third-party analytics, advertisements, or personally identifiable student information (PII) are collected or transmitted.
