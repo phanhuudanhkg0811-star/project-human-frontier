@@ -11,7 +11,6 @@ import type { CrewId, SystemId } from '../../types/index.ts';
 import { getHailCrewVisual, HAIL_SVG, HAIL_TACTILE_UI } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
-import { localizeEnumLabel } from '../../i18n/domainText.ts';
 
 export type JournalTabId = 'log' | 'crew' | 'systems' | 'cargo';
 
@@ -284,9 +283,9 @@ export function JournalModal({
                             num: `0${idx + 1}`,
                             name: member.name,
                             health: Math.round(member.health),
-                            hunger: localizeEnumLabel('hunger', member.hungerState, locale),
-                            satiety: member.satiety,
-                            condition: localizeEnumLabel('condition', member.condition, locale),
+                            hunger: t(`enum.hunger.${member.hungerState}`),
+                            satiety: Math.round(member.satiety),
+                            condition: t(`enum.condition.${member.condition}`),
                           })}
                         </span>
                       </li>
@@ -418,7 +417,7 @@ export function JournalModal({
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
                       {t('journal.cargoRover', {
-                        status: localizeEnumLabel('roverStatus', roverStatus, locale),
+                        status: t(`enum.roverStatus.${roverStatus}`),
                         radio: waitingRadioCount,
                       })}
                     </span>

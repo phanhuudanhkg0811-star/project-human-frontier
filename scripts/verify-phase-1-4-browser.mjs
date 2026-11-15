@@ -107,7 +107,7 @@ try {
       await open('expedition', 'Rover');
       const expedition = bundle.campaign.expeditions.find((entry) => entry.id === command.expeditionId);
       await click(button(expedition.name, "document.querySelector('.hail-site-tabs')"));
-      for (const equipment of command.equipmentIds) await click(`[...document.querySelectorAll('.mission-dialog button')].find(el => el.textContent.includes(${JSON.stringify(equipment + ' (')}))`);
+      for (const equipment of command.equipmentIds) await click(`[...document.querySelectorAll('.mission-dialog button')].find(el => el.dataset.equipmentId === ${JSON.stringify(equipment)} || el.textContent.includes(${JSON.stringify(equipment + ' (')}))`);
       await click(button('Lập lịch Rover tới'));
     } else if (command.type === 'rover/recover-signal') { await open('expedition', 'Rover'); await click(button('Khôi phục tín hiệu')); }
     else if (command.type === 'rationing/set-wrs') { await open('end', 'End-Sol'); await click(button('WRS:')); }

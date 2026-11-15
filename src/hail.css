@@ -1314,8 +1314,21 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   background: #28333b;
   color: #E7E6DF;
   padding: 18px 20px 20px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+.hail-dialog .hail-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #263746;
+  border-top: 1px solid #59666D;
+  padding: 12px 20px;
+  flex-shrink: 0;
 }
 
 .hail-dialog:is(.hail-dialog--dock-left, .hail-dialog--dock-right) .mission-dialog-body {
@@ -1519,13 +1532,20 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 10px;
+  padding: 7px 12px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  background: rgba(48, 59, 67, 0.85);
+  border: 1px solid #59666D;
+  color: #E7E6DF;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.hail-btn:hover:not(:disabled) {
+  background: rgba(89, 102, 109, 0.45);
+  border-color: #82939c;
 }
 
 .hail-btn:disabled {
@@ -1543,14 +1563,16 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   background: rgba(197, 125, 89, 0.35);
 }
 
-.hail-btn--accent {
-  background: rgba(117, 169, 165, 0.2);
+.hail-btn--accent,
+.hail-btn--primary {
+  background: rgba(117, 169, 165, 0.22);
   border-color: #75A9A5;
   color: #E7E6DF;
 }
 
-.hail-btn--accent:hover:not(:disabled) {
-  background: rgba(117, 169, 165, 0.35);
+.hail-btn--accent:hover:not(:disabled),
+.hail-btn--primary:hover:not(:disabled) {
+  background: rgba(117, 169, 165, 0.38);
 }
 
 /* Expedition Lunar Survey Panel */
@@ -1569,20 +1591,69 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 
 .hail-lunar-map-img {
   width: 100%;
-  height: 170px;
+  aspect-ratio: 16 / 9;
+  max-height: 215px;
   object-fit: cover;
+  object-position: center 62%;
   display: block;
+}
+
+.hail-lunar-map-pins {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hail-map-pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  min-height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(117, 169, 165, 0.75);
+  background: rgba(24, 34, 44, 0.85);
+  color: #E7E6DF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.hail-map-pin:hover {
+  border-color: #D7B66C;
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.hail-map-pin.is-selected {
+  border-color: #D7B66C;
+  background: #263746;
+  color: #F4DE9D;
+  box-shadow: 0 0 0 2px rgba(215, 182, 108, 0.35), 0 4px 12px rgba(0, 0, 0, 0.65);
+}
+
+.hail-map-pin.is-done {
+  border-color: #6EE7B7;
+  color: #A7F3D0;
 }
 
 .hail-lunar-map-overlay {
   position: absolute;
   inset: 0;
-  padding: 12px 14px;
+  z-index: 1;
+  pointer-events: none;
+  padding: 10px 12px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  background: linear-gradient(180deg, rgba(38, 55, 70, 0.2) 0%, rgba(38, 55, 70, 0.88) 100%);
+  background: linear-gradient(180deg, rgba(38, 55, 70, 0.15) 0%, rgba(38, 55, 70, 0.84) 100%);
 }
 
 .hail-tag-pill {
@@ -1639,8 +1710,8 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 
 .hail-site-detail-card {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 14px;
+  grid-template-columns: 172px 1fr;
+  gap: 12px;
   padding: 12px;
   border-radius: 10px;
   background: #303B43;
@@ -1649,7 +1720,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
 
 .hail-site-preview-img {
   width: 100%;
-  height: 150px;
+  height: 132px;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #59666D;
@@ -5521,7 +5592,7 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   right: max(14px, env(safe-area-inset-right));
   bottom: max(76px, calc(env(safe-area-inset-bottom) + 64px));
   z-index: 46;
-  width: min(360px, calc(100vw - 24px));
+  width: min(330px, calc(100vw - 24px));
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid rgba(94, 234, 212, 0.55);
@@ -5576,8 +5647,10 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  min-width: 32px;
+  min-height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   border: 1px solid rgba(148, 163, 184, 0.35);
   background: transparent;
@@ -5633,7 +5706,8 @@ button.hail-rack-cell:focus-visible .hail-rack-cell-tag {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 6px;
+  min-height: 32px;
+  padding: 6px 8px;
   border: none;
   background: transparent;
   color: #cbd5e1;

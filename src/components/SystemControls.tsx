@@ -36,7 +36,10 @@ export function SystemControls() {
         <div>
           <h3>{t('systems.title')}</h3>
           <p className="text-xs text-slate-300">
-            {t('systems.repairOdds', { level: t(`donki.${weather.level}`), pct: Math.round(weather.repairSuccessProb * 100) })}
+            {t('systems.repairOdds', { level: t(`enum.donki.${weather.level}`), pct: Math.round(weather.repairSuccessProb * 100) })}
+          </p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            {t('systems.modelNote')}
           </p>
         </div>
         <span className={`hail-phase-tag ${canEdit ? 'is-ready' : ''}`}>

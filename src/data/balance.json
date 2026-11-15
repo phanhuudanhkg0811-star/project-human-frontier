@@ -109,6 +109,7 @@
     "crewShelterProtectionByLevel": { "1": 0.20, "2": 0.55, "3": 0.90 },
     "dustShieldRadiationBonus": 0.10,
     "backgroundMgyPerSol": 0.38,
+    "radlabSurfaceScaleFactor": 1.20228,
     "stormPeakExtraMgy": 4.5,
     "stormSystemDegradeChance": 0.35
   }

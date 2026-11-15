@@ -517,6 +517,7 @@ export interface BalanceConfig {
     readonly crewShelterProtectionByLevel: Readonly<Record<'1' | '2' | '3', number>>;
     readonly dustShieldRadiationBonus: number;
     readonly backgroundMgyPerSol: number;
+    readonly radlabSurfaceScaleFactor?: number;
     readonly stormPeakExtraMgy: number;
     readonly stormSystemDegradeChance: number;
   };

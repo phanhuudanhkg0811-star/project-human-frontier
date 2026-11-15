@@ -246,10 +246,7 @@ export function StarlogModal({
               </div>
             )}
 
-            {event &&
-              (event.id === 'sol7-golden-comms-crisis' ||
-                (gameState.clock.sol === bundle.campaign.milestones.goldenCrisisSol &&
-                  event.category === 'crisis')) && (
+            {event?.id === 'sol7-golden-comms-crisis' && (
                 <div className="phf-starlog-crisis-banner" role="note">
                   <span className="phf-starlog-crisis-badge">
                     {t('starlog.goldenCrisisBadge', { sol: gameState.clock.sol })}

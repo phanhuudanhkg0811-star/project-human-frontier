@@ -8,7 +8,6 @@ import { getHailCrewVisual } from '../cabin/hailAssets.ts';
 import { HailSelect } from '../HailSelect.tsx';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
-import { localizeEnumLabel } from '../../i18n/domainText.ts';
 import { TOUR_TARGET_IDS } from '../../onboarding/targets.ts';
 
 interface CharacterSheetModalProps {
@@ -74,6 +73,10 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
       onClose={onClose}
     >
       <div className="flex flex-col gap-3 text-slate-200">
+        <p className="text-[11px] leading-relaxed text-slate-400 px-1">
+          {t('character.initialBaselineNote')}
+        </p>
+
         {note && (
           <div className="text-xs px-3 py-2 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-100">
             {localize(note, bundle)}
@@ -153,14 +156,14 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-mono">
                       <span className={`px-1.5 py-0.5 rounded border ${HUNGER_BADGE[member.hungerState]}`}>
-                        {t('character.satiety', { state: localizeEnumLabel('hunger', member.hungerState, locale), pct: member.satiety })}
+                        {t('character.satiety', { state: t(`enum.hunger.${member.hungerState}`), pct: Math.round(member.satiety) })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded border ${member.condition === 'fit' ? 'text-emerald-300 border-emerald-500/40 bg-emerald-950/40' : 'text-rose-300 border-rose-500/50 bg-rose-950/50'}`}>
-                        {localizeEnumLabel('condition', member.condition, locale)}
+                        {t(`enum.condition.${member.condition}`)}
                       </span>
                       {isTired && (
                         <span className="px-1.5 py-0.5 rounded border text-amber-300 border-amber-500/40 bg-amber-950/50">
-                          TIRED
+                          {t('character.tired')}
                         </span>
                       )}
                     </div>
@@ -175,7 +178,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                   </div>
                   <div>
                     <div className="text-slate-400">Morale</div>
-                    <strong className="text-sky-300">{member.morale}/100</strong>
+                    <strong className="text-sky-300">{Math.round(member.morale)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">{t('character.radiation')}</div>

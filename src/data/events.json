@@ -210,12 +210,11 @@
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-wrs-eclss",
     "when": [
-      { "sol": 7, "roverStatus": "scheduled" },
-      { "sol": 7, "roverStatus": "launching" },
-      { "sol": 7, "roverStatus": "outbound" },
-      { "sol": 7, "roverStatus": "exploring" },
-      { "sol": 7, "roverStatus": "signal-lost" },
-      { "sol": 7, "roverStatus": "returning" }
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "returning" }
     ],
     "mandatory": true,
     "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu và Rover phát tín hiệu yếu do địa hình che khuất. Bạn chọn ưu tiên điện cho Rover hay chạy WRS tái chế nước?",
@@ -252,9 +251,9 @@
     ]
   },
   {
-    "id": "sol7-station-crisis",
-    "title": "Sol 7: Sụt nguồn & Cảnh báo kho nước sạch",
-    "titleEn": "Sol 7: Power Brownout & Water Reserve Alert",
+    "id": "sol7-station-water-balance",
+    "title": "Sol 7: Cân bằng Điện & Nước của Trạm",
+    "titleEn": "Sol 7: Habitat Power & Water Balance",
     "category": "crisis",
     "art": "tech-fault",
     "priority": 100,
@@ -262,36 +261,42 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-wrs-eclss",
-    "when": [{ "sol": 7, "roverStatus": "available" }],
+    "when": [
+      { "sol": 7, "roverStatus": "available" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "returning" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "returning" }
+    ],
     "mandatory": true,
-    "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu trong khi lưới điện trạm gặp sụt áp. Bạn chọn ưu tiên điện cho WRS tái chế nước hay dự trữ pin cho đêm?",
-    "promptEn": "Sol 7 Alert: Clean water reserves are dropping while the habitat grid browns out. Prioritize power for the WRS or bank battery for the night?",
+    "prompt": "Không có Rover tại bãi Regolith cần cứu tín hiệu trong Sol này. Điện trạm vẫn hạn chế: bạn chạy WRS để thu hồi nước hay tạm giữ điện dự phòng?",
+    "promptEn": "No Rover at the Regolith field needs a telemetry rescue this Sol. Habitat power is still limited: run the WRS to reclaim water or conserve battery reserve?",
     "choices": [
       {
-        "id": "boost-wrs-now",
-        "label": "Ưu tiên bật máy lọc nước WRS 90% (Giữ điện chạy WRS)",
-        "labelEn": "Prioritize WRS 90% water recovery (Keep power for WRS)",
+        "id": "run-wrs-cycle",
+        "label": "Chạy chu trình WRS hôm nay (-4 kWh theo tải WRS)",
+        "labelEn": "Run the WRS cycle today (-4 kWh WRS load)",
         "effects": [
-          { "kind": "plan-override", "wrsEnabled": true },
-          { "kind": "crew", "target": "all", "moraleDelta": -5 },
-          { "kind": "set-flag", "key": "sol7_prioritized_station", "value": true },
-          { "kind": "schedule-follow-up", "eventId": "evt-rover2-aftermath", "delaySols": 1 }
+          { "kind": "plan-override", "wrsEnabled": true }
         ],
-        "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7.",
-        "logEn": "Prioritized station water recycling on Sol 7."
+        "log": "Đã ưu tiên điện cho chu trình tái chế nước WRS trong Sol 7.",
+        "logEn": "Allocated Sol 7 power to the WRS water-recovery cycle."
       },
       {
-        "id": "bank-battery-tonight",
-        "label": "Dự trữ pin cho đêm (-2 kWh Pin, tắt WRS hôm nay)",
-        "labelEn": "Bank battery for the night (-2 kWh Battery, disable WRS today)",
+        "id": "hold-grid-reserve",
+        "label": "Tạm dừng WRS để giữ điện dự phòng",
+        "labelEn": "Pause WRS to conserve battery reserve",
         "effects": [
-          { "kind": "resource", "resource": "batteryKWh", "delta": -2 },
-          { "kind": "plan-override", "wrsEnabled": false },
-          { "kind": "set-flag", "key": "sol7_saved_rover", "value": true },
-          { "kind": "schedule-follow-up", "eventId": "evt-rover2-aftermath", "delaySols": 2 }
+          { "kind": "plan-override", "wrsEnabled": false }
         ],
-        "log": "Đã giữ trữ lượng pin an toàn cho ca đêm Sol 7.",
-        "logEn": "Banked battery reserves through the Sol 7 night shift."
+        "log": "Đã tạm dừng WRS trong Sol 7 để giữ điện cho tải thiết yếu.",
+        "logEn": "Paused the Sol 7 WRS cycle to preserve essential-load reserve."
       }
     ]
   },
@@ -642,7 +647,8 @@
         "requiresEquipment": "cryo_thermal_rig",
         "effects": [
           { "kind": "equipment-wear", "equipmentId": "cryo_thermal_rig", "wear": 25 },
-          { "kind": "science", "delta": 5 }
+          { "kind": "science", "delta": 5 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Bộ sưởi Cryo Thermal Rig đã khôi phục độ đàn hồi gioăng Airlock hoàn hảo.",
         "logEn": "The Cryo Thermal Rig restored gasket elasticity with zero O2 loss."
@@ -653,7 +659,8 @@
         "labelEn": "Emergency patch with Sealant Tape (Prevents O2 leak)",
         "requiresEquipment": "sealant_tape",
         "effects": [
-          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 }
+          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Đã gia cố gioăng lạnh bằng băng keo chuyên dụng Sealant Tape.",
         "logEn": "Reinforced the cryogenic gasket using Sealant Tape."
@@ -664,7 +671,8 @@
         "labelEn": "Mechanical gasket swap & cabin repressurization (-2 kg Parts, -4 kg O2)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "resource", "resource": "oxygenKg", "delta": -4 }
+          { "kind": "resource", "resource": "oxygenKg", "delta": -4 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Đã thay vòng đệm cơ khí sau khi mất 4 kg O₂ bù áp.",
         "logEn": "Replaced the mechanical seal after expending 4 kg of O2."
@@ -1123,8 +1131,7 @@
         "labelEn": "Transmit 32-Sol Science Legacy Archive to Earth (+20 Science, +10 Morale)",
         "effects": [
           { "kind": "science", "delta": 20 },
-          { "kind": "crew", "target": "all", "moraleDelta": 10 },
-          { "kind": "set-flag", "key": "mission_archive_sent", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 10 }
         ],
         "log": "Tín hiệu xác nhận từ Houston: Chúc mừng Phi hành đoàn Artemis hoàn thành xuất sắc 32 Sol!",
         "logEn": "Houston confirmation received: Congratulations to the Artemis crew on completing 32 Sols!"
@@ -1135,8 +1142,7 @@
         "labelEn": "Prepare habitat handover cache for Expedition 2 (+4 kg Parts, +10 Science)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": 4 },
-          { "kind": "science", "delta": 10 },
-          { "kind": "set-flag", "key": "mission_archive_sent", "value": true }
+          { "kind": "science", "delta": 10 }
         ],
         "log": "Căn cứ Artemis đã sẵn sàng đón phi hành đoàn kế tiếp với đầy đủ vật tư dự phòng.",
         "logEn": "Artemis base is prepped and stocked for the next rotation crew."

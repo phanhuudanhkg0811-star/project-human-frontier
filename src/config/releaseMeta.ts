@@ -60,8 +60,14 @@ export const THIRD_PARTY_CREDITS: readonly AttributionEntry[] = [
   },
   {
     id: 'hail-assets',
-    name: 'Project Hail AeroMatte 2050 Assets & Procedural Web Audio',
-    detailVi: 'Bộ ảnh cockpit/crew/event WebP (manifest 141 assets) & âm thanh tổng hợp trình duyệt.',
-    detailEn: 'Custom WebP cockpit/crew/event artwork (141-asset manifest) & synthesized Web Audio SFX.',
+    name: 'Project Hail Artwork & Audio (Artist Originals + SI-Watermarked Visuals)',
+    detailVi: 'Tranh mở đầu 4 khung & chân dung phi hành đoàn NV1–NV4 do artist vẽ tay (không SI). Các ảnh WebP giao diện/thiết bị/môi trường còn lại & logo do SI tạo (đã gắn watermark SI trực quan); tệp âm thanh OGG & hiệu ứng Web Audio dùng SI (công bố trong manifest.json).',
+    detailEn: 'Opening 4-panel comic & NV1–NV4 crew illustrations are human-drawn artist originals (non-SI). Remaining environment/hardware/UI WebP art & logo are SI-generated with visible SI watermarks; OGG SFX & Web Audio synthesis are disclosed in manifest.json.',
+  },
+  {
+    id: 'si-disclosure-code-data',
+    name: 'Super Intelligence (SI) Disclosure — Code & Synthetic Parameters',
+    detailVi: 'Kiến trúc engine/UI TypeScript được phát triển với sự hỗ trợ của công cụ SI. Các mốc vật lý/hành tinh (Diviner, LOLA, GRAIL, RadLab, BVAD) trích từ NASA Open Data chính thức; các tham số gameplay phụ trợ được ghi rõ nguồn gốc mô phỏng.',
+    detailEn: 'TypeScript simulation engine/UI architecture was built with Super Intelligence (SI) assistance. Planetary baselines (Diviner, LOLA, GRAIL, RadLab, BVAD) use official NASA Open Data; auxiliary gameplay parameters are clearly distinguished from observed telemetry.'
   },
 ];

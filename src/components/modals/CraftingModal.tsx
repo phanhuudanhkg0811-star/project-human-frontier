@@ -6,7 +6,6 @@ import type { EquipmentId } from '../../types/index.ts';
 import { HAIL_EQUIPMENT, HAIL_INVENTORY } from '../cabin/hailAssets.ts';
 import { MissionDialog } from './MissionDialog.tsx';
 import { useI18n } from '../../i18n/useI18n.ts';
-import { localizeEnumLabel } from '../../i18n/domainText.ts';
 
 interface CraftingModalProps {
   onClose: () => void;
@@ -24,9 +23,8 @@ const ITEM_ICON: Record<string, string> = {
 };
 
 export function CraftingModal({ onClose }: CraftingModalProps) {
-  const { t, pickText, localize, locale } = useI18n();
+  const { t, pickText, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
-  const itemLabel = (itemId: string) => bundle.recipes.items.find((recipe) => recipe.id === itemId)?.name ?? itemId;
   const [feedback, setFeedback] = useState<string | null>(null);
   const inEngineering = gameState.clock.phase === 'engineering';
   const fabSys = gameState.systems.fabricator;
@@ -75,10 +73,19 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
           )}
         </div>
 
+        <p className="text-[11px] leading-relaxed text-slate-400 px-1">
+          {t('crafting.abstractionNote')}
+        </p>
+
         {activeJob && (
           <div className="p-3 rounded-lg bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-between gap-2 text-xs">
             <div>
-              <strong className="text-cyan-200">{t('crafting.processing', { action: localizeEnumLabel('fabricatorAction', activeJob.action, locale), item: itemLabel(activeJob.itemId) })}</strong>
+              <strong className="text-cyan-200">
+                {t('crafting.processing', {
+                  action: t(`enum.fabAction.${activeJob.action}`),
+                  item: bundle.recipes.items.find((r) => r.id === activeJob.itemId)?.name ?? activeJob.itemId,
+                })}
+              </strong>
               <p className="text-slate-300 mt-0.5">
                 {t('crafting.remaining', { sols: activeJob.solsRemaining, battery: activeJob.batteryReserved })}
               </p>
@@ -158,7 +165,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
                       </span>
                       {eq?.owned && (
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-                          {localizeEnumLabel('equipmentState', eq.state, locale)} ({eq.durability}%) · Lv{eq.level}
+                          {t(`enum.equipState.${eq.state}`)} ({eq.durability}%) · Lv{eq.level}
                         </span>
                       )}
                       {recipe.id === 'medkit' && (

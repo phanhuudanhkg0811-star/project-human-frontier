@@ -1,6 +1,7 @@
 import { deriveRoll } from './prng.ts';
 import type {
   BalanceConfig,
+  CrewPhysiologyDataset,
   DonkiCatalog,
   DonkiLevel,
   DonkiSolEntry,
@@ -98,13 +99,28 @@ export interface CrewWeatherRisk {
   readonly stormSystemDegradeProb: number;
 }
 
+export const DEFAULT_RADLAB_SURFACE_SCALE_FACTOR = 1.20228;
+
+/**
+ * Derive lunar surface quiet-day GCR background dose (mGy/Sol) directly from the loaded
+ * NASA OSDR RadLab CRaTER orbital dataset (`convertedMeanMgyPerDay`) multiplied by the
+ * surface-albedo/duration calibration factor (~1.20228 => 0.3161 * 1.20228 = 0.38 mGy/Sol).
+ */
+export function computeRadLabSurfaceBaselineMgy(
+  crewPhysiology: CrewPhysiologyDataset,
+  surfaceScaleFactor = DEFAULT_RADLAB_SURFACE_SCALE_FACTOR
+): number {
+  return round4(crewPhysiology.convertedMeanMgyPerDay * surfaceScaleFactor);
+}
+
 /**
  * Compute expected daily crew radiation dose (mGy), acute flare injury risk, and equipment/system stress
- * driven by NASA DONKI SEP/FLR/IPS indices.
+ * driven by NASA DONKI SEP/FLR/IPS indices and grounded by NASA OSDR RadLab baseline data.
  *
  * @assumption Airlock/Storm-Shelter bulkhead level (`systems.airlock`) + operational `dust_shield` equipment
  * proxy habitat storm shielding attenuation rather than CO2 scrubber filtration.
- * Constant galactic cosmic ray (GCR) background (`backgroundMgyPerSol`) always applies even on quiet Sols.
+ * Constant galactic cosmic ray (GCR) background (driven by RadLab when supplied, else `backgroundMgyPerSol`)
+ * always applies even on quiet Sols.
  */
 export function computeCrewWeatherRisk(
   weather: DonkiSolEntry,
@@ -112,7 +128,8 @@ export function computeCrewWeatherRisk(
   difficultyRiskMult: number,
   shelterLevel: 1 | 2 | 3,
   shelterIntegrity: number,
-  hasDustShield = false
+  hasDustShield = false,
+  crewPhysiology?: CrewPhysiologyDataset
 ): CrewWeatherRisk {
   const p = balance.donkiProbability;
   const shieldFromHull =
@@ -123,7 +140,10 @@ export function computeCrewWeatherRisk(
     0,
     0.95
   );
-  const quietBackgroundMgy = round4(p.backgroundMgyPerSol * (1 - baseShield * 0.25));
+  const effectiveBackgroundMgy = crewPhysiology
+    ? computeRadLabSurfaceBaselineMgy(crewPhysiology, p.radlabSurfaceScaleFactor)
+    : p.backgroundMgyPerSol;
+  const quietBackgroundMgy = round4(effectiveBackgroundMgy * (1 - baseShield * 0.25));
 
   if (
     weather.level === 'quiet' &&
@@ -163,7 +183,11 @@ export function computeCrewWeatherRisk(
   };
 }
 
-/** Compute effective daytime solar derating factor from DONKI storm intensity (0 during lunar night). */
+/**
+ * Compute effective daytime solar derating factor (`solarPenaltyPct`) during DONKI geomagnetic/SEP/CME storms
+ * (0 during lunar night). Models protective PV shunt throttling and solar-proton cell degradation—NOT lunar
+ * dust clouds, since the atmosphere-free Moon cannot suspend windborne dust.
+ */
 export function computeWeatherPowerPenalty(weather: DonkiSolEntry, isLunarNight: boolean): number {
   if (isLunarNight) return 0;
   return round4(clamp(weather.solarPenaltyPct, 0, 0.3));
@@ -176,6 +200,7 @@ export interface WeatherOutlook {
   readonly repairSuccessProb: number;
   readonly roverIncidentProb: number;
   readonly crewWeatherRisk: CrewWeatherRisk;
+  readonly radlabBaselineMgyPerSol?: number;
   readonly solarPenaltyPct: number;
   readonly headline: string | null;
 }

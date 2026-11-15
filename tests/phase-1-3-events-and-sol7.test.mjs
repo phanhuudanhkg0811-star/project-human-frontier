@@ -55,6 +55,23 @@ test('Phase 1.3 catalog contains 23 VI/EN events with valid references and Deck 
   const eventIds = new Set(bundle.events.map((e) => e.id));
   assert.equal(eventIds.size, 23);
 
+  const writtenFlags = new Set();
+  const readFlags = new Set();
+  for (const ev of bundle.events) {
+    for (const cond of ev.when) {
+      if (cond.flagSet) readFlags.add(cond.flagSet);
+      if (cond.flagUnset) readFlags.add(cond.flagUnset);
+    }
+    for (const ch of ev.choices) {
+      for (const eff of ch.effects) {
+        if (eff.kind === 'set-flag') writtenFlags.add(eff.key);
+      }
+    }
+  }
+  for (const key of readFlags) {
+    assert.ok(writtenFlags.has(key), `Event trigger reads unwritten flag "${key}"`);
+  }
+
   const briefIds = new Set(bundle.briefs.map((b) => b.id));
   for (const ev of bundle.events) {
     assert.ok(ev.title.length > 0 && ev.titleEn && ev.titleEn.length > 0, `Missing VI/EN title on ${ev.id}`);
@@ -487,11 +504,12 @@ test('Deterministic 32-Sol Moon campaign replay reaches Lunar Night, Sunrise, an
   // Sol 7 fires the golden Rover crisis only when a mission is travelling; the
   // station-only variant covers an idle Rover. Either way the crisis is mandatory.
   assert.ok(
-    seenIds.has('sol7-golden-comms-crisis') || seenIds.has('sol7-station-crisis'),
+    seenIds.has('sol7-golden-comms-crisis') || seenIds.has('sol7-station-water-balance'),
     'Expected a Sol 7 crisis event to trigger during 32-Sol run'
   );
   for (const milestoneId of [
     'sol1-arrival-check',
+    'sol7-station-water-balance',
     'evt-sol10-last-cargo-window',
     'evt-sol14-sunset-warning',
     'sol15-lunar-nightfall',
@@ -500,4 +518,23 @@ test('Deterministic 32-Sol Moon campaign replay reaches Lunar Night, Sunrise, an
   ]) {
     assert.ok(seenIds.has(milestoneId), `Expected milestone event "${milestoneId}" to trigger during 32-Sol run`);
   }
+
+  const cryoSeal = bundle.events.find((e) => e.id === 'evt-cryo-seal-crack');
+  assert.ok(cryoSeal && cryoSeal.when.some((w) => w.flagSet === 'airlock_dusty'));
+  assert.equal(
+    core.evaluateTriggerCondition(
+      { ...run1.state, clock: { ...run1.state.clock, sol: 18 }, events: { ...run1.state.events, flags: {} } },
+      cryoSeal.when[0],
+      bundle
+    ),
+    false
+  );
+  assert.equal(
+    core.evaluateTriggerCondition(
+      { ...run1.state, clock: { ...run1.state.clock, sol: 18 }, events: { ...run1.state.events, flags: { airlock_dusty: true } } },
+      cryoSeal.when[0],
+      bundle
+    ),
+    true
+  );
 });

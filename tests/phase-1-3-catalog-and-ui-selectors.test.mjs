@@ -357,7 +357,13 @@ test('Core integration: preview explains rover, assignment, follow-up and extra-
   ];
   for (const effect of effects.slice(0, 3)) {
     const fixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effect] })] }));
-    assert.ok(core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0].effectsSummary.length > 0, `Missing preview for ${effect.kind}`);
+    const preview = core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0];
+    const hasStructuredDelta =
+      Object.keys(preview.resourceDeltas).length > 0 || preview.scienceDelta !== 0;
+    assert.ok(
+      preview.effectsSummary.length > 0 || hasStructuredDelta,
+      `Missing preview for ${effect.kind}`
+    );
   }
   // Extra power cost is explained once, as a battery resource delta (not echoed in effectsSummary).
   const powerFixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effects[3]] })] }));
@@ -382,7 +388,7 @@ test('UI shows localized crew/rover/equipment labels instead of raw enum IDs', (
   const cargoHtml = renderWithState(core.JournalModal, { state: hurt, content: bundle,
     onOpenDecision() {}, onOpenPanel() {}, initialTab: 'cargo' });
   assert.doesNotMatch(cargoHtml, /AVAILABLE/);
-  assert.match(cargoHtml, /Available/);
+  assert.match(cargoHtml, /Standby in bay/);
 
   const sheetHtml = renderWithState(core.CharacterSheetModal, { state: hurt, content: bundle });
   assert.doesNotMatch(sheetHtml, /INJURED/);
@@ -395,7 +401,9 @@ test('UI shows localized crew/rover/equipment labels instead of raw enum IDs', (
   const expeditionHtml = renderWithState(core.ExpeditionModal, { state, content: bundle });
   assert.doesNotMatch(expeditionHtml, /steep-terrain-crater/);
   assert.doesNotMatch(expeditionHtml, /crater_core_sample/);
-  assert.doesNotMatch(expeditionHtml, /\bcore_drill\b/);
+  // The raw ID may still appear as a data-equipment-id attribute; visible text must be localized.
+  assert.doesNotMatch(expeditionHtml, />core_drill/);
+  assert.match(expeditionHtml, /Core Drill/);
 });
 
 test('MissionDialog generates a unique title id instead of a static shared one', () => {

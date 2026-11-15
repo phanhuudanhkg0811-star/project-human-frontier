@@ -4,11 +4,11 @@ import { selectRichDebriefBreakdown } from '../../domain/debriefSelectors.ts';
 import { selectDynamicDebrief, type DynamicDebriefView } from '../../domain/eventSelectors.ts';
 import { selectCampaignInsights, selectSol7DebriefBranch } from '../../domain/narrativeSelectors.ts';
 import { useI18n } from '../../i18n/useI18n.ts';
-import { localizeEnumLabel } from '../../i18n/domainText.ts';
 import { useGameStore } from '../../store/gameStore.ts';
 import type { Locale } from '../../i18n/types.ts';
 import { useUiStore } from '../../store/uiStore.ts';
 import type { ContentBundle, GameState, SolSummary } from '../../types/index.ts';
+import { formatPowerLoadList } from '../eventPresentation.ts';
 import { DynamicSTEMBrief } from '../DynamicSTEMBrief.tsx';
 import { CampaignReportCard, TrainingReport } from '../CampaignReportCard.tsx';
 import { HAIL_ENV, HAIL_SVG } from '../cabin/hailAssets.ts';
@@ -251,7 +251,7 @@ function DebriefDialogBody({
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                 <span>
                   {t('night.alert.loadShed', {
-                    loads: breakdown.power.unmetLoads.map((id) => localizeEnumLabel('powerConsumer', id, locale)).join(', '),
+                    loads: formatPowerLoadList(breakdown.power.unmetLoads, locale),
                   })}
                 </span>
               </span>
@@ -266,12 +266,29 @@ function DebriefDialogBody({
 
         {breakdown && breakdown.alerts.length > 0 && (
           <div className="phf-night-alert-strip" role="region" aria-label={t('night.alertsAria')}>
-            {breakdown.alerts.map((alert) => (
-              <span key={alert.id} className={`phf-night-alert-chip is-${alert.tone}`}>
-                <AlertTriangle className="w-3 h-3 shrink-0" aria-hidden="true" />
-                <span>{t(alert.labelKey, alert.params)}</span>
-              </span>
-            ))}
+            {breakdown.alerts.map((alert) => {
+              const params = { ...alert.params };
+              if (alert.labelKey === 'night.alert.loadShed' && typeof params.loads === 'string') {
+                params.loads = formatPowerLoadList(params.loads, locale);
+              } else if (alert.labelKey === 'night.alert.stormDamage' && typeof params.system === 'string') {
+                const sysId = params.system.trim().toLowerCase();
+                if (['solar', 'recycler', 'scrubber', 'airlock', 'fabricator'].includes(sysId)) {
+                  params.system = t(`system.${sysId}`);
+                }
+              } else if (
+                (alert.labelKey === 'night.alert.roverCompleted' || alert.labelKey === 'night.alert.roverFailed') &&
+                typeof params.id === 'string'
+              ) {
+                const exp = bundle.campaign.expeditions.find((e) => e.id === params.id);
+                if (exp) params.id = exp.name;
+              }
+              return (
+                <span key={alert.id} className={`phf-night-alert-chip is-${alert.tone}`}>
+                  <AlertTriangle className="w-3 h-3 shrink-0" aria-hidden="true" />
+                  <span>{t(alert.labelKey, params)}</span>
+                </span>
+              );
+            })}
           </div>
         )}
 
