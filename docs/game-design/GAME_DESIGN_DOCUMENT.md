@@ -56,8 +56,7 @@ Tất cả hoạt động nghiên cứu bề mặt được thực hiện qua xe
 
 ## 5. Sự Kiện Đánh Đổi Trọng Tâm: Sol 7 Golden Crisis
 
-Ở Sol 7, trạm đối mặt đồng thời với rò rỉ áp suất khoang, suy giảm nguồn điện và mất tín hiệu xe tự hành.
-Chỉ còn **Elena Chen** là thành viên duy nhất chưa nhận nhiệm vụ:
+Ở Sol 7, kho nước sạch giảm sâu trong khi tín hiệu Rover suy yếu do địa hình che khuất, buộc người chơi phân bổ nguồn điện hữu hạn:
 
 * **Phương án A — Cứu xe Rover**:
   - Dành 2 kWh pin và nhân lực để cứu đường truyền rover.

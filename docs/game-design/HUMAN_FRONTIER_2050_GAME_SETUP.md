@@ -119,10 +119,10 @@ Mọi node trong `events.json` chỉ chọn từ bảng hằng số này để �
 
 | ID | Họ tên | Chức danh (`Role Tag`) | Kỹ năng Chuyên môn (Rõ ràng 1 dòng) |
 | :--- | :--- | :--- | :--- |
-| `cmd` | **Sarah Chen** | `Commander` | Miễn nhiễm tụt `Morale` khi nhận nhiệm vụ xử lý khủng hoảng / CAPCOM. |
-| `eng` | **Alex Rivera** | `Engineer` | Sửa hệ thống về `100%`; giảm **`1 kg Parts`** khi nâng cấp hệ thống tàu trên Console (tối thiểu `1 kg`). |
-| `doc` | **Marcus Vance** | `Medic` | Dùng `Medkit` hồi thêm **`+20 Health`**; thực hiện `medical-care` hồi `+15 Morale` cho đồng đội được chăm sóc. |
-| `geo` | **Elena Rostova** | `Geologist` | Trực phóng/thu hồi Rover giúp **giảm `50%` hao mòn độ bền** cho toàn bộ thiết bị gắn theo Rover. |
+| `cmd` | **Ryan Mitchell** | `Commander` | Miễn nhiễm tụt `Morale` khi nhận nhiệm vụ xử lý khủng hoảng / CAPCOM. |
+| `eng` | **Mizuki Murakami** | `Engineer` | Sửa hệ thống về `100%`; giảm **`1 kg Parts`** khi nâng cấp hệ thống tàu trên Console (tối thiểu `1 kg`). |
+| `doc` | **Lê Minh Trọng** | `Medic` | Dùng `Medkit` hồi thêm **`+20 Health`**; thực hiện `medical-care` hồi `+15 Morale` cho đồng đội được chăm sóc. |
+| `geo` | **Dmitri Romanov** | `Geologist` | Trực phóng/thu hồi Rover giúp **giảm `50%` hao mòn độ bền** cho toàn bộ thiết bị gắn theo Rover. |
 
 ### 4.2. Ba Thanh Chỉ số & Hysteresis chống nhấp nháy
 1. **`Health` (`0–100`, khởi đầu `80`):**
@@ -214,7 +214,7 @@ flowchart TD
 ### 7.2. Danh mục Khung 22 Sự kiện cho Content Designer
 1. **Deck 1 — Training (`Sol 1–6`, `4` events):** `evt_sol1_welcome` (Milestone hướng dẫn), `evt_solar_particles` (bão hạt nhẹ), `evt_airlock_dust` (vệ sinh bụi hay chịu flag `airlock_dusty`), `evt_crater_core` (follow-up nếu `EXP-CRATER` xong).
 2. **Milestone Bắt buộc (`Sol 7`):** **`evt_sol7_blackout_dilemma`** — Golden Scenario cố định:
-   - *Fixture đầu Sol 7:* `waterL = 35.0 L`, `wasteWaterL = 10.0 L`, `Fission = 8 kWh`, `Battery = 8 kWh` (tổng điện `16 kWh`), `Essential = 12 kWh`, `WRS = 4 kWh` (Lv1 `90%`), 4 crew sống (`10.0 L` nước tiêu thụ), chỉ `Elena` rảnh tay.
+   - *Fixture đầu Sol 7:* `waterL = 35.0 L`, `wasteWaterL = 10.0 L`, `Fission = 8 kWh`, `Battery = 8 kWh` (tổng điện `16 kWh`), `Essential = 12 kWh`, `WRS = 4 kWh` (Lv1 `90%`), 4 crew sống (`10.0 L` nước tiêu thụ).
    - *Nhánh A (Cứu Rover, `-2 kWh`, tắt WRS):* Cuối Sol còn **`25.0 L` nước, `2.0 kWh` pin**; `EXP-REGOLITH` tiếp tục hoàn thành ở Sol 8 (set flag `sol7_saved_rover`).
    - *Nhánh B (Ưu tiên Trạm, bật `WRS 90%`, `-4 kWh`):* Xử lý `10.0 L` tồn + `8.8 L` nước xám phát sinh trong Sol, thu hồi `+16.9 L` → Cuối Sol còn **`41.9 L` nước, `0.0 kWh` pin**; `EXP-REGOLITH` hết hạn thất bại, Rover an toàn cho `EXP-PSR` (set flag `sol7_prioritized_station`).
 3. **Deck 2 — Night Prep (`Sol 8–14`, `5` events):** `evt_rover2_aftermath` (theo flag Sol 7), `evt_sol10_last_cargo_window` (Milestone nhắc đặt Cargo Sol 10), `evt_sol12_training_report` (tổng kết nửa đầu), `evt_psr_ice_vein` (follow-up `EXP-PSR`), `evt_sol14_sunset_warning` (Milestone chuyển cảnh hoàng hôn).

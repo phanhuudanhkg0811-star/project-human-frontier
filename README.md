@@ -129,7 +129,7 @@ flowchart LR
 
 ### 3. Crew Roster
 
-- **4 Astronauts**: *Alex Rivera* (Commander), *Elena Chen* (ECLSS Engineer), *Marcus Adebayo* (Geologist), *Aoi Tanaka* (Systems Specialist).
+- **4 Astronauts**: *Ryan Mitchell* (Commander), *Mizuki Murakami* (Engineer), *Lê Minh Trọng* (Medic), *Dmitri Romanov* (Geologist).
 - **Attributes**: `Health (0–100%)`, `Stress`, `Fatigue`, `Hunger`, `Thirst`, `Condition` (`Available`, `Busy`, `Tired`, `Injured`, `Incapacitated`).
 - **Core Rule**: Exactly **1 primary assignment per crew member per Sol**.
 
@@ -141,7 +141,7 @@ Surface exploration is conducted via uncrewed robotic rovers:
 3. **Expedition 3 (Sol 9–12) — Permanently Shadowed Region (PSR)**: Sub-zero cryogenic extremes (-240°C); targets volatile water-ice deposits.
 
 #### ⚖️ The Sol 7 Golden Crisis
-At Sol 7, a simultaneous cabin leak, solar degradation, and rover telemetry failure strike. Elena Chen is the only available astronaut remaining:
+At Sol 7, dwindling clean-water reserves and weakening rover telemetry force a power-allocation decision:
 - **Option A (Save Rover)**: Spend 2 kWh and postpone the WRS recycler to rescue rover data; Expedition 2 succeeds, leaving the station with 25.0 L water and 2 kWh battery.
 - **Option B (Protect Habitat)**: Run the WRS recycler on stored and same-Sol greywater; abandon rover comms deadline. Expedition 2 fails (rover survives for Expedition 3), leaving 41.9 L water and 0 kWh battery.
 

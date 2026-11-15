@@ -369,9 +369,15 @@ try {
   );
   await screenshot('journey1-title-desktop.png');
 
-  // Switch to EN briefly on Title Screen & back to check VI/EN parity on Title
-  await click("document.querySelector('.phf-title-settings-row button')");
-  await pause(50);
+  // Normalize to EN before checking, regardless of the persisted/default locale,
+  // then switch to VI for the remaining bilingual journey.
+  const titleStartsInEnglish = await evaluate(
+    "document.querySelector('[data-tour=\"title-new-mission\"]')?.textContent.includes('New Mission')"
+  );
+  if (!titleStartsInEnglish) {
+    await click("document.querySelector('.phf-title-settings-row button')");
+    await pause(50);
+  }
   check(
     'Journey 8 (Title EN): Title menu localizes cleanly to English',
     await evaluate("document.querySelector('[data-tour=\"title-new-mission\"]')?.textContent.includes('New Mission')")
