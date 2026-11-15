@@ -317,12 +317,13 @@ export function EndOfDayModal({
                 })}
                 {preview.blackout ? t('endDay.blackoutTag') : ''}
               </p>
-              <div className="hail-alloc-trend-chips">
+              <div className="hail-alloc-trend-chips" title={t('endDay.trendAssumption')} aria-label={t('endDay.trendAssumption')}>
                 {fiveSolTrend.slice(0, 4).map((pt) => (
                   <span key={pt.sol}>
                     S{pt.sol}:⚡{pt.batteryKWh.toFixed(0)}/💧{pt.waterL.toFixed(0)}
                   </span>
                 ))}
+                <span className="w-full text-[10px] text-slate-400">{t('endDay.trendAssumption')}</span>
               </div>
             </div>
 

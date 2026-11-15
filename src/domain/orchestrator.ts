@@ -546,7 +546,7 @@ export function dispatchDomainCommand(
       return {
         ok: true,
         state: candidate,
-        effects: [{ type: 'cargo-ordered', message: 'Đã phát tín hiệu vô tuyến tới Houston (độ trễ ~1.3s chiều đi).' }],
+        effects: [{ type: 'cargo-ordered', message: 'Đã phát tín hiệu vô tuyến tới Houston (1,3 s/chiều, phản hồi ~3,8 s).' }],
       };
     }
 
