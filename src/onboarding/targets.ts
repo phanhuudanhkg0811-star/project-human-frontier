@@ -4,6 +4,10 @@ export const TOUR_TARGET_IDS = {
   TITLE_NEW_MISSION: 'title-new-mission',
   TITLE_CONTINUE: 'title-continue',
   TITLE_HOW_TO_PLAY: 'title-how-to-play',
+  TELEMETRY_BAR: 'telemetry-bar',
+  COCKPIT_WINDOW: 'cockpit-window',
+  COCKPIT_CREW_STAGE: 'cockpit-crew-stage',
+  COCKPIT_FABRICATOR: 'cockpit-fabricator',
   OPEN_BRIEFING: 'open-briefing',
   WEATHER_STATUS: 'weather-status',
   TELEMETRY_DONKI: 'telemetry-donki',
@@ -22,6 +26,13 @@ export const TOUR_TARGET_IDS = {
   DEBRIEF_BRIEF: 'debrief-brief',
   HUD_TUTORIAL_TRIGGER: 'hud-tutorial-trigger',
 } as const satisfies Record<string, TourTargetId>;
+
+export const COCKPIT_DISCOVERY_TARGET_IDS: readonly TourTargetId[] = [
+  TOUR_TARGET_IDS.COCKPIT_WINDOW,
+  TOUR_TARGET_IDS.TELEMETRY_BAR,
+  TOUR_TARGET_IDS.COCKPIT_CREW_STAGE,
+  TOUR_TARGET_IDS.COCKPIT_FABRICATOR,
+];
 
 export const ALL_TOUR_TARGET_IDS: readonly TourTargetId[] = [
   TOUR_TARGET_IDS.TITLE_NEW_MISSION,
@@ -54,6 +65,10 @@ export const TOUR_SELECTORS: Readonly<Record<TourTargetId, string>> = Object.fre
   'title-new-mission': '[data-tour="title-new-mission"]',
   'title-continue': '[data-tour="title-continue"]',
   'title-how-to-play': '[data-tour="title-how-to-play"]',
+  'telemetry-bar': '[data-tour="telemetry-bar"]',
+  'cockpit-window': '[data-tour="cockpit-window"]',
+  'cockpit-crew-stage': '[data-tour="cockpit-crew-stage"]',
+  'cockpit-fabricator': '[data-tour="cockpit-fabricator"]',
   'open-briefing': '[data-tour="open-briefing"]',
   'weather-status': '[data-tour="weather-status"]',
   'telemetry-donki': '[data-tour="telemetry-donki"]',

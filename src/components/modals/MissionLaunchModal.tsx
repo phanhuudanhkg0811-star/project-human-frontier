@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Rocket } from 'lucide-react';
 import { playSfx } from '../../audio/sfx.ts';
 import { useGameStore } from '../../store/gameStore.ts';
+import { useUiStore } from '../../store/uiStore.ts';
 import type { DifficultyId } from '../../types/index.ts';
 import { MissionProgressionPanel } from '../MissionProgressionPanel.tsx';
 import { HailSelect } from '../HailSelect.tsx';
@@ -14,20 +15,26 @@ interface MissionLaunchModalProps {
 }
 
 export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
-  const { gameState, bundle, dispatch } = useGameStore();
+  const { gameState, bundle, dispatch, hasSavedCampaign } = useGameStore();
+  const appScreen = useUiStore((s) => s.appScreen);
+  const enterCockpit = useUiStore((s) => s.enterCockpit);
   const [selectedProfile, setSelectedProfile] = useState(gameState.campaign.donkiProfileId);
   const [difficulty, setDifficulty] = useState<DifficultyId>(gameState.campaign.difficulty);
   const [seed, setSeed] = useState(gameState.campaign.seed);
   const { t, pickText } = useI18n();
+  const showActiveCampaignReports = hasSavedCampaign || appScreen === 'cockpit';
 
   const handleStartNew = async () => {
     playSfx('launch', 0.6);
-    await dispatch({
+    const res = await dispatch({
       type: 'game/start',
       donkiProfileId: selectedProfile,
       difficulty,
       seed,
     });
+    if (res.ok) {
+      enterCockpit();
+    }
     onClose();
   };
 
@@ -40,9 +47,13 @@ export function MissionLaunchModal({ onClose }: MissionLaunchModalProps) {
       onClose={onClose}
     >
       <div className="flex flex-col gap-4 text-slate-200">
-        <MissionProgressionPanel />
-        <TrainingReport state={gameState} bundle={bundle} />
-        <ArtifactExportButtons />
+        {showActiveCampaignReports && (
+          <>
+            <MissionProgressionPanel />
+            <TrainingReport state={gameState} bundle={bundle} />
+            <ArtifactExportButtons />
+          </>
+        )}
 
         <section className="p-3 rounded-lg bg-slate-900/75 border border-slate-700/70 flex flex-col gap-3 text-xs">
           <h3 className="font-bold text-cyan-300">{t('launch.newCampaign')}</h3>

@@ -11,6 +11,8 @@ export const HAIL_ENV = {
   spaceDeep: hailUrl('environments/PH_ENV_SPACE_DEEP_BASE_V01.webp'),
   lunarDay: hailUrl('environments/PH_ENV_LUNAR_EXTERIOR_DAY_V01.webp'),
   lunarNight: hailUrl('environments/PH_ENV_LUNAR_EXTERIOR_NIGHT_V01.webp'),
+  titleMoon: hailUrl('environments/PH_ENV_TITLE_MOON_V01.svg'),
+  titleEarth: hailUrl('environments/PH_ENV_TITLE_EARTH_V01.svg'),
   cockpitShell: hailUrl('environments/PH_ENV_COCKPIT_SHELL_BASE_V01.webp'),
   lunarMap: hailUrl('environments/PH_ENV_LUNAR_MAP_BASE_V01.webp'),
   lunarCrater: hailUrl('environments/PH_ENV_LUNAR_CRATER_BASE_V01.webp'),

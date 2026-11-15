@@ -1,5 +1,7 @@
+import { COCKPIT_DISCOVERY_STEP_IDS } from './tours/cockpitDiscoveryTour.ts';
 import { MOON_SOL1_STEP_IDS } from './tours/moonSol1Tour.ts';
 import type {
+  CockpitTourStatus,
   IntroStatus,
   OnboardingDecodeResult,
   OnboardingState,
@@ -24,19 +26,27 @@ export interface DecodeOnboardingContext {
 }
 
 const VALID_INTRO_STATUSES: ReadonlySet<IntroStatus> = new Set(['unseen', 'skipped', 'completed']);
-const VALID_TOUR_IDS: ReadonlySet<TourId> = new Set(['sol1']);
+const VALID_TOUR_IDS: ReadonlySet<TourId> = new Set(['cockpit', 'sol1']);
 const VALID_SOL1_STATUSES: ReadonlySet<Sol1GuideStatus> = new Set([
   'unseen',
   'active',
   'skipped',
   'completed',
 ]);
+const VALID_COCKPIT_STATUSES: ReadonlySet<CockpitTourStatus> = new Set([
+  'unseen',
+  'active',
+  'skipped',
+  'completed',
+]);
+const VALID_COCKPIT_STEPS: ReadonlySet<string> = new Set(COCKPIT_DISCOVERY_STEP_IDS);
 const VALID_SOL1_STEPS: ReadonlySet<string> = new Set(MOON_SOL1_STEP_IDS);
 
 export function createDefaultOnboardingState(): OnboardingState {
   return {
     onboardingVersion: ONBOARDING_SCHEMA_VERSION,
     introStatus: 'unseen',
+    cockpitTourStatus: 'unseen',
     tourVersion: TOUR_VERSION,
     activeTour: null,
     activeStepId: null,
@@ -68,6 +78,19 @@ function sanitizeNumberRecord(input: unknown): Record<string, number> | null {
   return out;
 }
 
+function sanitizeStringRecord(input: unknown): Record<string, string> | null {
+  if (input === undefined) return {};
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
+    if (typeof k !== 'string' || typeof v !== 'string' || v.length === 0) {
+      return null;
+    }
+    out[k] = v;
+  }
+  return out;
+}
+
 export function decodeOnboardingState(
   raw: string | null,
   context: DecodeOnboardingContext = {}
@@ -80,6 +103,7 @@ export function decodeOnboardingState(
         state: {
           ...base,
           introStatus: 'completed',
+          cockpitTourStatus: 'completed',
           sol1GuideStatus: 'completed',
         },
         migrated: true,
@@ -92,6 +116,7 @@ export function decodeOnboardingState(
         state: {
           ...base,
           introStatus: 'completed',
+          cockpitTourStatus: 'completed',
           sol1GuideStatus: 'unseen',
         },
         migrated: true,
@@ -211,7 +236,21 @@ export function decodeOnboardingState(
 
   const hintLastShownSol = sanitizeNumberRecord(record.hintLastShownSol);
   const hintShowCounts = sanitizeNumberRecord(record.hintShowCounts);
-  if (!hintLastShownSol || !hintShowCounts) {
+  const hintSnoozedSol = sanitizeNumberRecord(record.hintSnoozedSol);
+  const hintLastSeverity = sanitizeStringRecord(record.hintLastSeverity);
+  if (!hintLastShownSol || !hintShowCounts || !hintSnoozedSol || !hintLastSeverity) {
+    return {
+      state: base,
+      migrated: false,
+      resetToDefault: true,
+      noticeCode: 'E_ONBOARDING_CORRUPT',
+    };
+  }
+
+  if (
+    record.cockpitTourStatus !== undefined &&
+    !VALID_COCKPIT_STATUSES.has(record.cockpitTourStatus as CockpitTourStatus)
+  ) {
     return {
       state: base,
       migrated: false,
@@ -222,12 +261,22 @@ export function decodeOnboardingState(
 
   const activeTour = record.activeTour as TourId | null;
   let sol1GuideStatus = record.sol1GuideStatus as Sol1GuideStatus;
+  let cockpitTourStatus: CockpitTourStatus =
+    (record.cockpitTourStatus as CockpitTourStatus | undefined) ??
+    (sol1GuideStatus !== 'unseen' ? 'completed' : 'unseen');
   let activeStepId = record.activeStepId as string | null;
 
   if (activeTour === null) {
     activeStepId = null;
     if (sol1GuideStatus === 'active') {
       sol1GuideStatus = 'unseen';
+    }
+    if (cockpitTourStatus === 'active') {
+      cockpitTourStatus = 'unseen';
+    }
+  } else if (activeTour === 'cockpit') {
+    if (!activeStepId || !VALID_COCKPIT_STEPS.has(activeStepId)) {
+      activeStepId = COCKPIT_DISCOVERY_STEP_IDS[0];
     }
   } else if (!activeStepId || !VALID_SOL1_STEPS.has(activeStepId)) {
     activeStepId = MOON_SOL1_STEP_IDS[0];
@@ -237,6 +286,7 @@ export function decodeOnboardingState(
     state: {
       onboardingVersion: ONBOARDING_SCHEMA_VERSION,
       introStatus: record.introStatus as IntroStatus,
+      cockpitTourStatus,
       tourVersion: TOUR_VERSION,
       activeTour,
       activeStepId,
@@ -245,6 +295,8 @@ export function decodeOnboardingState(
       dismissedHintIds: [...new Set(record.dismissedHintIds as string[])],
       hintLastShownSol,
       hintShowCounts,
+      ...(Object.keys(hintSnoozedSol).length > 0 ? { hintSnoozedSol } : {}),
+      ...(Object.keys(hintLastSeverity).length > 0 ? { hintLastSeverity } : {}),
     },
     migrated: false,
     resetToDefault: false,

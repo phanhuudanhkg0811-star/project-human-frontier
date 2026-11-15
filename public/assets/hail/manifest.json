@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "generatedBy": "scripts/build-hail-asset-manifest.mjs",
   "assetRoot": "/assets/hail/",
-  "assetCount": 141,
+  "assetCount": 143,
   "assets": [
     {
       "id": "audio:PH_MUS_LUNAR_BASE_LOOP_V01",
@@ -743,6 +743,46 @@
       "license": "Project-owned asset; approved for Project Human Frontier use",
       "version": 1,
       "sha256": "8cd0af6f9a1b3e42f059842e011a223b59f078e732638da78e74a7181c739cbf"
+    },
+    {
+      "id": "environments:PH_ENV_TITLE_EARTH_V01",
+      "path": "/assets/hail/environments/PH_ENV_TITLE_EARTH_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 1685,
+      "dimensions": {
+        "width": 256,
+        "height": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "620b949d8f08595b74d52a7bf901c76dbe87e764c6c7c3907b382a1eb033ab8d"
+    },
+    {
+      "id": "environments:PH_ENV_TITLE_MOON_V01",
+      "path": "/assets/hail/environments/PH_ENV_TITLE_MOON_V01.svg",
+      "mediaType": "image/svg+xml",
+      "bytes": 2329,
+      "dimensions": {
+        "width": 512,
+        "height": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "layer": "misc",
+      "state": "default",
+      "source": "Project Human Frontier internal AeroMatte 2050 production",
+      "license": "Project-owned asset; approved for Project Human Frontier use",
+      "version": 1,
+      "sha256": "afe5d0c88c61f29de9f05c9c0d721b62aa2014130b8fe9cc60c5c1d3dbd135e8"
     },
     {
       "id": "equipment:PH_EQP_COMMS_TERMINAL_BASE_V03",

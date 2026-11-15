@@ -32,8 +32,17 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   const { t, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
   const { selectedEquipmentIds, toggleRoverEquipment, clearRoverEquipment } = useUiStore();
-  const [selectedSite, setSelectedSite] = useState<ExpeditionId>('lunar-crater');
-  const [launchOperator, setLaunchOperator] = useState<CrewId>('geo');
+  const [selectedSite, setSelectedSite] = useState<ExpeditionId>(() => {
+    const { gameState: s, bundle: b } = useGameStore.getState();
+    const open = b.campaign.expeditions.find(
+      (e) =>
+        s.clock.sol >= e.windowStartSol &&
+        s.clock.sol <= e.windowEndSol &&
+        !s.rover.missionHistory.some((m) => m.expeditionId === e.id)
+    );
+    return (open ?? b.campaign.expeditions[0]).id;
+  });
+  const [pickedOperator, setLaunchOperator] = useState<CrewId | null>(null);
   const [recoveryOperator, setRecoveryOperator] = useState<CrewId>('geo');
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -50,6 +59,23 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   const ownedReadyEquipment = Object.values(gameState.equipment).filter(
     (eq) => eq.owned && eq.state !== 'damaged' && !eq.reservedForRover
   );
+
+  const canOperate = (id: CrewId) => {
+    const c = gameState.crew[id];
+    return (
+      c.condition === 'fit' &&
+      c.hungerState !== 'starving' &&
+      c.morale >= bundle.balance.crew.tiredBelowMorale &&
+      c.assignedTask === null
+    );
+  };
+  const crewIds = Object.keys(gameState.crew) as CrewId[];
+  // Default to an eligible operator instead of a hard-coded one that may be busy/tired.
+  const launchOperator: CrewId =
+    pickedOperator && canOperate(pickedOperator)
+      ? pickedOperator
+      : (crewIds.find(canOperate) ?? pickedOperator ?? crewIds[0]);
+  const noOperatorAvailable = !activeMission && !crewIds.some(canOperate);
 
   const handleSchedule = async () => {
     const res = await dispatch({
@@ -214,21 +240,26 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               value: id,
               label: gameState.crew[id].name,
               meta: `${gameState.crew[id].roleTag}${gameState.crew[id].assignedTask ? ` · ${t('expedition.busy')}` : ''}`,
-              disabled: gameState.crew[id].condition === 'evacuated',
+              disabled: !canOperate(id),
             }))}
           />
+        )}
+        {noOperatorAvailable && (
+          <p className="text-xs text-amber-300">
+            Không có người trực phóng khả dụng: cần Fit, không đói, đủ tinh thần và chưa được phân công ở Pha 2. / No eligible operator: crew must be Fit, fed, with enough morale and unassigned in Phase 2.
+          </p>
         )}
 
         <button
           type="button"
-          disabled={!schedulePermission.allowed}
+          disabled={!schedulePermission.allowed || noOperatorAvailable}
           onClick={handleSchedule}
           className="hail-btn hail-btn--accent py-2.5 flex items-center justify-center gap-2 font-bold"
         >
           <Rocket className="w-4 h-4" aria-hidden="true" />
           {inComms ? t('expedition.schedule', { site: expedition.name }) : t('expedition.phaseLock')}
         </button>
-        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)}</p>}
+        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)} (Sol hiện tại / current: {gameState.clock.sol})</p>}
 
         {activeMission?.status === 'scheduled' && (
           <button type="button" onClick={handleCancel} className="hail-btn">{t('expedition.cancel')}</button>

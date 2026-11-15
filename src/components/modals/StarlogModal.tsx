@@ -246,6 +246,18 @@ export function StarlogModal({
               </div>
             )}
 
+            {event &&
+              (event.id === 'sol7-golden-comms-crisis' ||
+                (gameState.clock.sol === bundle.campaign.milestones.goldenCrisisSol &&
+                  event.category === 'crisis')) && (
+                <div className="phf-starlog-crisis-banner" role="note">
+                  <span className="phf-starlog-crisis-badge">
+                    {t('starlog.goldenCrisisBadge', { sol: gameState.clock.sol })}
+                  </span>
+                  <p>{t('starlog.goldenCrisisNote')}</p>
+                </div>
+              )}
+
             {event && !canRespondNow && (
               <p className="hail-event-error">{t('starlog.cannotRespond')}</p>
             )}
@@ -373,7 +385,7 @@ export function StarlogModal({
           {/* Lower Half: Icon-Only Cards + 1-to-1 Square Green/Red Keys */}
           <div
             className="hail-dec-actions-grid"
-            data-tour={event && choicePreviews.length > 0 ? TOUR_TARGET_IDS.EVENT_CHOICE : undefined}
+            data-tour={TOUR_TARGET_IDS.EVENT_CHOICE}
             style={{
               gridTemplateColumns: `repeat(${Math.max(2, event ? choicePreviews.length : 2)}, minmax(0, 1fr))`,
             }}

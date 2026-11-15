@@ -156,7 +156,8 @@ export function EndOfDayModal({
               {mustResolveEvent && (
                 <button
                   type="button"
-                  className="hail-term-inline-cmd is-warn"
+                  className="hail-term-inline-cmd is-warn driver-allowed-element"
+                  data-tour={TOUR_TARGET_IDS.END_SOL}
                   onClick={() => {
                     playSfx('click', 0.45);
                     onStarlog?.();
@@ -179,7 +180,8 @@ export function EndOfDayModal({
                   </button>
                   <button
                     type="button"
-                    className="hail-term-inline-cmd is-primary"
+                    className="hail-term-inline-cmd is-primary driver-allowed-element"
+                    data-tour={TOUR_TARGET_IDS.END_SOL}
                     onClick={prepareRations}
                   >
                     {t('endDay.advanceToRationingCmd')}
@@ -350,7 +352,7 @@ export function EndOfDayModal({
           <button
             type="button"
             className={`hail-lever-btn ${leverPulled ? 'is-pulled' : ''}`}
-            data-tour={TOUR_TARGET_IDS.END_SOL}
+            data-tour={inRationing || ended ? TOUR_TARGET_IDS.END_SOL : undefined}
             disabled={!canPullLever}
             aria-label={t('endDay.leverAria')}
             title={
