@@ -25,6 +25,11 @@ const compiled = await esbuild.build({
     export * from './src/components/modals/EndOfDayModal.tsx';
     export * from './src/components/modals/NightCutsceneModal.tsx';
     export * from './src/components/modals/AboutCreditsModal.tsx';
+    export * from './src/components/modals/JournalModal.tsx';
+    export * from './src/components/modals/CharacterSheetModal.tsx';
+    export * from './src/components/modals/CraftingModal.tsx';
+    export * from './src/components/modals/ExpeditionModal.tsx';
+    export * from './src/components/modals/MissionDialog.tsx';
     export * from './src/store/gameStore.ts';
     export { createElement } from 'react';
     export { renderToStaticMarkup } from 'react-dom/server';
@@ -35,7 +40,7 @@ const compiled = await esbuild.build({
     setup(build) {
       build.onResolve({ filter: /store\/gameStore\.ts$/ }, () => ({ path: 'ui-fixture-store', namespace: 'test-fixture' }));
       build.onLoad({ filter: /.*/, namespace: 'test-fixture' }, () => ({
-        contents: 'let snapshot; export function useGameStore() { return snapshot; } export function setGameStoreSnapshot(value) { snapshot = value; }',
+        contents: 'let snapshot; export function useGameStore() { return snapshot; } useGameStore.getState = () => snapshot; export function setGameStoreSnapshot(value) { snapshot = value; }',
         loader: 'js',
       }));
     },
@@ -66,8 +71,9 @@ function deepFreeze(value) {
 const render = (component, props) => core.renderToStaticMarkup(core.createElement(component, props));
 function renderWithState(component, fixture) {
   core.setGameStoreSnapshot({ gameState: fixture.state, bundle: fixture.content, dispatch: async () => { throw new Error('SSR must not dispatch'); }, resetCampaign() {} });
+  const extraProps = Object.fromEntries(Object.entries(fixture).filter(([key]) => key !== 'state' && key !== 'content'));
   try {
-    return render(component, { onClose() {} });
+    return render(component, { onClose() {}, ...extraProps });
   } finally {
     core.setGameStoreSnapshot(null);
   }
@@ -287,7 +293,7 @@ test('Starlog uses event.art and permits optional choices in engineering while s
   const html = renderWithState(core.StarlogModal, fixture);
   assert.match(html, /PH_EVT_SOLAR_PARTICLE_BASE_V01.webp/);
   assert.match(html, /Optional/);
-  assert.match(html, /Requires condition: missing/);
+  assert.match(html, /Requires an earlier decision that was not made\./);
   assert.match(html, /<button type="button" class="hail-btn hail-choice-card">Select: Lựa chọn kiểm tra<\/button>/);
   assert.match(html, /disabled="" aria-describedby="event-choice-blocked-reasons"/);
   fixture.state.clock = { ...fixture.state.clock, phase: 'debrief' };
@@ -349,7 +355,7 @@ test('Core integration: preview explains rover, assignment, follow-up and extra-
     { kind: 'schedule-follow-up', eventId: 'later', delaySols: 1 },
     { kind: 'plan-override', extraPowerCostKWh: 2 },
   ];
-  for (const effect of effects) {
+  for (const effect of effects.slice(0, 3)) {
     const fixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effect] })] }));
     const preview = core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0];
     const hasStructuredDelta =
@@ -359,10 +365,49 @@ test('Core integration: preview explains rover, assignment, follow-up and extra-
       `Missing preview for ${effect.kind}`
     );
   }
-  const powerFixture = withEvent(
-    eventFixture({ choices: [choiceFixture({ effects: [{ kind: 'plan-override', extraPowerCostKWh: 2 }] })] })
-  );
+  // Extra power cost is explained once, as a battery resource delta (not echoed in effectsSummary).
+  const powerFixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effects[3]] })] }));
   const powerPreview = core.selectEventChoicePreviews(powerFixture.state, 'qa-event', powerFixture.content)[0];
   assert.equal(powerPreview.resourceDeltas.batteryKWh, -2);
   assert.equal(powerPreview.effectsSummary.length, 0);
+});
+
+test('UI shows localized crew/rover/equipment labels instead of raw enum IDs', () => {
+  const state = initialState();
+  const hurt = { ...state, crew: { ...state.crew,
+    cmd: { ...state.crew.cmd, hungerState: 'starving', condition: 'injured' } } };
+
+  const endHtml = renderWithState(core.EndOfDayModal, { state: hurt, content: bundle });
+  assert.doesNotMatch(endHtml, /STARVING/);
+  assert.match(endHtml, /Starving/);
+
+  const journalHtml = renderWithState(core.JournalModal, { state: hurt, content: bundle,
+    onOpenDecision() {}, onOpenPanel() {}, initialTab: 'crew' });
+  assert.doesNotMatch(journalHtml, /INJURED/);
+  assert.match(journalHtml, /Injured/);
+  const cargoHtml = renderWithState(core.JournalModal, { state: hurt, content: bundle,
+    onOpenDecision() {}, onOpenPanel() {}, initialTab: 'cargo' });
+  assert.doesNotMatch(cargoHtml, /AVAILABLE/);
+  assert.match(cargoHtml, /Standby in bay/);
+
+  const sheetHtml = renderWithState(core.CharacterSheetModal, { state: hurt, content: bundle });
+  assert.doesNotMatch(sheetHtml, /INJURED/);
+  assert.match(sheetHtml, /Injured/);
+
+  const craftHtml = renderWithState(core.CraftingModal, { state, content: bundle });
+  assert.doesNotMatch(craftHtml, /\bGOOD\b/);
+  assert.match(craftHtml, /Good/);
+
+  const expeditionHtml = renderWithState(core.ExpeditionModal, { state, content: bundle });
+  assert.doesNotMatch(expeditionHtml, /steep-terrain-crater/);
+  assert.doesNotMatch(expeditionHtml, /crater_core_sample/);
+  // The raw ID may still appear as a data-equipment-id attribute; visible text must be localized.
+  assert.doesNotMatch(expeditionHtml, />core_drill/);
+  assert.match(expeditionHtml, /Core Drill/);
+});
+
+test('MissionDialog generates a unique title id instead of a static shared one', () => {
+  const html = render(core.MissionDialog, { title: 'T', eyebrow: 'E', onClose() {} });
+  assert.doesNotMatch(html, /id="mission-dialog-title"/);
+  assert.match(html, /aria-labelledby="[^"]+"/);
 });

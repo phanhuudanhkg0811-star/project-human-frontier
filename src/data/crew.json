@@ -3,7 +3,7 @@
   "crew": [
     {
       "id": "cmd",
-      "name": "Sarah Chen",
+      "name": "Ryan Mitchell",
       "roleTag": "Commander",
       "perkId": "crisis-poise",
       "perkDescription": "Miễn nhiễm tụt Morale khi nhận nhiệm vụ xử lý khủng hoảng hoặc CAPCOM.",
@@ -17,7 +17,7 @@
     },
     {
       "id": "eng",
-      "name": "Alex Rivera",
+      "name": "Mizuki Murakami",
       "roleTag": "Engineer",
       "perkId": "upgrade-parts-discount",
       "perkDescription": "Sửa hệ thống về 100%; giảm 1 kg Parts khi nâng cấp hệ thống Console (tối thiểu 1 kg).",
@@ -31,7 +31,7 @@
     },
     {
       "id": "doc",
-      "name": "Marcus Vance",
+      "name": "Lê Minh Trọng",
       "roleTag": "Medic",
       "perkId": "medic-boost",
       "perkDescription": "Dùng Medkit hồi thêm +20 Health; thực hiện medical-care hồi +15 Morale cho đồng đội.",
@@ -45,7 +45,7 @@
     },
     {
       "id": "geo",
-      "name": "Elena Rostova",
+      "name": "Dmitri Romanov",
       "roleTag": "Geologist",
       "perkId": "rover-wear-halved",
       "perkDescription": "Trực phóng/thu hồi Rover giúp giảm 50% hao mòn độ bền cho thiết bị mang theo.",

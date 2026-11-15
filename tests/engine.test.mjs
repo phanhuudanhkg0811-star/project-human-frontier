@@ -307,22 +307,22 @@ test('DONKI Space Weather probabilities are 100% deterministic and scale with st
     assert.equal(h, firstHash);
   }
 
-  // Verify probability ordering: Alex > non-Alex on repair; BlockThreat/Elena lowers Rover incident risk
+  // Verify probability ordering: engineer > non-engineer on repair; BlockThreat/Dmitri (geologist) lowers Rover incident risk
   const mayWeather16 = core.getSolWeather(bundle.donki, 'may-2024-xstorm', 16);
   const quietWeather = core.getSolWeather(bundle.donki, 'may-2024-xstorm', 16, 'quiet');
-  const repairAlex = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isAlexAssigned: true });
-  const repairOther = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isAlexAssigned: false });
-  assert.ok(repairAlex > repairOther);
+  const repairEngineer = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isEngineerAssigned: true });
+  const repairOther = core.computeRepairSuccessProb(mayWeather16, bundle.balance, 1.0, { isEngineerAssigned: false });
+  assert.ok(repairEngineer > repairOther);
   assert.ok(repairOther < 1.0);
-  assert.equal(core.computeRepairSuccessProb(quietWeather, bundle.balance, 1.0, { isAlexAssigned: false }), 1.0);
+  assert.equal(core.computeRepairSuccessProb(quietWeather, bundle.balance, 1.0, { isEngineerAssigned: false }), 1.0);
 
   const roverBlocked = core.computeRoverRiskProb(mayWeather16, bundle.balance, 1.0, {
     threatBlocked: true,
-    isElenaOperating: true,
+    isGeologistOperating: true,
   });
   const roverUnblocked = core.computeRoverRiskProb(mayWeather16, bundle.balance, 1.0, {
     threatBlocked: false,
-    isElenaOperating: false,
+    isGeologistOperating: false,
   });
   assert.ok(roverUnblocked > roverBlocked * 5);
 
@@ -428,13 +428,13 @@ test('Multi-task repair/upgrade, crew/unassign refund, fabricator/cancel anti-ex
   assert.equal(endOut.nextState.systems.airlock.integrity, 1);
   assert.equal(endOut.nextState.systems.recycler.level, 2);
 
-  // Unassign upgrade refunds exact Parts (3 with Alex discount, 4 without); blocked in rationing
+  // Unassign upgrade refunds exact Parts (3 with engineer discount, 4 without); blocked in rationing
   let upgSt = core.dispatchDomainCommand(
     { ...base, clock: { sol: 3, phase: 'engineering', resolutionIndex: 2 }, dailyPlan: { ...base.dailyPlan, sol: 3 }, resources: { ...base.resources, partsKg: 10 } },
     { type: 'crew/assign', crewId: 'eng', task: 'upgrade-system', targetSystemId: 'solar' },
     bundle
   ).state;
-  assert.equal(upgSt.resources.partsKg, 7); // 10 - (4 - 1 Alex discount)
+  assert.equal(upgSt.resources.partsKg, 7); // 10 - (4 - 1 engineer discount)
   const blockedUnassign = core.dispatchDomainCommand(
     { ...upgSt, clock: { ...upgSt.clock, phase: 'rationing' } },
     { type: 'crew/unassign', crewId: 'eng' },

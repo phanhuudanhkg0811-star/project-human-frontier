@@ -147,6 +147,16 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
     );
   };
 
+  const handleClearRecoveryOperator = async () => {
+    const res = await dispatch({ type: 'rover/clear-recovery-operator' });
+    if (res.ok) playSfx('click', 0.45);
+    setFeedback(
+      res.ok
+        ? localize(res.effects[0]?.message ?? '', bundle) || t('expedition.recoveryCleared')
+        : localize(res.error.message, bundle)
+    );
+  };
+
   return (
     <MissionDialog
       title={t('modal.expeditionTitle')}
@@ -352,6 +362,9 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               />
             </div>
             <button type="button" disabled={noRecoveryOperator} onClick={handleRecoveryOperator} className="hail-btn hail-btn--accent shrink-0">{t('expedition.assignRecovery')}</button>
+            {activeMission.recoveryOperatorCrewId !== null && (
+              <button type="button" onClick={handleClearRecoveryOperator} className="hail-btn shrink-0">{t('expedition.clearRecovery')}</button>
+            )}
           </div>
         )}
       </div>

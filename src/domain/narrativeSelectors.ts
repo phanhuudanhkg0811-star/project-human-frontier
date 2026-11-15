@@ -337,6 +337,10 @@ export function selectCampaignInsights(
     });
   }
 
+  if (state.events.flags.mission_archive_sent) {
+    causes.push({ code: 'report.cause.archiveSent', params: {} });
+  }
+
   if (report.blackouts > 0) {
     causes.push({
       code: 'report.cause.blackouts',

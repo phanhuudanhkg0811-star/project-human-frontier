@@ -308,12 +308,12 @@ export function validateBalanceConfig(input: unknown): BalanceConfig {
   const dp = assertRecord(b.donkiProbability, 'balance.donkiProbability');
   assertFiniteNum(dp.repairBaseSuccessProb, 'donkiProbability.repairBaseSuccessProb', 0, 1);
   assertFiniteNum(dp.repairHardwareStressWeight, 'donkiProbability.repairHardwareStressWeight', 0, 2);
-  assertFiniteNum(dp.repairAlexBonus, 'donkiProbability.repairAlexBonus', 0, 1);
+  assertFiniteNum(dp.repairEngineerBonus, 'donkiProbability.repairEngineerBonus', 0, 1);
   assertFiniteNum(dp.repairMinSuccessProb, 'donkiProbability.repairMinSuccessProb', 0, 1);
   assertFiniteNum(dp.roverBaseIncidentProb, 'donkiProbability.roverBaseIncidentProb', 0, 1);
   assertFiniteNum(dp.roverStressWeight, 'donkiProbability.roverStressWeight', 0, 2);
   assertFiniteNum(dp.roverBlockedMultiplier, 'donkiProbability.roverBlockedMultiplier', 0, 1);
-  assertFiniteNum(dp.roverElenaMultiplier, 'donkiProbability.roverElenaMultiplier', 0, 1);
+  assertFiniteNum(dp.roverGeologistMultiplier, 'donkiProbability.roverGeologistMultiplier', 0, 1);
   assertFiniteNum(dp.crewHighRadiationThreshold, 'donkiProbability.crewHighRadiationThreshold', 0, 1);
   const shelterLv = assertRecord(dp.crewShelterProtectionByLevel, 'donkiProbability.crewShelterProtectionByLevel');
   for (const k of ['1', '2', '3']) assertFiniteNum(shelterLv[k], `crewShelterProtectionByLevel.${k}`, 0, 1);
@@ -1174,6 +1174,9 @@ export function validateGameCommand(input: unknown): GameCommand {
 
     case 'rover/set-recovery-operator':
       assertEnum(cmd.crewId, CREW_IDS, 'command.crewId');
+      return cmd as unknown as GameCommand;
+
+    case 'rover/clear-recovery-operator':
       return cmd as unknown as GameCommand;
 
     case 'crew/use-medkit':

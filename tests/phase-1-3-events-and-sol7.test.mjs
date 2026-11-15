@@ -501,6 +501,12 @@ test('Deterministic 32-Sol Moon campaign replay reaches Lunar Night, Sunrise, an
   assert.deepEqual(run1.seenEvents, run2.seenEvents);
 
   const seenIds = new Set(run1.seenEvents.map((e) => e.eventId));
+  // Sol 7 fires the golden Rover crisis only when a mission is travelling; the
+  // station-only variant covers an idle Rover. Either way the crisis is mandatory.
+  assert.ok(
+    seenIds.has('sol7-golden-comms-crisis') || seenIds.has('sol7-station-water-balance'),
+    'Expected a Sol 7 crisis event to trigger during 32-Sol run'
+  );
   for (const milestoneId of [
     'sol1-arrival-check',
     'sol7-station-water-balance',

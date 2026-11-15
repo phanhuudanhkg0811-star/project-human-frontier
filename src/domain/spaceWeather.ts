@@ -49,33 +49,33 @@ export function getSolWeather(
 /**
  * Compute probability in [repairMinSuccessProb, 0.99] that a repair task succeeds cleanly.
  * Interplanetary shocks (IPS), fast CMEs, and high flare stress degrade success probability;
- * assigning Engineer Alex grants an expertise bonus.
+ * assigning Engineer Mizuki grants an expertise bonus.
  */
 export function computeRepairSuccessProb(
   weather: DonkiSolEntry,
   balance: BalanceConfig,
   difficultyRiskMult: number,
-  options: { readonly isAlexAssigned: boolean }
+  options: { readonly isEngineerAssigned: boolean }
 ): number {
   if (weather.level === 'quiet' && weather.hardwareStressIndex === 0) {
     return 1.0;
   }
   const p = balance.donkiProbability;
   const penalty = weather.hardwareStressIndex * p.repairHardwareStressWeight * difficultyRiskMult;
-  const alexBonus = options.isAlexAssigned ? p.repairAlexBonus : 0;
+  const alexBonus = options.isEngineerAssigned ? p.repairEngineerBonus : 0;
   return round4(clamp(p.repairBaseSuccessProb - penalty + alexBonus, p.repairMinSuccessProb, 0.99));
 }
 
 /**
  * Compute probability of a Rover telemetry/hardware incident on the current Sol.
  * Unblocked rover hazards keep baseline risk, while fast CME / IPS storms amplify incident odds.
- * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Elena cuts risk further.
+ * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Dmitri cuts risk further.
  */
 export function computeRoverRiskProb(
   weather: DonkiSolEntry,
   balance: BalanceConfig,
   difficultyRiskMult: number,
-  options: { readonly threatBlocked: boolean; readonly isElenaOperating: boolean }
+  options: { readonly threatBlocked: boolean; readonly isGeologistOperating: boolean }
 ): number {
   if (weather.level === 'quiet' && weather.hardwareStressIndex === 0 && weather.commsNoiseIndex === 0) {
     return 0;
@@ -86,8 +86,8 @@ export function computeRoverRiskProb(
   if (options.threatBlocked) {
     prob *= p.roverBlockedMultiplier;
   }
-  if (options.isElenaOperating) {
-    prob *= p.roverElenaMultiplier;
+  if (options.isGeologistOperating) {
+    prob *= p.roverGeologistMultiplier;
   }
   return round4(clamp(prob, 0.005, 0.92));
 }

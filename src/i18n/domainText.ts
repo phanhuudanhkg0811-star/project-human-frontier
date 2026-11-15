@@ -199,10 +199,10 @@ const EXACT_VI_TO_EN: Record<string, string> = {
     'No Medkits remaining in stock.',
   'Không thể điều trị phi hành gia đã evacuated.':
     'Cannot treat an evacuated astronaut.',
-  'Chỉ Marcus Vance có bonus khi trực tiếp dùng Medkit.':
-    'Only Marcus Vance provides a bonus when directly administering a Medkit.',
-  'Marcus phải Fit và rảnh để trực tiếp dùng Medkit.':
-    'Marcus must be Fit and idle to directly administer a Medkit.',
+  'Chỉ Lê Minh Trọng có bonus khi trực tiếp dùng Medkit.':
+    'Only Lê Minh Trọng provides a bonus when directly administering a Medkit.',
+  'Trọng phải Fit và rảnh để trực tiếp dùng Medkit.':
+    'Trọng must be Fit and idle to directly administer a Medkit.',
   'Chỉ bật/tắt WRS trong pha Kỹ thuật hoặc Phân phối.':
     'WRS can only be toggled in Engineering or Rationing.',
   'Chỉ chỉnh thứ tự ưu tiên điện trong pha Phân phối.':
@@ -463,8 +463,8 @@ export function localizeDomainText(text: string, locale: Locale, bundle?: Conten
   if ((m = text.match(/^Yêu cầu thiết bị (\S+) còn tốt\.$/))) {
     return `Requires functional ${eqName(m[1])}.`;
   }
-  if ((m = text.match(/^Yêu cầu điều kiện (\S+)\.$/))) {
-    return `Requires condition: ${m[1]}.`;
+  if ((m = text.match(/^Yêu cầu một quyết định trước đó chưa được thực hiện\.$/))) {
+    return 'Requires an earlier decision that was not made.';
   }
   if ((m = text.match(/^(.+?) cần ở trạng thái Fit\.$/))) {
     return `${m[1]} must be Fit.`;

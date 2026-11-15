@@ -140,6 +140,7 @@ export function HailGameViewport() {
   const { t, localize } = useI18n();
   const [sysModalOpen, setSysModalOpen] = [activeModal === 'menu', () => openPanel('menu')];
   const liveRegionRef = useRef<HTMLDivElement>(null);
+  const errorToastRef = useRef<HTMLDivElement>(null);
   const prevActiveModalRef = useRef<ActiveModalType>(activeModal);
   const prevStepIdRef = useRef<string | null>(onboarding.activeStepId);
   const prevPhaseRef = useRef<SolPhase>(gameState.clock.phase);
@@ -417,6 +418,15 @@ export function HailGameViewport() {
     }
   }, [lastError, onboarding.activeTour, localize, bundle]);
 
+  // Promote the error toast to the top layer so open dialogs cannot cover it (audit 4.1).
+  useEffect(() => {
+    const el = errorToastRef.current;
+    if (!el || typeof el.showPopover !== 'function') return;
+    const open = el.matches(':popover-open');
+    if (lastError && !saveRecoveryError && !open) el.showPopover();
+    if ((!lastError || saveRecoveryError) && open) el.hidePopover();
+  }, [lastError, saveRecoveryError]);
+
   const fabSprite =
     gameState.systems.fabricator.status === 'offline'
       ? HAIL_EQUIPMENT.fabricatorDamaged
@@ -495,6 +505,8 @@ export function HailGameViewport() {
 
       {lastError && !saveRecoveryError && !activeModal && !sysModalOpen && (
         <div
+          ref={errorToastRef}
+          {...({ popover: 'manual' } as Record<string, unknown>)}
           role="status"
           onClick={dismissError}
           className="fixed top-20 right-4 z-50 max-w-sm p-2.5 rounded-lg bg-amber-950/95 border border-amber-400/60 text-amber-100 text-xs cursor-pointer shadow-lg"
