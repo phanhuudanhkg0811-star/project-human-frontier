@@ -27,6 +27,15 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
   const [note, setNote] = useState<string | null>(null);
   const [medTarget, setMedTarget] = useState<CrewId>(selectedCrewId ?? 'cmd');
   const canAssign = gameState.clock.phase === 'engineering' || gameState.clock.phase === 'comms';
+  const medPhaseOpen = gameState.clock.phase === 'engineering' || gameState.clock.phase === 'rationing';
+  const medTargetCrew = gameState.crew[medTarget];
+  const canUseMedkit =
+    medPhaseOpen &&
+    gameState.resources.medkits > 0 &&
+    medTargetCrew.condition !== 'evacuated' &&
+    medTargetCrew.health < 100;
+  const canMarcusAssist =
+    canUseMedkit && gameState.crew.doc.condition === 'fit' && gameState.crew.doc.assignedTask === null;
 
   const handleAssign = async (crewId: CrewId, task: 'rest' | 'emergency-response' | 'medical-care') => {
     const res = await dispatch({
@@ -86,13 +95,26 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                   value: id,
                   label: gameState.crew[id].name,
                   meta: gameState.crew[id].roleTag,
+                  disabled: gameState.crew[id].condition === 'evacuated',
                 }))}
               />
             </div>
-            <button type="button" onClick={() => handleMedkit(false)} className="hail-btn">
+            <button
+              type="button"
+              disabled={!canUseMedkit}
+              title={canUseMedkit ? undefined : t('character.medkitHint')}
+              onClick={() => handleMedkit(false)}
+              className="hail-btn"
+            >
               {t('character.selfAdminister', { amount: gameState.resources.medkitLevel === 2 ? 50 : 30 })}
             </button>
-            <button type="button" onClick={() => handleMedkit(true)} className="hail-btn hail-btn--accent">
+            <button
+              type="button"
+              disabled={!canMarcusAssist}
+              title={canMarcusAssist ? undefined : canUseMedkit ? t('character.marcusHint') : t('character.medkitHint')}
+              onClick={() => handleMedkit(true)}
+              className="hail-btn hail-btn--accent"
+            >
               {t('character.marcusAdminister')}
             </button>
           </div>
@@ -194,7 +216,7 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                               }))}
                             />
                           </div>
-                          <button type="button" disabled={!canAssign || member.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'medical-care')} className="hail-btn hail-btn--accent flex items-center gap-1 shrink-0">
+                          <button type="button" disabled={!canAssign || member.condition === 'evacuated' || medTargetCrew.condition === 'evacuated'} onClick={() => handleAssign(crewId, 'medical-care')} className="hail-btn hail-btn--accent flex items-center gap-1 shrink-0">
                             <HeartPulse className="w-3 h-3" aria-hidden="true" /> {t('character.care')}
                           </button>
                         </div>
