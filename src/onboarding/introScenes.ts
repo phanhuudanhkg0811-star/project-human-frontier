@@ -67,7 +67,7 @@ export const INTRO_SCENES: readonly IntroSceneDefinition[] = [
   {
     id: 'intro-take-command',
     durationSec: 13,
-    idea: 'Player takes command for 32 Sols',
+    idea: 'Player takes command for 32-Sol survey campaign (not rescue)',
     titleKey: 'intro.scenes.intro-take-command.title',
     bodyKey: 'intro.scenes.intro-take-command.body',
     visualKey: 'command',

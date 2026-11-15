@@ -196,7 +196,7 @@ export function HailGameViewport() {
   }, [progress.isLunarNight, weather.level, audioMuted]);
 
   useEffect(() => {
-    if ((activeEventView?.priority ?? 0) >= 4) playSynthSfx('alert');
+    if ((activeEventView?.priority ?? 0) >= 80) playSynthSfx('alert');
   }, [activeEventView?.event.id, activeEventView?.priority]);
 
   useEffect(() => {

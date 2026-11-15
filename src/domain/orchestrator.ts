@@ -353,11 +353,16 @@ export function dispatchDomainCommand(
       if (
         member.assignedTask.type === 'rover-operate' &&
         mission &&
-        ((mission.status === 'scheduled' && mission.launchOperatorCrewId === command.crewId) ||
-          mission.recoveryOperatorCrewId === command.crewId)
+        mission.status === 'scheduled' &&
+        mission.launchOperatorCrewId === command.crewId
       ) {
-        return fail(state, 'E_PLAN_INVALID', 'Nhiệm vụ Rover đang giữ slot này; hãy hủy lịch hoặc đổi người thu hồi Rover.');
+        return fail(state, 'E_PLAN_INVALID', 'Nhiệm vụ Rover đang giữ slot phóng; hãy hủy lịch Rover để đổi người.');
       }
+      const isRecoveryOp = Boolean(
+        member.assignedTask.type === 'rover-operate' &&
+        mission &&
+        mission.recoveryOperatorCrewId === command.crewId
+      );
       const fallbackParts =
         member.assignedTask.type === 'repair-system' ? bundle.balance.systems.repairPartsCost : 0;
       const partsRefund = member.assignedTask.partsSpent ?? fallbackParts;
@@ -372,6 +377,9 @@ export function dispatchDomainCommand(
           ...state.crew,
           [command.crewId]: { ...member, assignedTask: null },
         },
+        ...(isRecoveryOp && mission
+          ? { rover: { ...state.rover, activeMission: { ...mission, recoveryOperatorCrewId: null } } }
+          : {}),
       };
       const invErr = validateStateInvariants(candidate, bundle);
       if (invErr) return fail(state, invErr.code, invErr.message, false);
@@ -389,8 +397,8 @@ export function dispatchDomainCommand(
       if (state.fabricator.usedThisSol || state.fabricator.activeJob !== null) {
         return fail(state, 'E_PLAN_INVALID', '3D Fabricator chỉ nhận tối đa 1 lệnh mỗi Sol.');
       }
-      if (state.systems.fabricator.status === 'offline') {
-        return fail(state, 'E_PLAN_INVALID', '3D Fabricator đang hỏng, cần sửa trước.');
+      if (state.systems.fabricator.status === 'offline' || state.systems.fabricator.integrity < 0.35) {
+        return fail(state, 'E_PLAN_INVALID', '3D Fabricator đang hỏng hoặc độ bền dưới 35%, cần sửa trước.');
       }
 
       const recipe = bundle.recipes.items.find((r) => r.id === command.itemId);
@@ -398,7 +406,7 @@ export function dispatchDomainCommand(
 
       let partsCost = 0;
       let waterCost = 0;
-      let batteryReserved = 0;
+      let batteryCost = 0;
       let durationSols = 1;
 
       if (command.action === 'craft') {
@@ -410,7 +418,7 @@ export function dispatchDomainCommand(
         }
         partsCost = recipe.craftCost.partsKg;
         waterCost = recipe.craftCost.waterL;
-        batteryReserved = recipe.craftCost.batteryKWh;
+        batteryCost = recipe.craftCost.batteryKWh;
         durationSols = recipe.craftCost.durationSols;
       } else if (command.action === 'upgrade') {
         if (!recipe.upgradeCost) return fail(state, 'E_PLAN_INVALID', `${recipe.name} không có nâng cấp Lv2.`);
@@ -424,7 +432,7 @@ export function dispatchDomainCommand(
         }
         partsCost = recipe.upgradeCost.partsKg;
         waterCost = recipe.upgradeCost.waterL;
-        batteryReserved = recipe.upgradeCost.batteryKWh;
+        batteryCost = recipe.upgradeCost.batteryKWh;
         durationSols = recipe.upgradeCost.durationSols;
       } else if (command.action === 'repair') {
         if (recipe.category !== 'equipment') return fail(state, 'E_PLAN_INVALID', 'Chỉ sửa chữa được Equipment.');
@@ -434,7 +442,7 @@ export function dispatchDomainCommand(
         }
         partsCost = bundle.recipes.rules.repairCost.partsKg;
         waterCost = bundle.recipes.rules.repairCost.waterL;
-        batteryReserved = bundle.recipes.rules.repairCost.batteryKWh;
+        batteryCost = bundle.recipes.rules.repairCost.batteryKWh;
         durationSols = bundle.recipes.rules.repairCost.durationSols;
       } else if (command.action === 'recycle') {
         if (recipe.category !== 'equipment') return fail(state, 'E_PLAN_INVALID', 'Chỉ tái chế được Equipment.');
@@ -445,11 +453,17 @@ export function dispatchDomainCommand(
         durationSols = bundle.recipes.rules.recycleDurationSols;
       }
 
+      const batteryPerSol = durationSols > 1 ? round2(batteryCost / durationSols) : batteryCost;
+      const batteryReserved = batteryPerSol;
+
       if (state.resources.partsKg < partsCost) {
         return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần ${partsCost} kg Phụ tùng.`);
       }
       if (state.resources.waterL < waterCost) {
         return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần ${waterCost} L Nước.`);
+      }
+      if (state.resources.batteryKWh < batteryReserved) {
+        return fail(state, 'E_INSUFFICIENT_RESOURCE', `Cần tối thiểu ${batteryReserved} kWh Pin.`);
       }
 
       candidate = {
@@ -558,12 +572,19 @@ export function dispatchDomainCommand(
         (msg) => msg.status === 'transmitting' && command.nowMs >= msg.replyReadyAtMs
       );
       if (!anyDue) return { ok: true, state, effects: [] };
+      const sol = state.clock.sol;
+      const stageReply =
+        sol < 15
+          ? 'CAPCOM Houston xác nhận: Đã ghi nhận dữ liệu telemetry trạm Artemis. Khuyến nghị theo dõi pin và tích lũy mẫu vật trước Đêm Trăng Sol 15.'
+          : sol < 29
+            ? 'CAPCOM Houston xác nhận: Trạm đang trong Đêm Trăng cực lạnh (-185°C). Hãy duy trì dòng điện nền lò Fission và bảo vệ đường ống sinh tồn ECLSS.'
+            : 'CAPCOM Houston xác nhận: Bình minh Sol 29 đã tới Nam Cực Mặt Trăng. Pin mặt trời đã phát điện trở lại; dồn sức hoàn thành các mục tiêu khảo sát cuối cùng!';
       const updated = state.logistics.radioMessages.map((msg) =>
         msg.status === 'transmitting' && command.nowMs >= msg.replyReadyAtMs
           ? {
               ...msg,
               status: 'reply-received' as const,
-              reply: 'CAPCOM Houston xác nhận: Đã ghi nhận dữ liệu telemetry trạm Artemis. Khuyến nghị theo dõi pin trước Đêm Trăng Sol 15.',
+              reply: stageReply,
             }
           : msg
       );
@@ -728,6 +749,8 @@ export function dispatchDomainCommand(
           },
         },
       };
+      const invErr = validateStateInvariants(candidate, bundle);
+      if (invErr) return fail(state, invErr.code, invErr.message, false);
       return { ok: true, state: candidate, effects: [{ type: 'rover-signal-recovered', message: 'Đã khôi phục liên lạc với Rover.' }] };
     }
 
@@ -746,12 +769,22 @@ export function dispatchDomainCommand(
         return fail(state, 'E_PLAN_INVALID', 'Người thu hồi phải rảnh, Fit và không Tired/Starving.');
       }
       const operator = state.crew[command.crewId];
+      const prevOperatorId = mission.recoveryOperatorCrewId;
+      const nextCrew = {
+        ...state.crew,
+        ...(prevOperatorId && prevOperatorId !== operator.id && state.crew[prevOperatorId]
+          ? { [prevOperatorId]: { ...state.crew[prevOperatorId], assignedTask: null } }
+          : {}),
+        [operator.id]: { ...operator, assignedTask: { type: 'rover-operate' as const } },
+      };
       candidate = {
         ...state,
         revision: state.revision + 1,
-        crew: { ...state.crew, [operator.id]: { ...operator, assignedTask: { type: 'rover-operate' } } },
+        crew: nextCrew,
         rover: { ...state.rover, activeMission: { ...mission, recoveryOperatorCrewId: operator.id } },
       };
+      const invErr = validateStateInvariants(candidate, bundle);
+      if (invErr) return fail(state, invErr.code, invErr.message, false);
       return { ok: true, state: candidate, effects: [{ type: 'rover-recovery-assigned', message: `${operator.name} sẽ trực thu hồi Rover.` }] };
     }
 

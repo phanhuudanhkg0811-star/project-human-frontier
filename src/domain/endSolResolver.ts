@@ -763,14 +763,15 @@ function resolveRoverTick(
           failedMission
         );
       }
+      releaseEquipment(0);
       return {
-        rover: { ...state.rover, activeMission: { ...mission, incidents } },
+        rover: { ...state.rover, activeMission: null },
         equipment,
         resources,
         sciencePoints: state.campaign.sciencePoints,
         roverIncidentProb: 0,
         roverIncidentTriggered: false,
-        note: 'Thiếu điện hoặc người trực: lịch phóng Rover được giữ sang Sol kế tiếp.',
+        note: 'Thiếu điện hoặc người trực sẵn sàng: lịch phóng Rover được hủy, thiết bị trả về kho để lập lịch lại.',
       };
     }
 
@@ -855,12 +856,14 @@ function resolveRoverTick(
       (crew.assignedTask === null || crew.assignedTask.type === 'rover-operate')
     );
   };
+  const fallbackRecoveryOrder: readonly CrewId[] = ['geo', 'eng', 'cmd', 'doc'];
+  const resolveRecoveryCrewId = (selected: CrewId | null): CrewId | null => {
+    if (selected && isEligibleRecoveryCrew(selected)) return selected;
+    return fallbackRecoveryOrder.find(isEligibleRecoveryCrew) ?? null;
+  };
 
   if (mission.status === 'recovery-pending') {
-    const selected = mission.recoveryOperatorCrewId;
-    const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
-      ? selected
-      : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+    const recoveryCrewId = resolveRecoveryCrewId(mission.recoveryOperatorCrewId);
     if (recoveryCrewId) {
       const recoveryMission = { ...mission, recoveryOperatorCrewId: recoveryCrewId };
       const wear = recoveryCrewId === 'geo' ? 25 : 50;
@@ -980,10 +983,7 @@ function resolveRoverTick(
     };
   }
 
-  const selected = mission.recoveryOperatorCrewId;
-  const recoveryCrewId = selected && isEligibleRecoveryCrew(selected)
-    ? selected
-    : (Object.keys(state.crew) as CrewId[]).find(isEligibleRecoveryCrew) ?? null;
+  const recoveryCrewId = resolveRecoveryCrewId(mission.recoveryOperatorCrewId);
   if (!recoveryCrewId) {
     return {
       rover: {
