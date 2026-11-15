@@ -1,7 +1,7 @@
 {
-  "catalogVersion": "1.1.0-moon32",
-  "modelVersion": "1.4.0-ts-donki",
-  "generatedAtUtc": "2026-11-14T06:40:41.665Z",
+  "catalogVersion": "1.2.0-moon32-polar",
+  "modelVersion": "1.4.2-ts-polar",
+  "generatedAtUtc": "2026-11-14T17:35:25.390Z",
   "campaign": {
     "id": "moon-32",
     "planet": "moon",
@@ -14,16 +14,17 @@
     "provenance": "assumption"
   },
   "environment": {
-    "source": "Calibrated from LRO Diviner lunar surface temperature GCP records",
+    "source": "Diviner GCP polar band, LRO-L-DLRE-5-GDR-V1.0 (Williams et al. 2017); bolometric brightness temperature, 0.5 deg bins x 0.25 lunar hours",
     "provenance": "observed",
-    "diurnalCycleHours": 708.7,
+    "diurnalCycleHours": 655.6800000000001,
     "temperatureC": {
-      "meanC": -55.6177,
-      "amplitudeC": 164.0104,
-      "dayMaxC": 117.2871,
-      "nightMinC": -171.6508,
-      "noiseSdC": 26.4013,
-      "fitR2": 0.954,
+      "meanC": -117.2614,
+      "amplitudeC": 79.2302,
+      "dayMaxC": -27.1555,
+      "nightMinC": -185.616,
+      "noiseSdC": 11.7335,
+      "fitR2": 0.9268,
+      "shapeExponentK": 0.79,
       "provenance": "observed"
     },
     "dustTauMean": 0,
@@ -47,13 +48,13 @@
   },
   "provenanceMeta": {
     "sourceFiles": [
-      "data/calibration/environment_profile_moon.json"
+      "src/data/environment-profile-moon-polar.json"
     ],
     "sourceUrls": [
       "https://pds-geosciences.wustl.edu/missions/lro/diviner.htm",
       "https://ssd.jpl.nasa.gov/horizons/"
     ],
-    "rawInputSha256": "6d54e6400bac1d7cfd18d4b3411ff9374c32e6db57c0f442c83b14e533194488",
-    "normalizedSha256": "9db2d31e20b4dcba66a9709d23f212da0e4786ee33baafa393b8f9359f1724f0"
+    "rawInputSha256": "8583bd6a2a5d1074a092e8f32313236c64f97cc69f6620462271d1bb7e14902b",
+    "normalizedSha256": "2ffa472ace9dd58615d2c76910dafde8954f3e52c9f0e69b06027d60ce36127e"
   }
 }

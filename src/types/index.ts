@@ -645,6 +645,7 @@ export interface SimulationCatalog {
       readonly nightMinC: number;
       readonly noiseSdC: number;
       readonly fitR2: number;
+      readonly shapeExponentK?: number;
       readonly provenance: ProvenanceTag;
     };
     readonly dustTauMean: number;

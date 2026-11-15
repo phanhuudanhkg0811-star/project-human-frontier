@@ -1,0 +1,45 @@
+{
+  "planet": "moon",
+  "generated_at": "2026-11-14T17:09:21+00:00",
+  "source": "Diviner GCP polar band, LRO-L-DLRE-5-GDR-V1.0 (Williams et al. 2017); bolometric brightness temperature, 0.5 deg bins x 0.25 lunar hours",
+  "provenance": "observed",
+  "site": {
+    "name": "Connecting Ridge (Artemis III candidate)",
+    "latitude_deg": -89.45,
+    "longitude_deg_east": 222.7,
+    "mapping_provenance": "assumption",
+    "note": "Granted an observed Diviner cell; the site-to-cell choice is ours."
+  },
+  "cell": {
+    "latitude_deg": -89.25,
+    "longitude_deg_east": 222.75,
+    "band": "90s80s",
+    "n_local_time_bins": 96,
+    "local_time_peak_hour": 12.12
+  },
+  "thermal": {
+    "mean_c": -117.2614,
+    "amplitude_c": 79.2302,
+    "day_max_c": -27.1555,
+    "night_min_c": -185.616,
+    "noise_sd_c": 11.7335,
+    "period_days": 27.32,
+    "r2": 0.9268,
+    "shape_exponent_k": 0.79,
+    "shape_window_ltim": [
+      6.12,
+      18.12
+    ],
+    "n_fit": 48
+  },
+  "dust": {
+    "tau_mean": 0.0,
+    "tau_sd": 0.0,
+    "source": "airless lunar surface"
+  },
+  "raw_input": {
+    "file": "data/raw/diviner/diviner_gcp_90s80s.tab",
+    "sha256": "4bc7093fe5bf08ca7fd0c7ddaf94f7c452b27f705fe975a73c8614d8d41e28b6",
+    "bytes": 156211313
+  }
+}

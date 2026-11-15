@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const POC_ENV_PATH = 'd:/NASA/poc-moon-mars-simulation/data/calibration/environment_profile_moon.json';
+const POC_ENV_PATH = process.env.MOON_ENV_PROFILE
+  ?? path.join(ROOT, 'src/data/environment-profile-moon-polar.json');
 const OUT_CATALOG = path.join(ROOT, 'src', 'data', 'simulation-catalog.json');
 
 function sha256Hex(text) {
@@ -20,8 +21,8 @@ function main() {
   const pocEnv = JSON.parse(rawPocText);
 
   const coreCatalog = {
-    catalogVersion: '1.1.0-moon32',
-    modelVersion: '1.1.0-ts-donki',
+    catalogVersion: '1.2.0-moon32-polar',
+    modelVersion: '1.4.2-ts-polar',
     generatedAtUtc: new Date().toISOString(),
     campaign: {
       id: 'moon-32',
@@ -45,6 +46,7 @@ function main() {
         nightMinC: pocEnv.thermal?.night_min_c ?? -171.6508,
         noiseSdC: pocEnv.thermal?.noise_sd_c ?? 26.4013,
         fitR2: pocEnv.thermal?.r2 ?? 0.954,
+        shapeExponentK: pocEnv.thermal?.shape_exponent_k,
         provenance: 'observed',
       },
       dustTauMean: 0.0,
@@ -71,7 +73,7 @@ function main() {
   const simulationCatalog = {
     ...coreCatalog,
     provenanceMeta: {
-      sourceFiles: ['data/calibration/environment_profile_moon.json'],
+      sourceFiles: ['src/data/environment-profile-moon-polar.json'],
       sourceUrls: [
         'https://pds-geosciences.wustl.edu/missions/lro/diviner.htm',
         'https://ssd.jpl.nasa.gov/horizons/',

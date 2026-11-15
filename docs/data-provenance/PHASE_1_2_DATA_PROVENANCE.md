@@ -13,6 +13,16 @@ This committed summary contains no credentials. Full execution notes remain unde
 
 `src/data/lunar-sites.json` intentionally separates observed product/location metadata from the inferred or assumed mapping between those reference areas and fictional gameplay expeditions. It does not claim unsampled point elevation or temperature. LOLA supplies topography; Diviner supplies thermal products.
 
+## Polar thermal profile (Artemis south-pole base)
+
+- Product: Diviner Derived Global Cumulative Product, polar band `global_cumul_avg_cyl_90s80s_002.tab` (LRO-L-DLRE-5-GDR-V1.0, Williams et al. 2017), PDS bundle `urn-nasa-pds-lro_diviner_derived1`: <https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab>.
+- Raw archive: `nasa/data/raw/diviner/diviner_gcp_90s80s.tab` (156,211,313 bytes, SHA-256 recorded in `nasa/data/manifest.json` by `nasa/src/data/downloader.py`).
+- Cell used: `-89.25 S, 222.75 E` — nearest 0.5° Diviner GCP cell to Connecting Ridge (`-89.45 S, 222.7 E`), the Artemis III candidate region recorded in `src/data/lunar-sites.json` as `artemis-base-camp`. The site-to-cell choice is a gameplay assumption; no unsampled point temperature is claimed.
+- Fit: engine curve `T = night + (day − night) · sin(π·f)^k` over the illuminated local-time window, fit to the cell's 96 local-time bins → `k = 0.79`, `r2 = 0.927`.
+- Values committed to `src/data/simulation-catalog.json` (`temperatureC`): `dayMaxC −27.16 °C`, `nightMinC −185.62 °C`, `meanC −117.26 °C`, `noiseSdC 11.73 °C`, `shapeExponentK 0.79`; profile detail: `src/data/environment-profile-moon-polar.json` (committed, no raw table needed). Lab copy: `nasa/data/calibration/environment_profile_moon_polar.json` — local lab only, not committed.
+- Contrast with the equatorial band (`00n10n`, `dayMaxC +117.29 °C`): polar daytime highs stay below 0 °C and the cycle minimum approaches −200 °C, matching the Artemis south-pole setting.
+- Script: `nasa/scripts/build_diviner_polar.py` is local lab tooling, not committed — it downloads the polar band, parses it with the unchanged `src/data/parsers.py::parse_diviner_gcp`, and fits `T = night + (day − night) · sin(π·f)^k` to the cell's 96 local-time bins (`k = 0.79`, `r2 = 0.927`). `scripts/build-catalog.mjs` reads `src/data/environment-profile-moon-polar.json` via `MOON_ENV_PROFILE`.
+
 ## RadLab CRaTER reference sample
 
 - API documentation: <https://visualization.osdr.nasa.gov/radlab/gui/data-api/>.
