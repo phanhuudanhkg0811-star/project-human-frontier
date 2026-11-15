@@ -143,7 +143,7 @@ export function MilestonePresentationModal({
             {milestone.chips.map((chip) => (
               <div key={chip.labelKey} className="phf-milestone-chip">
                 <dt>{t(chip.labelKey)}</dt>
-                <dd>{chip.value}</dd>
+                <dd>{chip.valueKey ? t(chip.valueKey) : chip.value}</dd>
               </div>
             ))}
           </dl>

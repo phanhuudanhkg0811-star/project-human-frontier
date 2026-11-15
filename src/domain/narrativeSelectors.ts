@@ -24,7 +24,11 @@ export interface PendingMilestonePresentation {
   readonly bodyKey: string;
   readonly scienceNoteKey: string;
   readonly scienceNoteParams?: Readonly<Record<string, string | number>>;
-  readonly chips: ReadonlyArray<{ readonly labelKey: string; readonly value: string }>;
+  readonly chips: ReadonlyArray<{
+    readonly labelKey: string;
+    readonly value: string;
+    readonly valueKey?: string;
+  }>;
 }
 
 export interface MilestoneVisibilityGuard {
@@ -135,7 +139,14 @@ export function selectPendingCockpitMilestone(
         ],
       };
 
-    case 'moon-sol7-golden-crisis':
+    case 'moon-sol7-golden-crisis': {
+      const activeMission = state.rover.activeMission;
+      const hasRegolithMission =
+        activeMission?.expeditionId === 'regolith-field' &&
+        ['scheduled', 'outbound', 'exploring', 'signal-lost', 'recovery-pending'].includes(activeMission.status);
+      const roverStatus = activeMission?.status === 'recovery-pending'
+        ? 'returning'
+        : activeMission?.status ?? 'available';
       return {
         id: candidateId,
         sol,
@@ -144,19 +155,21 @@ export function selectPendingCockpitMilestone(
         provenance: 'simulated',
         scienceProvenance: 'inferred',
         sourceRef: 'NASA ECLSS & Deep Space Network Telemetry',
-        titleKey: 'milestone.sol7.title',
-        subtitleKey: 'milestone.sol7.subtitle',
-        bodyKey: 'milestone.sol7.body',
-        scienceNoteKey: 'milestone.sol7.science',
+        titleKey: hasRegolithMission ? 'milestone.sol7.title' : 'milestone.sol7.stationTitle',
+        subtitleKey: hasRegolithMission ? 'milestone.sol7.subtitle' : 'milestone.sol7.stationSubtitle',
+        bodyKey: hasRegolithMission ? 'milestone.sol7.body' : 'milestone.sol7.stationBody',
+        scienceNoteKey: hasRegolithMission ? 'milestone.sol7.science' : 'milestone.sol7.stationScience',
         chips: [
           { labelKey: 'milestone.chip.battery', value: `${state.resources.batteryKWh} kWh` },
           { labelKey: 'milestone.chip.water', value: `${state.resources.waterL} L` },
           {
             labelKey: 'milestone.chip.rover',
-            value: (state.rover.activeMission?.status ?? 'available').toUpperCase(),
+            value: roverStatus,
+            valueKey: `enum.roverStatus.${roverStatus}`,
           },
         ],
       };
+    }
 
     case 'moon-sol15-lunar-sunset':
       return {

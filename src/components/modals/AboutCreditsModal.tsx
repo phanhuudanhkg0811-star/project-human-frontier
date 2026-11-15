@@ -85,7 +85,7 @@ export function AboutCreditsModal({ onClose }: { onClose: () => void }) {
           {t('about.privacyNote')}
         </p>
 
-        <div className="flex flex-wrap justify-between gap-2 pt-1">
+        <div className="sticky bottom-0 z-10 -mx-2 mt-2 flex flex-wrap justify-between gap-2 border-t border-slate-700/80 bg-[#28333b]/95 px-2 pt-2.5 pb-1 backdrop-blur-sm">
           <button
             type="button"
             className="hail-btn"

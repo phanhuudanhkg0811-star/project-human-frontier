@@ -152,14 +152,14 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-1.5 text-[10px] font-mono">
                       <span className={`px-1.5 py-0.5 rounded border ${HUNGER_BADGE[member.hungerState]}`}>
-                        {t('character.satiety', { state: member.hungerState.toUpperCase(), pct: member.satiety })}
+                        {t('character.satiety', { state: t(`enum.hunger.${member.hungerState}`), pct: Math.round(member.satiety) })}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded border ${member.condition === 'fit' ? 'text-emerald-300 border-emerald-500/40 bg-emerald-950/40' : 'text-rose-300 border-rose-500/50 bg-rose-950/50'}`}>
-                        {member.condition.toUpperCase()}
+                        {t(`enum.condition.${member.condition}`)}
                       </span>
                       {isTired && (
                         <span className="px-1.5 py-0.5 rounded border text-amber-300 border-amber-500/40 bg-amber-950/50">
-                          TIRED
+                          {t('character.tired')}
                         </span>
                       )}
                     </div>
@@ -170,11 +170,11 @@ export function CharacterSheetModal({ onClose }: CharacterSheetModalProps) {
                 <div className="grid grid-cols-3 gap-2 text-[11px] font-mono bg-slate-950/80 p-2 rounded">
                   <div>
                     <div className="text-slate-400">Health</div>
-                    <strong className="text-emerald-300">{member.health}/100</strong>
+                    <strong className="text-emerald-300">{Math.round(member.health)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">Morale</div>
-                    <strong className="text-sky-300">{member.morale}/100</strong>
+                    <strong className="text-sky-300">{Math.round(member.morale)}/100</strong>
                   </div>
                   <div>
                     <div className="text-slate-400">{t('character.radiation')}</div>

@@ -253,7 +253,7 @@ export function EndOfDayModal({
                     <div className="hail-alloc-crew-statline">
                       <span>{t('endDay.satietyLabel', { satiety: member.satiety })}</span>
                       <span className={member.hungerState === 'starving' ? 'is-crit' : ''}>
-                        {member.hungerState.toUpperCase()}
+                        {t(`enum.hunger.${member.hungerState}`)}
                       </span>
                     </div>
                   </div>

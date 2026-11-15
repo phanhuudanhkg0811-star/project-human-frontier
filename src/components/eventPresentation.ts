@@ -50,6 +50,16 @@ const VI_TOKENS: Record<string, string> = {
   Health: 'Sức khỏe',
   Morale: 'Tinh thần',
   Satiety: 'Độ no',
+  'emergency-response': 'xử lý khẩn cấp',
+  'repair-system': 'sửa hệ thống',
+  'upgrade-system': 'nâng cấp hệ thống',
+  'medical-care': 'chăm sóc y tế',
+  'rover-operate': 'vận hành Rover',
+  'fail-expedition': 'hủy chuyến thám hiểm',
+  'restore-signal': 'khôi phục tín hiệu',
+  'continue-expedition': 'tiếp tục thám hiểm',
+  'delay-expedition': 'trì hoãn thám hiểm',
+  rest: 'nghỉ ngơi',
 };
 
 const EN_TOKENS: Record<string, string> = {
@@ -74,7 +84,24 @@ const EN_TOKENS: Record<string, string> = {
   Health: 'Health',
   Morale: 'Morale',
   Satiety: 'Satiety',
+  'emergency-response': 'emergency response',
+  'repair-system': 'repair system',
+  'upgrade-system': 'upgrade system',
+  'medical-care': 'medical care',
+  'rover-operate': 'rover operations',
+  'fail-expedition': 'abort expedition',
+  'restore-signal': 'restore signal',
+  'continue-expedition': 'continue expedition',
+  'delay-expedition': 'delay expedition',
+  rest: 'rest',
 };
+
+const TOKEN_PATTERN = new RegExp(
+  `\\b(?:${Object.keys(EN_TOKENS)
+    .sort((a, b) => b.length - a.length)
+    .join('|')})\\b`,
+  'g'
+);
 
 /** Translate selector labels for display without interpreting effects or recomputing gameplay. */
 export function formatEventEffectSummary(text: string, locale: Locale = 'vi'): string {
@@ -95,8 +122,22 @@ export function formatEventEffectSummary(text: string, locale: Locale = 'vi'): s
       .replace(/^Hệ quả sau /g, 'Follow-up in ');
   }
   const labels = locale === 'en' ? EN_TOKENS : VI_TOKENS;
-  return formatted.replace(
-    /\b(?:batteryKWh|oxygenKg|waterL|partsKg|mrePacks|medkits|core_drill|sealant_tape|solar_lantern|dust_shield|radio_repeater|cryo_thermal_rig|fabricator|recycler|scrubber|airlock|solar|Science|Health|Morale|Satiety)\b/g,
-    (token) => labels[token] ?? token
-  );
+  return formatted.replace(TOKEN_PATTERN, (token) => labels[token] ?? token);
+}
+
+const KNOWN_LOADS = new Set(['eclss', 'wrs', 'fabricator', 'rover']);
+
+/** Translate comma-separated or array power-load IDs for UI badges and hints. */
+export function formatPowerLoadList(
+  loads: string | readonly string[],
+  locale: Locale = 'vi'
+): string {
+  const items = typeof loads === 'string' ? loads.split(',') : loads;
+  return items
+    .map((raw) => {
+      const id = raw.trim().toLowerCase();
+      return KNOWN_LOADS.has(id) ? translate(locale, `enum.load.${id}`) : raw.trim();
+    })
+    .filter(Boolean)
+    .join(', ');
 }

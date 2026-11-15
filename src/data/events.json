@@ -21,8 +21,7 @@
         "labelEn": "Calibrate now (-2 kg Parts, +5 Crew Morale)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "sensors_calibrated", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Đã hiệu chỉnh xong cảm biến hệ thống trạm Artemis.",
         "logEn": "Calibrated Artemis station sensors."
@@ -113,8 +112,7 @@
         "labelEn": "Apply Sealant Tape (Mitigates leak, 0 Parts)",
         "requiresEquipment": "sealant_tape",
         "effects": [
-          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 },
-          { "kind": "set-flag", "key": "airlock_sealed", "value": true }
+          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 }
         ],
         "log": "Đã dán kín gioăng Airlock bằng Sealant Tape mà không tốn Phụ tùng.",
         "logEn": "Sealed the airlock gasket with Sealant Tape without spending spare parts."
@@ -124,8 +122,7 @@
         "label": "Thay gioăng dự phòng (-2 kg Phụ tùng)",
         "labelEn": "Replace gasket with spare parts (-2 kg Parts)",
         "effects": [
-          { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "set-flag", "key": "airlock_sealed", "value": true }
+          { "kind": "resource", "resource": "partsKg", "delta": -2 }
         ],
         "log": "Đã thay gioăng Airlock bằng 2 kg Phụ tùng.",
         "logEn": "Replaced the airlock gasket using 2 kg of spare parts."
@@ -201,7 +198,13 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-wrs-eclss",
-    "when": [{ "sol": 7 }],
+    "when": [
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "regolith-field", "roverStatus": "returning" }
+    ],
     "mandatory": true,
     "prompt": "Cảnh báo Sol 7: Kho nước sạch giảm sâu và Rover phát tín hiệu yếu do địa hình che khuất. Bạn chọn ưu tiên điện cho Rover hay chạy WRS tái chế nước?",
     "promptEn": "Sol 7 Alert: Clean water reserves are dropping while the Rover link weakens behind ridge terrain. Prioritize power to save the Rover link or run the WRS?",
@@ -233,6 +236,56 @@
         ],
         "log": "Đã dồn điện ưu tiên cho tái chế nước WRS trong Sol 7.",
         "logEn": "Prioritized station water recycling on Sol 7."
+      }
+    ]
+  },
+  {
+    "id": "sol7-station-water-balance",
+    "title": "Sol 7: Cân bằng Điện & Nước của Trạm",
+    "titleEn": "Sol 7: Habitat Power & Water Balance",
+    "category": "crisis",
+    "art": "tech-fault",
+    "priority": 100,
+    "weight": 100,
+    "repeatPolicy": "once",
+    "deadlineOffsetSols": 0,
+    "scienceBriefId": "brief-wrs-eclss",
+    "when": [
+      { "sol": 7, "roverStatus": "available" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "lunar-crater", "roverStatus": "returning" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "scheduled" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "outbound" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "exploring" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "signal-lost" },
+      { "sol": 7, "roverExpeditionId": "polar-psr", "roverStatus": "returning" }
+    ],
+    "mandatory": true,
+    "prompt": "Không có Rover tại bãi Regolith cần cứu tín hiệu trong Sol này. Điện trạm vẫn hạn chế: bạn chạy WRS để thu hồi nước hay tạm giữ điện dự phòng?",
+    "promptEn": "No Rover at the Regolith field needs a telemetry rescue this Sol. Habitat power is still limited: run the WRS to reclaim water or conserve battery reserve?",
+    "choices": [
+      {
+        "id": "run-wrs-cycle",
+        "label": "Chạy chu trình WRS hôm nay (-4 kWh theo tải WRS)",
+        "labelEn": "Run the WRS cycle today (-4 kWh WRS load)",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": true }
+        ],
+        "log": "Đã ưu tiên điện cho chu trình tái chế nước WRS trong Sol 7.",
+        "logEn": "Allocated Sol 7 power to the WRS water-recovery cycle."
+      },
+      {
+        "id": "hold-grid-reserve",
+        "label": "Tạm dừng WRS để giữ điện dự phòng",
+        "labelEn": "Pause WRS to conserve battery reserve",
+        "effects": [
+          { "kind": "plan-override", "wrsEnabled": false }
+        ],
+        "log": "Đã tạm dừng WRS trong Sol 7 để giữ điện cho tải thiết yếu.",
+        "logEn": "Paused the Sol 7 WRS cycle to preserve essential-load reserve."
       }
     ]
   },
@@ -324,8 +377,7 @@
         "labelEn": "Power landing radar beacon & salvage crate (-2 kWh Battery, +4 kg Parts)",
         "effects": [
           { "kind": "resource", "resource": "batteryKWh", "delta": -2 },
-          { "kind": "resource", "resource": "partsKg", "delta": 4 },
-          { "kind": "set-flag", "key": "cargo_beacon_ready", "value": true }
+          { "kind": "resource", "resource": "partsKg", "delta": 4 }
         ],
         "log": "Đã kích hoạt đèn hiệu dẫn đường bãi đáp và thu hồi 4 kg phụ tùng từ kho ngoại vi.",
         "logEn": "Activated landing pad radar beacon and recovered 4 kg of spare parts."
@@ -461,8 +513,7 @@
         "labelEn": "Wire auxiliary capacitors to top up Battery bank (-2 kg Parts, +6 kWh Battery)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "resource", "resource": "batteryKWh", "delta": 6 },
-          { "kind": "set-flag", "key": "sunset_battery_boosted", "value": true }
+          { "kind": "resource", "resource": "batteryKWh", "delta": 6 }
         ],
         "log": "Đã tích thêm +6 kWh điện năng quý giá từ những tia nắng cuối cùng của Sol 14.",
         "logEn": "Captured an extra +6 kWh from the final rays of Sol 14 sunlight."
@@ -472,8 +523,7 @@
         "label": "Gia cố lớp cách nhiệt đường ống nước & khoang ngủ (+5 Morale toàn đội)",
         "labelEn": "Reinforce thermal insulation on water lines & bunks (+5 Crew Morale)",
         "effects": [
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "pipes_insulated", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Đã bọc kín đường ống ECLSS sẵn sàng đón nhiệt độ âm sâu Đêm Trăng.",
         "logEn": "Insulated ECLSS plumbing for the cryogenic Lunar Night."
@@ -501,8 +551,7 @@
         "label": "Kích hoạt Chế độ Tiết kiệm Đêm Trăng (+5 Morale toàn đội)",
         "labelEn": "Engage Lunar Night Conservation Protocol (+5 Crew Morale)",
         "effects": [
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "lunar_night_started", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Toàn trạm chuyển sang nguồn Fission & Pin dự phòng cho 14 Sol Đêm Trăng.",
         "logEn": "Station switched to Fission baseline and battery reserves for the 14-Sol Lunar Night."
@@ -513,8 +562,7 @@
         "labelEn": "Tune Fission Stirling heat exchanger (-2 kg Parts, +4 kWh Battery)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "resource", "resource": "batteryKWh", "delta": 4 },
-          { "kind": "set-flag", "key": "lunar_night_started", "value": true }
+          { "kind": "resource", "resource": "batteryKWh", "delta": 4 }
         ],
         "log": "Đã tối ưu hiệu suất lò Fission, thu thêm +4 kWh điện dự phòng đầu Đêm Trăng.",
         "logEn": "Tuned the Fission heat exchanger for +4 kWh of reserve power entering Lunar Night."
@@ -576,7 +624,7 @@
     "repeatPolicy": "once",
     "deadlineOffsetSols": 0,
     "scienceBriefId": "brief-oxygen-eclss",
-    "when": [{ "solMin": 18, "solMax": 19, "isLunarNight": true }],
+    "when": [{ "solMin": 18, "solMax": 19, "isLunarNight": true, "flagSet": "airlock_dusty" }],
     "mandatory": true,
     "prompt": "Nhiệt độ vỏ ngoài tụt xuống dưới -168°C khiến vòng đệm polymer cửa Airlock bị giòn và xuất hiện vết rạn vi mô gây thất thoát O₂.",
     "promptEn": "Exterior hull temperatures below -168°C embrittle the polymer airlock gasket, opening micro-fissures that bleed cabin O2.",
@@ -588,7 +636,8 @@
         "requiresEquipment": "cryo_thermal_rig",
         "effects": [
           { "kind": "equipment-wear", "equipmentId": "cryo_thermal_rig", "wear": 25 },
-          { "kind": "science", "delta": 5 }
+          { "kind": "science", "delta": 5 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Bộ sưởi Cryo Thermal Rig đã khôi phục độ đàn hồi gioăng Airlock hoàn hảo.",
         "logEn": "The Cryo Thermal Rig restored gasket elasticity with zero O2 loss."
@@ -599,7 +648,8 @@
         "labelEn": "Emergency patch with Sealant Tape (Prevents O2 leak)",
         "requiresEquipment": "sealant_tape",
         "effects": [
-          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 }
+          { "kind": "equipment-wear", "equipmentId": "sealant_tape", "wear": 50 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Đã gia cố gioăng lạnh bằng băng keo chuyên dụng Sealant Tape.",
         "logEn": "Reinforced the cryogenic gasket using Sealant Tape."
@@ -610,7 +660,8 @@
         "labelEn": "Mechanical gasket swap & cabin repressurization (-2 kg Parts, -4 kg O2)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
-          { "kind": "resource", "resource": "oxygenKg", "delta": -4 }
+          { "kind": "resource", "resource": "oxygenKg", "delta": -4 },
+          { "kind": "clear-flag", "key": "airlock_dusty" }
         ],
         "log": "Đã thay vòng đệm cơ khí sau khi mất 4 kg O₂ bù áp.",
         "logEn": "Replaced the mechanical seal after expending 4 kg of O2."
@@ -940,8 +991,7 @@
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
           { "kind": "resource", "resource": "batteryKWh", "delta": 8 },
-          { "kind": "crew", "target": "all", "moraleDelta": 10 },
-          { "kind": "set-flag", "key": "sunrise_recovered", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 10 }
         ],
         "log": "Giàn pin Mặt Trời hoạt động hết công suất, nạp ngay +8 kWh và khích lệ toàn đội!",
         "logEn": "Solar arrays returned to peak output, charging +8 kWh and cheering the crew!"
@@ -952,8 +1002,7 @@
         "labelEn": "Gradual inverter warmup with zero parts cost (+4 kWh Battery, +5 Morale)",
         "effects": [
           { "kind": "resource", "resource": "batteryKWh", "delta": 4 },
-          { "kind": "crew", "target": "all", "moraleDelta": 5 },
-          { "kind": "set-flag", "key": "sunrise_recovered", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 5 }
         ],
         "log": "Bình minh đã trở lại! Hệ thống điện Mặt Trời khôi phục an toàn.",
         "logEn": "Sunlight has returned! Solar power generation safely restored."
@@ -1022,8 +1071,7 @@
         "labelEn": "Transmit 32-Sol Science Legacy Archive to Earth (+20 Science, +10 Morale)",
         "effects": [
           { "kind": "science", "delta": 20 },
-          { "kind": "crew", "target": "all", "moraleDelta": 10 },
-          { "kind": "set-flag", "key": "mission_archive_sent", "value": true }
+          { "kind": "crew", "target": "all", "moraleDelta": 10 }
         ],
         "log": "Tín hiệu xác nhận từ Houston: Chúc mừng Phi hành đoàn Artemis hoàn thành xuất sắc 32 Sol!",
         "logEn": "Houston confirmation received: Congratulations to the Artemis crew on completing 32 Sols!"
@@ -1034,8 +1082,7 @@
         "labelEn": "Prepare habitat handover cache for Expedition 2 (+4 kg Parts, +10 Science)",
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": 4 },
-          { "kind": "science", "delta": 10 },
-          { "kind": "set-flag", "key": "mission_archive_sent", "value": true }
+          { "kind": "science", "delta": 10 }
         ],
         "log": "Căn cứ Artemis đã sẵn sàng đón phi hành đoàn kế tiếp với đầy đủ vật tư dự phòng.",
         "logEn": "Artemis base is prepped and stocked for the next rotation crew."

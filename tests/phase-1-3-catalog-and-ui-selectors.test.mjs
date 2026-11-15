@@ -351,6 +351,18 @@ test('Core integration: preview explains rover, assignment, follow-up and extra-
   ];
   for (const effect of effects) {
     const fixture = withEvent(eventFixture({ choices: [choiceFixture({ effects: [effect] })] }));
-    assert.ok(core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0].effectsSummary.length > 0, `Missing preview for ${effect.kind}`);
+    const preview = core.selectEventChoicePreviews(fixture.state, 'qa-event', fixture.content)[0];
+    const hasStructuredDelta =
+      Object.keys(preview.resourceDeltas).length > 0 || preview.scienceDelta !== 0;
+    assert.ok(
+      preview.effectsSummary.length > 0 || hasStructuredDelta,
+      `Missing preview for ${effect.kind}`
+    );
   }
+  const powerFixture = withEvent(
+    eventFixture({ choices: [choiceFixture({ effects: [{ kind: 'plan-override', extraPowerCostKWh: 2 }] })] })
+  );
+  const powerPreview = core.selectEventChoicePreviews(powerFixture.state, 'qa-event', powerFixture.content)[0];
+  assert.equal(powerPreview.resourceDeltas.batteryKWh, -2);
+  assert.equal(powerPreview.effectsSummary.length, 0);
 });

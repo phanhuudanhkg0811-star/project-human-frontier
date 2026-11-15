@@ -282,10 +282,10 @@ export function JournalModal({
                           {t('journal.crewLine', {
                             num: `0${idx + 1}`,
                             name: member.name,
-                            health: member.health,
-                            hunger: member.hungerState.toUpperCase(),
-                            satiety: member.satiety,
-                            condition: member.condition.toUpperCase(),
+                            health: Math.round(member.health),
+                            hunger: t(`enum.hunger.${member.hungerState}`),
+                            satiety: Math.round(member.satiety),
+                            condition: t(`enum.condition.${member.condition}`),
                           })}
                         </span>
                       </li>
@@ -417,7 +417,7 @@ export function JournalModal({
                     <span className="hail-term-prompt">&gt;</span>
                     <span>
                       {t('journal.cargoRover', {
-                        status: roverStatus.toUpperCase(),
+                        status: t(`enum.roverStatus.${roverStatus}`),
                         radio: waitingRadioCount,
                       })}
                     </span>

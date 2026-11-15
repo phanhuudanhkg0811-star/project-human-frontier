@@ -18,7 +18,7 @@
     "terrain": {
       "productId": "LRO-L-LOLA-4-GDR-V1.0",
       "datasetReleaseId": "0030",
-      "layerId": "LRO_LOLA_ClrShade_Global_256ppd_v06",
+      "layerId": "LRO_LOLA_ClrShade_SPole875_5mp_v04_EQ",
       "unit": "m in source DEM; WMTS layer is rendered color hillshade",
       "provenance": "observed",
       "source": "https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=LRO-L-LOLA-4-GDR-V1.0&releaseid=0030"
@@ -51,7 +51,7 @@
     "terrain": {
       "productId": "LRO-L-LOLA-4-GDR-V1.0",
       "datasetReleaseId": "0030",
-      "layerId": "LRO_LOLA_ClrShade_Global_256ppd_v06",
+      "layerId": "LRO_LOLA_ClrShade_SPole875_5mp_v04_EQ",
       "unit": "m in source DEM; WMTS layer is rendered color hillshade",
       "provenance": "observed",
       "source": "https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=LRO-L-LOLA-4-GDR-V1.0&releaseid=0030"

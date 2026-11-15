@@ -71,7 +71,12 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
         {activeJob && (
           <div className="p-3 rounded-lg bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-between gap-2 text-xs">
             <div>
-              <strong className="text-cyan-200">{t('crafting.processing', { action: activeJob.action.toUpperCase(), item: activeJob.itemId })}</strong>
+              <strong className="text-cyan-200">
+                {t('crafting.processing', {
+                  action: t(`enum.fabAction.${activeJob.action}`),
+                  item: bundle.recipes.items.find((r) => r.id === activeJob.itemId)?.name ?? activeJob.itemId,
+                })}
+              </strong>
               <p className="text-slate-300 mt-0.5">
                 {t('crafting.remaining', { sols: activeJob.solsRemaining, battery: activeJob.batteryReserved })}
               </p>
@@ -137,7 +142,7 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
                       </span>
                       {eq?.owned && (
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
-                          {eq.state.toUpperCase()} ({eq.durability}%) · Lv{eq.level}
+                          {t(`enum.equipState.${eq.state}`)} ({eq.durability}%) · Lv{eq.level}
                         </span>
                       )}
                       {recipe.id === 'medkit' && (

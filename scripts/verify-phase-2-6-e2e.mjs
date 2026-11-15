@@ -309,7 +309,7 @@ try {
       await click(button(expedition.name, "document.querySelector('.hail-site-tabs')"));
       for (const equipment of command.equipmentIds) {
         await click(
-          `[...document.querySelectorAll('.mission-dialog button')].find(el => el.textContent.includes(${JSON.stringify(equipment + ' (')}))`
+          `[...document.querySelectorAll('.mission-dialog button')].find(el => el.dataset.equipmentId === ${JSON.stringify(equipment)} || el.textContent.includes(${JSON.stringify(equipment + ' (')}))`
         );
       }
       await click(button('Lập lịch Rover tới'));

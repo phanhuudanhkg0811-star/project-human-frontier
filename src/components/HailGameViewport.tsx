@@ -493,7 +493,7 @@ export function HailGameViewport() {
         </div>
       )}
 
-      {lastError && !saveRecoveryError && (
+      {lastError && !saveRecoveryError && !activeModal && !sysModalOpen && (
         <div
           role="status"
           onClick={dismissError}
@@ -748,7 +748,7 @@ export function HailGameViewport() {
                     draggable={false}
                   />
                   <span className={`hail-crew-pill ${slot.depth === 'rear' ? 'is-rear-pill' : ''}`}>
-                    {member.name.split(' ')[0]} · <span className="hail-crew-pill-heart" aria-hidden="true">♥</span>{member.health} · {stateLabel.toUpperCase()}
+                    {member.name.split(' ')[0]} · <span className="hail-crew-pill-heart" aria-hidden="true">♥</span>{Math.round(member.health)} · {stateLabel}
                   </span>
                 </button>
               );
@@ -778,7 +778,7 @@ export function HailGameViewport() {
                 aria-label={t('cockpit.openDecision')}
               >
                 <span className="hail-screen-code">DECISION</span>
-                <strong>{gameState.events.activeEventId ? t('cockpit.incident') : weather.level.toUpperCase()}</strong>
+                <strong>{gameState.events.activeEventId ? t('cockpit.incident') : t(`enum.donki.${weather.level}`)}</strong>
               </button>
               <button
                 type="button"
@@ -883,7 +883,7 @@ export function HailGameViewport() {
         />
       )}
       <Suspense fallback={null}>
-        {activeHint && (
+        {activeHint && !activeModal && !sysModalOpen && (
           <ContextualHintBanner
             hint={activeHint}
             sol={gameState.clock.sol}

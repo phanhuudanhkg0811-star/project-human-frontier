@@ -29,6 +29,21 @@ const SITE_ART: Record<ExpeditionId, string> = {
   'polar-psr': HAIL_ENV.lunarPsr,
 };
 
+const SITE_MAP_PINS: Readonly<Record<ExpeditionId, { readonly leftPct: number; readonly topPct: number; readonly shortCode: string }>> = {
+  'lunar-crater': { leftPct: 21, topPct: 48, shortCode: 'S1' },
+  'regolith-field': { leftPct: 56, topPct: 66, shortCode: 'S2' },
+  'polar-psr': { leftPct: 74, topPct: 38, shortCode: 'S3' },
+};
+
+function formatLunarCoords(latDeg: number, lonDegEast: number): string {
+  const latText = `${Math.abs(latDeg).toFixed(2)}°${latDeg < 0 ? 'S' : 'N'}`;
+  if (lonDegEast < 0) {
+    const lon360 = ((lonDegEast % 360) + 360) % 360;
+    return `${latText}, ${Math.abs(lonDegEast).toFixed(1)}°W (${lon360.toFixed(1)}°E)`;
+  }
+  return `${latText}, ${lonDegEast.toFixed(1)}°E`;
+}
+
 export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   const { t, localize } = useI18n();
   const { gameState, bundle, dispatch } = useGameStore();
@@ -72,6 +87,19 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
   const recoveryOperatorId: CrewId =
     canOperate(recoveryOperator) ? recoveryOperator : (crewIds.find(canOperate) ?? recoveryOperator);
   const noRecoveryOperator = !crewIds.some(canOperate);
+
+  const translateOrFallback = (key: string, fallback: string) => {
+    const label = t(key);
+    return label === key ? fallback : label;
+  };
+  const activeMissionName = activeMission
+    ? (bundle.campaign.expeditions.find((e) => e.id === activeMission.expeditionId)?.name ?? activeMission.expeditionId)
+    : '';
+  const rewardItems = [
+    expedition.rewards.science > 0 ? t('expedition.rewardScience', { amount: expedition.rewards.science }) : null,
+    expedition.rewards.partsKg > 0 ? t('expedition.rewardParts', { amount: expedition.rewards.partsKg }) : null,
+    expedition.rewards.waterL > 0 ? t('expedition.rewardWater', { amount: expedition.rewards.waterL }) : null,
+  ].filter((part): part is string => part !== null);
 
   const handleSchedule = async () => {
     const res = await dispatch({
@@ -130,7 +158,28 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
     >
       <div className="hail-expedition-panel">
         <div className="hail-lunar-map-banner">
-          <img src={HAIL_ENV.lunarMap} alt="Lunar Reconnaissance Map" className="hail-lunar-map-img" />
+          <img src={HAIL_ENV.lunarMap} alt={t('expedition.mapBannerAlt')} className="hail-lunar-map-img" />
+          <div className="hail-lunar-map-pins">
+            {bundle.campaign.expeditions.map((exp) => {
+              const pin = SITE_MAP_PINS[exp.id];
+              const done = completed.includes(exp.id);
+              const isSelected = selectedSite === exp.id;
+              return (
+                <button
+                  key={exp.id}
+                  type="button"
+                  onClick={() => setSelectedSite(exp.id)}
+                  aria-label={exp.name}
+                  title={exp.name}
+                  style={{ left: `${pin.leftPct}%`, top: `${pin.topPct}%` }}
+                  className={`hail-map-pin ${isSelected ? 'is-selected' : ''} ${done ? 'is-done' : ''}`}
+                >
+                  <span>{pin.shortCode}</span>
+                  {done && <span aria-hidden="true">✓</span>}
+                </button>
+              );
+            })}
+          </div>
           <div className="hail-lunar-map-overlay">
             <span className="hail-tag-pill">{t('expedition.samples', { count: samples.length })}</span>
             <span className="hail-tag-pill">
@@ -141,10 +190,10 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
 
         <div className="hail-rover-status-card">
           <div>
-            <strong>{t('expedition.status', { status: roverStatus.toUpperCase() })}</strong>
+            <strong>{t('expedition.status', { status: translateOrFallback(`expedition.roverStatus.${roverStatus}`, roverStatus) })}</strong>
             <p className="text-xs text-slate-300 mt-0.5">
               {activeMission
-                ? t('expedition.activeMission', { mission: activeMission.expeditionId, sols: selectRoverRemainingSols(gameState) })
+                ? t('expedition.activeMission', { mission: activeMissionName, sols: selectRoverRemainingSols(gameState) })
                 : t('expedition.ready')}
             </p>
           </div>
@@ -177,10 +226,21 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <div className="hail-site-meta">
             <div className="hail-site-badges">
               <span className="hail-tag-pill">{t('expedition.window', { start: expedition.windowStartSol, end: expedition.windowEndSol })}</span>
-              <span className="hail-tag-pill">{t('expedition.threat', { threat: expedition.threat })}</span>
+              <span className="hail-tag-pill">{t('expedition.threat', { threat: translateOrFallback(`expedition.threat.${expedition.threat}`, expedition.threat) })}</span>
             </div>
             <p className="text-xs text-slate-300">
-              {t('expedition.mitigation')} <strong>{expedition.mitigationOptions.map((option) => `${option.allOf.join(' + ')}${option.requirements?.minBatteryKWh ? ` + ${t('expedition.batteryAtLeast', { amount: option.requirements.minBatteryKWh })}` : ''}`).join(` ${t('expedition.or')} `)}</strong> →{' '}
+              {t('expedition.mitigation')}{' '}
+              <strong>
+                {expedition.mitigationOptions
+                  .map((option) => {
+                    const itemsText = option.allOf
+                      .map((eqId) => translateOrFallback(`equipment.${eqId}`, eqId))
+                      .join(' + ');
+                    return `${itemsText}${option.requirements?.minBatteryKWh ? ` + ${t('expedition.batteryAtLeast', { amount: option.requirements.minBatteryKWh })}` : ''}`;
+                  })
+                  .join(` ${t('expedition.or')} `)}
+              </strong>{' '}
+              →{' '}
               {threatBlocked ? (
                 <span className="text-emerald-300 font-semibold inline-flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> {t('expedition.blockedThreat')}
@@ -192,11 +252,18 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
               )}
             </p>
             <p className="text-xs text-cyan-200">
-              {t('expedition.reward', { sample: expedition.rewardSample, science: expedition.rewards.science, parts: expedition.rewards.partsKg, water: expedition.rewards.waterL })}
+              {t('expedition.reward', {
+                sample: translateOrFallback(`expedition.sample.${expedition.rewardSample}`, expedition.rewardSample),
+                items: rewardItems.join(' · '),
+              })}
             </p>
             {siteData && (
               <p className="text-[11px] text-slate-400">
-                {t('expedition.reference', { name: siteData.representativeLocation.name, lat: siteData.representativeLocation.latitudeDeg, lon: siteData.representativeLocation.longitudeDegEast, mapping: siteData.mappingProvenance })}
+                {t('expedition.reference', {
+                  name: siteData.representativeLocation.name,
+                  coords: formatLunarCoords(siteData.representativeLocation.latitudeDeg, siteData.representativeLocation.longitudeDegEast),
+                  mapping: translateOrFallback(`stem.evidence.${siteData.mappingProvenance}`, siteData.mappingProvenance),
+                })}
               </p>
             )}
           </div>
@@ -210,14 +277,16 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <div className="flex flex-wrap gap-2">
             {ownedReadyEquipment.map((eq) => {
               const selected = selectedEquipmentIds.includes(eq.id);
+              const eqLabel = translateOrFallback(`equipment.${eq.id}`, eq.id);
               return (
                 <button
                   key={eq.id}
                   type="button"
+                  data-equipment-id={eq.id}
                   onClick={() => toggleRoverEquipment(eq.id as EquipmentId)}
                   className={`hail-btn text-xs ${selected ? 'hail-btn--accent' : ''}`}
                 >
-                  {selected ? '✓ ' : ''}{eq.id} ({eq.durability}%)
+                  {selected ? '✓ ' : ''}{eqLabel} ({eq.durability}%)
                 </button>
               );
             })}
@@ -242,7 +311,7 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
         )}
         {noOperatorAvailable && (
           <p className="text-xs text-amber-300">
-            Không có người trực phóng khả dụng: cần Fit, không đói, đủ tinh thần và chưa được phân công ở Pha 2. / No eligible operator: crew must be Fit, fed, with enough morale and unassigned in Phase 2.
+            {t('expedition.noOperatorAvailable')}
           </p>
         )}
 
@@ -255,7 +324,11 @@ export function ExpeditionModal({ onClose }: ExpeditionModalProps) {
           <Rocket className="w-4 h-4" aria-hidden="true" />
           {inComms ? t('expedition.schedule', { site: expedition.name }) : t('expedition.phaseLock')}
         </button>
-        {!schedulePermission.allowed && !activeMission && <p className="text-xs text-amber-300">{localize(schedulePermission.message ?? '', bundle)} (Sol hiện tại / current: {gameState.clock.sol})</p>}
+        {!schedulePermission.allowed && !activeMission && (
+          <p className="text-xs text-amber-300">
+            {t('expedition.scheduleBlockedSol', { reason: localize(schedulePermission.message ?? '', bundle), sol: gameState.clock.sol })}
+          </p>
+        )}
 
         {activeMission?.status === 'scheduled' && (
           <button type="button" onClick={handleCancel} className="hail-btn">{t('expedition.cancel')}</button>
