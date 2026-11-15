@@ -185,7 +185,7 @@ test('Phase 1.3 eventEngine enforces AND/OR trigger rules, priority + sorted ID 
   assert.equal(core.canEventRepeat(atSol5, cooldownEv), true);
 });
 
-test('Phase 1.3 non-mandatory events can be deferred across phases and expire at End-Sol deadlineSol', () => {
+test('Phase 1.3 mandatory events preempt deferred optional events without dropping expiration effects', () => {
   const bundle = core.loadContentBundle();
   const base = core.createInitialGameState(bundle, { seed: 303030 });
 
@@ -228,29 +228,64 @@ test('Phase 1.3 non-mandatory events can be deferred across phases and expire at
   const rat = core.dispatchDomainCommand(comms.state, { type: 'phase/advance' }, bundle);
   assert.equal(rat.state.clock.phase, 'rationing');
 
-  // End Sol 2: since deadlineSol is 3 (inclusive), it remains active into Sol 3!
+  // End Sol 2: deadlineSol is 3, so the optional event remains active during Debrief.
   const endSol2 = core.dispatchDomainCommand(rat.state, { type: 'sol/end' }, bundle);
   assert.equal(endSol2.ok, true);
   assert.equal(endSol2.state.events.activeEventId, 'sol2-solar-particles');
 
+  // Starting Sol 3 must not let the open optional event hide the mandatory Airlock alert.
   const startSol3 = core.dispatchDomainCommand(endSol2.state, { type: 'debrief/dismiss' }, bundle);
   assert.equal(startSol3.ok, true);
   assert.equal(startSol3.state.clock.sol, 3);
-  assert.equal(startSol3.state.events.activeEventId, 'sol2-solar-particles');
-
-  // Advance through Sol 3 without resolving -> at End of Sol 3 (sol === deadlineSol === 3), it expires!
-  const s3Eng = core.dispatchDomainCommand(startSol3.state, { type: 'phase/advance' }, bundle);
-  const s3Comms = core.dispatchDomainCommand(s3Eng.state, { type: 'phase/advance' }, bundle);
-  const s3Rat = core.dispatchDomainCommand(s3Comms.state, { type: 'phase/advance' }, bundle);
-  const endSol3 = core.dispatchDomainCommand(s3Rat.state, { type: 'sol/end' }, bundle);
-  assert.equal(endSol3.ok, true);
-  assert.equal(endSol3.state.events.activeEventId, null);
-  const expiredEntry = endSol3.state.events.occurrenceHistory.find(
+  assert.equal(startSol3.state.events.activeEventId, 'sol3-airlock-seal-alert');
+  const expiredEntry = startSol3.state.events.occurrenceHistory.find(
     (occ) => occ.eventId === 'sol2-solar-particles'
   );
   assert.ok(expiredEntry);
   assert.equal(expiredEntry.outcome, 'expired');
   assert.equal(expiredEntry.settledSol, 3);
+  assert.equal(startSol3.state.crew.cmd.health, endSol2.state.crew.cmd.health - 5);
+  assert.equal(startSol3.state.crew.cmd.morale, endSol2.state.crew.cmd.morale - 5);
+});
+
+test('Crew injury hysteresis is identical for event health effects', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 404040 });
+  const injured = {
+    ...base,
+    crew: {
+      ...base.crew,
+      cmd: { ...base.crew.cmd, health: 20, condition: 'injured' },
+    },
+  };
+
+  const at50 = core.applyEventEffectsAtomic(
+    injured,
+    [{ kind: 'crew', target: 'cmd', healthDelta: 30 }],
+    bundle,
+    { mode: 'choice', sourceEventId: 'test-hysteresis', sourceChoiceId: 'heal-to-50' }
+  );
+  assert.equal(at50.ok, true);
+  assert.equal(at50.state.crew.cmd.health, 50);
+  assert.equal(at50.state.crew.cmd.condition, 'injured');
+
+  const at64 = core.applyEventEffectsAtomic(
+    at50.state,
+    [{ kind: 'crew', target: 'cmd', healthDelta: 14 }],
+    bundle,
+    { mode: 'choice', sourceEventId: 'test-hysteresis', sourceChoiceId: 'heal-to-64' }
+  );
+  assert.equal(at64.ok, true);
+  assert.equal(at64.state.crew.cmd.condition, 'injured');
+
+  const at65 = core.applyEventEffectsAtomic(
+    at64.state,
+    [{ kind: 'crew', target: 'cmd', healthDelta: 1 }],
+    bundle,
+    { mode: 'choice', sourceEventId: 'test-hysteresis', sourceChoiceId: 'heal-to-65' }
+  );
+  assert.equal(at65.ok, true);
+  assert.equal(at65.state.crew.cmd.condition, 'fit');
 });
 
 test('Golden Sol 7 fixture: Choice A (25.0L / 2.0kWh + Regolith completes Sol 8) vs Choice B (34.0L / 0.0kWh + Regolith fails + Save/Reload)', () => {

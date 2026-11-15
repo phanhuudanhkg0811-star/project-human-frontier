@@ -104,6 +104,40 @@ test('Static catalogs validate cleanly including 3x32-day NASA DONKI samples and
   assert.notEqual(ng1.campaign.runId, ng2.campaign.runId);
 });
 
+test('P0 science content and Rover sites stay aligned with the South Polar runtime catalogs', () => {
+  const bundle = core.loadContentBundle();
+  const thermal = bundle.catalog.environment.temperatureC;
+  const lunarBrief = bundle.briefs.find((brief) => brief.id === 'brief-lunar-cycle');
+  const deepNightEvent = bundle.events.find((event) => event.id === 'evt-emergency-load-shed');
+
+  assert.ok(lunarBrief.content.includes(thermal.nightMinC.toFixed(2)));
+  assert.ok(lunarBrief.content.includes(thermal.dayMaxC.toFixed(2)));
+  assert.ok(lunarBrief.source.includes(thermal.fitR2.toFixed(4)));
+  assert.ok(deepNightEvent.title.includes(thermal.nightMinC.toFixed(1)));
+  assert.ok(deepNightEvent.prompt.includes(thermal.nightMinC.toFixed(1)));
+
+  const moonRadiusKm = 1737.4;
+  const outpost = { latitudeDeg: -89.45, longitudeDegEast: -137.3 };
+  const toRad = (degrees) => (degrees * Math.PI) / 180;
+  const distanceFromOutpostKm = (location) => {
+    const lat1 = toRad(outpost.latitudeDeg);
+    const lat2 = toRad(location.latitudeDeg);
+    const deltaLon = toRad(location.longitudeDegEast - outpost.longitudeDegEast);
+    const centralAngle = Math.acos(
+      Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(deltaLon)
+    );
+    return moonRadiusKm * centralAngle;
+  };
+
+  for (const site of bundle.lunarSites) {
+    assert.ok(site.representativeLocation.latitudeDeg < -88.5, `${site.expeditionId} must remain at the South Pole`);
+    assert.ok(distanceFromOutpostKm(site.representativeLocation) <= 50, `${site.expeditionId} must be within Rover range`);
+    assert.equal(site.representativeLocation.provenance, 'assumption');
+    assert.equal(site.mappingProvenance, 'assumption');
+    assert.doesNotMatch(site.representativeLocation.name, /Apollo 11|Apollo 15/i);
+  }
+});
+
 test('Golden Sol 1 full lifecycle through MockGamePort preserves Option A/B invariants', async () => {
   const bundle = core.loadContentBundle();
   const port = new core.MockGamePort({ seed: 205001, spaceWeatherOverride: 'quiet' }, bundle);
@@ -1130,6 +1164,59 @@ test('Fabricator refuses to run below minimum integrity', () => {
   const broken = runAt(0.3);
   assert.equal(broken.summary.unmetLoads.includes('fabricator'), true);
   assert.equal(broken.nextState.fabricator.activeJob.solsRemaining, 2, 'no progress while fabricator is unreliable');
+});
+
+test('Recycling and re-crafting upgraded equipment resets it to level 1', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 1818, spaceWeatherOverride: 'quiet' });
+  const upgradedDrill = { ...base.equipment.core_drill, level: 2 };
+  const jobFor = (action) => ({
+    action,
+    itemId: 'core_drill',
+    startedSol: 3,
+    solsRemaining: 1,
+    partsSpent: 0,
+    waterSpent: 0,
+    batteryReserved: 0,
+  });
+  const run = (action, equipment) =>
+    core.resolveSol(
+      variant(base, {
+        clock: { sol: 3, phase: 'rationing', resolutionIndex: 2 },
+        dailyPlan: committedPlan(3),
+        equipment: { core_drill: equipment },
+        fabricator: { usedThisSol: false, activeJob: jobFor(action) },
+      }),
+      bundle,
+      'preview'
+    ).nextState.equipment.core_drill;
+
+  const recycled = run('recycle', upgradedDrill);
+  assert.equal(recycled.owned, false);
+  assert.equal(recycled.level, 1);
+
+  const crafted = run('craft', { ...recycled, level: 2 });
+  assert.equal(crafted.owned, true);
+  assert.equal(crafted.level, 1);
+  assert.equal(crafted.durability, 100);
+});
+
+test('Medkit healing respects the 65 Health recovery threshold', () => {
+  const bundle = core.loadContentBundle();
+  const base = core.createInitialGameState(bundle, { seed: 1919 });
+  const injured = {
+    ...base,
+    clock: { sol: 1, phase: 'engineering', resolutionIndex: 0 },
+    crew: { ...base.crew, cmd: { ...base.crew.cmd, health: 20, condition: 'injured' } },
+  };
+  const healed = core.dispatchDomainCommand(
+    injured,
+    { type: 'crew/use-medkit', targetCrewId: 'cmd' },
+    bundle
+  );
+  assert.equal(healed.ok, true);
+  assert.equal(healed.state.crew.cmd.health, 50);
+  assert.equal(healed.state.crew.cmd.condition, 'injured');
 });
 
 test('Preview and commit remain byte-identical under the new physics', () => {

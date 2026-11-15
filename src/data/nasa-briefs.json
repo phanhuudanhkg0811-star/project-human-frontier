@@ -4,9 +4,9 @@
     "tags": ["baseline", "lunar-night"],
     "title": "Chu kỳ Ngày & Đêm 29.5 ngày trên Mặt Trăng",
     "titleEn": "The 29.5-Day Lunar Day-Night Cycle",
-    "content": "Một ngày-đêm trên Mặt Trăng dài khoảng 708.7 giờ (~29.5 ngày Trái Đất). Trong 14 Sol Đêm Trăng (Sol 15-28), nhiệt độ bề mặt đo từ tàu LRO Diviner giảm xuống tới -171.7°C và tấm pin Solar không nhận được ánh sáng — toàn trạm phải dựa vào lò hạt nhân nhỏ Fission (+8 kWh/Sol) và pin tích trữ.",
-    "contentEn": "One full lunar day-night cycle lasts about 708.7 hours (~29.5 Earth days). During the 14-Sol Lunar Night (Sol 15-28), surface temperatures measured by LRO Diviner plunge to -171.7°C and solar arrays receive zero sunlight — the entire habitat must rely on its compact Fission reactor (+8 kWh/Sol) and stored battery power.",
-    "source": "NASA LRO Diviner Thermal Calibration (Observed, R² = 0.954)",
+    "content": "Chu kỳ pha Mặt Trời của Mặt Trăng dài khoảng 708.7 giờ (~29.5 ngày Trái Đất). Mô hình nhiệt dùng ô dữ liệu LRO Diviner GCP cực Nam gần Connecting Ridge: cực đại ban ngày -27.16°C, cực tiểu ban đêm -185.62°C; đường khớp theo giờ địa phương có R² = 0.9268. Chiến dịch ánh xạ profile này vào chu kỳ gameplay 28 Sol.",
+    "contentEn": "The Moon's solar phase cycle lasts about 708.7 hours (~29.5 Earth days). The thermal model uses a South Polar LRO Diviner GCP cell near Connecting Ridge: -27.16°C daytime maximum and -185.62°C nighttime minimum, with a local-time fit of R² = 0.9268. The campaign maps this profile onto a 28-Sol gameplay cycle.",
+    "source": "NASA LRO Diviner GCP polar cell (Observed; -89.25°, 222.75°E; R² = 0.9268)",
     "provenance": "observed"
   },
   {

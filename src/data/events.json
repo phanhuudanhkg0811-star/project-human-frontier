@@ -452,8 +452,8 @@
     "scienceBriefId": "brief-lunar-cycle",
     "when": [{ "sol": 14 }],
     "mandatory": true,
-    "prompt": "Bóng tối từ vành miệng hố Shackleton đang trùm lên căn cứ. Đây là Sol có nắng cuối cùng trước 14 Sol Đêm Trăng (-171.7°C, Solar = 0 kWh).",
-    "promptEn": "Shadows from the Shackleton rim are creeping across the outpost. This is the final sunlit Sol before 14 Sols of Lunar Night (-171.7°C, Solar = 0 kWh).",
+    "prompt": "Bóng tối từ vành miệng hố Shackleton đang trùm lên căn cứ. Đây là Sol có nắng cuối cùng trước 14 Sol Đêm Trăng (cực tiểu mô hình -185.6°C, Solar = 0 kWh).",
+    "promptEn": "Shadows from the Shackleton rim are creeping across the outpost. This is the final sunlit Sol before 14 Sols of Lunar Night (modeled minimum -185.6°C, Solar = 0 kWh).",
     "choices": [
       {
         "id": "top-up-battery-bank",
@@ -673,8 +673,8 @@
   },
   {
     "id": "evt-emergency-load-shed",
-    "title": "Sol 22: Đỉnh Lạnh Cực Đại (-171.7°C) — Cân bằng Tải Sưởi ấm",
-    "titleEn": "Sol 22: Deep-Night Thermal Minimum (-171.7°C) — Heater Load Spike",
+    "title": "Sol 22: Đỉnh Lạnh Cực Đại (-185.6°C) — Cân bằng Tải Sưởi ấm",
+    "titleEn": "Sol 22: Deep-Night Thermal Minimum (-185.6°C) — Heater Load Spike",
     "category": "crisis",
     "art": "tech-fault",
     "priority": 90,
@@ -684,8 +684,8 @@
     "scienceBriefId": "brief-fission-kilopower",
     "when": [{ "sol": 22, "isLunarNight": true }],
     "mandatory": true,
-    "prompt": "Đêm Trăng bước vào điểm lạnh nhất (-171.7°C). Hệ thống sưởi thành trạm cần thêm điện năng để tránh đóng băng đường ống sinh tồn.",
-    "promptEn": "Lunar Night reaches its coldest point (-171.7°C). Habitat hull heaters demand extra power to prevent life-support lines from freezing.",
+    "prompt": "Đêm Trăng bước vào điểm lạnh nhất của mô hình (-185.6°C). Hệ thống sưởi thành trạm cần thêm điện năng để tránh đóng băng đường ống sinh tồn.",
+    "promptEn": "Lunar Night reaches the model's coldest point (-185.6°C). Habitat hull heaters demand extra power to prevent life-support lines from freezing.",
     "choices": [
       {
         "id": "divert-wrs-power",
@@ -930,8 +930,8 @@
     "scienceBriefId": "brief-lunar-cycle",
     "when": [{ "sol": 29 }],
     "mandatory": true,
-    "prompt": "Sau 14 Sol bóng tối, những tia nắng đầu tiên chiếu rực đỉnh núi Malapert! Giàn pin Mặt Trời tăng nhiệt đột ngột từ -171°C lên -55°C.",
-    "promptEn": "After 14 Sols of darkness, first light strikes the Malapert massif! The solar arrays experience a rapid thermal ramp from -171°C to -55°C.",
+    "prompt": "Sau 14 Sol bóng tối, những tia nắng đầu tiên chiếu lên khu vực Connecting Ridge! Giàn pin bắt đầu rời mức cực tiểu mô hình -185.6°C và bước vào chu kỳ tăng nhiệt.",
+    "promptEn": "After 14 Sols of darkness, first light reaches the Connecting Ridge region. The arrays begin warming away from the modeled -185.6°C minimum.",
     "choices": [
       {
         "id": "brush-and-sync-solar",

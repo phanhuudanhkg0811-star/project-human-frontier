@@ -2,17 +2,17 @@
   {
     "expeditionId": "lunar-crater",
     "representativeLocation": {
-      "name": "Apollo 15 / Hadley reference area",
-      "latitudeDeg": 26.13239,
-      "longitudeDegEast": 3.6333,
+      "name": "Connecting Ridge local crater survey sector",
+      "latitudeDeg": -89.36,
+      "longitudeDegEast": -136.0,
       "bbox": [
-        3.3833,
-        25.88239,
-        3.8833,
-        26.38239
+        -137.0,
+        -89.46,
+        -135.0,
+        -89.26
       ],
-      "provenance": "observed",
-      "source": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      "provenance": "assumption",
+      "source": "https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=LRO-L-LOLA-4-GDR-V1.0&releaseid=0030"
     },
     "mappingProvenance": "assumption",
     "terrain": {
@@ -25,27 +25,27 @@
     },
     "thermal": {
       "productId": "LRO-L-DLRE-5-GDR-V1.0",
-      "layerId": "LRO_Diviner_ST_Avg_Clr_Global_32ppd",
-      "unit": "K",
+      "layerId": "global_cumul_avg_cyl_90s80s_002",
+      "unit": "K in source table; converted to °C for catalog",
       "provenance": "observed",
-      "source": "https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=LRO-L-DLRE-5-GDR-V1.0"
+      "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab"
     },
-    "gameplayNote": "The expedition-to-location mapping is illustrative; no unsampled point elevation or temperature is claimed."
+    "gameplayNote": "Fictional gameplay sector 2.8 km from the Connecting Ridge outpost, constrained by South Polar LOLA terrain. Apollo 15 geology remains a historical analog only, not a Rover destination."
   },
   {
     "expeditionId": "regolith-field",
     "representativeLocation": {
-      "name": "Apollo 11 / Mare Tranquillitatis reference area",
-      "latitudeDeg": 0.67416,
-      "longitudeDegEast": 23.47314,
+      "name": "Shackleton ejecta regolith field sector",
+      "latitudeDeg": -89.48,
+      "longitudeDegEast": -150.0,
       "bbox": [
-        23.22314,
-        0.42416,
-        23.72314,
-        0.92416
+        -151.0,
+        -89.58,
+        -149.0,
+        -89.38
       ],
-      "provenance": "observed",
-      "source": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      "provenance": "assumption",
+      "source": "https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=LRO-L-LOLA-4-GDR-V1.0&releaseid=0030"
     },
     "mappingProvenance": "assumption",
     "terrain": {
@@ -58,17 +58,17 @@
     },
     "thermal": {
       "productId": "LRO-L-DLRE-5-GDR-V1.0",
-      "layerId": "LRO_Diviner_ST_Avg_Clr_Global_32ppd",
-      "unit": "K",
+      "layerId": "global_cumul_avg_cyl_90s80s_002",
+      "unit": "K in source table; converted to °C for catalog",
       "provenance": "observed",
-      "source": "https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=LRO-L-DLRE-5-GDR-V1.0"
+      "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab"
     },
-    "gameplayNote": "Apollo 11 coordinates are observed; their use as the Regolith Field gameplay site is an assumption."
+    "gameplayNote": "Fictional gameplay sector 3.7 km from the Connecting Ridge outpost, constrained by South Polar LOLA terrain. Apollo 11 regolith operations remain a historical analog only, not a Rover destination."
   },
   {
     "expeditionId": "polar-psr",
     "representativeLocation": {
-      "name": "Shackleton crater south-polar reference area",
+      "name": "Shackleton rim PSR approach sector",
       "latitudeDeg": -89.66,
       "longitudeDegEast": 129.2,
       "bbox": [
@@ -77,10 +77,10 @@
         129.7,
         -89.4
       ],
-      "provenance": "observed",
+      "provenance": "assumption",
       "source": "https://moon.nasa.gov/resources/162/on-the-rim/"
     },
-    "mappingProvenance": "inferred",
+    "mappingProvenance": "assumption",
     "terrain": {
       "productId": "LRO-L-LOLA-4-GDR-V1.0",
       "datasetReleaseId": "0030",
@@ -109,6 +109,6 @@
       },
       "source": "https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gcp/global_cumul_avg_cyl_90s80s_002.tab"
     },
-    "gameplayNote": "South-pole reference (Shackleton rim / Connecting Ridge region). Committed catalog temperatureC is the Diviner GCP 90s80s cell at -89.25 S, 222.75 E: day max \u221227.16 \u00b0C, night min \u2212185.62 \u00b0C. Diviner cell choice is the nearest 0.5\u00b0 sample to the named ridge; no unsampled point temperature is claimed."
+    "gameplayNote": "Fictional PSR approach sector 20.1 km from the Connecting Ridge outpost, constrained by Shackleton-region LOLA terrain. The shared Diviner cell is the nearest 0.5-degree sample; no unsampled point temperature is claimed."
   }
 ]

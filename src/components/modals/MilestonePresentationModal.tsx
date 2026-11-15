@@ -149,7 +149,10 @@ export function MilestonePresentationModal({
           </dl>
 
           <aside className="phf-milestone-science">
-            <p>{t(milestone.scienceNoteKey)}</p>
+            <span className="hail-evidence-badge">
+              {t(`stem.evidence.${milestone.scienceProvenance}`)}
+            </span>
+            <p>{t(milestone.scienceNoteKey, milestone.scienceNoteParams)}</p>
             <small>{t('milestone.sourceLabel', { source: milestone.sourceRef })}</small>
           </aside>
 

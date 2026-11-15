@@ -1,4 +1,5 @@
 import { buildDebriefContext, resolveExpiredEventAtEndSol } from './eventEngine.ts';
+import { deriveCrewCondition } from './crewCondition.ts';
 import { deriveRoll } from './prng.ts';
 import { campaignReasonText, evaluateCampaign } from './campaignEvaluator.ts';
 import {
@@ -12,7 +13,6 @@ import {
 import type {
   CampaignConfig,
   ContentBundle,
-  CrewCondition,
   CrewId,
   CrewMemberState,
   DonkiSolEntry,
@@ -108,13 +108,6 @@ function deriveHungerState(satiety: number): HungerState {
   if (satiety <= 0) return 'starving';
   if (satiety <= 25) return 'hungry';
   return 'ok';
-}
-
-function deriveCrewCondition(health: number, prev: CrewCondition, fitThreshold: number, injuredThreshold: number): CrewCondition {
-  if (health <= 0) return 'evacuated';
-  if (health < injuredThreshold) return 'injured';
-  if (prev === 'injured' && health < fitThreshold) return 'injured';
-  return 'fit';
 }
 
 function applyCargoArrival(state: GameState, bundle: ContentBundle): { state: GameState; note: string | null } {
@@ -287,7 +280,9 @@ function finalizeFabricatorJob(
 
   const eqId = job.itemId;
   const current = equipment[eqId];
-  if (job.action === 'craft' || job.action === 'repair') {
+  if (job.action === 'craft') {
+    equipment[eqId] = { ...current, owned: true, level: 1, durability: 100, state: 'good' };
+  } else if (job.action === 'repair') {
     equipment[eqId] = { ...current, owned: true, durability: 100, state: 'good' };
   } else if (job.action === 'upgrade') {
     equipment[eqId] = { ...current, owned: true, level: 2 };
@@ -298,7 +293,14 @@ function finalizeFabricatorJob(
       ...resources,
       partsKg: clamp(round2(resources.partsKg + refund), 0, bundle.balance.storages.partsKg.max),
     };
-    equipment[eqId] = { ...current, owned: false, durability: 0, state: 'damaged', reservedForRover: false };
+    equipment[eqId] = {
+      ...current,
+      owned: false,
+      level: 1,
+      durability: 0,
+      state: 'damaged',
+      reservedForRover: false,
+    };
     note = `Đã tái chế ${eqId}, thu hồi +${refund} kg Phụ tùng.`;
   }
 
