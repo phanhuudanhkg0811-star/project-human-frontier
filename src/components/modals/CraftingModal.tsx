@@ -29,6 +29,8 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
   const inEngineering = gameState.clock.phase === 'engineering';
   const fabSys = gameState.systems.fabricator;
   const fabOffline = fabSys.status === 'offline';
+  const fabDegraded = fabSys.integrity < 0.35;
+  const fabBlocked = fabOffline || fabDegraded;
   const activeJob = gameState.fabricator.activeJob;
   const isBusy = gameState.fabricator.usedThisSol || activeJob !== null;
 
@@ -66,6 +68,9 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
           {fabOffline && (
             <span className="text-rose-300 font-mono">{t('crafting.offline')}</span>
           )}
+          {fabDegraded && (
+            <span className="text-amber-300 font-mono">{t('crafting.degraded')}</span>
+          )}
         </div>
 
         {activeJob && (
@@ -99,32 +104,46 @@ export function CraftingModal({ onClose }: CraftingModalProps) {
             const isEq = recipe.category === 'equipment';
             const eq = isEq ? gameState.equipment[recipe.id as EquipmentId] : null;
             const lockedByLevel = fabSys.level < recipe.requiredFabricatorLevel;
+            const craftDuration = recipe.craftCost.durationSols ?? 1;
+            const craftBatteryPerSol = craftDuration > 1 ? Number((recipe.craftCost.batteryKWh / craftDuration).toFixed(2)) : recipe.craftCost.batteryKWh;
             const canCraft =
               inEngineering &&
-              !fabOffline &&
+              !fabBlocked &&
               !isBusy &&
               !lockedByLevel &&
               (!isEq || !eq?.owned) &&
               gameState.resources.partsKg >= recipe.craftCost.partsKg &&
-              gameState.resources.waterL >= recipe.craftCost.waterL;
+              gameState.resources.waterL >= recipe.craftCost.waterL &&
+              gameState.resources.batteryKWh >= craftBatteryPerSol;
 
+            const upgradeDuration = recipe.upgradeCost?.durationSols ?? 1;
+            const upgradeBatteryPerSol = recipe.upgradeCost
+              ? (upgradeDuration > 1 ? Number((recipe.upgradeCost.batteryKWh / upgradeDuration).toFixed(2)) : recipe.upgradeCost.batteryKWh)
+              : 0;
             const canUpgrade =
               inEngineering &&
-              !fabOffline &&
+              !fabBlocked &&
               !isBusy &&
               recipe.upgradeCost !== null &&
               (recipe.id === 'medkit' ? gameState.resources.medkitLevel < 2 : Boolean(eq?.owned && eq.level < 2)) &&
-              gameState.resources.partsKg >= (recipe.upgradeCost?.partsKg ?? 999);
+              gameState.resources.partsKg >= (recipe.upgradeCost?.partsKg ?? 999) &&
+              gameState.resources.waterL >= (recipe.upgradeCost?.waterL ?? 999) &&
+              gameState.resources.batteryKWh >= upgradeBatteryPerSol;
 
+            const repairCost = bundle.recipes.rules.repairCost;
+            const repairDuration = repairCost.durationSols ?? 1;
+            const repairBatteryPerSol = repairDuration > 1 ? Number((repairCost.batteryKWh / repairDuration).toFixed(2)) : repairCost.batteryKWh;
             const canRepair =
               inEngineering &&
-              !fabOffline &&
+              !fabBlocked &&
               !isBusy &&
               isEq &&
               Boolean(eq?.owned && eq.durability < 100) &&
-              gameState.resources.partsKg >= bundle.recipes.rules.repairCost.partsKg;
+              gameState.resources.partsKg >= repairCost.partsKg &&
+              gameState.resources.waterL >= repairCost.waterL &&
+              gameState.resources.batteryKWh >= repairBatteryPerSol;
 
-            const canRecycle = inEngineering && !fabOffline && !isBusy && isEq && Boolean(eq?.owned && !eq.reservedForRover);
+            const canRecycle = inEngineering && !fabBlocked && !isBusy && isEq && Boolean(eq?.owned && !eq.reservedForRover);
 
             return (
               <div key={recipe.id} className="p-3 rounded-lg bg-slate-900/75 border border-slate-800 flex flex-col gap-2.5">

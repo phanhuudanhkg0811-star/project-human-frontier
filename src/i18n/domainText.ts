@@ -151,6 +151,12 @@ const EXACT_VI_TO_EN: Record<string, string> = {
     'Radio transmission sent to Houston (1.3 s one-way, reply in ~3.8 s).',
   'CAPCOM Houston xác nhận: Đã ghi nhận dữ liệu telemetry trạm Artemis. Khuyến nghị theo dõi pin trước Đêm Trăng Sol 15.':
     'CAPCOM Houston confirms: Artemis station telemetry logged. Monitor battery reserves ahead of Sol 15 Lunar Night.',
+  'CAPCOM Houston xác nhận: Đã ghi nhận dữ liệu telemetry trạm Artemis. Khuyến nghị theo dõi pin và tích lũy mẫu vật trước Đêm Trăng Sol 15.':
+    'CAPCOM Houston confirms: Artemis base telemetry logged. Recommend monitoring battery reserves and stockpiling samples ahead of Sol 15 Lunar Night.',
+  'CAPCOM Houston xác nhận: Trạm đang trong Đêm Trăng cực lạnh (-185°C). Hãy duy trì dòng điện nền lò Fission và bảo vệ đường ống sinh tồn ECLSS.':
+    'CAPCOM Houston confirms: Base is weathering deep Lunar Night (-185°C). Maintain Fission baseload power and protect ECLSS life-support lines.',
+  'CAPCOM Houston xác nhận: Bình minh Sol 29 đã tới Nam Cực Mặt Trăng. Pin mặt trời đã phát điện trở lại; dồn sức hoàn thành các mục tiêu khảo sát cuối cùng!':
+    'CAPCOM Houston confirms: Sol 29 sunrise has reached the Lunar South Pole. Solar panels are generating power again; push to finish final survey objectives!',
   'Chỉ đặt tàu tiếp tế trong pha Liên lạc.':
     'Cargo resupply can only be ordered during Comms.',
   'Đang có tàu tiếp tế trên đường bay.':

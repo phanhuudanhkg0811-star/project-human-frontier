@@ -67,7 +67,7 @@
         "id": "doc-dosimetry-protocol",
         "label": "Bác sĩ Marcus phát khẩu phần chống oxy hóa (+5 Health toàn đội)",
         "labelEn": "Dr. Marcus administers radioprotective protocol (+5 Crew Health)",
-        "requiresCrew": { "crewId": "doc", "requireFit": true },
+        "requiresCrew": { "crewId": "doc", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "crew", "target": "all", "healthDelta": 5 },
           { "kind": "science", "delta": 5 }
@@ -135,7 +135,7 @@
           { "kind": "resource", "resource": "oxygenKg", "delta": -5 },
           { "kind": "system-integrity", "systemId": "airlock", "delta": -0.2 },
           { "kind": "set-flag", "key": "airlock_dusty", "value": true },
-          { "kind": "schedule-follow-up", "eventId": "evt-cryo-seal-crack", "delaySols": 13 }
+          { "kind": "schedule-follow-up", "eventId": "evt-cryo-seal-crack", "delaySols": 15 }
         ],
         "log": "Airlock rò rỉ nhẹ trước khi được siết lại cuối ca.",
         "logEn": "Airlock leaked O2 before the hatch was tightened at shift end."
@@ -304,9 +304,7 @@
       {
         "solMin": 8,
         "solMax": 10,
-        "flagSet": "sol7_saved_rover",
-        "roverExpeditionId": "regolith-field",
-        "roverStatus": "completed"
+        "flagSet": "sol7_saved_rover"
       },
       {
         "solMin": 8,
@@ -589,7 +587,7 @@
         "id": "eng-stabilize-coolant",
         "label": "Kỹ sư Alex cân chỉnh van điều áp (-2 kg Phụ tùng, +4 kWh Pin, +5 Science)",
         "labelEn": "Engineer Alex balances pressure valves (-2 kg Parts, +4 kWh Battery, +5 Science)",
-        "requiresCrew": { "crewId": "eng", "requireFit": true },
+        "requiresCrew": { "crewId": "eng", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
           { "kind": "resource", "resource": "batteryKWh", "delta": 4 },
@@ -740,24 +738,24 @@
     "choices": [
       {
         "id": "divert-wrs-power",
-        "label": "Tắt WRS hôm nay, dồn điện dư cho bộ sưởi (+2 kWh Pin)",
-        "labelEn": "Disable WRS today and divert surplus power (+2 kWh Battery)",
+        "label": "Tắt WRS hôm nay, dồn điện cho bộ sưởi",
+        "labelEn": "Disable WRS today and divert power to hull heaters",
         "effects": [
-          { "kind": "plan-override", "wrsEnabled": false },
-          { "kind": "resource", "resource": "batteryKWh", "delta": 2 }
+          { "kind": "plan-override", "wrsEnabled": false }
         ],
-        "log": "Đã tạm ngắt WRS trong Sol 22 để giữ ấm trạm và tiết kiệm +2 kWh Pin.",
-        "logEn": "Paused WRS for Sol 22 to power hull heaters and save +2 kWh."
+        "log": "Đã tạm ngắt WRS trong Sol 22 để dồn điện giữ ấm trạm.",
+        "logEn": "Paused WRS for Sol 22 to divert power to hull heaters."
       },
       {
         "id": "burn-battery-reserve",
-        "label": "Xả pin dự phòng duy trì cả bộ sưởi lẫn kế hoạch WRS (-4 kWh Pin)",
-        "labelEn": "Draw battery reserves to run heaters and current WRS plan (-4 kWh Battery)",
+        "label": "Xả pin dự phòng duy trì cả bộ sưởi lẫn WRS (-4 kWh Pin)",
+        "labelEn": "Draw battery reserves to run heaters and keep WRS running (-4 kWh Battery)",
         "effects": [
+          { "kind": "plan-override", "wrsEnabled": true },
           { "kind": "resource", "resource": "batteryKWh", "delta": -4 }
         ],
-        "log": "Đã xả 4 kWh Pin dự phòng vượt qua đỉnh lạnh Sol 22.",
-        "logEn": "Drew 4 kWh from battery reserves to weather the Sol 22 thermal minimum."
+        "log": "Đã xả 4 kWh Pin dự phòng để duy trì sưởi ấm và WRS qua đỉnh lạnh Sol 22.",
+        "logEn": "Drew 4 kWh from battery reserves to keep heaters and WRS running through Sol 22 thermal minimum."
       }
     ]
   },
@@ -885,7 +883,7 @@
         "id": "medical-counseling",
         "label": "Bác sĩ Marcus tư vấn & điều chỉnh lịch nghỉ (+8 Morale, +5 Health toàn đội)",
         "labelEn": "Dr. Marcus mediates & adjusts rest cycles (+8 Morale, +5 Health)",
-        "requiresCrew": { "crewId": "doc", "requireFit": true },
+        "requiresCrew": { "crewId": "doc", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "crew", "target": "all", "moraleDelta": 8, "healthDelta": 5 }
         ],

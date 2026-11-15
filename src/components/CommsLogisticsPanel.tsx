@@ -47,7 +47,7 @@ export function CommsLogisticsPanel() {
     if (!messageInput.trim()) return;
     const res = await dispatch({
       type: 'comms/send-radio',
-      id: `tx-sol${gameState.clock.sol}-${Date.now()}`,
+      id: `tx-sol${gameState.clock.sol}-${gameState.logistics.radioMessages.length + 1}`,
       message: messageInput.trim(),
       nowMs: Date.now(),
     });
