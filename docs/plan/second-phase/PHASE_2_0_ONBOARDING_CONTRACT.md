@@ -84,7 +84,7 @@
 | Scene | ID | Thời lượng | Visual / Asset tái dùng | Ý chính duy nhất | Copy VI (7–12 tuổi) | Copy EN (7–12 tuổi) |
 | --- | --- | ---: | --- | --- | --- | --- |
 | 1 | `intro-outpost-2050` | 12s | `HAIL_ENV.spaceDeep` + `HAIL_ENV.lunarDay` | Bối cảnh năm 2050 tại Nam Cực Mặt Trăng | **Năm 2050: Trạm Artemis.** Chào mừng tới căn cứ Nam Cực Mặt Trăng. Nắng chỉ chạm nhẹ vành miệng hố, xung quanh là bóng tối lạnh giá. | **Year 2050: Artemis Base.** Welcome to our outpost at the Lunar South Pole. Sunlight barely grazes the crater rims while freezing shadows wait nearby. |
-| 2 | `intro-crew-habitat` | 12s | `HAIL_ENV.cockpitShell` + 4 crew sprites | 4 phi hành gia sống trong hệ khép kín | **Bốn người, một mái nhà.** Ryan, Dmitri, Mizuki và Trọng sống chung trong khoang kín. Mỗi hơi thở và giọt nước đều cần được giữ gìn. | **Four Astronauts, One Home.** Ryan, Dmitri, Mizuki, and Trọng share one sealed habitat. Every breath of air and drop of water must be protected. |
+| 2 | `intro-crew-habitat` | 12s | `HAIL_ENV.cockpitShell` + 4 crew sprites | 4 phi hành gia sống trong hệ khép kín | **Bốn người, một mái nhà.** Ryan, Mizuki, Trọng và Dmitri sống chung trong khoang kín. Mỗi hơi thở và giọt nước đều cần được giữ gìn. | **Four Astronauts, One Home.** Ryan, Mizuki, Trọng, and Dmitri share one sealed habitat. Every breath of air and drop of water must be protected. |
 | 3 | `intro-finite-resources` | 12s | `HAIL_EQUIPMENT.fabricatorIdle` + `HAIL_INVENTORY.*` | O₂, nước, MRE và điện đều hữu hạn | **Tài nguyên có giới hạn.** Oxy, nước sạch, đồ ăn MRE và pin đều có thể cạn. Máy lọc WRS và xưởng in 3D giúp trạm tự chủ lâu hơn. | **Finite Daily Supplies.** Oxygen, clean water, MRE packs, and battery power can all run out. Your WRS recycler and 3D Fabricator keep the base running. |
 | 4 | `intro-rover-science` | 12s | `HAIL_ROVER.active` + `HAIL_ENV.lunarCrater` / `lunarPsr` | Rover khảo sát 3 vùng để kiếm khoa học & tài nguyên | **Rover thám hiểm Nam Cực.** Cử Rover vượt miệng hố, đồng bằng bụi và vùng tối PSR để tìm băng nước cổ đại và gửi dữ liệu về Trái Đất. | **Rover Polar Expeditions.** Send your Rover across craters, dusty regolith fields, and shadowed PSRs to hunt ancient water ice and collect science data. |
 | 5 | `intro-lunar-night` | 14s | `HAIL_ENV.lunarNight` + `HAIL_EQUIPMENT.consoleDesk` | Đêm Mặt Trăng bắt đầu Sol 15 (Solar = 0) | **Đêm Mặt Trăng từ Sol 15.** Mặt Trời lặn suốt 14 ngày! Pin mặt trời tạo 0 kWh. Cả trạm phải sống nhờ lò Fission và pin tích trữ. | **Lunar Night at Sol 15.** The Sun sets for 14 full Sols! Solar panels make 0 kWh. Your crew relies on the Fission reactor and stored batteries. |
@@ -271,8 +271,8 @@ Khối JSON dưới đây được kiểm tra tự động bởi `tests/phase-2-
         "id": "intro-crew-habitat",
         "durationSec": 12,
         "idea": "Four astronauts in closed-loop habitat",
-        "vi": "Bốn người, một mái nhà. Ryan, Dmitri, Mizuki và Trọng sống chung trong khoang kín. Mỗi hơi thở và giọt nước đều cần được giữ gìn.",
-        "en": "Four Astronauts, One Home. Ryan, Dmitri, Mizuki, and Trọng share one sealed habitat. Every breath of air and drop of water must be protected."
+        "vi": "Bốn người, một mái nhà. Ryan, Mizuki, Trọng và Dmitri sống chung trong khoang kín. Mỗi hơi thở và giọt nước đều cần được giữ gìn.",
+        "en": "Four Astronauts, One Home. Ryan, Mizuki, Trọng, and Dmitri share one sealed habitat. Every breath of air and drop of water must be protected."
       },
       {
         "id": "intro-finite-resources",

@@ -49,7 +49,7 @@ export function getSolWeather(
 /**
  * Compute probability in [repairMinSuccessProb, 0.99] that a repair task succeeds cleanly.
  * Interplanetary shocks (IPS), fast CMEs, and high flare stress degrade success probability;
- * assigning Engineer Dmitri grants an expertise bonus.
+ * assigning Engineer Mizuki grants an expertise bonus.
  */
 export function computeRepairSuccessProb(
   weather: DonkiSolEntry,
@@ -69,7 +69,7 @@ export function computeRepairSuccessProb(
 /**
  * Compute probability of a Rover telemetry/hardware incident on the current Sol.
  * Unblocked rover hazards keep baseline risk, while fast CME / IPS storms amplify incident odds.
- * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Trọng cuts risk further.
+ * Proper BlockThreat equipment lowers risk by `roverBlockedMultiplier`; Dmitri cuts risk further.
  */
 export function computeRoverRiskProb(
   weather: DonkiSolEntry,

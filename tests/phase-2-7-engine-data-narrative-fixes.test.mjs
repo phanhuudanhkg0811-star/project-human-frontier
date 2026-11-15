@@ -117,7 +117,7 @@ test('Rover: missed launch clears schedule and unhangs launchOperator', () => {
   assert.equal(resolved.equipment.core_drill.reservedForRover, false);
 });
 
-test('Rover: fallback recovery prioritizes Trọng (geo) for 25% wear over Ryan (cmd) 50% wear', () => {
+test('Rover: fallback recovery prioritizes Dmitri (geo) for 25% wear over Ryan (cmd) 50% wear', () => {
 
   const exploringState = {
     ...base,
@@ -146,7 +146,7 @@ test('Rover: fallback recovery prioritizes Trọng (geo) for 25% wear over Ryan 
   };
   const resolved = mod.resolveSol(exploringState, bundle, 'commit').nextState;
   assert.equal(resolved.rover.activeMission.status, 'completed');
-  assert.equal(resolved.rover.activeMission.recoveryOperatorCrewId, 'geo'); // Trọng selected, not Ryan!
+  assert.equal(resolved.rover.activeMission.recoveryOperatorCrewId, 'geo'); // Dmitri selected, not Ryan!
   assert.equal(resolved.equipment.core_drill.durability, 75); // 25% wear, not 50%!
 });
 
@@ -178,7 +178,7 @@ test('Rover: set-recovery-operator and unassign release old operator tasks clean
     },
   };
 
-  // 1. Assign Trọng ('geo') as recovery operator
+  // 1. Assign Dmitri ('geo') as recovery operator
   const step1 = mod.dispatchDomainCommand(readyForRecoveryState, {
     type: 'rover/set-recovery-operator',
     crewId: 'geo',
@@ -186,7 +186,7 @@ test('Rover: set-recovery-operator and unassign release old operator tasks clean
   assert.equal(step1.ok, true);
   assert.equal(step1.state.crew.geo.assignedTask?.type, 'rover-operate');
 
-  // 2. Change to Ryan ('cmd'): Trọng's task must be released to null!
+  // 2. Change to Ryan ('cmd'): Dmitri's task must be released to null!
   const step2 = mod.dispatchDomainCommand(step1.state, {
     type: 'rover/set-recovery-operator',
     crewId: 'cmd',

@@ -56,7 +56,7 @@
     },
     "eng": {
       "id": "eng",
-      "name": "Dmitri Romanov",
+      "name": "Mizuki Murakami",
       "roleTag": "Engineer",
       "health": 80,
       "morale": 80,
@@ -68,7 +68,7 @@
     },
     "doc": {
       "id": "doc",
-      "name": "Mizuki Murakami",
+      "name": "Lê Minh Trọng",
       "roleTag": "Medic",
       "health": 80,
       "morale": 80,
@@ -80,7 +80,7 @@
     },
     "geo": {
       "id": "geo",
-      "name": "Lê Minh Trọng",
+      "name": "Dmitri Romanov",
       "roleTag": "Geologist",
       "health": 80,
       "morale": 80,

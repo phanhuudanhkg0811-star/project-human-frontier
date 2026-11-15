@@ -49,8 +49,8 @@
     "scienceBriefId": "brief-donki-sep-flare",
     "when": [{ "solMin": 2, "solMax": 4 }],
     "mandatory": false,
-    "prompt": "Vệ tinh cảnh báo sớm ghi nhận chùm hạt proton năng lượng nhẹ quét qua vùng Nam Cực. Bạn có thể tăng tải màng chắn hoặc giao Bác sĩ Mizuki theo dõi liều kế.",
-    "promptEn": "Early-warning satellites detect a moderate solar energetic particle stream crossing the South Pole. Boost shielding or assign Dr. Mizuki to monitor dosimeters.",
+    "prompt": "Vệ tinh cảnh báo sớm ghi nhận chùm hạt proton năng lượng nhẹ quét qua vùng Nam Cực. Bạn có thể tăng tải màng chắn hoặc giao Bác sĩ Trọng theo dõi liều kế.",
+    "promptEn": "Early-warning satellites detect a moderate solar energetic particle stream crossing the South Pole. Boost shielding or assign Dr. Trọng to monitor dosimeters.",
     "choices": [
       {
         "id": "boost-shielding-power",
@@ -65,15 +65,15 @@
       },
       {
         "id": "doc-dosimetry-protocol",
-        "label": "Bác sĩ Mizuki phát khẩu phần chống oxy hóa (+5 Health toàn đội)",
-        "labelEn": "Dr. Mizuki administers radioprotective protocol (+5 Crew Health)",
+        "label": "Bác sĩ Trọng phát khẩu phần chống oxy hóa (+5 Health toàn đội)",
+        "labelEn": "Dr. Trọng administers radioprotective protocol (+5 Crew Health)",
         "requiresCrew": { "crewId": "doc", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "crew", "target": "all", "healthDelta": 5 },
           { "kind": "science", "delta": 5 }
         ],
-        "log": "Bác sĩ Mizuki đã kiểm tra liều kế và bổ sung vi chất bảo vệ tế bào.",
-        "logEn": "Dr. Mizuki audited dosimeters and administered radioprotective supplements."
+        "log": "Bác sĩ Trọng đã kiểm tra liều kế và bổ sung vi chất bảo vệ tế bào.",
+        "logEn": "Dr. Trọng audited dosimeters and administered radioprotective supplements."
       },
       {
         "id": "calibrated-sep-forecast",
@@ -324,8 +324,8 @@
       }
     ],
     "mandatory": false,
-    "prompt": "Sau ca trực căng thẳng ở Sol 7, Trọng và Dmitri tổng hợp dữ liệu hậu cần từ bãi đá Regolith và hệ thống lọc nước WRS để chuẩn bị cho nửa chặng đường tiếp theo.",
-    "promptEn": "Following the Sol 7 power dilemma, Trọng and Dmitri review telemetry from the Regolith traverse and WRS reserves to prepare for the upcoming polar operations.",
+    "prompt": "Sau ca trực căng thẳng ở Sol 7, Dmitri và Mizuki tổng hợp dữ liệu hậu cần từ bãi đá Regolith và hệ thống lọc nước WRS để chuẩn bị cho nửa chặng đường tiếp theo.",
+    "promptEn": "Following the Sol 7 power dilemma, Dmitri and Mizuki review telemetry from the Regolith traverse and WRS reserves to prepare for the upcoming polar operations.",
     "choices": [
       {
         "id": "salvage-regolith-telemetry",
@@ -598,16 +598,16 @@
     "choices": [
       {
         "id": "eng-stabilize-coolant",
-        "label": "Kỹ sư Dmitri cân chỉnh van điều áp (-2 kg Phụ tùng, +4 kWh Pin, +5 Science)",
-        "labelEn": "Engineer Dmitri balances pressure valves (-2 kg Parts, +4 kWh Battery, +5 Science)",
+        "label": "Kỹ sư Mizuki cân chỉnh van điều áp (-2 kg Phụ tùng, +4 kWh Pin, +5 Science)",
+        "labelEn": "Engineer Mizuki balances pressure valves (-2 kg Parts, +4 kWh Battery, +5 Science)",
         "requiresCrew": { "crewId": "eng", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "resource", "resource": "partsKg", "delta": -2 },
           { "kind": "resource", "resource": "batteryKWh", "delta": 4 },
           { "kind": "science", "delta": 5 }
         ],
-        "log": "Kỹ sư Dmitri đã ổn định vòng làm mát NaK và thu hồi +4 kWh nhiệt điện.",
-        "logEn": "Engineer Dmitri stabilized the NaK coolant loop and recovered +4 kWh."
+        "log": "Kỹ sư Mizuki đã ổn định vòng làm mát NaK và thu hồi +4 kWh nhiệt điện.",
+        "logEn": "Engineer Mizuki stabilized the NaK coolant loop and recovered +4 kWh."
       },
       {
         "id": "throttle-fission-loop",
@@ -930,14 +930,14 @@
     "choices": [
       {
         "id": "medical-counseling",
-        "label": "Bác sĩ Mizuki tư vấn & điều chỉnh lịch nghỉ (+8 Morale, +5 Health toàn đội)",
-        "labelEn": "Dr. Mizuki mediates & adjusts rest cycles (+8 Morale, +5 Health)",
+        "label": "Bác sĩ Trọng tư vấn & điều chỉnh lịch nghỉ (+8 Morale, +5 Health toàn đội)",
+        "labelEn": "Dr. Trọng mediates & adjusts rest cycles (+8 Morale, +5 Health)",
         "requiresCrew": { "crewId": "doc", "requireFit": true, "requireFree": true },
         "effects": [
           { "kind": "crew", "target": "all", "moraleDelta": 8, "healthDelta": 5 }
         ],
-        "log": "Bác sĩ Mizuki đã hóa giải căng thẳng và sắp xếp lại giấc ngủ cho toàn đội.",
-        "logEn": "Dr. Mizuki mediated the dispute and optimized crew sleep shifts."
+        "log": "Bác sĩ Trọng đã hóa giải căng thẳng và sắp xếp lại giấc ngủ cho toàn đội.",
+        "logEn": "Dr. Trọng mediated the dispute and optimized crew sleep shifts."
       },
       {
         "id": "extra-water-ration",
