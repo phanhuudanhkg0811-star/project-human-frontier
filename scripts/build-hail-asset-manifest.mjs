@@ -77,12 +77,55 @@ function readCanonicalAssetBytes(filePath, extension) {
   return extension === '.svg' ? Buffer.from(raw.toString('utf8').replace(/\r\n/g, '\n'), 'utf8') : raw;
 }
 
+const inferOrigin = (relativePath, extension) => {
+  const normalized = relativePath.normalize('NFC').toLowerCase();
+  const isHumanArtist =
+    normalized.startsWith('nhân vật cho project hail/') ||
+    normalized.startsWith('characters/ph_char_nv') ||
+    /^4 khung cho cảnh mở đ[ầa][uụ]\//.test(normalized);
+  if (isHumanArtist) {
+    return {
+      origin: 'artist-human',
+      siGenerated: false,
+      watermarkApplied: false,
+      source: 'Project Human Frontier human artist original illustration (non-SI artwork)',
+      license: 'Project-owned human artwork; approved for Project Human Frontier use',
+    };
+  }
+  if (extension === '.svg') {
+    return {
+      origin: 'procedural-vector',
+      siGenerated: false,
+      watermarkApplied: false,
+      source: 'Project Human Frontier deterministic vector SVG graphics (SI-assisted codebase)',
+      license: 'Project-owned vector asset; approved for Project Human Frontier use',
+    };
+  }
+  if (extension === '.ogg') {
+    return {
+      origin: 'si-generated',
+      siGenerated: true,
+      watermarkApplied: false,
+      source: 'Project Human Frontier AeroMatte 2050 SFX (SI-generated audio; disclosed in metadata & Credits)',
+      license: 'Project-owned SI-generated audio; approved for Project Human Frontier use',
+    };
+  }
+  return {
+    origin: 'si-generated',
+    siGenerated: true,
+    watermarkApplied: true,
+    source: 'Project Human Frontier AeroMatte 2050 artwork (SI-generated image; visible SI watermark embedded)',
+    license: 'Project-owned SI-generated asset; approved for Project Human Frontier use',
+  };
+};
+
 const assets = listFiles(assetRoot).map((filePath) => {
   const extension = path.extname(filePath).toLowerCase();
   const buffer = readCanonicalAssetBytes(filePath, extension);
   const relativePath = path.relative(assetRoot, filePath).replaceAll('\\', '/');
   const dimensions = extension === '.svg' ? svgDimensions(buffer) : extension === '.webp' ? webpDimensions(buffer) : null;
   const versionMatch = path.basename(filePath).match(/_V(\d+)/i);
+  const originInfo = inferOrigin(relativePath, extension);
   return {
     id: relativePath.replace(/\.[^.]+$/, '').replaceAll('/', ':'),
     path: `/assets/hail/${relativePath}`,
@@ -92,17 +135,34 @@ const assets = listFiles(assetRoot).map((filePath) => {
     anchor: dimensions ? { x: 0.5, y: 0.5 } : null,
     layer: inferLayer(relativePath),
     state: inferState(path.basename(filePath)),
-    source: 'Project Human Frontier internal AeroMatte 2050 production',
-    license: 'Project-owned asset; approved for Project Human Frontier use',
+    origin: originInfo.origin,
+    siGenerated: originInfo.siGenerated,
+    watermarkApplied: originInfo.watermarkApplied,
+    source: originInfo.source,
+    license: originInfo.license,
     version: versionMatch ? Number(versionMatch[1]) : 1,
     sha256: crypto.createHash('sha256').update(buffer).digest('hex'),
   };
 });
 
+const originCounts = assets.reduce(
+  (acc, item) => {
+    acc[item.origin] = (acc[item.origin] || 0) + 1;
+    return acc;
+  },
+  { 'artist-human': 0, 'si-generated': 0, 'procedural-vector': 0 },
+);
+
 const manifest = {
   schemaVersion: 1,
   generatedBy: 'scripts/build-hail-asset-manifest.mjs',
   assetRoot: '/assets/hail/',
+  siDisclosure: {
+    policy: 'NASA Space Apps Challenge - Use of Super Intelligence (SI)',
+    summary:
+      'Artist-drawn comic & crew illustrations are non-SI originals (no SI watermark); all SI-generated WebP images carry visible SI watermarks, and SI-generated OGG audio plus SI-assisted code/telemetry helpers are disclosed in metadata and Credits.',
+    originCounts,
+  },
   assetCount: assets.length,
   assets,
 };
